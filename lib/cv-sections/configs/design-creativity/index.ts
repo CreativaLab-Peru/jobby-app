@@ -1,4 +1,3 @@
-// design-creativity/index.ts
 import { OpportunityType } from "@prisma/client"
 import type { ConfigGetter } from "../../types"
 import { designCreativityExchangeProgram } from "./exchange-program"

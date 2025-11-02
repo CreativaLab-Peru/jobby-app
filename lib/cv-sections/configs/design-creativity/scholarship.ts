@@ -11,17 +11,17 @@ export const designCreativityScholarship: SectionConfig = {
   examples: {
     // Personal - Summary
     "personal.summary":
-        "Estudiante de Ingeniería de Sistemas con promedio ponderado de 16.5/20 y gran interés en inteligencia artificial y machine learning. Busco una beca de estudios para profundizar en investigación aplicada y contribuir al desarrollo de soluciones tecnológicas que generen impacto social y académico.",
+        "Arte y tecnología se entrelazan en mi pasión por el diseño creativo. Como estudiante de Ingeniería de Sistemas con un fuerte interés en machine learning y análisis de datos, busco aplicar mis habilidades técnicas para resolver problemas complejos y generar impacto positivo. Mi enfoque innovador y capacidad para trabajar en equipo me impulsan a sobresalir en entornos dinámicos y desafiantes.",
 
     // Projects
     "projects.title": 
-        "Sistema de Predicción de Deserción Estudiantil con ML",
+        "Logo para Startup de Tecnología Educativa",
     "projects.description":
-        "Desarrollé un modelo predictivo usando algoritmos de machine learning (Random Forest, XGBoost) para identificar estudiantes en riesgo de deserción académica. Procesé datos históricos de 5,000+ estudiantes y logré una precisión del 87%. El proyecto fue presentado en el congreso estudiantil de investigación y recibió mención honrosa.",
+        "Diseño de un logotipo moderno y versátil para una nueva startup enfocada en soluciones educativas basadas en tecnología. El proceso incluyó la investigación de la competencia y la creación de un manual de marca.",
     "projects.technologies":
-        "Python, Scikit-learn, Pandas, NumPy, Jupyter Notebook, TensorFlow, Matplotlib",
+        "Adobe Illustrator, Figma",
     "projects.duration":
-        "6 meses (Marzo 2024 - Agosto 2024)",
+        "3 meses (Sept 2023 - Nov 2023)",
 
     // Achievements
     "achievements.title": 
@@ -33,7 +33,7 @@ export const designCreativityScholarship: SectionConfig = {
 
     // Education
     "education.title": 
-        "Ingeniería de Sistemas e Informática",
+        "Diseño Gráfico",
     "education.institution":
         "Universidad Nacional de San Antonio Abad del Cusco",
     "education.location":

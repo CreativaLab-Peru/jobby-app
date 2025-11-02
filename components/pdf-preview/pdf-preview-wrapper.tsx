@@ -4,7 +4,7 @@
 import dynamic from "next/dynamic";
 import { CVData, CVSection } from "@/types/cv";
 
-// ✅ Dynamically import the PDF preview, client-only
+// Dynamically import the PDF preview, client-only
 const ClientPDFPreview = dynamic(
   () => import("./client-pdf-preview").then((mod) => mod.ClientPDFPreview),
   { ssr: false }

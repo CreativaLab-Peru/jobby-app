@@ -41,8 +41,6 @@ export const designCreativityExchangeProgram: SectionConfig = {
         "React, Node.js, Express, MongoDB, Socket.io",
     "projects.duration": 
         "6 meses (Feb 2024 - Jul 2024)",
-    "projects.collaboration":
-        "Colaboré con un equipo de 4 diseñadores de diferentes países, coordinando tareas y compartiendo ideas a través de herramientas como Slack y Trello.",
     
     // Volunteering
     "volunteering.title": 

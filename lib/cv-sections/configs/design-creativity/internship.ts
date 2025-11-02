@@ -12,11 +12,11 @@ export const designCreativityInternship: SectionConfig = {
   examples: {
     // Personal
     "personal.summary":
-      "Estudiante de 5to ciclo de Ingeniería de Sistemas con sólidos conocimientos en desarrollo web full-stack y bases de datos. Busco prácticas profesionales para aplicar mis habilidades en programación y contribuir al desarrollo de soluciones tecnológicas innovadoras mientras continúo aprendiendo de profesionales experimentados.",
+      "Estudiante de diseño gráfico con experiencia en desarrollo de proyectos creativos y habilidades técnicas en herramientas de diseño. Apasionado por la innovación visual y la comunicación efectiva a través del diseño. Busco una pasantía para aplicar mis conocimientos y crecer profesionalmente en un entorno dinámico.",
 
     // Education
     "education.title": 
-        "Ingeniería de Sistemas e Informática",
+        "Diseño Gráfico",
     "education.institution":
         "Universidad Nacional de San Antonio Abad del Cusco",
     "education.location": 
@@ -24,31 +24,31 @@ export const designCreativityInternship: SectionConfig = {
     "education.year": 
         "Esperado Diciembre 2026",
     "education.honors":
-        "Tercio Superior, Participante de Hackathon Universitario 2023",
+        "Tercio Superior, Participante de Diseño 2023",
 
     // Projects
     "projects.title": 
-        "Sistema de Gestión de Inventario con IA",
+        "Diseño de Marca para Empresa de Alimentos",
     "projects.description":
-        "Desarrollé una aplicación web que utiliza machine learning para predecir la demanda de productos, reduciendo el desperdicio en 25%. Implementé algoritmos de clasificación y una interfaz intuitiva para usuarios no técnicos.",
+        "Creé la identidad visual de una nueva línea de productos alimenticios, incluyendo logotipo, paleta de colores y tipografía. Realicé investigaciones de mercado para asegurar que el diseño resonara con el público objetivo.",
     "projects.technologies":
-        "Python, Flask, TensorFlow, MySQL",
+        "Adobe Illustrator, Adobe Photoshop, Figma",
     "projects.duration": 
         "5 meses (Jun 2024 - Oct 2024)",
 
     // Skills
     "skills.technical":
-        "JavaScript, TypeScript, Python, React, Node.js, Express, PostgreSQL, MongoDB, Git, Docker, REST APIs, HTML/CSS",
+        "Adobe Creative Suite (Photoshop, Illustrator, InDesign), Figma, Sketch, Prototipado, Diseño UX/UI, Branding, Tipografía, Comunicación Visual",
     "skills.soft":
-        "Trabajo en equipo, Aprendizaje rápido, Resolución de problemas, Comunicación efectiva, Pensamiento analítico, Adaptabilidad",
+        "Creatividad, Pensamiento crítico, Comunicación efectiva, Gestión del tiempo, Adaptabilidad",
     "skills.languages":
         "Español (Nativo), Inglés (Intermedio - B1), Quechua (Básico)",
 
     // Certifications
-    "certifications.title": 
-        "Certificación en Desarrollo Web Full-Stack",
+    "certifications.name": 
+        "Certificación en Diseño Gráfico",
     "certifications.issuer": 
-        "Platzi",
+        "Coursera",
     "certifications.date": 
         "Noviembre 2023", 
   },

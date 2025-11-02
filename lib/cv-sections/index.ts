@@ -1,11 +1,16 @@
 import { CvType, OpportunityType } from "@prisma/client";
 import type { CVSection } from "@/types/cv";
 import { baseSectionsMap } from "./base-sections";
+import type { SectionConfig } from "./types";
+import { getDefaultConfig } from "./configs/default";
 import { getFinanceProjectsConfig } from "./configs/finance-projects";
 import { getTechnologyEngineeringConfig } from "./configs/technology-engineering";
-import { getDefaultConfig } from "./configs/default";
-import type { SectionConfig } from "./types";
 import { getDesignCreativityConfig } from "./configs/design-creativity";
+import { getMarketingStrategyConfig } from "./configs/marketing-strategy";
+import { getManagementBusinessConfig } from "./configs/management-business";
+import { getSocialMediaConfig } from "./configs/social-media";
+import { getEducationConfig } from "./configs/education";
+import { getScienceConfig } from "./configs/science";
 
 /**
  * Obtiene la configuración específica según CvType + OpportunityType
@@ -21,13 +26,16 @@ function getConfig(
       return getFinanceProjectsConfig(opportunityType);
     case CvType.DESIGN_CREATIVITY:
       return getDesignCreativityConfig(opportunityType);
-
-    // Los demás CvTypes usan configuración por defecto (temporal)
     case CvType.MARKETING_STRATEGY:
+      return getMarketingStrategyConfig(opportunityType);
     case CvType.MANAGEMENT_BUSINESS:
+      return getManagementBusinessConfig(opportunityType);
     case CvType.SOCIAL_MEDIA:
+      return getSocialMediaConfig(opportunityType);
     case CvType.EDUCATION:
+      return getEducationConfig(opportunityType);
     case CvType.SCIENCE:
+      return getScienceConfig(opportunityType);
     default:
       return getDefaultConfig(opportunityType);
   }
@@ -64,12 +72,12 @@ function applyCustomization(
  */
 export function getSections(
   opportunityType: OpportunityType,
-  cvType: CvType = CvType.TECHNOLOGY_ENGINEERING // Default para retrocompatibilidad
+  cvType: CvType = CvType.TECHNOLOGY_ENGINEERING
 ): CVSection[] {
   // Obtener configuración específica
   const config = getConfig(cvType, opportunityType);
 
-  // Construir secciones según el orden especificado en la config
+  // Construir secciones según el orden especificado en la config de cada CvType
   const sections: CVSection[] = [];
 
   for (const sectionId of config.sections) {
@@ -84,7 +92,6 @@ export function getSections(
   return sections;
 }
 
-// Re-exportar tipos para conveniencia
 export type {
   SectionConfig,
   FieldExampleConfig,

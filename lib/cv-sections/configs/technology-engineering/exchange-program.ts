@@ -34,8 +34,6 @@ export const technologyEngineeringExchangeProgram: SectionConfig = {
         "Español (Nativo), Inglés (Avanzado - C1), Portugués (Intermedio - B1)", 
       
     // Volunteering
-    "volunteering.title": 
-        "Voluntario en Taller de Programación para Niños",
     "volunteering.organization": 
         "Código para el Futuro",
     "volunteering.location": 

@@ -24,24 +24,29 @@ export const technologyEngineeringInternship: SectionConfig = {
       "Tercio Superior, Participante de Hackathon Universitario 2023",
 
     // Projects
-    "projects.title": "Plataforma de E-learning con Gamificación",
+    "projects.title": 
+        "Plataforma de E-learning con Gamificación",
     "projects.description":
-      "Desarrollé una plataforma web educativa que implementa mecánicas de juego para aumentar el engagement estudiantil. Utilicé React para el frontend, Node.js/Express para el backend, y PostgreSQL para gestión de datos. El proyecto logró incrementar la participación estudiantil en un 45% durante las pruebas piloto con 200 usuarios.",
+        "Desarrollé una plataforma web educativa que implementa mecánicas de juego para aumentar el engagement estudiantil. Utilicé React para el frontend, Node.js/Express para el backend, y PostgreSQL para gestión de datos. El proyecto logró incrementar la participación estudiantil en un 45% durante las pruebas piloto con 200 usuarios.",
     "projects.technologies":
-      "React, Node.js, Express, PostgreSQL, JWT, TailwindCSS, Git",
-    "projects.duration": "4 meses (Julio 2024 - Octubre 2024)",
+        "React, Node.js, Express, PostgreSQL, JWT, TailwindCSS, Git",
+    "projects.duration": 
+        "4 meses (Julio 2024 - Octubre 2024)",
 
     // Skills
     "skills.technical":
-      "JavaScript, TypeScript, Python, React, Node.js, Express, PostgreSQL, MongoDB, Git, Docker, REST APIs, HTML/CSS",
+        "JavaScript, TypeScript, Python, React, Node.js, Express, PostgreSQL, MongoDB, Git, Docker, REST APIs, HTML/CSS",
     "skills.soft":
-      "Trabajo en equipo, Aprendizaje rápido, Resolución de problemas, Comunicación efectiva, Pensamiento analítico, Adaptabilidad",
+        "Trabajo en equipo, Aprendizaje rápido, Resolución de problemas, Comunicación efectiva, Pensamiento analítico, Adaptabilidad",
     "skills.languages":
-      "Español (Nativo), Inglés (Intermedio - B1), Quechua (Básico)",
+        "Español (Nativo), Inglés (Intermedio - B1), Quechua (Básico)",
 
     // Certifications
-    "certifications.title": "Certificación en Desarrollo Web Full-Stack",
-    "certifications.issuer": "Platzi",
-    "certifications.date": "Noviembre 2023", 
+    "certifications.name": 
+        "Certificación en Desarrollo Web Full-Stack",
+    "certifications.issuer": 
+        "Platzi",
+    "certifications.date": 
+        "Noviembre 2023", 
   },
 };

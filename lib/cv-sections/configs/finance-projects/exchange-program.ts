@@ -41,21 +41,17 @@ export const financeProjectsExchangeProgram: SectionConfig = {
         "Meta Ads, Canva, Google Analytics",
     "projects.duration": 
         "5 meses (Feb 2024 - Jun 2024)",
-    "projects.collaboration":
-        "Colaboré con un equipo de 4 estudiantes de diferentes especialidades, coordinando tareas y compartiendo ideas a través de herramientas como Slack y Trello.",
     
     // Volunteering
-    "volunteering.title": 
-        "Asistente de Proyectos en ONG de Emprendimiento Juvenil",
     "volunteering.organization": 
-        "Creativos del Futuro",
-    "volunteering.location": 
-        "Cusco, Perú", 
-    "volunteering.position": 
-        "Instructor Voluntario",
-    "volunteering.duration": 
+        "Fundación Ayuda al Niño",
+    "volunteering.location":
+        "Cusco, Perú",
+    "volunteering.position":
+        "Voluntario",
+    "volunteering.duration":
         "6 meses (Jul 2023 - Dic 2023)",
     "volunteering.responsibilities":
-        "Colaboré en la organización de talleres para más de 50 jóvenes emprendedores, apoyando en la sistematización de datos y en el seguimiento de indicadores de impacto social.",
+        "Colaboré en la organización de actividades recreativas y educativas para niños en situación de vulnerabilidad, apoyando en la logística y en la creación de materiales didácticos.",
     }
 };

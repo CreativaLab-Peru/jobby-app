@@ -26,7 +26,9 @@ export function PreviewCVComponent({ cv: cvData, cvId, opportunityType, cvType, 
   // Regenerar las secciones en el cliente usando los IDs
   const sections = useMemo(() => {
     const allSections = getSections(opportunityType, cvType);
-    return allSections.filter(s => sectionIds.includes(s.id));
+    const sectionMap = new Map(allSections.map(s => [s.id, s]));
+    // Mantener el orden de sectionIds
+    return sectionIds.map(id => sectionMap.get(id)).filter(Boolean) as typeof allSections;
   }, [opportunityType, cvType, sectionIds]);
 
   return (

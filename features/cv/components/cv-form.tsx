@@ -1,6 +1,5 @@
 "use client"
 
-import { motion } from "framer-motion"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import {
@@ -24,12 +23,14 @@ interface CVFormProps {
 }
 
 export const cvTypes = [
-  { key: CvType.TECHNOLOGY, value: "Tecnología e Ingeniería" },
-  { key: CvType.DESIGN, value: "Diseño y Creatividad" },
-  { key: CvType.MARKETING, value: "Marketing y Comunicación" },
-  { key: CvType.SALES, value: "Ventas y Negocios" },
-  { key: CvType.SOCIAL_MEDIA, value: "Redes Sociales y Medios Digitales" },
-  { key: CvType.FINANCE, value: "Finanzas y Administración" },
+  { key: CvType.TECHNOLOGY_ENGINEERING, value: "Tecnología e Ingeniería" },
+  { key: CvType.DESIGN_CREATIVITY, value: "Diseño y Creatividad" },
+  { key: CvType.MARKETING_STRATEGY, value: "Marketing y Estrategia" },
+  { key: CvType.MANAGEMENT_BUSINESS, value: "Gestión y Negocios" },
+  { key: CvType.FINANCE_PROJECTS, value: "Finanzas y Proyectos" },
+  { key: CvType.SOCIAL_MEDIA, value: "Redes Sociales y Contenido Digital" },
+  { key: CvType.EDUCATION, value: "Educación y Desarrollo Humano" },
+  { key: CvType.SCIENCE, value: "Ciencia e Innovación" },
 ]
 
 export const opportunityTypes = [

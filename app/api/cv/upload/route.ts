@@ -66,7 +66,7 @@ export async function POST(req: Request) {
         userId,
         language: Language.EN,
         opportunityType: OpportunityType.FULL_TIME,
-        cvType: CvType.TECHNOLOGY,
+        cvType: CvType.TECHNOLOGY_ENGINEERING,
         title: file.name,
         createdByJobId,
         attachments: {

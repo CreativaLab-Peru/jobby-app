@@ -330,6 +330,7 @@ enum LogAction {
   JOB
   EMAIL
   FILE_UPLOAD
+  AUTH
   OTHER
 }
 

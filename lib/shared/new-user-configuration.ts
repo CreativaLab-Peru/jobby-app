@@ -14,7 +14,7 @@ export const newUserConfiguration = async (userId: string) => {
     }
 
     const SUBSCRIPTION_FREE_ID = "d79cafea-beef-4037-a874-bf0e8e04d4e9";
-    const subscriptionPlanFree = await prisma.subscriptionPlan.findFirst({
+    const subscriptionPlanFree = await prisma.paymentPlan.findFirst({
       where: {
         id: SUBSCRIPTION_FREE_ID,
       }
@@ -24,7 +24,7 @@ export const newUserConfiguration = async (userId: string) => {
       return false;
     }
 
-    const subscription = await prisma.userSubscription.create({
+    const subscription = await prisma.userPayment.create({
       data: {
         planId: SUBSCRIPTION_FREE_ID,
         userId: user.id,

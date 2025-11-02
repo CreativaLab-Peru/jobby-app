@@ -2,8 +2,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { CVData } from "@/types/cv";
-import { OpportunityType } from "@prisma/client";
+import { CVData, CVSection } from "@/types/cv";
 
 // ✅ Dynamically import the PDF preview, client-only
 const ClientPDFPreview = dynamic(
@@ -11,11 +10,17 @@ const ClientPDFPreview = dynamic(
   { ssr: false }
 );
 
-export function PdfPreviewWrapper({ cvData, opportunityType }: { cvData: CVData; opportunityType: OpportunityType }) {
+export function PdfPreviewWrapper({ 
+  cvData, 
+  sections 
+}: { 
+  cvData: CVData;
+  sections: CVSection[];
+}) {
   return (
     <ClientPDFPreview
       cvData={cvData}
-      opportunityType={opportunityType}
+      sections={sections}
     />
   );
 }

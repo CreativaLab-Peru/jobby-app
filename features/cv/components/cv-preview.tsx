@@ -1,15 +1,16 @@
 "use client"
 
 import { Eye } from "lucide-react"
-import { CVData } from "@/types/cv"
-import { OpportunityType } from "@prisma/client"
+import { CVData, CVSection } from "@/types/cv"
 
 interface CVPreviewProps {
   data: CVData
-  type: OpportunityType
+  sections: CVSection[]
 }
 
-export function CVPreview({ data, type }: CVPreviewProps) {
+export function CVPreview({ data, sections }: CVPreviewProps) {
+  // Crear un Set con los IDs de las secciones activas para búsqueda rápida
+  const activeSectionIds = new Set(sections.map(s => s.id))
   return (
     <div className="text-center bg-white p-8 min-h-[500px] font-sans text-xs" style={{ fontFamily: "Arial, sans-serif" }}>
       {/* Header with Name */}
@@ -51,35 +52,35 @@ export function CVPreview({ data, type }: CVPreviewProps) {
         </div>
       )}
 
-      {/* Logros o Certificaciones */}
-      {type === "SCHOLARSHIP" || type === "EXCHANGE_PROGRAM" || type === "INTERNSHIP"
-        ? data.achievements?.items?.length > 0 && (
-          <div className="mb-2">
-            <h2 className="text-sm font-bold text-black mb-3 uppercase border-b border-black text-left">LOGROS Y RECONOCIMIENTOS</h2>
-            <div className="text-xs text-black leading-relaxed text-justify list-disc">
-              {data.achievements.items.map((achievement, index) => (
-                <div key={achievement.title || index}>
-                  <strong>{achievement.title}:</strong> {achievement.description}
-                </div>
-              ))}
-            </div>
+      {/* Logros o Certificaciones - Renderizado dinámico */}
+      {activeSectionIds.has("achievements") && data.achievements?.items?.length > 0 && (
+        <div className="mb-2">
+          <h2 className="text-sm font-bold text-black mb-3 uppercase border-b border-black text-left">LOGROS Y RECONOCIMIENTOS</h2>
+          <div className="text-xs text-black leading-relaxed text-justify list-disc">
+            {data.achievements.items.map((achievement, index) => (
+              <div key={achievement.title || index}>
+                <strong>{achievement.title}:</strong> {achievement.description}
+              </div>
+            ))}
           </div>
-        )
-        : data.certifications?.items?.length > 0 && (
-          <div className="mb-2">
-            <h2 className="text-left text-sm font-bold text-black mb-2 uppercase border-b border-black">LICENCIAS Y CERTIFICACIONES</h2>
-            <div className="text-xs text-black leading-relaxed text-justify">
-              {data.certifications.items.map((cert, index) => (
-                <div key={cert.id || index} className="line-clamp-1">
-                  {cert.name} by {cert.issuer} ({new Date(cert.date).toLocaleDateString("en-US", { year: "numeric" })})
-                </div>
-              ))}
-            </div>
+        </div>
+      )}
+
+      {activeSectionIds.has("certifications") && data.certifications?.items?.length > 0 && (
+        <div className="mb-2">
+          <h2 className="text-left text-sm font-bold text-black mb-2 uppercase border-b border-black">LICENCIAS Y CERTIFICACIONES</h2>
+          <div className="text-xs text-black leading-relaxed text-justify">
+            {data.certifications.items.map((cert, index) => (
+              <div key={cert.id || index} className="line-clamp-1">
+                {cert.name} by {cert.issuer} ({new Date(cert.date).toLocaleDateString("en-US", { year: "numeric" })})
+              </div>
+            ))}
           </div>
-        )}
+        </div>
+      )}
 
       {/* Educación */}
-      {data.education?.items?.length > 0 && (
+      {activeSectionIds.has("education") && data.education?.items?.length > 0 && (
         <div className="mb-2">
           <h2 className="text-left text-sm font-bold text-black mb-2 uppercase border-b border-black">EDUCACIÓN</h2>
           {data.education.items.map((edu, index) => (
@@ -102,7 +103,7 @@ export function CVPreview({ data, type }: CVPreviewProps) {
         </div>
       )}
 
-      {data.projects?.items?.length > 0 && (
+      {activeSectionIds.has("projects") && data.projects?.items?.length > 0 && (
         <div className="mb-2">
           <h2 className="text-left text-sm font-bold text-black mb-3 uppercase border-b border-black">PROYECTOS ACADÉMICOS</h2>
           {data.projects.items.map((project, index) => (
@@ -122,7 +123,7 @@ export function CVPreview({ data, type }: CVPreviewProps) {
         </div>
       )}
 
-      {data.volunteering?.items?.length > 0 && (
+      {activeSectionIds.has("volunteering") && data.volunteering?.items?.length > 0 && (
         <div className="mb-2">
           <h2 className="text-left text-sm font-bold text-black mb-3 uppercase border-b border-black">VOLUNTARIADOS Y ACTIVIDADES COMUNITARIAS</h2>
           {data.volunteering.items.map((vol, index) => (
@@ -147,7 +148,7 @@ export function CVPreview({ data, type }: CVPreviewProps) {
         </div>
       )}
 
-      {data.experience?.items?.length > 0 && (
+      {activeSectionIds.has("experience") && data.experience?.items?.length > 0 && (
         <div className="mb-2">
           <h2 className="text-left text-sm font-bold text-black mb-3 uppercase border-b border-black">EXPERIENCIA LABORAL</h2>
           {data.experience.items.map((exp, index) => (
@@ -173,7 +174,7 @@ export function CVPreview({ data, type }: CVPreviewProps) {
       )}
 
       {/* Habilidades */}
-      {data.skills && (
+      {activeSectionIds.has("skills") && data.skills && (
         data.skills.technical.length > 0 ||
         data.skills.soft.length > 0 ||
         data.skills.languages.length > 0

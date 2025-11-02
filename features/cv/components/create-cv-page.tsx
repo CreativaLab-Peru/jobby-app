@@ -150,7 +150,7 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
                     </CardHeader>
                     <CardContent className="p-0">
                       <div className="max-h-[85vh] overflow-y-auto">
-                        <CVPreview data={cvData} type={opportunityType} />
+                        <CVPreview data={cvData} sections={sections} />
                       </div>
                     </CardContent>
                   </Card>

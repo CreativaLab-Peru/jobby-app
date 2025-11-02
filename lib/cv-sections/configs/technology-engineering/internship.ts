@@ -7,7 +7,6 @@ export const technologyEngineeringInternship: SectionConfig = {
     "projects",
     "skills",
     "certifications",
-    "volunteering",
   ],
 
   examples: {
@@ -44,14 +43,5 @@ export const technologyEngineeringInternship: SectionConfig = {
     "certifications.title": "Certificación en Desarrollo Web Full-Stack",
     "certifications.issuer": "Platzi",
     "certifications.date": "Noviembre 2023", 
-    
-    //Volunteering
-    "volunteering.title": "Voluntario en Taller de Programación para Niños",
-    "volunteering.organization": "Código para el Futuro",
-    "volunteering.location": "Cusco, Perú",
-    "volunteering.position": "Instructor Voluntario",
-    "volunteering.duration": "Marzo 2023 - Diciembre 2023",
-    "volunteering.responsibilities":
-      "• Impartí talleres semanales de programación básica (HTML, CSS, JavaScript) a niños de 10-14 años.\n• Desarrollé materiales didácticos interactivos para facilitar el aprendizaje.\n• Fomenté un ambiente inclusivo y motivador para los estudiantes.\n• Colaboré con otros voluntarios para organizar eventos de tecnología comunitarios.",
   },
 };

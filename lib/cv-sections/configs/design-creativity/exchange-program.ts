@@ -1,5 +1,5 @@
 import type { SectionConfig } from "../../types"
-export const financeProjectsExchangeProgram: SectionConfig = {
+export const designCreativityExchangeProgram: SectionConfig = {
   sections: [
     "personal",
     "education",
@@ -10,11 +10,11 @@ export const financeProjectsExchangeProgram: SectionConfig = {
     examples: {
     // Personal
     "personal.summary":
-        "Estudiante de Administración y Negocios con interés en gestión empresarial y análisis de mercados. Experiencia en proyectos académicos de planeamiento estratégico y marketing digital, aplicando metodologías como Canvas y OKRs. Capacidad para aportar en la organización de procesos y en el desarrollo de estrategias comerciales.",
+        "Estudiante de Diseño Gráfico en intercambio académico en la Universidad de São Paulo, Brasil. Apasionado por el diseño centrado en el usuario y la creatividad aplicada a soluciones visuales innovadoras. Experiencia en proyectos colaborativos internacionales y adaptabilidad cultural.",
     
     // Education
     "education.title": 
-        "Licenciatura en Finanzas",
+        "Licenciatura en Diseño Gráfico",
     "education.institution":
         "Universidad Nacional de San Antonio Abad del Cusco",
     "education.location": 
@@ -22,8 +22,8 @@ export const financeProjectsExchangeProgram: SectionConfig = {
     "education.year": 
         "Esperado Diciembre 2025",
     "education.honors":
-        "Promedio ponderado: 16.2/20, Participante activo del Club de Finanzas y Economía",
-
+        "Promedio ponderado: 16.2/20, Participante activo del Club de Diseño y Creatividad",
+    
     // Skills
     "skills.technical":
         "Adobe Creative Suite (Photoshop, Illustrator, InDesign), Figma, Sketch, Prototipado, Diseño UX/UI, Branding, Tipografía, Comunicación Visual, Investigación de Usuarios",
@@ -34,19 +34,19 @@ export const financeProjectsExchangeProgram: SectionConfig = {
     
     // projects
     "projects.title": 
-        "Plan de Marketing Digital para Pyme Textil.",
+        "Plataforma Web de Tutorías Académicas",
     "projects.description":
-        "Diseñé e implementé una estrategia de marketing digital que incrementó en 35% la visibilidad online de una empresa textil. Incluyó gestión de redes sociales, campañas segmentadas en Meta Ads y optimización de contenidos.",
+        "Implementé una plataforma que conecta estudiantes con tutores especializados en distintas materias, incorporando sistema de pagos y notificaciones en tiempo real.",
     "projects.technologies":
-        "Meta Ads, Canva, Google Analytics",
+        "React, Node.js, Express, MongoDB, Socket.io",
     "projects.duration": 
-        "5 meses (Feb 2024 - Jun 2024)",
+        "6 meses (Feb 2024 - Jul 2024)",
     "projects.collaboration":
-        "Colaboré con un equipo de 4 estudiantes de diferentes especialidades, coordinando tareas y compartiendo ideas a través de herramientas como Slack y Trello.",
+        "Colaboré con un equipo de 4 diseñadores de diferentes países, coordinando tareas y compartiendo ideas a través de herramientas como Slack y Trello.",
     
     // Volunteering
     "volunteering.title": 
-        "Asistente de Proyectos en ONG de Emprendimiento Juvenil",
+        "Mentor de Programación en Hackathon Universitaria",
     "volunteering.organization": 
         "Creativos del Futuro",
     "volunteering.location": 
@@ -54,8 +54,8 @@ export const financeProjectsExchangeProgram: SectionConfig = {
     "volunteering.position": 
         "Instructor Voluntario",
     "volunteering.duration": 
-        "6 meses (Jul 2023 - Dic 2023)",
+        "48h + 1 mes de seguimiento (Sept 2023)",
     "volunteering.responsibilities":
-        "Colaboré en la organización de talleres para más de 50 jóvenes emprendedores, apoyando en la sistematización de datos y en el seguimiento de indicadores de impacto social.",
+        "Guié a un equipo de 4 estudiantes en el desarrollo de un prototipo de app de movilidad urbana. El equipo obtuvo el segundo lugar entre 20 grupos participantes.",
     }
 };

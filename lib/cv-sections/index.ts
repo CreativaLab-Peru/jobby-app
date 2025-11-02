@@ -5,6 +5,7 @@ import { getFinanceProjectsConfig } from "./configs/finance-projects";
 import { getTechnologyEngineeringConfig } from "./configs/technology-engineering";
 import { getDefaultConfig } from "./configs/default";
 import type { SectionConfig } from "./types";
+import { getDesignCreativityConfig } from "./configs/design-creativity";
 
 /**
  * Obtiene la configuración específica según CvType + OpportunityType
@@ -18,9 +19,10 @@ function getConfig(
       return getTechnologyEngineeringConfig(opportunityType);
     case CvType.FINANCE_PROJECTS:
       return getFinanceProjectsConfig(opportunityType);
+    case CvType.DESIGN_CREATIVITY:
+      return getDesignCreativityConfig(opportunityType);
 
     // Los demás CvTypes usan configuración por defecto (temporal)
-    case CvType.DESIGN_CREATIVITY:
     case CvType.MARKETING_STRATEGY:
     case CvType.MANAGEMENT_BUSINESS:
     case CvType.SOCIAL_MEDIA:

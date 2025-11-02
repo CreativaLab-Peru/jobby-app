@@ -1,4 +1,4 @@
-import { User, Briefcase, GraduationCap, Award, Code, Languages } from "lucide-react"
+import { User, Briefcase, GraduationCap, Award, Code, Languages, Heart } from "lucide-react"
 import type { CVSection } from "@/types/cv"
 
 
@@ -60,7 +60,7 @@ export const personalSection: CVSection = {
 
 export const projectsSection: CVSection = {
   id: "projects",
-  title: "Proyectos y Voluntariados",
+  title: "Proyectos",
   icon: Code,
   multiple: true,
   fields: [
@@ -271,6 +271,56 @@ export const certificationsSection: CVSection = {
   ],
 }
 
+export const volunteeringSection: CVSection = {
+  id: "volunteering",
+  title: "Voluntariados y Actividades Comunitarias",
+  icon: Heart,
+  multiple: true,
+  fields: [
+    {
+      name: "organization",
+      label: "Organización",
+      type: "text",
+      required: true,
+      tip: "Nombre completo de la organización, ONG o comunidad",
+      example: "Cruz Roja Peruana",
+    },
+    {
+      name: "location",
+      label: "Ubicación",
+      type: "text",
+      required: true,
+      tip: "Ciudad y país donde se realiza el voluntariado",
+      example: "Cusco, Perú",
+    },
+    {
+      name: "position",
+      label: "Rol o Cargo",
+      type: "text",
+      required: true,
+      tip: "Describe tu rol en la organización",
+      example: "Coordinador de Voluntarios",
+    },
+    {
+      name: "duration",
+      label: "Duración",
+      type: "text",
+      required: true,
+      tip: "Formato: Mes Año - Mes Año o 'Presente' si continúas",
+      example: "Marzo 2023 - Presente",
+    },
+    {
+      name: "responsibilities",
+      label: "Actividades y Responsabilidades",
+      type: "textarea",
+      required: true,
+      tip: "Describe las actividades realizadas y el impacto generado. Usa verbos de acción y métricas si es posible.",
+      example:
+        "• Coordiné eventos de recaudación de fondos que generaron S/. 20,000 para programas comunitarios.\n• Lideré un equipo de 15 voluntarios en campañas de ayuda social.\n• Organicé talleres educativos para 200+ beneficiarios en comunidades vulnerables.",
+    },
+  ],
+}
+
 export const skillsSection: CVSection = {
   id: "skills",
   title: "Habilidades",
@@ -310,5 +360,6 @@ export const baseSectionsMap: Record<string, CVSection> = {
   education: educationSection,
   achievements: achievementsSection,
   certifications: certificationsSection,
+  volunteering: volunteeringSection,
   skills: skillsSection,
 }

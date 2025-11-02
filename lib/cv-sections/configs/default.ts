@@ -37,6 +37,12 @@ export const getDefaultConfig = (opportunityType: OpportunityType): SectionConfi
         "achievements.description":
           "Lideré un equipo de 4 personas para desarrollar una solución de movilidad urbana sostenible. Competimos contra 150 equipos de todo el país y fuimos reconocidos por la innovación y viabilidad de nuestra propuesta.",
         "achievements.date": "Marzo 2024",
+        "volunteering.organization": "Organización de Desarrollo Comunitario",
+        "volunteering.location": "Lima, Perú",
+        "volunteering.position": "Voluntario Coordinador",
+        "volunteering.duration": "Enero 2023 - Presente",
+        "volunteering.responsibilities":
+          "• Coordiné actividades de desarrollo comunitario para 100+ beneficiarios.\n• Organicé talleres educativos y eventos de recaudación de fondos.\n• Colaboré con equipos multidisciplinarios para implementar proyectos sociales.",
         "skills.technical": "JavaScript, Python, React, Node.js, SQL, Git",
         "skills.soft": "Liderazgo, Comunicación efectiva, Trabajo en equipo, Resolución de problemas",
         "skills.languages": "Español (Nativo), Inglés (Avanzado), Francés (Intermedio)",

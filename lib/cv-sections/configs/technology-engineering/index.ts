@@ -3,9 +3,6 @@ import type { ConfigGetter } from "../../types"
 import { technologyEngineeringInternship } from "./internship"
 import { technologyEngineeringScholarship } from "./scholarship"
 import { technologyEngineeringExchangeProgram } from "./exchange-program"
-import { technologyEngineeringFullTime } from "./full-time"
-import { technologyEngineeringPartTime } from "./part-time"
-import { technologyEngineeringFreelance } from "./freelance"
 
 export const getTechnologyEngineeringConfig: ConfigGetter = (opportunityType) => {
   switch (opportunityType) {
@@ -17,15 +14,6 @@ export const getTechnologyEngineeringConfig: ConfigGetter = (opportunityType) =>
     
     case OpportunityType.EXCHANGE_PROGRAM:
       return technologyEngineeringExchangeProgram
-    
-    case OpportunityType.FULL_TIME:
-      return technologyEngineeringFullTime
-    
-    case OpportunityType.PART_TIME:
-      return technologyEngineeringPartTime
-    
-    case OpportunityType.FREELANCE:
-      return technologyEngineeringFreelance
     
     // Para tipos que aún no configuramos, usar default
     case OpportunityType.RESEARCH_FELLOWSHIP:

@@ -74,7 +74,7 @@ export const updateCvAndSections = async (id: string, cvData: CVData) => {
       message: "CV and sections updated successfully.",
       data: existingCv as Cv,
     };
-  } catch (error: any) {
+  } catch (error) {
     console.error("[UPDATE_CV_ERROR]", error);
     return {
       success: false,
@@ -87,7 +87,7 @@ export const updateCvAndSections = async (id: string, cvData: CVData) => {
  * Transforms CVData → CvSection[] (each sectionType + contentJson)
  */
 function buildSections(cvData: CVData) {
-  const sections: { sectionType: CvSectionType; contentJson: any; title?: string }[] = [];
+  const sections: { sectionType: CvSectionType; contentJson; title?: string }[] = [];
 
   if (cvData.personal?.summary) {
     sections.push({
@@ -141,6 +141,14 @@ function buildSections(cvData: CVData) {
       sectionType: CvSectionType.CERTIFICATIONS,
       title: "Certifications",
       contentJson: cvData.certifications.items,
+    });
+  }
+
+  if (cvData.volunteering?.items?.length) {
+    sections.push({
+      sectionType: CvSectionType.VOLUNTEERING,
+      title: "Volunteering",
+      contentJson: cvData.volunteering.items,
     });
   }
 

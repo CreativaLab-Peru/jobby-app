@@ -11,7 +11,7 @@ import {
   WidthType,
 } from "docx"
 
-export function generateWordDocument(data: any, type: string) {
+export function generateWordDocument(data, type: string) {
   const isAcademicType = type === "becas" || type === "practicas" || type === "intercambios"
 
   const doc = new Document({
@@ -87,6 +87,9 @@ export function generateWordDocument(data: any, type: string) {
           // Experience or Projects
           ...(isAcademicType ? generateProjectsSection(data.projects) : generateExperienceSection(data.experience)),
 
+          // Volunteering
+          ...generateVolunteeringSection(data.volunteering),
+
           // Education
           ...generateEducationSection(data.education),
 
@@ -105,7 +108,7 @@ export function generateWordDocument(data: any, type: string) {
   return doc
 }
 
-function generateProjectsSection(projects: any) {
+function generateProjectsSection(projects) {
   if (!projects?.items || projects.items.length === 0) return []
 
   return [
@@ -123,7 +126,7 @@ function generateProjectsSection(projects: any) {
         },
       },
     }),
-    ...projects.items.flatMap((project: any) => [
+    ...projects.items.flatMap((project) => [
       new Table({
         width: {
           size: 100,
@@ -196,7 +199,136 @@ function generateProjectsSection(projects: any) {
   ]
 }
 
-function generateExperienceSection(experience: any) {
+function generateVolunteeringSection(volunteering) {
+  if (!volunteering?.items || volunteering.items.length === 0) return []
+
+  return [
+    new Paragraph({
+      text: "VOLUNTARIADOS Y ACTIVIDADES COMUNITARIAS",
+      heading: HeadingLevel.HEADING_2,
+      spacing: {
+        after: 200,
+      },
+      border: {
+        bottom: {
+          color: "#000000",
+          style: BorderStyle.SINGLE,
+          size: 1,
+        },
+      },
+    }),
+    ...volunteering.items.flatMap((vol) => [
+      new Table({
+        width: {
+          size: 100,
+          type: WidthType.PERCENTAGE,
+        },
+        rows: [
+          new TableRow({
+            children: [
+              new TableCell({
+                children: [
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: vol.organization || "",
+                        bold: true,
+                      }),
+                    ],
+                  }),
+                ],
+                width: {
+                  size: 70,
+                  type: WidthType.PERCENTAGE,
+                },
+              }),
+              new TableCell({
+                children: [
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: vol.location || "",
+                        bold: true,
+                      }),
+                    ],
+                    alignment: AlignmentType.RIGHT,
+                  }),
+                ],
+                width: {
+                  size: 30,
+                  type: WidthType.PERCENTAGE,
+                },
+              }),
+            ],
+          }),
+          new TableRow({
+            children: [
+              new TableCell({
+                children: [
+                  new Paragraph({
+                    text: vol.position || "",
+                  }),
+                ],
+                width: {
+                  size: 70,
+                  type: WidthType.PERCENTAGE,
+                },
+              }),
+              new TableCell({
+                children: [
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: vol.duration || "",
+                        italics: true,
+                      }),
+                    ],
+                    alignment: AlignmentType.RIGHT,
+                  }),
+                ],
+                width: {
+                  size: 30,
+                  type: WidthType.PERCENTAGE,
+                },
+              }),
+            ],
+          }),
+        ],
+        borders: {
+          top: { style: BorderStyle.NONE },
+          bottom: { style: BorderStyle.NONE },
+          left: { style: BorderStyle.NONE },
+          right: { style: BorderStyle.NONE },
+          insideHorizontal: { style: BorderStyle.NONE },
+          insideVertical: { style: BorderStyle.NONE },
+        },
+      }),
+      ...(vol.responsibilities
+        ? vol.responsibilities.split("\n").map(
+            (line: string) =>
+              new Paragraph({
+                text: line.replace(/^[-–•]\s*/, ""),
+                bullet: {
+                  level: 0,
+                },
+                spacing: {
+                  after: 100,
+                },
+                alignment: AlignmentType.JUSTIFIED,
+              })
+          )
+        : []),
+      new Paragraph({
+        text: "",
+        spacing: {
+          after: 200,
+        },
+      }),
+    ]),
+  ]
+}
+
+function generateExperienceSection(experience) {
   if (!experience?.items || experience.items.length === 0) return []
 
   return [
@@ -214,7 +346,7 @@ function generateExperienceSection(experience: any) {
         },
       },
     }),
-    ...experience.items.flatMap((exp: any) => [
+    ...experience.items.flatMap((exp) => [
       new Table({
         width: {
           size: 100,
@@ -275,7 +407,7 @@ function generateExperienceSection(experience: any) {
   ]
 }
 
-function generateEducationSection(education: any) {
+function generateEducationSection(education) {
   if (!education?.items || education.items.length === 0) return []
 
   return [
@@ -293,7 +425,7 @@ function generateEducationSection(education: any) {
         },
       },
     }),
-    ...education.items.flatMap((edu: any) => [
+    ...education.items.flatMap((edu) => [
       new Table({
         width: {
           size: 100,
@@ -373,7 +505,7 @@ function generateEducationSection(education: any) {
   ]
 }
 
-function generateAchievementsSection(achievements: any) {
+function generateAchievementsSection(achievements) {
   if (!achievements?.items || achievements.items.length === 0) return []
 
   return [
@@ -393,7 +525,7 @@ function generateAchievementsSection(achievements: any) {
     }),
     new Paragraph({
       text: achievements.items
-        .map((achievement: any) => `${achievement.title || ""}: ${achievement.description || ""}`)
+        .map((achievement) => `${achievement.title || ""}: ${achievement.description || ""}`)
         .join(". "),
       spacing: {
         after: 400,
@@ -403,7 +535,7 @@ function generateAchievementsSection(achievements: any) {
   ]
 }
 
-function generateCertificationsSection(certifications: any) {
+function generateCertificationsSection(certifications) {
   if (!certifications?.items || certifications.items.length === 0) return []
 
   return [
@@ -422,7 +554,7 @@ function generateCertificationsSection(certifications: any) {
       },
     }),
     new Paragraph({
-      text: certifications.items.map((cert: any) => `${cert.name || ""} - ${cert.issuer || ""}`).join(". "),
+      text: certifications.items.map((cert) => `${cert.name || ""} - ${cert.issuer || ""}`).join(". "),
       spacing: {
         after: 400,
       },
@@ -431,7 +563,7 @@ function generateCertificationsSection(certifications: any) {
   ]
 }
 
-function generateSkillsSection(skills: any) {
+function generateSkillsSection(skills) {
   if (!skills || (!skills.technical && !skills.soft && !skills.languages)) return []
 
   return [

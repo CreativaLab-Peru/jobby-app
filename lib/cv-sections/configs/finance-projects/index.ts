@@ -8,7 +8,8 @@ export const getFinanceProjectsConfig: ConfigGetter = (opportunityType) => {
   switch (opportunityType) {
     case OpportunityType.EXCHANGE_PROGRAM:
       return financeProjectsExchangeProgram
-    // ... otros casos
+    
+      // Casos no implementados aún, por defecto
     default:
       return financeProjectsExchangeProgram
   }

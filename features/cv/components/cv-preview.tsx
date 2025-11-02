@@ -122,6 +122,31 @@ export function CVPreview({ data, type }: CVPreviewProps) {
         </div>
       )}
 
+      {data.volunteering?.items?.length > 0 && (
+        <div className="mb-2">
+          <h2 className="text-left text-sm font-bold text-black mb-3 uppercase border-b border-black">VOLUNTARIADOS Y ACTIVIDADES COMUNITARIAS</h2>
+          {data.volunteering.items.map((vol, index) => (
+            <div key={vol.id || index} className="mb-3">
+              <div className="flex justify-between items-start">
+                <h3 className="text-xs font-bold text-black">{vol.organization}</h3>
+                <span className="text-xs text-black whitespace-nowrap ml-2 font-bold">{vol.location}</span>
+              </div>
+              <div className="flex justify-between items-start mb-1">
+                <p className="text-xs text-black">{vol.position}</p>
+                <span className="text-xs text-black whitespace-nowrap ml-2 italic">{vol.duration}</span>
+              </div>
+              <ul className="text-xs text-black leading-relaxed text-justify">
+                {vol.responsibilities?.split("\n").map((line, idx) => (
+                  <li key={idx} className="text-xs list-disc ml-6">
+                    {line.replace(/^[-–•]\s*/, "")}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      )}
+
       {data.experience?.items?.length > 0 && (
         <div className="mb-2">
           <h2 className="text-left text-sm font-bold text-black mb-3 uppercase border-b border-black">EXPERIENCIA LABORAL</h2>

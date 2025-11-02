@@ -92,7 +92,7 @@ export function CVForm({ formData, onFormDataChange }: CVFormProps) {
 
       <div className="space-y-2">
         <Label htmlFor="type" className="text-sm font-medium text-gray-700">
-          Tipo de CV
+          Selecciona tu perfil profesional
         </Label>
         <Select
           value={formData.cvType}
@@ -113,6 +113,19 @@ export function CVForm({ formData, onFormDataChange }: CVFormProps) {
             ))}
           </SelectContent>
         </Select>
+        <p>
+          <span className="text-sm text-gray-500">
+            {formData.cvType === CvType.TECHNOLOGY_ENGINEERING && "Ideal para perfiles en sistemas, software, innovación o data."}
+            {formData.cvType === CvType.DESIGN_CREATIVITY && "Para creativos visuales, diseñadores gráficos, UX/UI o artistas digitales."}
+            {formData.cvType === CvType.MARKETING_STRATEGY && "Para marketers, comunicadores o estrategas de contenido."}
+            {formData.cvType === CvType.MANAGEMENT_BUSINESS && "Para administración, emprendimiento o desarrollo comercial."}
+            {formData.cvType === CvType.FINANCE_PROJECTS && "Para gestión financiera, análisis económico o PMO."}
+            {formData.cvType === CvType.SOCIAL_MEDIA && "Para community managers, creadores de contenido o influencers."}
+            {formData.cvType === CvType.EDUCATION && "Para docentes, formadores, capacitadores o coaches."}
+            {formData.cvType === CvType.SCIENCE && "Para perfiles STEM, sostenibilidad, impacto o proyectos de investigación."}
+            {!formData.cvType && "Selecciona un perfil profesional para ver su descripción."}
+          </span>
+        </p>
       </div>
     </div>
   )

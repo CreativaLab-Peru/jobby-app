@@ -1,10 +1,11 @@
-import { inngest } from "@/inngest/client";
+import { inngest } from "@/inngest/functions/client";
 import { prisma } from "@/lib/prisma";
 import { v4 as uuidv4 } from "uuid";
 import { CvType, Language, OpportunityType } from "@prisma/client";
 import { savePdf } from "@/features/upload-cv/actions/save-pdf";
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
+import { getLimitPlanOfCurrentUser } from "@/lib/shared/get-count-availables-attempts";
 
 export async function POST(req: Request) {
   try {
@@ -20,27 +21,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: "User not found" }, { status: 404 });
     }
 
-    const userSubscription = await prisma.userSubscription.findFirst({
-      where: {
-        userId: currentUser.id,
-        expiresAt: {
-          gt: new Date(),
-        },
-      },
-      include: {
-        plan: true,
-      },
-    });
-
-    if (!userSubscription) {
-      return NextResponse.json(
-        { success: false, message: "No active subscription found" },
-        { status: 403 }
-      );
-    }
-
-    const uploadCvsUsed = userSubscription.uploadCvsUsed;
-    const uploadCvLimit = userSubscription.plan?.uploadCvLimit || 0;
+    const limitOfPlan = await getLimitPlanOfCurrentUser()
+    const uploadCvsUsed = limitOfPlan.scoreAnalysis.used;
+    const uploadCvLimit = limitOfPlan.scoreAnalysis.total;
     if (uploadCvsUsed >= uploadCvLimit) {
       return NextResponse.json(
         { success: false, message: "Upload CV limit reached" },

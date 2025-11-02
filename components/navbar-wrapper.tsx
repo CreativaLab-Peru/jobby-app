@@ -2,10 +2,11 @@
 
 import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/navbar";
+import { LimitOfPlan } from "@/lib/shared/get-count-availables-attempts";
 
 interface NavbarWrapperProps {
   hasSubscription: boolean;
-  userLimit: any;
+  userLimit: LimitOfPlan;
   user: any;
 }
 

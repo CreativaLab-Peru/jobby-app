@@ -7,11 +7,11 @@ async function main() {
     update: {},
     create: {
       id: "d79cafea-beef-4037-a874-bf0e8e04d4e9",
-      slug: "premium",
-      name: "Premium Plan",
+      slug: "pro",
+      name: "Premium Pro",
       description: "Access to all premium features",
       priceCents: 9.90,
-      currency: "SOLES",
+      currency: "PEN",
       features: {
         caracteristics: [
           "Limited to 3 manual CV analyses",

@@ -149,7 +149,7 @@ export function LoginForm() {
                                 </Button>
 
                                 {/* Divider */}
-                                <div className="relative">
+                                {/* <div className="relative">
                                     <div className="absolute inset-0 flex items-center">
                                         <span className="w-full border-t border-border" />
                                     </div>
@@ -158,10 +158,10 @@ export function LoginForm() {
                                             O continúa con
                                         </span>
                                     </div>
-                                </div>
+                                </div> */}
 
                                 {/* Google Login Button */}
-                                <Button
+                                {/* <Button
                                     type="button"
                                     variant="outline"
                                     className="font-bold h-14 px-10 w-full"
@@ -186,7 +186,7 @@ export function LoginForm() {
                                         />
                                     </svg>
                                     Google
-                                </Button>
+                                </Button> */}
                             </form>
 
                             {/* Register Link */}

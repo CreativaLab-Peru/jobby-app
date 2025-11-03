@@ -4,8 +4,15 @@ import { LogAction, LogLevel } from "@prisma/client";
 const API_KEY = process.env.MAILERLITE_API_KEY;
 const WELCOME_GROUP_ID = process.env.MAILERLITE_WELCOME_GROUP_ID;
 const VERIFY_GROUP_ID = process.env.MAILERLITE_VERIFY_GROUP_ID;
+const MAGIC_LINK_GROUP_ID = process.env.MAILERLITE_MAGIC_LINK_GROUP_ID;
 
-type EmailAction = "welcome" | "verify"
+type EmailAction = "welcome" | "verify" | "magicLink"
+
+const mapAction = {
+  "welcome": WELCOME_GROUP_ID,
+  "verify": VERIFY_GROUP_ID,
+  "magicLink": MAGIC_LINK_GROUP_ID
+}
 
 export async function addToMailerLite(email: string, data?: any, action?: EmailAction) {
   if (!API_KEY || !VERIFY_GROUP_ID || !WELCOME_GROUP_ID) {
@@ -20,7 +27,17 @@ export async function addToMailerLite(email: string, data?: any, action?: EmailA
     return;
   }
 
-  const groupId = action === "welcome" ? WELCOME_GROUP_ID : VERIFY_GROUP_ID;
+  const groupId = mapAction[action]
+  if (!groupId) {
+    await logsService.createLog({
+      action: LogAction.EMAIL,
+      level: LogLevel.ERROR,
+      message: "No found map action and environment",
+      email,
+      metadata: { ...data, action },
+    });
+    return;
+  }
 
   try {
     const res = await fetch("https://connect.mailerlite.com/api/subscribers", {

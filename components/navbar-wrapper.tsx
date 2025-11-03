@@ -5,12 +5,12 @@ import { Navbar } from "@/components/navbar";
 import { LimitOfPlan } from "@/lib/shared/get-count-availables-attempts";
 
 interface NavbarWrapperProps {
-  hasSubscription: boolean;
+  needNewPayment: boolean;
   userLimit: LimitOfPlan;
   user: any;
 }
 
-export function NavbarWrapper({ hasSubscription, userLimit, user }: NavbarWrapperProps) {
+export function NavbarWrapper({ needNewPayment, userLimit, user }: NavbarWrapperProps) {
   const pathname = usePathname();
 
   // 👇 List of paths where you want to hide the navbar
@@ -21,5 +21,5 @@ export function NavbarWrapper({ hasSubscription, userLimit, user }: NavbarWrappe
 
   if (shouldHide) return null;
 
-  return <Navbar hasSubscription={hasSubscription} userLimit={userLimit} user={user} />;
+  return <Navbar needNewPayment={needNewPayment} userLimit={userLimit} user={user} />;
 }

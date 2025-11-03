@@ -1,5 +1,6 @@
 "use server"
 import { prisma } from "@/lib/prisma";
+import { PAYMEMT_PLAN_ID_BY_DEFAULT } from "./consts";
 
 export const newUserConfiguration = async (userId: string) => {
   try {
@@ -9,35 +10,34 @@ export const newUserConfiguration = async (userId: string) => {
       }
     })
     if (!user) {
-      console.error("User not found by userId:", userId);
+      console.error("[NOT_FOUND_USER]:", userId);
       return false;
     }
 
-    const SUBSCRIPTION_FREE_ID = "d79cafea-beef-4037-a874-bf0e8e04d4e9";
-    const subscriptionPlanFree = await prisma.paymentPlan.findFirst({
+    const planFree = await prisma.paymentPlan.findFirst({
       where: {
-        id: SUBSCRIPTION_FREE_ID,
+        id: PAYMEMT_PLAN_ID_BY_DEFAULT,
       }
     })
-    if (!subscriptionPlanFree) {
-      console.error("Subscription plan not found by id:", SUBSCRIPTION_FREE_ID);
+    if (!planFree) {
+      console.error("[PLAN_NOT_FOUND]", PAYMEMT_PLAN_ID_BY_DEFAULT);
       return false;
     }
 
-    const subscription = await prisma.userPayment.create({
+    const userPlan = await prisma.userPayment.create({
       data: {
-        planId: SUBSCRIPTION_FREE_ID,
+        planId: PAYMEMT_PLAN_ID_BY_DEFAULT,
         userId: user.id,
       }
     })
-    if (!subscription) {
-      console.error("Error creating subscription for userId:", userId);
+    if (!userPlan) {
+      console.error("[CREATING_NEW_USER_PLAN_ERROR]:", userId);
       return false;
     }
 
     return true;
   } catch (error) {
-    console.error("[ERROR_NEW_USER]", error);
+    console.error("[ERROR_NEW_USER_CONFIGURATION]", error);
     return false;
   }
 }

@@ -17,6 +17,7 @@ enum PaymentType {
   SUBSCRIPTION
   ONE_TIME
   REFUND
+  FREE
 }
 
 enum OpportunityType {
@@ -59,6 +60,16 @@ enum JobStatus {
   SUCCEEDED
   FAILED
   CANCELLED
+}
+
+model TemporalUser {
+  id    String @id @default(uuid())
+  email String
+
+  date DateTime @default(now())
+
+  @@unique([email])
+  @@map("temporal_user")
 }
 
 model User {
@@ -141,8 +152,8 @@ model PaymentPlan {
   features      Json? // JSON list of features/pricing tiers
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
-  manualCvLimit Int         @default(2) // number of manual CVs allowed
-  uploadCvLimit Int         @default(2) // number of uploaded CVs allowed
+  manualCvLimit Int         @default(0) // number of manual CVs allowed
+  uploadCvLimit Int         @default(0) // number of uploaded CVs allowed
 
   payments UserPayment[]
 
@@ -370,7 +381,7 @@ model LogEntry {
   // What type of action happened?
   action LogAction
 
-  // Optional entity reference for tracing
+  // Optional entity reference for tracing                  
   entity   String? // e.g. "CV", "PAYMENT", "ACCOUNT"
   entityId String? // ID of the affected entity
 

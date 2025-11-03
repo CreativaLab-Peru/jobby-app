@@ -42,7 +42,7 @@ export default async function RootLayout({
             <div className="flex min-h-screen relative w-full">
                 <div className="flex-1 flex flex-col">
                     <NavbarWrapper
-                        hasSubscription={needsNewPayment}
+                        needNewPayment={needsNewPayment}
                         userLimit={limitPlanOfCurrentUser}
                         user={user} />
                     <main className="flex-1 transition-all duration-300">{children}</main>

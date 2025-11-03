@@ -98,7 +98,7 @@ export function Navbar({ userLimit, user, needNewPayment }: NavbarProps) {
           <div className="flex items-center space-x-4">
 
             {/* Upgrade to Premium Button */}
-            {!needNewPayment ? null : (
+            {/* {!needNewPayment ? null : (
               <motion.div whileHover={{ scale: 1.05 }} className="hidden sm:block">
                 <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-sm"
                   onClick={getPremiumSuscription}
@@ -119,7 +119,7 @@ export function Navbar({ userLimit, user, needNewPayment }: NavbarProps) {
                   </CardContent>
                 </Card>
               </motion.div>
-            )}
+            )} */}
 
             {/* CV Creation Credits */}
             <motion.div whileHover={{ scale: 1.05 }} className="hidden sm:block">

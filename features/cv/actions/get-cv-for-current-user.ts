@@ -30,7 +30,7 @@ export const getCvForCurrentUser = async () => {
       return;
     }
 
-    const [cvs, userSubscription] = await Promise.all([
+    const [cvs, userPayments] = await Promise.all([
       prisma.cv.findMany({
         where: {
           userId: user.id,
@@ -69,10 +69,9 @@ export const getCvForCurrentUser = async () => {
           createdAt: "desc",
         }
       }),
-      prisma.userPayment.findFirst({
+      prisma.userPayment.findMany({
         where: {
           userId: user.id,
-          expiresAt: { gt: new Date() },
         },
         include: {
           plan: true,
@@ -86,22 +85,35 @@ export const getCvForCurrentUser = async () => {
     const manuals = cvs.filter(cv => cv.createdByJobId === null);
     const uploads = cvs.filter(cv => cv.createdByJobId !== null);
 
-    const activeManualSubscription = userSubscription
-      ? userSubscription.manualCvsUsed < userSubscription.plan?.manualCvLimit
-      : false;
+    const totalManualCvsUsed = userPayments.reduce(
+      (acc, item) => acc + (item.manualCvsUsed || 0),
+      0
+    );
+    const totalUploadCvUsed = userPayments.reduce(
+      (acc, item) => acc + (item.uploadCvsUsed || 0),
+      0
+    );
 
-    const activeUploadSubscription = userSubscription
-      ? userSubscription.uploadCvsUsed < userSubscription.plan?.uploadCvLimit
-      : false;
+    const totalAvailableManualCv = userPayments.reduce(
+      (acc, item) => acc + (item.plan.manualCvLimit || 0),
+      0
+    )
+    const totalAvailableUploadCv = userPayments.reduce(
+      (acc, item) => acc + (item.plan.uploadCvLimit || 0),
+      0
+    )
+
+    console.log("totalManualCvsUsed", totalManualCvsUsed, totalAvailableManualCv)
+    console.log("totalUploadCvUsed", totalUploadCvUsed, totalAvailableUploadCv)
 
     const response: CvForCurrentUserResponse = {
       manuals: {
         cvs: manuals,
-        activeSubscription: activeManualSubscription,
+        activeSubscription: totalManualCvsUsed === totalAvailableManualCv ? false : true,
       },
       uploads: {
         cvs: uploads,
-        activeSubscription: activeUploadSubscription,
+        activeSubscription: totalUploadCvUsed === totalAvailableUploadCv ? false : true,
       },
     };
 

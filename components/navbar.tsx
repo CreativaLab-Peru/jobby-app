@@ -105,13 +105,13 @@ export function Navbar({ userLimit, user, needNewPayment }: NavbarProps) {
                 >
                   <CardContent className="p-3 hover:cursor-pointer" >
                     <div className="flex items-center space-x-3">
-                      <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg border-0">
+                      <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg">
                         <Crown className="w-4 h-4 text-white" />
                       </div>
                       <div className="flex flex-col">
                         <div className="flex items-center space-x-2">
                           <span className="text-sm font-medium text-gray-700">
-                            Obtener Premium
+                            Obtener Pro
                           </span>
                         </div>
                       </div>
@@ -152,7 +152,7 @@ export function Navbar({ userLimit, user, needNewPayment }: NavbarProps) {
             </motion.div>
 
             {/* Score Analysis Credits */}
-            {/* <motion.div whileHover={{ scale: 1.05 }} className="hidden sm:block">
+            <motion.div whileHover={{ scale: 1.05 }} className="hidden sm:block">
               <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-sm"
               >
                 <CardContent className="p-3">
@@ -163,23 +163,33 @@ export function Navbar({ userLimit, user, needNewPayment }: NavbarProps) {
                     <div className="flex flex-col">
                       <div className="flex items-center space-x-2">
                         <span className="text-sm font-medium text-gray-700">Scores</span>
-                        <Badge
-                          className={`text-xs px-2 py-1 ${getCreditColor(scoresRemaining, userLimit.scoreAnalysis.total)}`}
-                        >
-                          {scoresRemaining} restantes
-                        </Badge>
+                        {
+                          scoresRemaining !== 0 && <Badge
+                            className={`text-xs px-2 py-1 ${getCreditColor(scoresRemaining, userLimit.scoreAnalysis.total)}`}
+                          >
+                            {scoresRemaining} restantes
+                          </Badge>
+                        }
                       </div>
-                      <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden mt-1">
-                        <div
-                          className={`h-full bg-gradient-to-r ${getProgressColor(scoresRemaining, userLimit.scoreAnalysis.total)} transition-all duration-300`}
-                          style={{ width: `${(scoresRemaining / userLimit.scoreAnalysis.total) * 100}%` }}
-                        />
-                      </div>
+                      {
+                        scoresRemaining === 0
+                          ? <span className="text-xs text-gray-400">
+                            Necesitas plan pro
+                          </span>
+                          :
+                          <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden mt-1">
+                            <div
+                              className={`h-full bg-gradient-to-r ${getProgressColor(scoresRemaining, userLimit.scoreAnalysis.total)} transition-all duration-300`}
+                              style={{ width: `${(scoresRemaining / userLimit.scoreAnalysis.total) * 100}%` }}
+                            />
+                          </div>
+                      }
+
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            </motion.div> */}
+            </motion.div>
 
             {/* Mobile Credits */}
             <div className="flex sm:hidden items-center space-x-2">

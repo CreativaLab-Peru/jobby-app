@@ -19,6 +19,39 @@ export const createCVByTitleAndType = async (
       return { success: false, message: "User not found." };
     }
 
+    const lastsPaymentPlans = await prisma.userPayment.findMany({
+      where: {
+        userId: currentUser.id
+      },
+      include: {
+        plan: true
+      }
+    })
+
+    if (lastsPaymentPlans === null) {
+      return { success: false, message: "The current user has no attempts" }
+    }
+
+    const lastAvailablePaymentToCreate = lastsPaymentPlans.find(plan => plan.manualCvsUsed < plan.plan.manualCvLimit)
+    if (!lastAvailablePaymentToCreate) {
+      return { success: false, message: "The current user has no attempts" }
+    }
+
+    const oneMoreInManualCvLimit = lastAvailablePaymentToCreate.manualCvsUsed + 1
+
+    const updatePaymentPlanOfUser = await prisma.userPayment.update({
+      where: {
+        id: lastAvailablePaymentToCreate.id,
+      },
+      data: {
+        manualCvsUsed: oneMoreInManualCvLimit
+      }
+    })
+
+    if (!updatePaymentPlanOfUser) {
+      return { success: false, message: "Error trying to update plan of current user" }
+    }
+
     // Validate opportunityType is correct
     if (!Object.values(OpportunityType).includes(opportunityType)) {
       return { success: false, message: "Invalid opportunity type." };
@@ -105,6 +138,7 @@ export const createCVByTitleAndType = async (
         sections: true, // return the created sections
       },
     });
+
 
     if (!newCv) {
       return { success: false, message: "Error creating CV." };

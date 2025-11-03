@@ -63,6 +63,47 @@ export async function POST(req: Request) {
       },
     });
 
+    if (!cv) {
+      return NextResponse.json(
+        { success: false, message: "Error al crear nuevo cv" },
+        { status: 400 }
+      );
+    }
+
+    const lastsPaymentPlans = await prisma.userPayment.findMany({
+      where: {
+        userId: currentUser.id
+      },
+      include: {
+        plan: true
+      }
+    })
+
+    if (lastsPaymentPlans === null) {
+      return NextResponse.json({ success: false, message: "The current user has no attempts" }, { status: 400 })
+    }
+
+    const lastAvailablePaymentToUpload = lastsPaymentPlans.find(plan => plan.uploadCvsUsed < plan.plan.uploadCvLimit)
+    if (!lastAvailablePaymentToUpload) {
+      return NextResponse.json({ success: false, message: "The current user has no attempts" }, { status: 400 })
+    }
+
+    const oneMoreInUploadCvLimit = lastAvailablePaymentToUpload.manualCvsUsed + 1
+
+    const updatePaymentPlanOfUser = await prisma.userPayment.update({
+      where: {
+        id: lastAvailablePaymentToUpload.id,
+      },
+      data: {
+        manualCvsUsed: oneMoreInUploadCvLimit
+      }
+    })
+
+    if (!updatePaymentPlanOfUser) {
+      return NextResponse.json({ success: false, message: "Error trying to update plan of current user" }, { status: 400 })
+    }
+
+
     // 3️⃣ Trigger Inngest workflow
     await inngest.send({
       name: "cv/uploaded",

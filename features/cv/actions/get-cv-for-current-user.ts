@@ -108,7 +108,7 @@ export const getCvForCurrentUser = async () => {
 
     const response: CvForCurrentUserResponse = {
       manuals: {
-        cvs: manuals,
+        cvs: [...manuals, ...uploads],
         activeSubscription: totalManualCvsUsed === totalAvailableManualCv ? false : true,
       },
       uploads: {

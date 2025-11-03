@@ -11,22 +11,23 @@ import { CVSectionForm } from "@/features/cv/components/cv-section-form"
 import { CVPreview } from "@/features/cv/components/cv-preview"
 import { CVData } from "@/types/cv";
 import { updateCvAndSections } from "@/features/cv/actions/update-cv-and-sections";
-import { OpportunityType } from "@prisma/client"
+import { OpportunityType, CvType } from "@prisma/client"
 
 interface CreateCVPageProps {
   cv: CVData
   id: string
   opportunityType: OpportunityType
+  cvType: CvType
 }
 
-export default function CreateCVPage({ cv, id, opportunityType }: CreateCVPageProps) {
+export default function CreateCVPage({ cv, id, opportunityType, cvType }: CreateCVPageProps) {
   const [cvData, setCvData] = useState<CVData>(cv)
   const [activeSection, setActiveSection] = useState(0)
   const [showPreview, setShowPreview] = useState(true)
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
 
-  const sections = getSections(opportunityType)
+  const sections = getSections(opportunityType, cvType)
   const submit = () => {
     if (isPending) return
     startTransition(() => {
@@ -149,7 +150,7 @@ export default function CreateCVPage({ cv, id, opportunityType }: CreateCVPagePr
                     </CardHeader>
                     <CardContent className="p-0">
                       <div className="max-h-[85vh] overflow-y-auto">
-                        <CVPreview data={cvData} type={opportunityType} />
+                        <CVPreview data={cvData} sections={sections} />
                       </div>
                     </CardContent>
                   </Card>

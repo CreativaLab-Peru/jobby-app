@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
@@ -8,17 +8,28 @@ import { ActionsSidebar } from "@/features/cv-preview/components/actions-sidebar
 import { TipCard } from "@/features/cv-preview/components/tip-card"
 import { CVData } from "@/types/cv"
 import { PdfPreviewWrapper } from "@/components/pdf-preview/pdf-preview-wrapper"
-import { OpportunityType } from "@prisma/client"
+import { OpportunityType, CvType } from "@prisma/client"
+import { getSections } from "@/lib/cv-sections"
 
 interface PreviewCVComponentProps {
   cv: CVData
   cvId?: string
   opportunityType: OpportunityType
+  cvType: CvType
+  sectionIds: string[]
 }
 
-export function PreviewCVComponent({ cv: cvData, cvId, opportunityType }: PreviewCVComponentProps) {
+export function PreviewCVComponent({ cv: cvData, cvId, opportunityType, cvType, sectionIds }: PreviewCVComponentProps) {
   const [isDisabled] = useState(false)
   const router = useRouter()
+
+  // Regenerar las secciones en el cliente usando los IDs
+  const sections = useMemo(() => {
+    const allSections = getSections(opportunityType, cvType);
+    const sectionMap = new Map(allSections.map(s => [s.id, s]));
+    // Mantener el orden de sectionIds
+    return sectionIds.map(id => sectionMap.get(id)).filter(Boolean) as typeof allSections;
+  }, [opportunityType, cvType, sectionIds]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
@@ -29,7 +40,7 @@ export function PreviewCVComponent({ cv: cvData, cvId, opportunityType }: Previe
             <div className="lg:col-span-3">
               <Card className="shadow-xl border-0 bg-white">
                 <CardContent className="p-0">
-                  <PdfPreviewWrapper cvData={cvData} opportunityType={opportunityType} />
+                  <PdfPreviewWrapper cvData={cvData} sections={sections} />
                 </CardContent>
               </Card>
             </div>

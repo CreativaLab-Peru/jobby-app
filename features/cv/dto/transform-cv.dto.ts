@@ -14,6 +14,7 @@ export function transformCVToDTO(cv: CVWithSections): CVData {
   const projects = parseJsonArray(getSection(CvSectionType.PROJECTS)?.contentJson);
   const certifications = parseJsonArray(getSection(CvSectionType.CERTIFICATIONS)?.contentJson);
   const achievements = parseJsonArray(getSection(CvSectionType.ACHIEVEMENTS)?.contentJson);
+  const volunteering = parseJsonArray(getSection(CvSectionType.VOLUNTEERING)?.contentJson);
 
   const summary = getSection(CvSectionType.SUMMARY)?.contentJson as
     | { text?: string }
@@ -50,7 +51,7 @@ export function transformCVToDTO(cv: CVWithSections): CVData {
       summary: summary?.text ?? "",
     },
     education: {
-      items: education.map((item: any) => ({
+      items: education.map((item) => ({
         id: item.id,
         level: item.level ?? "",
         title: item.title ?? "",
@@ -61,7 +62,7 @@ export function transformCVToDTO(cv: CVWithSections): CVData {
       })),
     },
     experience: {
-      items: experience.map((item: any) => ({
+      items: experience.map((item) => ({
         id: item.id,
         position: item.position ?? "",
         company: item.company ?? "",
@@ -71,7 +72,7 @@ export function transformCVToDTO(cv: CVWithSections): CVData {
       })),
     },
     projects: {
-      items: projects.map((item: any) => ({
+      items: projects.map((item) => ({
         id: item.id,
         title: item.title ?? "",
         description: item.description ?? "",
@@ -80,7 +81,7 @@ export function transformCVToDTO(cv: CVWithSections): CVData {
       })),
     },
     certifications: {
-      items: certifications.map((item: any) => ({
+      items: certifications.map((item) => ({
         id: item.id,
         name: item.name ?? "",
         issuer: item.issuer ?? "",
@@ -93,11 +94,21 @@ export function transformCVToDTO(cv: CVWithSections): CVData {
       languages: skills?.languages ?? [],
     },
     achievements: {
-      items: achievements.map((item: any) => ({
+      items: achievements.map((item) => ({
         id: item.id,
         title: item.title ?? "",
         description: item.description ?? "",
         date: item.date ?? "",
+      })),
+    },
+    volunteering: {
+      items: volunteering.map((item) => ({
+        id: item.id,
+        organization: item.organization ?? "",
+        location: item.location ?? "",
+        position: item.position ?? "",
+        duration: item.duration ?? "",
+        responsibilities: item.responsibilities ?? "",
       })),
     },
   };

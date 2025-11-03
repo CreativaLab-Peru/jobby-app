@@ -1,7 +1,8 @@
-import { inngest } from "@/inngest/client";
+import { inngest } from "@/inngest/functions/client";
 import { NextResponse } from "next/server";
 import { CVData } from "@/types/cv";
-import {getCurrentUser} from "@/features/share/actions/get-current-user";
+import { getCurrentUser } from "@/features/share/actions/get-current-user";
+import { getLimitPlanOfCurrentUser } from "@/lib/shared/get-count-availables-attempts";
 
 interface CvBody {
   cvId: string;
@@ -18,6 +19,16 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { success: false, message: "User not found." },
         { status: 404 }
+      );
+    }
+
+    const limitOfPlan = await getLimitPlanOfCurrentUser()
+    const analyseCvsUsed = limitOfPlan.scoreAnalysis.used;
+    const analyseCvLimit = limitOfPlan.scoreAnalysis.total;
+    if (analyseCvsUsed >= analyseCvLimit) {
+      return NextResponse.json(
+        { success: false, message: "Analyse CV limit reached" },
+        { status: 403 }
       );
     }
 

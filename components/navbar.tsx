@@ -8,29 +8,21 @@ import { Card, CardContent } from "@/components/ui/card"
 import { FileText, BarChart3, Zap, Plus, Crown } from "lucide-react"
 import Link from "next/link"
 import { ProfileButton } from "@/components/profile-button";
-import { createPreference } from "@/lib/mercadopago/create-preference"
+import { createPreferenceForAuthenticatedUser } from "@/lib/mercadopago/create-preference-for-authenticated-user"
+import { LimitOfPlan } from "@/lib/shared/get-count-availables-attempts"
 
 interface NavbarProps {
-  hasSubscription?: boolean
+  needNewPayment?: boolean
   user: {
     id: string
     name: string
     email: string
     image?: string
   } | null
-  userLimit?: {
-    cvCreations: {
-      used: number
-      total: number
-    },
-    scoreAnalysis: {
-      used: number
-      total: number
-    }
-  }
+  userLimit: LimitOfPlan
 }
 
-export function Navbar({ userLimit, user, hasSubscription }: NavbarProps) {
+export function Navbar({ userLimit, user, needNewPayment }: NavbarProps) {
   const [mounted, setMounted] = useState(false)
   const [isClosed, setIsClosed] = useState(false)
   const [isPending, startTransition] = useTransition()
@@ -72,7 +64,7 @@ export function Navbar({ userLimit, user, hasSubscription }: NavbarProps) {
   const getPremiumSuscription = () => {
     if (isPending) return
     startTransition(async () => {
-      const response = await createPreference();
+      const response = await createPreferenceForAuthenticatedUser();
       if (response.success && response.redirect) {
         window.location.href = response.redirect;
         return;
@@ -106,7 +98,7 @@ export function Navbar({ userLimit, user, hasSubscription }: NavbarProps) {
           <div className="flex items-center space-x-4">
 
             {/* Upgrade to Premium Button */}
-            {hasSubscription ? null : (
+            {!needNewPayment ? null : (
               <motion.div whileHover={{ scale: 1.05 }} className="hidden sm:block">
                 <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-sm"
                   onClick={getPremiumSuscription}
@@ -160,7 +152,7 @@ export function Navbar({ userLimit, user, hasSubscription }: NavbarProps) {
             </motion.div>
 
             {/* Score Analysis Credits */}
-            <motion.div whileHover={{ scale: 1.05 }} className="hidden sm:block">
+            {/* <motion.div whileHover={{ scale: 1.05 }} className="hidden sm:block">
               <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-sm"
               >
                 <CardContent className="p-3">
@@ -187,7 +179,7 @@ export function Navbar({ userLimit, user, hasSubscription }: NavbarProps) {
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </motion.div> */}
 
             {/* Mobile Credits */}
             <div className="flex sm:hidden items-center space-x-2">

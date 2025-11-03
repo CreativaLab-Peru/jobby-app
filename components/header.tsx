@@ -234,18 +234,21 @@ const Header = ({ authenticated }: HeaderProps) => {
         </div>
 
         {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="text-center md:hidden py-4 space-y-4">
+        <div
+          className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${mobileMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+            }`}
+        >
+          <div className="text-center py-4 space-y-4">
             <Link
               href="/empresas"
-              className="block text-sm font-medium text-foreground/80 hover:text-primary"
+              className="block text-sm font-medium text-foreground/80 hover:text-primary transform transition-all duration-200 hover:translate-x-1"
               onClick={() => setMobileMenuOpen(false)}
             >
               Para empresas
             </Link>
             <Link
               href="/instituciones"
-              className="block text-sm font-medium text-foreground/80 hover:text-primary"
+              className="block text-sm font-medium text-foreground/80 hover:text-primary transform transition-all duration-200 hover:translate-x-1"
               onClick={() => setMobileMenuOpen(false)}
             >
               Para instituciones
@@ -353,13 +356,15 @@ const Header = ({ authenticated }: HeaderProps) => {
                     }
                   }}
                 >
-                  <Button size="sm" className="w-full justify-between">
-                    Regístrate
-                    <ChevronDown
-                      className={`h-4 w-4 transition-transform ${mobileRegisterOpen ? "rotate-180" : ""
-                        }`}
-                    />
-                  </Button>
+                  <Link href="/register" aria-label="Registrate">
+                    <Button size="sm" className="w-full justify-between">
+                      Regístrate
+                      <ChevronDown
+                        className={`h-4 w-4 transition-transform ${mobileRegisterOpen ? "rotate-180" : ""
+                          }`}
+                      />
+                    </Button>
+                  </Link>
                 </div>
                 {/* {mobileRegisterOpen && (
                   <div className="mt-2 space-y-1">
@@ -404,7 +409,7 @@ const Header = ({ authenticated }: HeaderProps) => {
               </div>
             </div>
           </div>
-        )}
+        </div>
       </nav>
     </header>
   );

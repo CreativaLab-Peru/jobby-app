@@ -13,6 +13,13 @@ enum Language {
   ES
 }
 
+enum PaymentType {
+  SUBSCRIPTION
+  ONE_TIME
+  REFUND
+  FREE
+}
+
 enum OpportunityType {
   INTERNSHIP
   SCHOLARSHIP
@@ -59,6 +66,16 @@ enum JobStatus {
   CANCELLED
 }
 
+model TemporalUser {
+  id    String @id @default(uuid())
+  email String
+
+  date DateTime @default(now())
+
+  @@unique([email])
+  @@map("temporal_user")
+}
+
 model User {
   id              String  @id
   name            String
@@ -81,12 +98,14 @@ model User {
   acceptedSecurityPolicy   Boolean   @default(false)
   acceptedSecurityPolicyAt DateTime?
 
-  createdAt     DateTime
-  updatedAt     DateTime
-  sessions      Session[]
-  accounts      Account[]
-  subscriptions UserSubscription[]
-  cvs           Cv[]
+  createdAt  DateTime
+  updatedAt  DateTime
+  sessions   Session[]
+  accounts   Account[]
+  payments   UserPayment[]
+  cvs        Cv[]
+  logs       LogEntry[]
+  magicLinks MagicLinkToken[]
 
   @@unique([email])
   @@map("user")
@@ -126,38 +145,39 @@ model Account {
   @@map("account")
 }
 
-model SubscriptionPlan {
-  id            String   @id @default(uuid())
-  slug          String   @unique // e.g. "free", "pro", "enterprise"
+model PaymentPlan {
+  id            String      @id @default(uuid())
+  slug          String      @unique // e.g. "free", "pro", "enterprise"
   name          String
   description   String?
-  priceCents    Decimal  @default(0) @db.Decimal(10, 2) // price in cents
-  currency      String   @default("USD")
+  paymentType   PaymentType @default(ONE_TIME)
+  priceCents    Decimal     @default(0) @db.Decimal(10, 2) // price in cents
+  currency      String      @default("USD")
   features      Json? // JSON list of features/pricing tiers
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  manualCvLimit Int      @default(2) // number of manual CVs allowed
-  uploadCvLimit Int      @default(2) // number of uploaded CVs allowed
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  manualCvLimit Int         @default(0) // number of manual CVs allowed
+  uploadCvLimit Int         @default(0) // number of uploaded CVs allowed
 
-  userSubscriptions UserSubscription[]
+  payments UserPayment[]
 
   @@map("subscription_plan")
 }
 
-model UserSubscription {
-  id            String           @id @default(uuid())
-  user          User             @relation(fields: [userId], references: [id])
+model UserPayment {
+  id            String      @id @default(uuid())
+  user          User        @relation(fields: [userId], references: [id])
   userId        String
-  plan          SubscriptionPlan @relation(fields: [planId], references: [id])
+  plan          PaymentPlan @relation(fields: [planId], references: [id])
   planId        String
-  startedAt     DateTime         @default(now())
+  startedAt     DateTime    @default(now())
   expiresAt     DateTime?
-  active        Boolean          @default(true)
-  manualCvsUsed Int              @default(0) // number of manual CVs created
-  uploadCvsUsed Int              @default(0) // number of uploaded CVs created
+  active        Boolean     @default(true)
+  manualCvsUsed Int         @default(0) // number of manual CVs created
+  uploadCvsUsed Int         @default(0) // number of uploaded CVs created
   metadata      Json? // e.g. billing provider ids, coupon info
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 
   @@index([userId])
   @@index([planId])
@@ -311,4 +331,81 @@ model QueueJob {
   @@index([type])
   @@index([cvId])
   @@map("queue_job")
+}
+
+// Monitoring
+enum LogAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  PAYMENT
+  EVALUATION
+  JOB
+  EMAIL
+  FILE_UPLOAD
+  AUTH
+  OTHER
+}
+
+enum LogLevel {
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+}
+
+model MagicLinkToken {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String // e.g. SHA256(token)
+  purpose   String? // e.g. "post_payment_signin"
+  createdAt DateTime  @default(now())
+  expiresAt DateTime
+  usedAt    DateTime?
+  usedByIp  String?
+  usedByUa  String?
+  metadata  Json?
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("magic_link_token")
+}
+
+model LogEntry {
+  id String @id @default(uuid())
+
+  // User who triggered the event (optional, some logs may be system-triggered)
+  userId String?
+  email  String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  // What type of action happened?
+  action LogAction
+
+  // Optional entity reference for tracing                  
+  entity   String? // e.g. "CV", "PAYMENT", "ACCOUNT"
+  entityId String? // ID of the affected entity
+
+  // Log severity
+  level LogLevel @default(INFO)
+
+  // Free text description
+  message String
+
+  // JSON with useful details
+  metadata Json? // old/new values, payload, request data, etc.
+
+  ipAddress String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([action])
+  @@index([level])
+  @@map("log_entry")
 }

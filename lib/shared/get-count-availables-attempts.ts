@@ -1,12 +1,18 @@
 import { getSession } from "@/lib/shared/session";
 import { prisma } from "@/lib/prisma";
-import { SubscriptionPlan, UserSubscription } from "@prisma/client";
 
-export type UserSubscriptionWithPlan = UserSubscription & {
-  plan: SubscriptionPlan
+export type LimitOfPlan = {
+  cvCreations: {
+    used: number,
+    total: number,
+  },
+  scoreAnalysis: {
+    used: number,
+    total: number
+  }
 }
 
-export const getCurrentSubscription = async (): Promise<UserSubscriptionWithPlan | undefined> => {
+export const getLimitPlanOfCurrentUser = async (): Promise<LimitOfPlan> => {
   try {
     const session = await getSession();
     if (!session?.user?.email) {
@@ -14,12 +20,9 @@ export const getCurrentSubscription = async (): Promise<UserSubscriptionWithPlan
     }
 
     const userId = session.user.id;
-    const lastUserSubscription = await prisma.userSubscription.findFirst({
+    const userPayments = await prisma.userPayment.findMany({
       where: {
         userId,
-        expiresAt: {
-          gt: new Date(),
-        },
       },
       orderBy: {
         createdAt: 'desc',
@@ -28,11 +31,34 @@ export const getCurrentSubscription = async (): Promise<UserSubscriptionWithPlan
         plan: true,
       }
     });
-    if (!lastUserSubscription) {
-      return;
-    }
-    return lastUserSubscription;
 
+    const totalManualCvsUsed = userPayments.reduce(
+      (acc, item) => acc + (item.manualCvsUsed || 0),
+      0
+    );
+    const totalUploadCvUsed = userPayments.reduce(
+      (acc, item) => acc + (item.uploadCvsUsed || 0),
+      0
+    );
+
+    const totalAvailableManualCv = userPayments.reduce(
+      (acc, item) => acc + (item.plan.manualCvLimit || 0),
+      0
+    )
+    const totalAvailableUploadCv = userPayments.reduce(
+      (acc, item) => acc + (item.plan.uploadCvLimit || 0),
+      0
+    )
+    return {
+      cvCreations: {
+        used: totalManualCvsUsed,
+        total: totalAvailableManualCv,
+      },
+      scoreAnalysis: {
+        used: totalUploadCvUsed,
+        total: totalAvailableUploadCv
+      }
+    }
   } catch (error) {
     console.error("[ERROR_GET_AVAILABLE_ATTEMPTS]", error);
     return;

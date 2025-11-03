@@ -69,7 +69,7 @@ export const getCvForCurrentUser = async () => {
           createdAt: "desc",
         }
       }),
-      prisma.userSubscription.findFirst({
+      prisma.userPayment.findFirst({
         where: {
           userId: user.id,
           expiresAt: { gt: new Date() },

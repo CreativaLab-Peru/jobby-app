@@ -30,8 +30,8 @@ export function RegisterForm() {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
     const [acceptedTerms, setAcceptedTerms] = useState(false);
-    const router = useRouter();
     const [isPending, startTransition] = useTransition();
+    const router = useRouter();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -61,16 +61,16 @@ export function RegisterForm() {
             }
 
             // Create a basic subscription for the new user
-            // if (isPending) {
-            //     return;
-            // }
+            if (isPending) {
+                return;
+            }
 
-            // startTransition(async () => {
-            //     const response = await newUserConfiguration(userId);
-            //     if (!response) {
-            //         console.error("Error in new user configuration for userId:", userId);
-            //     }
-            // });
+            startTransition(async () => {
+                const response = await newUserConfiguration(userId);
+                if (!response) {
+                    console.error("Error in new user configuration for userId:", userId);
+                }
+            });
 
             setSuccess(true);
             router.push("/cv");
@@ -210,11 +210,11 @@ export function RegisterForm() {
                                 />
                                 <label htmlFor="terms" className="text-sm text-muted-foreground">
                                     Acepto los{" "}
-                                    <a href="/terms" target="_blank" className="text-primary hover:underline">
+                                    <a href="/terminos-y-condiciones" target="_blank" className="text-primary hover:underline">
                                         términos y condiciones
                                     </a>{" "}
                                     y la{" "}
-                                    <a href="/privacy-policy" target="_blank" className="text-primary hover:underline">
+                                    <a href="/politica-de-privacidad" target="_blank" className="text-primary hover:underline">
                                         política de privacidad
                                     </a>
                                 </label>

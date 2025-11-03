@@ -48,8 +48,8 @@ export async function POST(req: Request) {
       data: {
         userId,
         language: Language.EN,
-        opportunityType: OpportunityType.FULL_TIME,
-        cvType: CvType.TECHNOLOGY,
+        opportunityType: OpportunityType.EMPLOYMENT,
+        cvType: CvType.TECHNOLOGY_ENGINEERING,
         title: file.name,
         createdByJobId,
         attachments: {

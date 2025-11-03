@@ -8,7 +8,6 @@ import { Card } from "@/components/ui/card";
 import { Loader2, Mail, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import Header from "@/components/header";
 import Link from "next/link";
 
 const errorMapper = {
@@ -118,9 +117,9 @@ export function LoginForm() {
                                 {/* Success Message */}
                                 {success && (
                                     <div className="bg-green-50 border border-green-200 rounded-md p-3">
-                                        <div className="text-green-500 text-sm">
+                                        {/* <div className="text-green-500 text-sm">
                                             ¡Has iniciado sesión correctamente! Redirigiendo...
-                                        </div>
+                                        </div> */}
                                     </div>
                                 )}
 

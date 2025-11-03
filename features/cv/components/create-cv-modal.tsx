@@ -32,7 +32,7 @@ export function CreateCVModal({ children, isOpen, onOpenChange }: CreateCVModalP
     opportunityType: OpportunityType
   }>({
     title: "",
-    cvType: "TECHNOLOGY",
+    cvType: "TECHNOLOGY_ENGINEERING",
     opportunityType: "INTERNSHIP",
   })
   const [isCreating, setIsCreating] = useState(false)
@@ -59,7 +59,7 @@ export function CreateCVModal({ children, isOpen, onOpenChange }: CreateCVModalP
           opportunityType
         ).then((result) => {
           if (result?.success) {
-            setFormData({ title: "", opportunityType: "INTERNSHIP", cvType: "TECHNOLOGY" })
+            setFormData({ title: "", opportunityType: "INTERNSHIP", cvType: "TECHNOLOGY_ENGINEERING" })
             onOpenChange(false)
             const cvId = result.data.id
             router.push(`/cv/${cvId}/edit`)
@@ -79,7 +79,7 @@ export function CreateCVModal({ children, isOpen, onOpenChange }: CreateCVModalP
   const handleCancel = () => {
     setFormData({
       title: "",
-      cvType: "TECHNOLOGY",
+      cvType: "TECHNOLOGY_ENGINEERING",
       opportunityType: "INTERNSHIP"
     })
     onOpenChange(false)

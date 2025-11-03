@@ -1,6 +1,5 @@
 "use client"
 
-import { motion } from "framer-motion"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import {
@@ -24,18 +23,21 @@ interface CVFormProps {
 }
 
 export const cvTypes = [
-  { key: CvType.TECHNOLOGY, value: "Tecnología e Ingeniería" },
-  { key: CvType.DESIGN, value: "Diseño y Creatividad" },
-  { key: CvType.MARKETING, value: "Marketing y Comunicación" },
-  { key: CvType.SALES, value: "Ventas y Negocios" },
-  { key: CvType.SOCIAL_MEDIA, value: "Redes Sociales y Medios Digitales" },
-  { key: CvType.FINANCE, value: "Finanzas y Administración" },
+  { key: CvType.TECHNOLOGY_ENGINEERING, value: "Tecnología e Ingeniería" },
+  { key: CvType.DESIGN_CREATIVITY, value: "Diseño y Creatividad" },
+  { key: CvType.MARKETING_STRATEGY, value: "Marketing y Estrategia" },
+  { key: CvType.MANAGEMENT_BUSINESS, value: "Gestión y Negocios" },
+  { key: CvType.FINANCE_PROJECTS, value: "Finanzas y Proyectos" },
+  { key: CvType.SOCIAL_MEDIA, value: "Redes Sociales y Contenido Digital" },
+  { key: CvType.EDUCATION, value: "Educación y Desarrollo Humano" },
+  { key: CvType.SCIENCE, value: "Ciencia e Innovación" },
 ]
 
 export const opportunityTypes = [
   { key: OpportunityType.INTERNSHIP, value: "Prácticas" },
   { key: OpportunityType.SCHOLARSHIP, value: "Beca" },
   { key: OpportunityType.EXCHANGE_PROGRAM, value: "Programa de Intercambio" },
+  { key: OpportunityType.EMPLOYMENT, value: "Empleo" },
   // { key: OpportunityType.RESEARCH_FELLOWSHIP, value: "Investigación o Fellowship" },
   // { key: OpportunityType.GRADUATE_PROGRAM, value: "Programa de Posgrado" },
   // { key: OpportunityType.FREELANCE, value: "Freelance / Independiente" },
@@ -91,7 +93,7 @@ export function CVForm({ formData, onFormDataChange }: CVFormProps) {
 
       <div className="space-y-2">
         <Label htmlFor="type" className="text-sm font-medium text-gray-700">
-          Tipo de CV
+          Selecciona tu perfil profesional
         </Label>
         <Select
           value={formData.cvType}
@@ -112,6 +114,19 @@ export function CVForm({ formData, onFormDataChange }: CVFormProps) {
             ))}
           </SelectContent>
         </Select>
+        <p>
+          <span className="text-sm text-gray-500">
+            {formData.cvType === CvType.TECHNOLOGY_ENGINEERING && "Ideal para perfiles en sistemas, software, innovación o data."}
+            {formData.cvType === CvType.DESIGN_CREATIVITY && "Para creativos visuales, diseñadores gráficos, UX/UI o artistas digitales."}
+            {formData.cvType === CvType.MARKETING_STRATEGY && "Para marketers, comunicadores o estrategas de contenido."}
+            {formData.cvType === CvType.MANAGEMENT_BUSINESS && "Para administración, emprendimiento o desarrollo comercial."}
+            {formData.cvType === CvType.FINANCE_PROJECTS && "Para gestión financiera, análisis económico o PMO."}
+            {formData.cvType === CvType.SOCIAL_MEDIA && "Para community managers, creadores de contenido o influencers."}
+            {formData.cvType === CvType.EDUCATION && "Para docentes, formadores, capacitadores o coaches."}
+            {formData.cvType === CvType.SCIENCE && "Para perfiles STEM, sostenibilidad, impacto o proyectos de investigación."}
+            {!formData.cvType && "Selecciona un perfil profesional para ver su descripción."}
+          </span>
+        </p>
       </div>
     </div>
   )

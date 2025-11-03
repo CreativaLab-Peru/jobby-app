@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import Header from "@/components/header";
 import { Lock, Mail, User, Loader2 } from "lucide-react";
 import { newUserConfiguration } from "@/lib/shared/new-user-configuration";
 
@@ -194,9 +193,9 @@ export function RegisterForm() {
                             {/* Success Message */}
                             {success && (
                                 <div className="bg-green-50 border border-green-200 rounded-md p-3">
-                                    <div className="text-green-500 text-sm">
+                                    {/* <div className="text-green-500 text-sm">
                                         ¡Cuenta creada exitosamente! Redirigiendo...
-                                    </div>
+                                    </div> */}
                                 </div>
                             )}
 

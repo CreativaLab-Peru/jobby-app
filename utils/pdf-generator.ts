@@ -8,7 +8,7 @@ function escapeHtml(text: string): string {
     .replace(/'/g, "&#039;");
 }
 
-export function generatePDFContent(data: any, type: string) {
+export function generatePDFContent(data, type: string) {
   let content = "";
 
   // Header with name
@@ -66,7 +66,7 @@ export function generatePDFContent(data: any, type: string) {
           <div class="section-title">PROYECTOS ACADÉMICOS</div>
           ${data.projects.items
             .map(
-              (project: any) => `
+              (project) => `
               <div class="project-item">
                 <div class="item-header">
                   <div>
@@ -87,6 +87,40 @@ export function generatePDFContent(data: any, type: string) {
         </div>
       `;
     }
+
+    if (data.volunteering?.items && data.volunteering.items.length > 0) {
+      content += `
+        <div class="section">
+          <div class="section-title">VOLUNTARIADOS Y ACTIVIDADES COMUNITARIAS</div>
+          ${data.volunteering.items
+            .map(
+              (vol) => `
+              <div class="experience-item">
+                <div class="item-header">
+                  <div class="item-title-bold">${escapeHtml(vol.organization || "")}</div>
+                  <div class="item-location-bold">${escapeHtml(vol.location || "")}</div>
+                </div>
+                <div class="item-subheader">
+                  <div class="item-position">${escapeHtml(vol.position || "")}</div>
+                  <div class="item-date-italic">${escapeHtml(vol.duration || "")}</div>
+                </div>
+                <ul class="responsibilities-list">
+                  ${
+                    vol.responsibilities
+                      ? vol.responsibilities
+                          .split("\n")
+                          .map((line: string) => `<li>${escapeHtml(line.replace(/^[-–•]\s*/, ""))}</li>`)
+                          .join("")
+                      : ""
+                  }
+                </ul>
+              </div>
+            `
+            )
+            .join("")}
+        </div>
+      `;
+    }
   } else {
     if (data.experience?.items && data.experience.items.length > 0) {
       content += `
@@ -94,7 +128,7 @@ export function generatePDFContent(data: any, type: string) {
           <div class="section-title">EXPERIENCIA LABORAL</div>
           ${data.experience.items
             .map(
-              (exp: any) => `
+              (exp) => `
               <div class="experience-item">
                 <div class="item-header">
                   <div class="item-title-bold">${escapeHtml(exp.company || "")}</div>
@@ -130,7 +164,7 @@ export function generatePDFContent(data: any, type: string) {
         <div class="section-title">EDUCACIÓN</div>
         ${data.education.items
           .map(
-            (edu: any) => `
+            (edu) => `
             <div class="education-item">
               <div class="item-header">
                 <div class="item-title-bold">${escapeHtml(edu.institution || "")}</div>
@@ -166,7 +200,7 @@ export function generatePDFContent(data: any, type: string) {
           <div class="item-description">
             ${data.achievements.items
               .map(
-                (achievement: any) =>
+                (achievement) =>
                   `${escapeHtml(achievement.title || "")}: ${escapeHtml(achievement.description || "")}`
               )
               .join(". ")}
@@ -182,7 +216,7 @@ export function generatePDFContent(data: any, type: string) {
           <div class="item-description">
             ${data.certifications.items
               .map(
-                (cert: any) => `${escapeHtml(cert.name || "")} - ${escapeHtml(cert.issuer || "")}`
+                (cert) => `${escapeHtml(cert.name || "")} - ${escapeHtml(cert.issuer || "")}`
               )
               .join(". ")}
           </div>

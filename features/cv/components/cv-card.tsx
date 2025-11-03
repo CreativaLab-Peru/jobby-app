@@ -2,12 +2,10 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { FileText, Eye, Edit, Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/utils/format-date"
 import { CvWithRelations } from "../actions/get-cv-for-current-user"
-import { JobStatus } from "@prisma/client"
 
 
 interface CVCardProps {
@@ -66,7 +64,25 @@ export function CVCard({ cv }: CVCardProps) {
                     {cv?.title || <span className="text-gray-400">Sin título</span>}
                 </CardTitle>
                 <CardDescription>
-                    Tipo: {cv?.cvType || <span className="text-gray-400">No especificado</span>}
+                    <span className="font-bold">Tipo de Oportunidad:{" "}</span>
+                    {cv?.cvType === "TECHNOLOGY_ENGINEERING" && "Tecnología e Ingeniería"}
+                    {cv?.cvType === "DESIGN_CREATIVITY" && "Diseño y Creatividad"}
+                    {cv?.cvType === "MARKETING_STRATEGY" && "Marketing y Estrategia"}
+                    {cv?.cvType === "MANAGEMENT_BUSINESS" && "Gestión y Negocios"}
+                    {cv?.cvType === "FINANCE_PROJECTS" && "Finanzas y Proyectos"}
+                    {cv?.cvType === "SOCIAL_MEDIA" && "Redes Sociales"}
+                    {cv?.cvType === "EDUCATION" && "Educación"}
+                    {cv?.cvType === "SCIENCE" && "Ciencia"}
+                    {!cv?.cvType && <span className="text-gray-400">No especificado</span>}
+                    
+                    <span className="mx-2">|</span>
+                    
+                    <span className="font-bold">Estado:{" "}</span>
+                    {cv?.opportunityType === "INTERNSHIP" && "Prácticas"}
+                    {cv?.opportunityType === "SCHOLARSHIP" && "Beca"}
+                    {cv?.opportunityType === "EXCHANGE_PROGRAM" && "Programa de Intercambio"}
+                    {cv?.opportunityType === "EMPLOYMENT" && "Empleo"}
+                    {!cv?.opportunityType && <span className="text-gray-400">No especificado</span>}
                 </CardDescription>
             </CardHeader>
             <CardContent>

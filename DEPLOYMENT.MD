@@ -17,3 +17,7 @@
   - /Pro contents all of content related by the PRO model and use the extra components.
   - FAQsSection includes the question about the PRO model.
   - AutoPlayVideo is the component used for the load the video of demostration.
+
+- Integrated a new modularized structure for create CVs, dynamic form and dynamic preciew taking the sections order.
+- Add VOLUNTEERING in CvSectionType
+- All names of CvType was changed with other more descriptives.

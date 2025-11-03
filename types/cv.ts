@@ -11,7 +11,7 @@ export interface CVField {
 export interface CVSection {
   id: string
   title: string
-  icon: any
+  icon
   fields: CVField[]
   multiple?: boolean
 }
@@ -69,6 +69,16 @@ export interface CVData {
       name?: string
       issuer?: string
       date?: string
+    }>
+  }
+  volunteering?: {
+    items?: Array<{
+      id: string
+      organization?: string
+      location?: string
+      position?: string
+      duration?: string
+      responsibilities?: string
     }>
   }
   skills?: {

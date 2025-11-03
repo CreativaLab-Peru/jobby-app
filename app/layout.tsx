@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Poppins } from 'next/font/google'
 import './globals.css'
 import AnimatedBackgroundWrapper from '@/components/animated-background-wrapper'
+import { Suspense } from 'react'
 
 // Configura la fuente Poppins
 const poppins = Poppins({
@@ -24,7 +25,9 @@ export default async function RootLayout({
   return (
     <html lang="es" className={poppins.variable}>
       <body className="font-poppins">
-        <AnimatedBackgroundWrapper />
+        <Suspense fallback={null}>
+          <AnimatedBackgroundWrapper />
+        </Suspense>
         <div className="relative z-10">{children}</div>
       </body>
     </html>

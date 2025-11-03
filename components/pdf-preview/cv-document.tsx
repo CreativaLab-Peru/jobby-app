@@ -13,13 +13,24 @@ import path from "path";
 import type { CVData, CVSection } from "@/types/cv";
 
 // OPTIONAL: register a custom font if you host one in /public/fonts
+// Font.register({
+//   family: "Inter",
+//   fonts: [
+//     { src: path.resolve("/fonts/Inter/Inter_18pt-Regular.ttf"), fontWeight: "normal", fontStyle: "normal" },
+//     { src: path.resolve("/fonts/Inter/Inter_18pt-Italic.ttf"), fontWeight: "normal", fontStyle: "italic" },
+//     { src: path.resolve("/fonts/Inter/Inter_18pt-Bold.ttf"), fontWeight: "bold", fontStyle: "normal" },
+//     { src: path.resolve("/fonts/Inter/Inter_18pt-BoldItalic.ttf"), fontWeight: "bold", fontStyle: "italic" },
+//   ],
+// });
+
+// Font Arial
 Font.register({
-  family: "Inter",
+  family: "Arial",
   fonts: [
-    { src: path.resolve("/fonts/Inter_18pt-Regular.ttf"), fontWeight: "normal", fontStyle: "normal" },
-    { src: path.resolve("/fonts/Inter_18pt-Italic.ttf"), fontWeight: "normal", fontStyle: "italic" },
-    { src: path.resolve("/fonts/Inter_18pt-Bold.ttf"), fontWeight: "bold", fontStyle: "normal" },
-    { src: path.resolve("/public/fonts/Inter_18pt-BoldItalic.ttf"), fontWeight: "bold", fontStyle: "italic" },
+    { src: path.resolve("/fonts/Arial/ARIAL.TTF"), fontWeight: "normal", fontStyle: "normal" },
+    { src: path.resolve("/fonts/Arial/ARIALI.TTF"), fontWeight: "normal", fontStyle: "italic" },
+    { src: path.resolve("/fonts/Arial/ARIALBD.TTF"), fontWeight: "bold", fontStyle: "normal" },
+    { src: path.resolve("/fonts/Arial/ARIALBI.TTF"), fontWeight: "bold", fontStyle: "italic" },
   ],
 });
 
@@ -29,7 +40,7 @@ const styles = StyleSheet.create({
     paddingBottom: 28,
     paddingHorizontal: 36,
     fontSize: 11,
-    fontFamily: "Inter",
+    fontFamily: "Arial",
     color: "#111",
     lineHeight: 1.35,
   },

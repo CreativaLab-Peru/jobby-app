@@ -52,19 +52,20 @@ export function FieldWithRecommendations({
         <label className="block text-sm font-medium text-gray-700">
           {field.label} {field.required && <span className="text-red-500">*</span>}
         </label>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {/* Tip Popover */}
           {field.tip && (
             <Popover open={tipPopoverOpen} onOpenChange={setTipPopoverOpen}>
               <PopoverTrigger asChild>
                 <button
                   type="button"
-                  className="inline-flex items-center justify-center w-7 h-7 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-full transition-colors border-2 border-blue-200 hover:border-blue-300"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-blue-700 hover:text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-lg transition-all duration-300 border border-blue-300 hover:border-blue-400 text-xs font-medium shadow-sm hover:shadow-md animate-pulse hover:animate-none"
                 >
-                  <Lightbulb className="w-4 h-4" />
+                  <Lightbulb className="w-3.5 h-3.5" />
+                  <span>Consejo</span>
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="w-80" side="top">
+              <PopoverContent className="bg-white w-80" side="top">
                 <div className="space-y-3">
                   <div className="flex items-start gap-2">
                     <Lightbulb className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
@@ -95,9 +96,10 @@ export function FieldWithRecommendations({
               <PopoverTrigger asChild>
                 <button
                   type="button"
-                  className=" inline-flex items-center justify-center w-7 h-7 text-green-500 hover:text-green-700 hover:bg-green-50 rounded-full transition-colors border-2 border-green-200 hover:border-green-300"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-green-700 hover:text-green-700 bg-green-100 hover:bg-green-200 rounded-lg transition-all duration-300 border border-green-500 hover:border-green-300 text-xs font-medium shadow-sm hover:shadow-md animate-pulse hover:animate-none"
                 >
-                  <Info className="w-4 h-4" />
+                  <Info className="w-3.5 h-3.5" />
+                  <span>Ejemplo</span>
                 </button>
               </PopoverTrigger>
               <PopoverContent className="border-gray-200 bg-white w-80" side="top">
@@ -143,7 +145,7 @@ export function FieldWithRecommendations({
           value={fieldValue}
           onChange={(e) => onChange(e.target.value)}
           placeholder={`Ingresa ${field.label.toLowerCase()}`}
-          className="min-h-[100px]"
+          className="min-h-[200px]"
         />
       ) : field.type === "tags" ? (
         <TagsInput

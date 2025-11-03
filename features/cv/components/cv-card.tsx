@@ -78,11 +78,12 @@ export function CVCard({ cv }: CVCardProps) {
                     <span className="mx-2">|</span>
                     
                     <span className="font-bold">Estado:{" "}</span>
-                    {cv?.opportunityType === "INTERNSHIP" && "Prácticas"}
-                    {cv?.opportunityType === "SCHOLARSHIP" && "Beca"}
-                    {cv?.opportunityType === "EXCHANGE_PROGRAM" && "Programa de Intercambio"}
-                    {cv?.opportunityType === "EMPLOYMENT" && "Empleo"}
-                    {!cv?.opportunityType && <span className="text-gray-400">No especificado</span>}
+                        {cv?.opportunityType === "INTERNSHIP" && "Prácticas"}
+                        {cv?.opportunityType === "SCHOLARSHIP" && "Beca"}
+                        {cv?.opportunityType === "EXCHANGE_PROGRAM" && "Programa de Intercambio"}
+                        {cv?.opportunityType === "EMPLOYMENT" && "Empleo"}
+                        {!cv?.opportunityType && <span className="text-gray-400">No especificado
+                    </span>}
                 </CardDescription>
             </CardHeader>
             <CardContent>

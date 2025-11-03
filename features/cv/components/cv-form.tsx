@@ -55,7 +55,7 @@ export function CVForm({ formData, onFormDataChange }: CVFormProps) {
     <div className="space-y-6 py-4">
       <div className="space-y-2">
         <Label htmlFor="title" className="text-sm font-medium text-gray-700">
-          Título del CV
+          Título del documento
         </Label>
         <Input
           id="title"
@@ -64,6 +64,11 @@ export function CVForm({ formData, onFormDataChange }: CVFormProps) {
           onChange={(e) => updateFormData({ title: e.target.value })}
           className="w-full border border-gray-300 focus:border-gray-400 focus:ring-1 focus:ring-gray-400"
         />
+        <p>
+          <span className="text-sm text-gray-500">
+            El título ayudará a identificar este currículum en tu lista de CVs.
+          </span>
+        </p>
       </div>
 
       <div className="space-y-2">
@@ -89,6 +94,15 @@ export function CVForm({ formData, onFormDataChange }: CVFormProps) {
             ))}
           </SelectContent>
         </Select>
+        <p>
+          <span className="text-sm text-gray-500">
+            {formData.opportunityType === OpportunityType.INTERNSHIP && "Oportunidades de prácticas profesionales."}
+            {formData.opportunityType === OpportunityType.SCHOLARSHIP && "Oportunidades de becas académicas."}
+            {formData.opportunityType === OpportunityType.EXCHANGE_PROGRAM && "Oportunidades de programas de intercambio."}
+            {formData.opportunityType === OpportunityType.EMPLOYMENT && "Oportunidades de empleo y trabajo."}
+            {!formData.opportunityType && "Selecciona un tipo de oportunidad para ver su descripción."}
+          </span>
+        </p>
       </div>
 
       <div className="space-y-2">

@@ -40,8 +40,8 @@ export function TagsInput({ value, onChange, placeholder }: TagsInputProps) {
         </Button>
       </div>
       <div className="flex flex-wrap gap-2">
-        {value.map((tag: string) => (
-          <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+        {value.map((tag: string, index: number) => (
+          <Badge key={index} variant="secondary" className="flex items-center gap-1">
             {tag}
             <button onClick={() => removeTag(tag)} className="ml-1 hover:text-red-500">
               <Trash2 className="w-3 h-3" />

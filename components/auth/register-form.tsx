@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { Lock, Mail, User, Loader2 } from "lucide-react";
+import { newUserConfiguration } from "@/lib/shared/new-user-configuration";
 
 const errorMapper: Record<string, string> = {
     "Email already exists": "El correo electrónico ya está en uso",
@@ -30,6 +31,7 @@ export function RegisterForm() {
     const [success, setSuccess] = useState(false);
     const [acceptedTerms, setAcceptedTerms] = useState(false);
     const router = useRouter();
+    const [isPending, startTransition] = useTransition();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -63,12 +65,12 @@ export function RegisterForm() {
             //     return;
             // }
 
-            // startTransition(async () => {
-            //     const response = await newUserConfiguration(userId);
-            //     if (!response) {
-            //         console.error("Error in new user configuration for userId:", userId);
-            //     }
-            // });
+            startTransition(async () => {
+                const response = await newUserConfiguration(userId);
+                if (!response) {
+                    console.error("Error in new user configuration for userId:", userId);
+                }
+            });
 
             setSuccess(true);
             router.push("/cv");

@@ -3,7 +3,8 @@ import { prisma } from "@/lib/prisma"
 import { mercadopago } from "@/lib/mercado-preference"
 import { Payment } from "mercadopago"
 import { NextResponse } from "next/server"
-import { JobStatus } from "@prisma/client";
+import { JobStatus, LogAction, LogLevel } from "@prisma/client";
+import { logsService } from "@/features/share/services/logs-service";
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -21,6 +22,15 @@ export async function POST(req: Request) {
       status: JobStatus.PENDING,
       payload: { paymentId },
     },
+  });
+
+  await logsService.createLog({
+    action: LogAction.PAYMENT,
+    level: LogLevel.INFO,
+    entity: "MERCADO_PAGO_INTEGRATION",
+    entityId: job.id,
+    message: `Started saving info of payment: ${paymentId}`,
+    metadata: { paymentId },
   });
 
   // 2. Procesarlo inmediatamente
@@ -47,6 +57,14 @@ async function processPaymentJob(jobId: string, paymentId: string) {
     // 2. Obtener pago de MercadoPago
     const payment = await new Payment(mercadopago).get({ id: paymentId });
 
+    await logsService.createLog({
+      action: LogAction.PAYMENT,
+      level: LogLevel.INFO,
+      entity: "MERCADO_PAGO_INTEGRATION_GET_PAYMENT",
+      message: `Started saving info of payment: ${paymentId}`,
+      metadata: { payment },
+    });
+
     if (!payment || payment.status !== "approved") {
       await prisma.queueJob.update({
         where: { id: jobId },
@@ -56,6 +74,15 @@ async function processPaymentJob(jobId: string, paymentId: string) {
           finishedAt: new Date(),
         },
       });
+
+      await logsService.createLog({
+        action: LogAction.PAYMENT,
+        level: LogLevel.INFO,
+        entity: "MERCADO_PAGO_INTEGRATION_GET_PAYMENT",
+        message: `Started saving info of payment: ${paymentId}`,
+        metadata: { payment },
+      });
+
       return;
     }
 
@@ -89,7 +116,7 @@ async function processPaymentJob(jobId: string, paymentId: string) {
     }
 
     // 6. Crear userPayment
-    await prisma.userPayment.create({
+    const newUserPayment = await prisma.userPayment.create({
       data: {
         userId: userId,
         planId: planId,
@@ -105,7 +132,24 @@ async function processPaymentJob(jobId: string, paymentId: string) {
         finishedAt: new Date(),
       },
     });
+
+    await logsService.createLog({
+      action: LogAction.PAYMENT,
+      level: LogLevel.INFO,
+      entity: "MERCADO_PAGO_INTEGRATION_CREATE_USER_PAYMENT",
+      message: `Started saving info of payment: ${paymentId}`,
+      metadata: { newUserPayment },
+    });
+
   } catch (err: any) {
+    await logsService.createLog({
+      action: LogAction.PAYMENT,
+      level: LogLevel.ERROR,
+      entity: "MERCADO_PAGO_INTEGRATION_CREATE_USER_PAYMENT",
+      message: `Error saving info of payment: ${paymentId}`,
+      metadata: { err },
+    });
+
     await prisma.queueJob.update({
       where: { id: jobId },
       data: {

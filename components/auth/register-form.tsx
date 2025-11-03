@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,6 @@ import { Card } from "@/components/ui/card";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { Lock, Mail, User, Loader2 } from "lucide-react";
-import { newUserConfiguration } from "@/lib/shared/new-user-configuration";
 
 const errorMapper: Record<string, string> = {
     "Email already exists": "El correo electrónico ya está en uso",
@@ -30,7 +29,6 @@ export function RegisterForm() {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
     const [acceptedTerms, setAcceptedTerms] = useState(false);
-    const [isPending, startTransition] = useTransition();
     const router = useRouter();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,16 +59,16 @@ export function RegisterForm() {
             }
 
             // Create a basic subscription for the new user
-            if (isPending) {
-                return;
-            }
+            // if (isPending) {
+            //     return;
+            // }
 
-            startTransition(async () => {
-                const response = await newUserConfiguration(userId);
-                if (!response) {
-                    console.error("Error in new user configuration for userId:", userId);
-                }
-            });
+            // startTransition(async () => {
+            //     const response = await newUserConfiguration(userId);
+            //     if (!response) {
+            //         console.error("Error in new user configuration for userId:", userId);
+            //     }
+            // });
 
             setSuccess(true);
             router.push("/cv");
@@ -191,13 +189,13 @@ export function RegisterForm() {
                             )}
 
                             {/* Success Message */}
-                            {success && (
+                            {/* {success && (
                                 <div className="bg-green-50 border border-green-200 rounded-md p-3">
-                                    {/* <div className="text-green-500 text-sm">
+                                    <div className="text-green-500 text-sm">
                                         ¡Cuenta creada exitosamente! Redirigiendo...
-                                    </div> */}
+                                    </div>
                                 </div>
-                            )}
+                            )} */}
 
                             {/* Terms and Conditions */}
                             <div className="flex items-start gap-2">

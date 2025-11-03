@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useTransition } from "react"
+import { useState, useCallback, useTransition, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -28,6 +28,25 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
   const [isPending, startTransition] = useTransition()
 
   const sections = getSections(opportunityType, cvType)
+  
+  // Autosave con debounce: guarda automáticamente después de 2 segundos de inactividad
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (isPending) return
+      startTransition(() => {
+        updateCvAndSections(id, cvData).then((result) => {
+          if (result?.success) {
+            console.log("CV autosaved successfully")
+          } else {
+            console.error("Failed to autosave CV:", result?.message)
+          }
+        })
+      })
+    }, 2000)
+
+    return () => clearTimeout(timeoutId)
+  }, [cvData, id, isPending])
+
   const submit = () => {
     if (isPending) return
     startTransition(() => {

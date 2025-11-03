@@ -115,13 +115,13 @@ export function LoginForm() {
                                 )}
 
                                 {/* Success Message */}
-                                {success && (
+                                {/* {success && (
                                     <div className="bg-green-50 border border-green-200 rounded-md p-3">
-                                        {/* <div className="text-green-500 text-sm">
+                                        <div className="text-green-500 text-sm">
                                             ¡Has iniciado sesión correctamente! Redirigiendo...
-                                        </div> */}
+                                        </div>
                                     </div>
-                                )}
+                                )} */}
 
                                 {/* Forgot Password Link */}
                                 <div className="flex items-center justify-between text-sm">
@@ -148,7 +148,7 @@ export function LoginForm() {
                                 </Button>
 
                                 {/* Divider */}
-                                {/* <div className="relative">
+                                <div className="relative">
                                     <div className="absolute inset-0 flex items-center">
                                         <span className="w-full border-t border-border" />
                                     </div>
@@ -157,10 +157,10 @@ export function LoginForm() {
                                             O continúa con
                                         </span>
                                     </div>
-                                </div> */}
+                                </div>
 
                                 {/* Google Login Button */}
-                                {/* <Button
+                                <Button
                                     type="button"
                                     variant="outline"
                                     className="font-bold h-14 px-10 w-full"
@@ -185,7 +185,7 @@ export function LoginForm() {
                                         />
                                     </svg>
                                     Google
-                                </Button> */}
+                                </Button>
                             </form>
 
                             {/* Register Link */}

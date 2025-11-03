@@ -154,35 +154,35 @@ export const processMercadoPagoPayment = inngest.createFunction(
     });
 
     // ✅ STEP 5: Crear token magic link
-    const magicData = await step.run("generate-magic-link", async () => {
-      const raw = generateMagicLinkToken();
-      const hash = hashMagicLinkToken(raw);
+    // const magicData = await step.run("generate-magic-link", async () => {
+    //   const raw = generateMagicLinkToken();
+    //   const hash = hashMagicLinkToken(raw);
 
-      const record = await prisma.magicLinkToken.create({
-        data: {
-          userId: user.id,
-          tokenHash: hash,
-          expiresAt: new Date(Date.now() + 1000 * 60 * 10),
-        },
-      });
+    //   const record = await prisma.magicLinkToken.create({
+    //     data: {
+    //       userId: user.id,
+    //       tokenHash: hash,
+    //       expiresAt: new Date(Date.now() + 1000 * 60 * 10),
+    //     },
+    //   });
 
-      const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/magic?token=${raw}`;
+    //   const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/magic?token=${raw}`;
 
-      return { recordId: record.id, magicUrl: url };
-    });
+    //   return { recordId: record.id, magicUrl: url };
+    // });
 
-    // ✅ STEP 6: Enviar magic link por email
-    await step.run("send-magiclink-event", async () => {
-      await inngest.send({
-        name: "send/magiclink",
-        data: {
-          email: user.email,
-          name: user.name,
-          magicLink: magicData.magicUrl,
-          userId,
-        },
-      });
-    });
+    // // ✅ STEP 6: Enviar magic link por email
+    // await step.run("send-magiclink-event", async () => {
+    //   await inngest.send({
+    //     name: "send/magiclink",
+    //     data: {
+    //       email: user.email,
+    //       name: user.name,
+    //       magicLink: magicData.magicUrl,
+    //       userId,
+    //     },
+    //   });
+    // });
 
     // ✅ FINALIZAR JOB
     await step.run("complete-job", async () => {

@@ -1,5 +1,3 @@
-import Header from "@/components/header";
-import Footer from "@/components/footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,8 +5,8 @@ import {
   CheckCircle2,
   Sparkles,
   Star,
-  Target,
   TrendingUp,
+  TriangleAlert,
   Upload,
   Zap,
 } from "lucide-react";
@@ -66,9 +64,9 @@ const Pro = () => {
                     / mes
                   </span> */}
                 </div>
-                {/* <p className="text-sm text-muted-foreground mt-2">
-                  Sin permanencia, cancela cuando quieras
-                </p> */}
+                <p className="text-sm text-muted-foreground mt-2">
+                  Pago único, sin suscripciones ✓
+                </p>
               </div>
 
               <div className="space-y-4 relative">
@@ -114,10 +112,12 @@ const Pro = () => {
               <div className="relative inline-flex">
                 <Upload className="h-10 w-10 mx-auto text-primary group-hover:scale-110 transition-transform" />
               </div>
-              <h3 className="text-xl font-bold">Crea o importa tu CV</h3>
+              <h3 className="text-xl font-bold">
+                Crea tu cuenta, regístrate y realiza el pago
+              </h3>
               <p className="text-muted-foreground leading-relaxed">
-                Carga tu información una sola vez. La IA propone estructura y
-                mejoras al instante.
+                Accede al creador inteligente de CV con recomendaciones
+                alineadas a tu perfil profesional.
               </p>
             </div>
 
@@ -131,12 +131,11 @@ const Pro = () => {
               <div className="relative inline-flex">
                 <Sparkles className="h-10 w-10 mx-auto text-secondary group-hover:scale-110 transition-transform" />
               </div>
-              <h3 className="text-xl font-bold">
-                Genera versiones con un clic
-              </h3>
+              <h3 className="text-xl font-bold">Crea o sube tu CV</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Hasta 5 CV guardados por objetivo laboral. Cada uno con enfoque,
-                palabras clave y métricas específicas.
+                Genera hasta 5 CV adaptados por objetivo laboral (prácticas,
+                becas o empleos). Cada uno optimizado con palabras clave y
+                métricas específicas para superar filtros.
               </p>
             </div>
 
@@ -150,10 +149,11 @@ const Pro = () => {
               <div className="relative inline-flex">
                 <TrendingUp className="h-10 w-10 mx-auto text-accent group-hover:scale-110 transition-transform" />
               </div>
-              <h3 className="text-xl font-bold">Aplica con ventaja</h3>
+              <h3 className="text-xl font-bold">Recibe recomendaciones</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Recibe 5 oportunidades al mes, revisa tu compatibilidad y
-                postula con el CV ideal.
+                La IA te sugiere oportunidades alineadas a tu perfil: vacantes,
+                internships y becas. Recibe recomendaciones para mejorar tu
+                perfil.
               </p>
             </div>
           </div>
@@ -188,141 +188,6 @@ const Pro = () => {
         </div>
       </section>
 
-      {/* Comparación de planes */}
-      {/* <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-5xl font-bold mb-4">
-              ¿Gratis o Pro?{" "}
-              <span className="text-gradient">Compara y elige</span>
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Elige el plan que mejor se adapte a tus necesidades
-            </p>
-          </div> */}
-
-      {/* <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto"> */}
-      {/* Plan Gratis */}
-      {/* <Card className="p-8 bg-card shadow-lg hover:shadow-xl transition-all duration-300 border-2 hover:border-primary/30 group">
-              <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold mb-3">Gratis</h3>
-                <div className="flex items-baseline justify-center gap-1 mb-2">
-                  <span className="text-5xl font-bold">S/0</span>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Perfecto para empezar
-                </p>
-              </div>
-
-              <ul className="space-y-3 mb-8 min-h-[200px]">
-                <li className="flex items-start gap-3 text-sm">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span>CV básico optimizado</span>
-                </li>
-                <li className="flex items-start gap-3 text-sm">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span>Plantilla profesional</span>
-                </li>
-                <li className="flex items-start gap-3 text-sm">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span>Descarga en PDF</span>
-                </li>
-                <li className="flex items-start gap-3 text-sm">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span>1 CV almacenado</span>
-                </li>
-                <li className="flex items-start gap-3 text-sm">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span>Soporte técnico</span>
-                </li>
-              </ul>
-
-              <Link href="/register" className="block">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="w-full group-hover:border-primary/50 transition-colors"
-                >
-                  Comenzar gratis
-                </Button>
-              </Link>
-            </Card> */}
-
-      {/* Plan Pro */}
-      {/* <Card className="p-8 bg-gradient-to-br from-secondary/20 via-primary/10 to-primary/20 shadow-2xl border-2 border-primary/60 relative overflow-hidden transform hover:scale-[1.02] transition-all duration-300 group"> */}
-      {/* Animated background */}
-      {/* <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-
-              <div className="absolute top-4 right-4 z-10">
-                <span className="px-3 py-1.5 bg-primary text-primary-foreground rounded-full text-xs font-bold shadow-lg animate-pulse">
-                  ⭐ POPULAR
-                </span>
-              </div>
-
-              <div className="text-center mb-6 relative">
-                <h3 className="text-2xl font-bold mb-3">Pro</h3>
-                <div className="flex items-baseline justify-center gap-1 mb-2">
-                  <span className="text-5xl font-bold">S/9.90</span>
-                  <span className="text-base text-muted-foreground">/ mes</span>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Cancela cuando quieras
-                </p>
-              </div>
-
-              <ul className="space-y-3 mb-8 min-h-[200px] relative">
-                <li className="flex items-start gap-3 text-sm">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span className="text-muted-foreground">
-                    Todo del plan Gratis, más:
-                  </span>
-                </li>
-                <li className="flex items-start gap-3 text-sm">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span className="font-semibold">
-                    CV optimizado con IA avanzada
-                  </span>
-                </li>
-                <li className="flex items-start gap-3 text-sm">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span className="font-semibold">
-                    Hasta 5 CV almacenados
-                  </span>
-                </li>
-                <li className="flex items-start gap-3 text-sm">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span className="font-semibold">
-                    5 oportunidades personalizadas/mes
-                  </span>
-                </li>
-                <li className="flex items-start gap-3 text-sm">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span className="font-semibold">
-                    Análisis de compatibilidad
-                  </span>
-                </li>
-                <li className="flex items-start gap-3 text-sm">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span className="font-semibold">
-                    Soporte prioritario
-                  </span>
-                </li>
-              </ul>
-
-              <Link href="/register" className="block relative">
-                <Button
-                  size="lg"
-                  className="w-full shadow-glow hover:shadow-xl transition-all duration-300"
-                >
-                  Comenzar ahora
-                  <Star className="ml-2 h-5 w-5 fill-current" />
-                </Button>
-              </Link>
-            </Card>
-          </div>
-        </div>
-      </section> */}
-
       {/* Testimonios */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-card/30">
         <div className="container mx-auto max-w-6xl">
@@ -331,140 +196,175 @@ const Pro = () => {
       </section>
 
       {/* Beneficios del plan Pro */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-card/30">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-card/30 to-background">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-5xl font-bold mb-4">
-              ¿Por qué elegir el plan{" "}
-              <span className="text-gradient">PRO?</span>
+              ¿Por qué elegir {" "}
+              <span className="text-gradient">Jobby PRO?</span>
             </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Invertir en tu futuro no tiene por qué ser caro
+            </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="p-8 bg-card shadow-lg hover:shadow-glow transition-all duration-300 hover:scale-[1.02] border-2 hover:border-primary/30 group">
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {/* Otras opciones */}
+            <Card className="p-8 bg-card shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-border/50 relative overflow-hidden group opacity-90">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-muted to-muted-foreground/20" />
+
+              <div className="relative inline-flex mb-6">
+                <div className="absolute inset-0 bg-muted/30 rounded-lg blur-lg transition-all" />
+                <div className="relative h-14 w-14 rounded-xl bg-gradient-to-br from-muted/30 to-muted/10 flex items-center justify-center border border-muted/30">
+                  <Zap className="h-7 w-7 text-muted-foreground" />
+                </div>
+              </div>
+
+              <h3 className="text-2xl font-bold mb-2 text-muted-foreground">
+                Otras opciones
+              </h3>
+              <p className="text-sm text-muted-foreground mb-6">
+                Métodos tradicionales
+              </p>
+
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3 text-muted-foreground">
+                  <div className="mt-1">
+                    <CheckCircle2 className="h-5 w-5 text-muted-foreground/60 shrink-0" />
+                  </div>
+                  <span>
+                    Asesorías tradicionales: S/200 - S/300 por una sola revisión.
+                    de CV.
+                  </span>
+                </li>
+                <li className="flex items-start gap-3 text-muted-foreground">
+                  <div className="mt-1">
+                    <CheckCircle2 className="h-5 w-5 text-muted-foreground/60 shrink-0" />
+                  </div>
+                  <span>
+                    Suscripciones mensuales en plataformas.
+                  </span>
+                </li>
+                <li className="flex items-start gap-3 text-muted-foreground">
+                  <div className="mt-1">
+                    <CheckCircle2 className="h-5 w-5 text-muted-foreground/60 shrink-0" />
+                  </div>
+                  <span>Procesos lentos y costosos, poca accesibilidad.</span>
+                </li>
+                <li className="flex items-start gap-3 text-muted-foreground">
+                  <div className="mt-1">
+                    <TriangleAlert className="h-5 w-5 text-muted-foreground/60 shrink-0" />
+                  </div>
+                  <span>
+                    No siempre adaptadas al talento joven o al mercado local.
+                  </span>
+                </li>
+              </ul>
+            </Card>
+
+            {/* Jobby Pro */}
+            <Card className="p-8 bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 shadow-2xl hover:shadow-glow transition-all duration-300 hover:scale-[1.02] border-2 border-primary/50 relative overflow-hidden group">
+              <div className="absolute top-4 right-4 z-10">
+                <span className="px-3 py-1.5 bg-primary text-primary-foreground rounded-full text-xs font-bold shadow-lg animate-pulse">
+                  ⭐ MEJOR OPCIÓN
+                </span>
+              </div>
+
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-secondary to-accent" />
+
               <div className="relative inline-flex mb-6">
                 <div className="absolute inset-0 bg-primary/30 rounded-lg blur-xl group-hover:blur-2xl transition-all" />
-                <div className="relative h-14 w-14 rounded-xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center border border-primary/20">
-                  <Target className="h-7 w-7 text-primary" />
+                <div className="relative h-14 w-14 rounded-xl bg-gradient-to-br from-primary/30 to-accent/20 flex items-center justify-center border border-primary/30 group-hover:scale-110 transition-transform">
+                  <Award className="h-7 w-7 text-primary" />
                 </div>
               </div>
-              <h3 className="text-xl font-bold mb-4">CV optimizado con IA</h3>
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                  <span className="text-base">
-                    Titulares potentes y extracto profesional orientado a valor.
-                  </span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                  <span className="text-base">
-                    Logros con métricas: impacto, porcentaje de mejora, alcance,
-                    etc.
-                  </span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                  <span className="text-base">
-                    Secciones sugeridas según el perfil: proyectos,
-                    voluntariado, cursos, etc.
-                  </span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                  <span className="text-base">
-                    Formato <span className="font-bold">ATS-friendly</span>, sin
-                    tablas rotas, lectura por reclutador y software.
-                  </span>
-                </li>
-              </ul>
-            </Card>
 
-            <Card className="p-8 bg-card shadow-lg hover:shadow-glow transition-all duration-300 hover:scale-[1.02] border-2 hover:border-secondary/30 group">
-              <div className="relative inline-flex mb-6">
-                <div className="absolute inset-0 bg-secondary/30 rounded-lg blur-xl group-hover:blur-2xl transition-all" />
-                <div className="relative h-14 w-14 rounded-xl bg-gradient-to-br from-secondary/30 to-secondary/10 flex items-center justify-center border border-secondary/20">
-                  <Zap className="h-7 w-7 text-secondary" />
-                </div>
-              </div>
-              <h3 className="text-xl font-bold mb-4">
-                Oportunidades personalizadas
+              <h3 className="text-2xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
+                Jobby Pro
               </h3>
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
+              <div className="flex items-baseline gap-2 mb-6">
+                <span className="text-3xl font-bold text-primary">
+                  Pago único de S/9.90
+                </span>
+              </div>
+
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3">
+                  <div className="mt-1">
+                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
+                  </div>
                   <span className="text-base">
-                    Hasta{" "}
-                    <span className="font-bold">5 oportunidades al mes</span>,
-                    curadas según{" "}
-                    <span className="font-bold">
-                      rol, nivel, ubicación y habilidades
+                    <span className="text-foreground">
+                      Hasta 5 CV optimizados con IA en segundos.
                     </span>
-                    .
                   </span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
+                <li className="flex items-start gap-3">
+                  <div className="mt-1">
+                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
+                  </div>
                   <span className="text-base">
-                    Enlace directo para postular y recomendaciones de palabras
-                    clave.
+                    <span className="text-foreground">
+                      Recomendaciones de oportunidades ajustadas a tu perfil según tus habilidades.
+                    </span>
                   </span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
+                <li className="flex items-start gap-3">
+                  <div className="mt-1">
+                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
+                  </div>
                   <span className="text-base">
-                    Recordatorios y seguimiento opcional.
+                    <span className="text-foreground">
+                      Accesible para cualquier estudiante o recién egresado.
+                    </span>
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="mt-1">
+                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
+                  </div>
+                  <span className="text-base">
+                    <span className="text-foreground">
+                      Score de match.
+                    </span>
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="mt-1">
+                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
+                  </div>
+                  <span className="text-base">
+                    <span className="text-foreground">
+                      Habilidades a reforzar con micro-cursos sugeridos.
+                    </span>
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="mt-1">
+                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
+                  </div>
+                  <span className="text-base">
+                    <span className="text-foreground">
+                      Exportación: PDF y Word.
+                    </span>
                   </span>
                 </li>
               </ul>
-            </Card>
 
-            <Card className="p-8 bg-card shadow-lg hover:shadow-glow transition-all duration-300 hover:scale-[1.02] border-2 hover:border-accent/30 group">
-              <div className="relative inline-flex mb-6">
-                <div className="absolute inset-0 bg-accent/30 rounded-lg blur-xl group-hover:blur-2xl transition-all" />
-                <div className="relative h-14 w-14 rounded-xl bg-gradient-to-br from-accent/30 to-accent/10 flex items-center justify-center border border-accent/20">
-                  <Award className="h-7 w-7 text-accent" />
-                </div>
+              {/* Call to action */}
+              <div className="mt-8 pt-6 border-t border-primary/20">
+                <Link href="/register" className="block">
+                  <Button
+                    size="lg"
+                    className="w-full shadow-glow hover:shadow-xl transition-all duration-300 text-base font-semibold"
+                  >
+                    Pagar ahora
+                    <Star className="ml-2 h-5 w-5 fill-current" />
+                  </Button>
+                </Link>
               </div>
-              <h3 className="text-xl font-bold mb-4">
-                Análisis de compatibilidad
-              </h3>
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                  <span className="text-base">
-                    <span className="font-bold">Score de match.</span>
-                  </span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                  <span className="text-base">
-                    <span className="font-bold">Palabras clave faltantes.</span>
-                  </span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                  <span className="text-base">
-                    <span className="font-bold">Habilidades a reforzar</span>{" "}
-                    con micro-cursos sugeridos.
-                  </span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                  <span className="text-base">
-                    <span className="font-bold">
-                      Checklist de ajuste del CV
-                    </span>{" "}
-                    para esa vacante.
-                  </span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                  <span className="text-base">
-                    Exportación: <span className="font-bold">PDF</span> y{" "}
-                    <span className="font-bold">Word</span>.
-                  </span>
-                </li>
-              </ul>
             </Card>
           </div>
         </div>

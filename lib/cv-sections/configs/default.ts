@@ -10,7 +10,8 @@ export const getDefaultConfig = (opportunityType: OpportunityType): SectionConfi
   if (
     opportunityType === OpportunityType.INTERNSHIP ||
     opportunityType === OpportunityType.SCHOLARSHIP ||
-    opportunityType === OpportunityType.EXCHANGE_PROGRAM
+    opportunityType === OpportunityType.EXCHANGE_PROGRAM ||
+    opportunityType === OpportunityType.EMPLOYMENT
   ) {
     return {
       sections: ["personal", "projects", "experience", "education", "achievements", "skills"],

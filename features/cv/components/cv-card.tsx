@@ -64,6 +64,7 @@ export function CVCard({ cv }: CVCardProps) {
                     {cv?.title || <span className="text-gray-400">Sin título</span>}
                 </CardTitle>
                 <CardDescription>
+                    <span className="font-bold">Tipo de Oportunidad:{" "}</span>
                     {cv?.cvType === "TECHNOLOGY_ENGINEERING" && "Tecnología e Ingeniería"}
                     {cv?.cvType === "DESIGN_CREATIVITY" && "Diseño y Creatividad"}
                     {cv?.cvType === "MARKETING_STRATEGY" && "Marketing y Estrategia"}
@@ -73,6 +74,15 @@ export function CVCard({ cv }: CVCardProps) {
                     {cv?.cvType === "EDUCATION" && "Educación"}
                     {cv?.cvType === "SCIENCE" && "Ciencia"}
                     {!cv?.cvType && <span className="text-gray-400">No especificado</span>}
+                    
+                    <span className="mx-2">|</span>
+                    
+                    <span className="font-bold">Estado:{" "}</span>
+                    {cv?.opportunityType === "INTERNSHIP" && "Prácticas"}
+                    {cv?.opportunityType === "SCHOLARSHIP" && "Beca"}
+                    {cv?.opportunityType === "EXCHANGE_PROGRAM" && "Programa de Intercambio"}
+                    {cv?.opportunityType === "EMPLOYMENT" && "Empleo"}
+                    {!cv?.opportunityType && <span className="text-gray-400">No especificado</span>}
                 </CardDescription>
             </CardHeader>
             <CardContent>

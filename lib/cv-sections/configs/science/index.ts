@@ -3,6 +3,7 @@ import type { ConfigGetter } from "../../types"
 import { scienceExchangeProgram } from "./exchange-program"
 import { scienceScholarship } from "./scholarship"
 import { scienceInternship } from "./internship"
+import { scienceEmployment } from "./employment"
 
 export const getScienceConfig: ConfigGetter = (opportunityType) => {
   switch (opportunityType) {
@@ -14,8 +15,12 @@ export const getScienceConfig: ConfigGetter = (opportunityType) => {
 
     case OpportunityType.EXCHANGE_PROGRAM:
       return scienceExchangeProgram
+     
+    case OpportunityType.EMPLOYMENT:
+      return scienceEmployment  
     
-      // Casos no implementados aún, por defecto
+    // TODO: Crear configs para otros tipos 
+    // Casos no implementados aún, por defecto
     default:
       return scienceExchangeProgram
   }

@@ -17,7 +17,7 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
           <h2 className="text-sm font-bold text-black mb-3 uppercase border-b border-black text-left">LOGROS Y RECONOCIMIENTOS</h2>
           <div className="text-xs text-black leading-relaxed text-justify list-disc">
             {data.achievements.items.map((achievement, index) => (
-              <div key={achievement.title || index}>
+              <div key={achievement.id || index}>
                 <strong>{achievement.title}:</strong> {achievement.description}
               </div>
             ))}

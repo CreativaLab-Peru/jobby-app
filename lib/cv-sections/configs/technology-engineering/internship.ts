@@ -48,5 +48,7 @@ export const technologyEngineeringInternship: SectionConfig = {
         "Platzi",
     "certifications.date": 
         "Noviembre 2023", 
+
+  // TODO: Agregar tipado estricto
   },
 };

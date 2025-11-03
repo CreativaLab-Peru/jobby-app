@@ -3,6 +3,7 @@ import type { ConfigGetter } from "../../types"
 import { marketingStrategyInternship } from "./internship"
 import { marketingStrategyScholarship } from "./scholarship"
 import { marketingStrategyExchangeProgram } from "./exchange-program"
+import { marketingStrategyEmployment } from "./employment"
 
 export const getMarketingStrategyConfig: ConfigGetter = (opportunityType) => {
   switch (opportunityType) {
@@ -12,7 +13,11 @@ export const getMarketingStrategyConfig: ConfigGetter = (opportunityType) => {
       return marketingStrategyInternship
     case OpportunityType.SCHOLARSHIP:
       return marketingStrategyScholarship
-    
+
+    case OpportunityType.EMPLOYMENT:
+      return marketingStrategyEmployment
+
+    // TODO: Crear configs para otros tipos  
     default:
       return marketingStrategyScholarship
   }

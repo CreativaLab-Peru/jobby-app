@@ -3,6 +3,7 @@ import type { ConfigGetter } from "../../types"
 import { socialMediaInternship } from "./internship"
 import { socialMediaScholarship } from "./scholarship"
 import { socialMediaExchangeProgram } from "./exchange-program"
+import { socialMediaEmployment } from "./employment"
 
 export const getSocialMediaConfig: ConfigGetter = (opportunityType) => {
   switch (opportunityType) {
@@ -12,7 +13,10 @@ export const getSocialMediaConfig: ConfigGetter = (opportunityType) => {
       return socialMediaInternship
     case OpportunityType.SCHOLARSHIP:
       return socialMediaScholarship
-    
+    case OpportunityType.EMPLOYMENT:
+      return socialMediaEmployment
+
+    // TODO: Crear configs para otros tipos  
     default:
       return socialMediaScholarship
   }

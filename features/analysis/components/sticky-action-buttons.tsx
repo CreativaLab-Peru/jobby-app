@@ -59,11 +59,13 @@ export function StickyActionButtons({ show }: StickyActionButtonsProps) {
                   </motion.div>
                 </Button>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1">
+              
+              {/* TODO: Implementar botón de ver más oportunidades */}
+              {/* <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1">
                 <Button
                   size="lg"
                   variant="outline"
-                  className="w-full px-6 py-4 text-lg border-2 bg-white/90 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-purple-300 shadow-xl hover:shadow-2xl transition-all duration-300"
+                  className="text-black border-gray-200 w-full px-6 py-4 text-lg border-2 bg-white/90 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-purple-300 shadow-xl hover:shadow-2xl transition-all duration-300"
                   onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}
                 >
                   <motion.div
@@ -79,7 +81,7 @@ export function StickyActionButtons({ show }: StickyActionButtonsProps) {
                   >
                     <Target className="w-5 h-5 mr-2" />
                   </motion.div>
-                  Ver Más Oportunidades
+                  Ver más Oportunidades
                   <motion.div
                     animate={{ y: [0, -3, 0] }}
                     transition={{
@@ -92,7 +94,7 @@ export function StickyActionButtons({ show }: StickyActionButtonsProps) {
                     🚀
                   </motion.div>
                 </Button>
-              </motion.div>
+              </motion.div> */}
             </div>
             <motion.div
               animate={{

@@ -131,9 +131,9 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ delay: 1, duration: 1.5, ease: "easeOut" }}
-          className="origin-left"
+          className=" origin-left"
         >
-          <Progress value={score} className="h-4 bg-gray-200" />
+          <Progress value={score} className="h-4 bg-gray-200 [&>div]:bg-gradient-to-r [&>div]:from-indigo-500 [&>div]:via-purple-500 [&>div]:to-pink-500" />
         </motion.div>
       </CardContent>
     </Card>

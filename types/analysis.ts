@@ -6,7 +6,7 @@ export interface ScoreItem {
 
 export interface ScoreCategory {
   category: string
-  icon: string
+  icon: any
   score: number
   maxScore: number
   color: string

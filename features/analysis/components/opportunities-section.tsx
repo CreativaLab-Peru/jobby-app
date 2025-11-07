@@ -18,7 +18,7 @@ export function OpportunitiesSection({ opportunities }: OpportunitiesSectionProp
       <CardHeader>
         <CardTitle className="flex items-center text-2xl text-gray-800">
           <Award className="w-8 h-8 mr-3 text-purple-500" />
-          Top 5 Oportunidades para Ti
+          Top 5 Oportunidades para ti
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -34,8 +34,12 @@ export function OpportunitiesSection({ opportunities }: OpportunitiesSectionProp
               <div className="flex-1">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">{opp.title}</h3>
                 <div className="flex items-center gap-4 mb-3">
-                  <Badge variant="outline">{opp.type}</Badge>
-                  <span className="text-sm text-gray-500">Fecha límite: {opp.deadline}</span>
+                  <Badge className="text-black bg-blue-100">
+                    {opp.type}
+                  </Badge>
+                  <span className="text-sm text-gray-500">
+                    <span className="font-bold">Fecha límite:</span> {opp.deadline}
+                  </span>
                 </div>
               </div>
               <div className="text-right">
@@ -54,8 +58,8 @@ export function OpportunitiesSection({ opportunities }: OpportunitiesSectionProp
               </div>
             </div>
             <div className="flex items-center justify-between">
-              <Progress value={opp.match} className="flex-1 mr-4" />
-              <Button size="sm" variant="outline">
+              <Progress value={opp.match} className="h-4 bg-gray-200 [&>div]:bg-gradient-to-r [&>div]:from-indigo-500 [&>div]:via-purple-500 [&>div]:to-pink-500" />
+              <Button size="sm" className="text-black border-2 border-yellow-200 bg-yellow-100 hover:bg-yellow-200 ml-4">
                 <ExternalLink className="w-4 h-4 mr-1" />
                 Ver más
               </Button>

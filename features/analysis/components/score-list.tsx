@@ -104,7 +104,9 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
                             )}
                           </CardTitle>
                           <CardDescription>
-                            Analizado el {formatDate(score.evaluations[0]?.createdAt, "dd/MM/yyyy")}
+                            {score.evaluations[0]?.createdAt
+                              ? `Analizado el ${formatDate(score.evaluations[0].createdAt, "dd/MM/yyyy")}`
+                              : "Sin análisis todavía"}
                           </CardDescription>
                         </div>
                         <div className="">

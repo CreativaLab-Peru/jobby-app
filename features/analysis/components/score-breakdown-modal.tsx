@@ -54,7 +54,7 @@ export function ScoreBreakdownModal({ show, onClose, scoreBreakdown, totalScore 
                   console.log('Modal - Category:', category.category, 'Has Icon:', !!category.Icon);
                   return (
                     <motion.div
-                      key={category.category}
+                      key={`${category.category}-${index}`}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}

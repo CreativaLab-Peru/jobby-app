@@ -30,8 +30,8 @@ export function RegisterForm() {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
     const [acceptedTerms, setAcceptedTerms] = useState(false);
-    const [isPending, startTransition] = useTransition();
     const router = useRouter();
+    const [isPending, startTransition] = useTransition();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -61,9 +61,9 @@ export function RegisterForm() {
             }
 
             // Create a basic subscription for the new user
-            if (isPending) {
-                return;
-            }
+            // if (isPending) {
+            //     return;
+            // }
 
             startTransition(async () => {
                 const response = await newUserConfiguration(userId);
@@ -191,13 +191,13 @@ export function RegisterForm() {
                             )}
 
                             {/* Success Message */}
-                            {success && (
+                            {/* {success && (
                                 <div className="bg-green-50 border border-green-200 rounded-md p-3">
-                                    {/* <div className="text-green-500 text-sm">
+                                    <div className="text-green-500 text-sm">
                                         ¡Cuenta creada exitosamente! Redirigiendo...
-                                    </div> */}
+                                    </div>
                                 </div>
-                            )}
+                            )} */}
 
                             {/* Terms and Conditions */}
                             <div className="flex items-start gap-2">

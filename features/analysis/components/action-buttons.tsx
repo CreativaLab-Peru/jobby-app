@@ -23,9 +23,9 @@ export function ActionButtons({ show }: ActionButtonsProps) {
         <Users className="w-5 h-5 mr-2" />
         Potenciarme con un Experto
       </Button>
-      <Button size="lg" variant="outline" className="px-8 py-4 text-lg border-2 bg-transparent">
+      <Button size="lg" className=" px-8 py-4 text-lg border-2 bg-transparent">
         <Target className="w-5 h-5 mr-2" />
-        Ver Más Oportunidades
+        Ver más Oportunidades
       </Button>
     </motion.div>
   )

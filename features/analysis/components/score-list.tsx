@@ -9,7 +9,6 @@ import { BarChart3, TrendingUp, TrendingDown, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/utils/format-date"
-import { Cv } from "@prisma/client"
 import { CvWithRelations } from "@/features/cv/actions/get-cv-for-current-user"
 
 const categoryMap = {
@@ -70,7 +69,9 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
               <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 bg-clip-text text-transparent">
                 Scores de CVs
               </h1>
-              <p className="text-gray-600 mt-2">Analiza el rendimiento y mejora tus currículums 🚀</p>
+              <p className="text-gray-600 mt-2">
+                Analiza el rendimiento y mejora tus currículums 🚀
+              </p>
             </div>
             <Button className="bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 hover:from-purple-600 hover:via-pink-600 hover:to-red-600 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
               disabled={disabledButton}
@@ -103,7 +104,9 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
                             )}
                           </CardTitle>
                           <CardDescription>
-                            Analizado el {formatDate(score.evaluations[0]?.createdAt, "dd/MM/yyyy")}
+                            {score.evaluations[0]?.createdAt
+                              ? `Analizado el ${formatDate(score.evaluations[0].createdAt, "dd/MM/yyyy")}`
+                              : "Sin análisis todavía"}
                           </CardDescription>
                         </div>
                         <div className="">
@@ -130,24 +133,36 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
                   <CardContent>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {/* Categories Scores */}
-                      <div>
-                        <h4 className="font-semibold text-gray-800 mb-4">Puntuación por Categorías</h4>
+                        <div>
+                        <h4 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                          <BarChart3 className="w-4 h-4 text-purple-500" />
+                          Puntuación por Categorías
+                        </h4>
                         <div className="space-y-3">
                           {score.evaluations[0]?.scores.map((section) => (
-                            <div key={section.id}>
-                              <div className="flex justify-between text-sm mb-1">
-                                <span className="text-gray-600">{section.sectionType}</span>
-                                <span className={`font-medium ${getScoreColor(section.score)}`}>{section.score}%</span>
-                              </div>
-                              <Progress value={section.score} className="h-2" />
+                          <div key={section.id} className="group">
+                            <div className="flex justify-between text-sm mb-1.5">
+                            <span className="text-gray-700 font-medium group-hover:text-purple-600 transition-colors">
+                              {categoryMap[section.sectionType as keyof typeof categoryMap] || section.sectionType}
+                            </span>
+                            <span className={`font-semibold ${getScoreColor(section.score)} text-base`}>
+                              {section.score}%
+                            </span>
                             </div>
+                            <Progress 
+                            value={section.score} 
+                            className="h-2.5 bg-gray-200 rounded-full [&>div]:bg-gradient-to-r [&>div]:from-indigo-500 [&>div]:via-purple-500 [&>div]:to-pink-500 [&>div]:rounded-full [&>div]:transition-all [&>div]:duration-500" 
+                            />
+                          </div>
                           ))}
                         </div>
-                      </div>
+                        </div>
 
                       {/* Recommendations */}
                       <div>
-                        <h4 className="font-semibold text-gray-800 mb-4">Recomendaciones de Mejora</h4>
+                        <h4 className="font-semibold text-gray-800 mb-4">
+                          Recomendaciones de Mejora
+                        </h4>
                         <ul className="space-y-2">
                           {score.evaluations[0]?.recommendations.map((rec, idx) => (
                             <li key={idx} className="flex items-start gap-2 text-sm text-gray-600">

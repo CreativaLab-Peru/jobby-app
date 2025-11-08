@@ -51,19 +51,23 @@ export function CVSectionForm({ section, data, onChange }: CVSectionFormProps) {
 
   const addItem = () => {
     if (section.multiple) {
-      setFormData((prev) => ({
-        ...prev,
-        items: [...(prev.items || []), {}],
-      }))
+      const newData = {
+        ...formData,
+        items: [...(formData.items || []), {}],
+      }
+      setFormData(newData)
+      onChange(newData)
     }
   }
 
   const removeItem = (index: number) => {
     if (section.multiple) {
-      setFormData((prev) => ({
-        ...prev,
-        items: (prev.items || []).filter((_: any, i: number) => i !== index),
-      }))
+      const newData = {
+        ...formData,
+        items: (formData.items || []).filter((_: any, i: number) => i !== index),
+      }
+      setFormData(newData)
+      onChange(newData)
     }
   }
 

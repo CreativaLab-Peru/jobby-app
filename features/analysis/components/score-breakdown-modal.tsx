@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { Calculator, X, CheckCircle, AlertTriangle, Info } from "lucide-react"
+import { Calculator, X, CheckCircle, AlertTriangle, Info, Award } from "lucide-react"
 import type { ScoreCategory } from "@/types/analysis"
 
 interface ScoreBreakdownModalProps {
@@ -49,63 +49,78 @@ export function ScoreBreakdownModal({ show, onClose, scoreBreakdown, totalScore 
             
             <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
               <div className="space-y-6">
-                {scoreBreakdown.map((category, index) => (
-                  <motion.div
-                    key={category.category}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="border rounded-lg p-6 bg-gray-50/50"
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${category.bgColor}`}>
-                          {category.Icon && <category.Icon className={`w-6 h-6 ${category.color}`} />}
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-800">{category.category}</h3>
-                          <p className="text-sm text-gray-600">
-                            {category.score}/{category.maxScore} puntos
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className={`text-2xl font-bold ${category.color}`}>
-                          {Math.round((category.score / category.maxScore) * 100)}%
-                        </div>
-                        <Progress value={(category.score / category.maxScore) * 100} className="w-24 h-2 mt-1" />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-3">
-                      {category.items.map((item, itemIndex) => (
-                        <div
-                          key={itemIndex}
-                          className="flex items-center justify-between py-2 px-3 bg-white rounded-lg"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={`w-3 h-3 rounded-full ${
-                                item.status === "complete"
-                                  ? "bg-green-500"
-                                  : item.status === "partial"
-                                    ? "bg-yellow-500"
-                                    : "bg-red-500"
-                              }`}
-                            />
-                            <span className="text-sm text-gray-700">{item.name}</span>
+                {scoreBreakdown.map((category, index) => {
+                  const IconComponent = category.Icon || Award;
+                  console.log('Modal - Category:', category.category, 'Has Icon:', !!category.Icon);
+                  return (
+                    <motion.div
+                      key={`${category.category}-${index}`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="border rounded-xl p-6 bg-white shadow-sm hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex items-start justify-between mb-6">
+                        <div className="flex items-center gap-4">
+                          <div className={`p-3 rounded-xl`} style={{ backgroundColor: category.bgColor || '#f3f4f6' }}>
+                            <IconComponent className="w-7 h-7" style={{ color: category.color || '#6b7280' }} />
                           </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-gray-600">{item.points} pts</span>
-                            {item.status === "complete" && <CheckCircle className="w-4 h-4 text-green-500" />}
-                            {item.status === "partial" && <AlertTriangle className="w-4 h-4 text-yellow-500" />}
-                            {item.status === "missing" && <X className="w-4 h-4 text-red-500" />}
+                          <div>
+                            <h3 className="text-xl font-bold text-gray-800 mb-1">{category.category}</h3>
+                            <p className="text-sm text-gray-600">
+                              {category.score}/{category.maxScore} puntos obtenidos
+                            </p>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  </motion.div>
-                ))}
+                        <div className="text-right">
+                          <div className="text-3xl font-bold" style={{ color: category.color || '#6b7280' }}>
+                            {Math.round((category.score / category.maxScore) * 100)}%
+                          </div>
+                          <Progress 
+                            value={(category.score / category.maxScore) * 100} 
+                            className="bg-gray-200 [&>div]:bg-gradient-to-r [&>div]:from-indigo-500 [&>div]:via-purple-500 [&>div]:to-pink-500 w-28 h-2.5 mt-2" 
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        {category.items.map((item, itemIndex) => (
+                          <div
+                            key={itemIndex}
+                            className="flex items-center justify-between py-3 px-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                          >
+                            <div className="flex items-center gap-3 flex-1">
+                              <div
+                                className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
+                                  item.status === "complete"
+                                    ? "bg-green-500"
+                                    : item.status === "partial"
+                                      ? "bg-yellow-500"
+                                      : "bg-red-500"
+                                }`}
+                              />
+                              <span className="text-sm text-gray-700 font-medium">{item.name}</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className="text-sm font-semibold text-gray-600 min-w-[45px] text-right">
+                                {item.points} pts
+                              </span>
+                              {item.status === "complete" && (
+                                <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                              )}
+                              {item.status === "partial" && (
+                                <AlertTriangle className="w-5 h-5 text-yellow-500 flex-shrink-0" />
+                              )}
+                              {item.status === "missing" && (
+                                <X className="w-5 h-5 text-red-500 flex-shrink-0" />
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
               
               <div className="mt-8 p-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg border border-indigo-200">

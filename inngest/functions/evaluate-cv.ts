@@ -84,8 +84,6 @@ export const evaluateCv = inngest.createFunction(
         throw new Error(result.message ?? "Evaluation failed");
       }
 
-      console.log("[✅ Evaluation result]:", result.data);
-
       // ✅ Log: Successful Gemini result received
       await logsService.createLog({
         userId,

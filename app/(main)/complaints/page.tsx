@@ -17,28 +17,27 @@ export default function ComplaintsPage() {
     complaint: "",
   });
   const [submitting, setSubmitting] = useState(false);
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    
+
     try {
       // Replace with real API call
       await new Promise((r) => setTimeout(r, 1000));
-      console.log("Complaint submitted:", form);
       alert("Tu reclamo ha sido enviado exitosamente.");
       setForm({ name: "", email: "", phone: "", complaint: "" });
     } finally {
       setSubmitting(false);
     }
   };
-  
+
   return (
-  <div className="bg-white min-h-screen py-12 px-4">
+    <div className="bg-white min-h-screen py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <Card className="shadow-xl border border-orange-100 bg-white/95 backdrop-blur-sm">
@@ -47,12 +46,12 @@ export default function ComplaintsPage() {
                 Libro de Reclamaciones
               </CardTitle>
             </CardHeader>
-            
+
             <CardContent className="space-y-6">
               <p className="text-gray-600 text-sm text-center">
                 Por favor completa el siguiente formulario para registrar tu reclamo o queja.
               </p>
-              
+
               <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Name */}
                 <div className="space-y-2">
@@ -69,7 +68,7 @@ export default function ComplaintsPage() {
                     className="border-gray-300 focus-visible:ring-orange-500"
                   />
                 </div>
-                
+
                 {/* Email */}
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-gray-700">
@@ -86,7 +85,7 @@ export default function ComplaintsPage() {
                     className="border-gray-300 focus-visible:ring-orange-500"
                   />
                 </div>
-                
+
                 {/* Phone */}
                 <div className="space-y-2">
                   <Label htmlFor="phone" className="text-gray-700">
@@ -102,7 +101,7 @@ export default function ComplaintsPage() {
                     className="border-gray-300 focus-visible:ring-orange-500"
                   />
                 </div>
-                
+
                 {/* Complaint */}
                 <div className="space-y-2">
                   <Label htmlFor="complaint" className="text-gray-700">
@@ -118,7 +117,7 @@ export default function ComplaintsPage() {
                     className="border-gray-300 focus-visible:ring-orange-500 min-h-[120px]"
                   />
                 </div>
-                
+
                 {/* Submit Button */}
                 <Button
                   type="submit"

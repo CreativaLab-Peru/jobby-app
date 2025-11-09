@@ -14,7 +14,6 @@ interface CVExperienceProps {
 }
 
 export function CVExperience({ experience }: CVExperienceProps) {
-  console.log('CVExperience experience:', experience);
   if (!experience?.items || experience.items.length === 0) return null
 
   return (

@@ -14,12 +14,13 @@ export default async function EditCVPage({ params }: EditCVPageProps) {
   const { cvId } = await params;
   if (!cvId) {
     return redirect('/cv')
+
   }
+
   const cv = await getCvById(cvId);
   if (!cv) {
     return redirect('/404');
   }
-
   const cvData: CVData = transformCVToDTO(cv);
   return (
     <CreateCVPage

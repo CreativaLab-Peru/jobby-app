@@ -36,15 +36,17 @@ You must return **only one valid JSON object** following this structure:
 
 2. **title** should be the section’s title as written in the CV (e.g., “Professional Experience”, “Academic Background”, “Skills”).
 
-3. **contentJson** should contain **structured objects** describing the specific details found in each section:
-   - EXPERIENCE → [{ company, position, startDate, endDate, description }]
-   - EDUCATION → [{ institution, degree, startDate, endDate }]
-   - SKILLS → [{ skill, level? }]
-   - PROJECTS → [{ name, description, technologies? }]
-   - CERTIFICATIONS → [{ name, issuer?, year? }]
+3. **contentJson** should contain **structured objects** describing the specific details found in each section (Object or List of objects):
+   - EXPERIENCE → [{ position, company, location, duration, responsibilities }]
+   - EDUCATION → [{ level, title, institution, location, year, honors? }]
+   - SKILLS → { soft:[], languages:[], technical:[] }
+   - PROJECTS → [{ title?, duration, description, technologies? }]
+   - CERTIFICATIONS → [{ name, issuer?, year?, date? }]
    - LANGUAGES → [{ language, proficiency }]
-   - CONTACT → [{ name?, email?, phone?, linkedin?, location? }]
-   - SUMMARY → [{ text }]
+   - CONTACT → { fullName?, email?, phone?, linkedin?, address?, summary? }
+   - SUMMARY → { text }
+   - VOLUNTEERING → [{ organization?, location?, position?, duration?, responsabilities? }]
+   - ACHIEVEMENTS → [{ title?, description?, date? }]
 
 4. Dates must be in ISO format "YYYY-MM" when available.
 
@@ -62,9 +64,7 @@ You must return **only one valid JSON object** following this structure:
     {
       "sectionType": "SUMMARY",
       "title": "Professional Summary",
-      "contentJson": [
-        { "text": "Computer Science graduate with experience in backend development using Go and Kubernetes." }
-      ]
+      "contentJson": { "text": "Computer Science graduate with experience in backend development using Go and Kubernetes." }
     },
     {
       "sectionType": "EXPERIENCE",

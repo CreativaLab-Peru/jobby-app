@@ -13,7 +13,6 @@ export const testOnProd = inngest.createFunction(
     const email = payload.email as string;
     // Simulate sleeping for 2 seconds
     await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log("Test on prod function executed for:", email);
     return { email };
   }
 );

@@ -34,7 +34,6 @@ export default function SettingsPage() {
     setLoading(true);
     try {
       await new Promise((r) => setTimeout(r, 1000));
-      console.log("Settings saved:", form);
       alert("Configuraciones guardadas correctamente");
     } finally {
       setLoading(false);
@@ -42,7 +41,7 @@ export default function SettingsPage() {
   };
 
   return (
-  <div className="bg-white min-h-screen py-12 px-4">
+    <div className="bg-white min-h-screen py-12 px-4">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -31,12 +31,10 @@ export function ProgressStatus({ cvId }: ProgressStatusProps) {
   })
 
   useEffect(() => {
-    console.log("Current status:", status)
     if (status?.status === "CV_EVALUATION_FINISHED"
       || status?.status === "CV_EVALUATION_SUCCEEDED"
     ) {
       const evaluateId = status.evaluateId
-      console.log("Redirecting to evaluations page...")
       setTimeout(() => {
         router.push(`/evaluations/${evaluateId}`)
       }, 500)

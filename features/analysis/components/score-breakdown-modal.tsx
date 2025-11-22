@@ -46,12 +46,11 @@ export function ScoreBreakdownModal({ show, onClose, scoreBreakdown, totalScore 
                 </Button>
               </div>
             </div>
-            
+
             <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
               <div className="space-y-6">
                 {scoreBreakdown.map((category, index) => {
                   const IconComponent = category.Icon || Award;
-                  console.log('Modal - Category:', category.category, 'Has Icon:', !!category.Icon);
                   return (
                     <motion.div
                       key={`${category.category}-${index}`}
@@ -76,13 +75,13 @@ export function ScoreBreakdownModal({ show, onClose, scoreBreakdown, totalScore 
                           <div className="text-3xl font-bold" style={{ color: category.color || '#6b7280' }}>
                             {Math.round((category.score / category.maxScore) * 100)}%
                           </div>
-                          <Progress 
-                            value={(category.score / category.maxScore) * 100} 
-                            className="bg-gray-200 [&>div]:bg-gradient-to-r [&>div]:from-indigo-500 [&>div]:via-purple-500 [&>div]:to-pink-500 w-28 h-2.5 mt-2" 
+                          <Progress
+                            value={(category.score / category.maxScore) * 100}
+                            className="bg-gray-200 [&>div]:bg-gradient-to-r [&>div]:from-indigo-500 [&>div]:via-purple-500 [&>div]:to-pink-500 w-28 h-2.5 mt-2"
                           />
                         </div>
                       </div>
-                      
+
                       <div className="space-y-2">
                         {category.items.map((item, itemIndex) => (
                           <div
@@ -91,13 +90,12 @@ export function ScoreBreakdownModal({ show, onClose, scoreBreakdown, totalScore 
                           >
                             <div className="flex items-center gap-3 flex-1">
                               <div
-                                className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
-                                  item.status === "complete"
+                                className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${item.status === "complete"
                                     ? "bg-green-500"
                                     : item.status === "partial"
                                       ? "bg-yellow-500"
                                       : "bg-red-500"
-                                }`}
+                                  }`}
                               />
                               <span className="text-sm text-gray-700 font-medium">{item.name}</span>
                             </div>
@@ -122,7 +120,7 @@ export function ScoreBreakdownModal({ show, onClose, scoreBreakdown, totalScore 
                   );
                 })}
               </div>
-              
+
               <div className="mt-8 p-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg border border-indigo-200">
                 <div className="flex items-start gap-3">
                   <Info className="w-6 h-6 text-indigo-600 mt-1" />

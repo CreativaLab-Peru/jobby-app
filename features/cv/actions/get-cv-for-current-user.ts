@@ -103,9 +103,6 @@ export const getCvForCurrentUser = async () => {
       0
     )
 
-    console.log("totalManualCvsUsed", totalManualCvsUsed, totalAvailableManualCv)
-    console.log("totalUploadCvUsed", totalUploadCvUsed, totalAvailableUploadCv)
-
     const response: CvForCurrentUserResponse = {
       manuals: {
         cvs: [...manuals, ...uploads],

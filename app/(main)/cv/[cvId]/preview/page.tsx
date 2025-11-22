@@ -25,7 +25,7 @@ export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
   const sections = getSections(cv.opportunityType, cv.cvType);
   // Extraer solo los IDs de las secciones (sin los iconos/funciones)
   const sectionIds = sections.map(s => s.id);
-  
+
   return (
     <PreviewCVComponent
       cv={cvData}

@@ -1,14 +1,14 @@
 "use server"
 
-import {auth} from "@/lib/auth";
-import {prisma} from "@/lib/prisma";
-import {getCurrentUser} from "@/features/share/actions/get-current-user";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/features/share/actions/get-current-user";
 
 export const updatePassword = async (password: string) => {
   try {
     const currentUser = await getCurrentUser()
     if (!currentUser) {
-      console.log("[ERROR_UPDATE_PASSWORD] User not found");
+      console.error("[ERROR_UPDATE_PASSWORD] User not found");
       return
     }
 
@@ -18,7 +18,7 @@ export const updatePassword = async (password: string) => {
         newPassword: password
       }
     });
-    
+
     await auth.api.signInEmail({
       body: {
         email: currentUser.email,
@@ -26,14 +26,14 @@ export const updatePassword = async (password: string) => {
       },
       asResponse: true
     });
-    
+
     return {
       success: true,
       message: "Contraseña actualizada exitosamente ✅",
     }
-    
+
   } catch (error) {
-    console.log("[ERROR_UPDATE_PASSWORD]", error);
+    console.error("[ERROR_UPDATE_PASSWORD]", error);
     return {
       success: false,
       message: "Hubo un error al actualizar la contraseña.",

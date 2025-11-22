@@ -46,9 +46,9 @@ export function CVCard({ cv }: CVCardProps) {
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    
+
     const result = await softDeleteCv(cv.id);
-    
+
     if (result.success) {
       toast({
         title: "CV ocultado",
@@ -62,7 +62,7 @@ export function CVCard({ cv }: CVCardProps) {
         variant: "destructive",
       });
     }
-    
+
     setIsDeleting(false);
   };
 

@@ -70,8 +70,6 @@ export const processUploadedCv = inngest.createFunction(
         return await queryGemini({ prompt, type: "JSON" });
       });
 
-      console.log("✅ Extraction result:", result);
-
       // ✅ Gemini failed?
       if (!result.success) {
         await logsService.createLog({

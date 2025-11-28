@@ -65,6 +65,10 @@ export function RegisterForm() {
             //     return;
             // }
 
+            if (isPending) {
+                return;
+            }
+
             startTransition(async () => {
                 const response = await newUserConfiguration(userId);
                 if (!response) {

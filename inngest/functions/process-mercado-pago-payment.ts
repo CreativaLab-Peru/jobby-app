@@ -5,8 +5,6 @@ import { mercadopago } from "@/lib/mercado-preference";
 
 import { logsService } from "@/features/share/services/logs-service";
 import { JobStatus, LogAction, LogLevel } from "@prisma/client";
-import { generateMagicLinkToken, hashMagicLinkToken } from "@/utils/magic-links";
-import { randomUUID } from "node:crypto";
 
 export const processMercadoPagoPayment = inngest.createFunction(
   { id: "process-mercadopago-payment" },
@@ -54,7 +52,7 @@ export const processMercadoPagoPayment = inngest.createFunction(
 
     const { id: planId, user_id: userId, email } = payment.metadata;
     // ✅ STEP 2: Validar usuario
-    let user: any = null;
+    let user = null;
     if (userId) {
       user = await step.run("get-user", async () => {
         const existingUser = await prisma.user.findUnique({ where: { id: userId } });
@@ -64,10 +62,8 @@ export const processMercadoPagoPayment = inngest.createFunction(
       user = await step.run("get-tmp-user", async () => {
         const existingTmpUser = await prisma.temporalUser.findUnique({ where: { email } });
         if (existingTmpUser) {
-          const newUserId = randomUUID();
           user = await prisma.user.create({
             data: {
-              id: newUserId,
               email,
               name: "tmp",
               emailVerified: false,

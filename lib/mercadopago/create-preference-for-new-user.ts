@@ -1,27 +1,24 @@
 "use server"
 
-import { prisma } from "@/lib/prisma";
+import {prisma} from "@/lib/prisma";
 
-import { Preference } from "mercadopago";
-import { PreferenceCreateData } from "mercadopago/dist/clients/preference/create/types";
-import { BASE_URL, mercadopago } from "@/lib/mercado-preference";
-import { PAYMEMT_PLAN_ID_BY_DIRECT } from "../shared/consts";
-import { TemporalUser } from "@prisma/client";
+import {Preference} from "mercadopago";
+import {PreferenceCreateData} from "mercadopago/dist/clients/preference/create/types";
+import {BASE_URL, mercadopago} from "@/lib/mercado-preference";
+import {PAYMEMT_PLAN_ID_BY_DIRECT} from "../shared/consts";
 
-export const createPreferenceForNewUser = async (email: string) => {
+export const createPreferenceForNewUser = async (id: string) => {
   try {
-    let currentUser: TemporalUser | null = null
-    const existingUser = await prisma.temporalUser.findFirst({
+    const currentUser = await prisma.temporalUser.findFirst({
       where: {
-        email,
+        id,
       }
     })
-    if (!existingUser) {
-      currentUser = await prisma.temporalUser.create({
-        data: {
-          email,
-        }
-      })
+    if (!currentUser) {
+      return {
+        success: false,
+        error: 'No se ha encontrado el usuario temporal',
+      }
     }
 
     const directPayment = await prisma.paymentPlan.findFirst({

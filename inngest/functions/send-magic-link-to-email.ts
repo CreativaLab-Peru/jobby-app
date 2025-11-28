@@ -19,7 +19,7 @@ export const sendMagicLinkToEmail = inngest.createFunction(
       required(name, "name");
       required(name, "magicLink");
     } catch (err) {
-      console.error("[SEND_MAGIC_LINKL_VALIDATION_ERROR]:", err);
+      console.error("[SEND_MAGIC_LINK_VALIDATION_ERROR]:", err);
 
       await logsService.createLog({
         action: LogAction.EMAIL,
@@ -48,7 +48,7 @@ export const sendMagicLinkToEmail = inngest.createFunction(
     });
 
     try {
-      await addToMailerLite(email, { name, magicLink }, "welcome");
+      await addToMailerLite(email, { name, magicLink }, "magicLink");
 
       await prisma.queueJob.update({
         where: { id: job.id },

@@ -104,7 +104,7 @@ export async function POST(req: Request) {
     }
 
 
-    // 3️⃣ Trigger Inngest workflow
+    // 3️Trigger Inngest workflow
     await inngest.send({
       name: "cv/uploaded",
       data: {

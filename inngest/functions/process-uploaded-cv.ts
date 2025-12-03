@@ -5,7 +5,6 @@ import { getPromptToGetCv } from "@/lib/prompts/get-prompt-to-get-cv";
 import { queryGemini } from "@/lib/queries/query-gemini";
 import { getTextFromPdfApi } from "@/utils/get-text-from-pdf-api";
 import { logsService } from "@/features/share/services/logs-service";
-import {detectCv} from "@/lib/cv/verify-cv";
 
 export const processUploadedCv = inngest.createFunction(
   { id: "process-uploaded-cv" },
@@ -55,14 +54,6 @@ export const processUploadedCv = inngest.createFunction(
           message: "Extracted raw text from uploaded CV",
           metadata: { textLength: textFromCv?.length },
         });
-
-        const verifyCv = detectCv(textFromCv);
-        if (!verifyCv.isCv) {
-          return {
-            success: false,
-            message: "The uploaded document does not appear to be a CV.",
-          }
-        }
 
         const prompt = getPromptToGetCv(textFromCv);
 

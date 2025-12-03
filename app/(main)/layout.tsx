@@ -39,7 +39,7 @@ export default async function RootLayout({
 
     return (
         <>
-            <div className="flex min-h-screen relative w-full">
+            <div className="flex min-h-screen relative w-full bg-white">
                 <div className="flex-1 flex flex-col">
                     <NavbarWrapper
                         needNewPayment={needsNewPayment}

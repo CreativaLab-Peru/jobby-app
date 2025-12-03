@@ -1,4 +1,3 @@
-// /api/webhooks/mercadopago/confirm-payment
 import {prisma} from "@/lib/prisma"
 import {mercadopago} from "@/lib/mercado-preference"
 import {Payment} from "mercadopago"
@@ -43,7 +42,6 @@ export async function POST(req: Request) {
     return new NextResponse("[ERROR_PROCESS_PAYMENT_JOB]", {status: 500});
   }
 
-
   // 3. Responder rápido al webhook
   return new NextResponse(null, {status: 200});
 }
@@ -79,16 +77,17 @@ async function processPaymentJob(jobId: string, paymentId: string) {
 
       await logsService.createLog({
         action: LogAction.PAYMENT,
-        level: LogLevel.INFO,
-        entity: "MERCADO_PAGO_INTEGRATION_GET_PAYMENT",
-        message: `Started saving info of payment: ${paymentId}`,
+        level: LogLevel.ERROR,
+        entity: "MERCADO_PAGO_INTEGRATION_GET_PAYMENT_ERROR",
+        message: `There is not payment or payment status is not approved: ${paymentId}`,
         metadata: {payment},
       });
 
       return;
     }
 
-    let {id: planId, user_id: userId, email} = payment.metadata;
+    let {user_id: userId} = payment.metadata;
+    const {planId, email} = payment.metadata;
 
     const existing = await prisma.userPayment.findFirst({
       where: {
@@ -127,7 +126,6 @@ async function processPaymentJob(jobId: string, paymentId: string) {
               happensAfterPayment: true,
               createdAt: new Date(),
               updatedAt: new Date(),
-
             },
           });
         }
@@ -142,7 +140,7 @@ async function processPaymentJob(jobId: string, paymentId: string) {
           data: {
             userId,
             tokenHash: hashedToken,
-            expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24), // 15 min
+            expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24), // 24 hours
             purpose: "post_payment_access",
           }
         });
@@ -180,8 +178,8 @@ async function processPaymentJob(jobId: string, paymentId: string) {
     await logsService.createLog({
       action: LogAction.PAYMENT,
       level: LogLevel.INFO,
-      entity: "MERCADO_PAGO_INTEGRATION_CREATE_USER_PAYMENT",
-      message: `Started saving info of payment: ${paymentId}`,
+      entity: "MERCADO_PAGO_INTEGRATION_CREATE_USER_PAYMENT_COMPLETED",
+      message: `Payment completed: ${paymentId}`,
       metadata: {newUserPayment},
     });
 

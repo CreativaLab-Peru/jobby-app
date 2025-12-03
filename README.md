@@ -1,18 +1,23 @@
 # CV SCORE
 
-## Test
+## Dependencies
+1. Bun 1.3.3
+2. Docker and Docker Compose
+3. Node.js 20.x
 
-- Use this to login
-```bash
-  http://localhost:3000/verify?id=0ba3e16e-87f7-4403-8d36-d84f64258bbb&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYWdpYy10b2tlbiIsImVtYWlsIjoidXNlckB0ZXN0LmNvbSIsImV4cCI6MTc1MzAxMTc5MiwiaWF0IjoxNzUyOTY4NTkyfQ.ulqMTXZHF71gNMbeAWn2DYFjbIdNUjJmX6WKpdOVNok
-```
-
-- Run Inngest
-```bash
-npx inngest-cli@latest dev
-```
-
-- Add subscription by default
-```bash
-node prisma/seed/init.js
-```
+## Setup Instructions
+1. Generate SSH keys and add them to your GitHub account:
+   ```bash
+   ssh-keygen -t ed25519 -C "your_email@example.com"
+2. Clone the repository:
+   ```bash
+   git clone git@github.com:CreativaLab-Peru/jobby-app.git
+   ```
+3. Run the script to set up the environment: (linux)
+   ```bash
+   ./setup.sh
+   ```
+4. Start de app (linux)
+  ```bash 
+    ./start_dev.sh
+  ```

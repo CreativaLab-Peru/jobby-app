@@ -40,7 +40,7 @@ export const createPreferenceForNewUser = async (id: string) => {
             id: directPayment.id,
             unit_price: Number(directPayment.priceCents) || 9.90,
             quantity: 1,
-            title: directPayment.name || 'sin-titulo',
+            title: 'Jobby pro',
             currency_id: 'PEN',
           },
         ],
@@ -64,7 +64,7 @@ export const createPreferenceForNewUser = async (id: string) => {
       redirect: preference.init_point!
     }
   } catch (error) {
-    console.error("[MERCADOPAGO][CREATE_PREFERENCE][ERROR]", error)
+    console.error("[ERROR_CREATE_PREFERENCE_FOR_NEW_USER", error)
     return {
       success: false,
       error: 'Ha ocurrido un error al procesar tu solicitud',

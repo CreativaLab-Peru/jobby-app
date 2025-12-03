@@ -48,7 +48,8 @@ export const sendMagicLinkToEmail = inngest.createFunction(
     });
 
     try {
-      await addToMailerLite(email, { name, magicLink }, "magicLink");
+      const UrlWithMagicLink = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000" + `/magic-link?token=${magicLink}`;
+      await addToMailerLite(email, { name, UrlWithMagicLink }, "magicLink");
 
       await prisma.queueJob.update({
         where: { id: job.id },

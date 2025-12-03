@@ -75,28 +75,29 @@ export default function AnalysisScore({
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      <div className="container mx-auto px-4 py-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-6xl mx-auto"
-        >
-          <AnalysisHeader />
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+        <div className="container mx-auto px-4 py-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-6xl mx-auto"
+          >
+            <AnalysisHeader />
 
-          <Tabs defaultValue="score" className="space-y-8">
-            <TabsList className="grid w-full grid-cols-1 h-16 text-lg bg-white shadow-lg rounded-xl border-2 border-gray-100">
-              <TabsTrigger
-                value="score"
-                className="text-gray-400 flex items-center gap-3 h-12 text-base font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
-              >
-                <Target className="w-6 h-6" />
-                Score y Recomendaciones
-              </TabsTrigger>
-            </TabsList>
+            <Tabs defaultValue="score" className="space-y-8">
+              <TabsList className="grid w-full grid-cols-1 h-16 text-lg bg-white shadow-lg rounded-xl border-2 border-gray-100">
+                <TabsTrigger
+                  value="score"
+                  className="text-gray-400 flex items-center gap-3 h-12 text-base font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
+                >
+                  <Target className="w-6 h-6" />
+                  Score y Recomendaciones
+                </TabsTrigger>
+              </TabsList>
 
-            {/* TODO: Implementar pestaña de Oportunidades, ahora estamos usando oportunidades hardcodeadas */}
-            {/* <TabsList className="grid w-full grid-cols-2 h-16 text-lg bg-white shadow-lg rounded-xl border-2 border-gray-100">
+              {/* TODO: Implementar pestaña de Oportunidades, ahora estamos usando oportunidades hardcodeadas */}
+              {/* <TabsList className="grid w-full grid-cols-2 h-16 text-lg bg-white shadow-lg rounded-xl border-2 border-gray-100">
               <TabsTrigger
               value="score"
                 className="text-gray-400 flex items-center gap-3 h-12 text-base font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
@@ -113,32 +114,31 @@ export default function AnalysisScore({
               </TabsTrigger>
             </TabsList> */}
 
-            <TabsContent value="score" className="space-y-6">
-              <CVScoreCard score={cvScore} onShowBreakdown={() => setShowScoreBreakdown(true)} />
-              <RecommendationsSection recommendations={recommendations} /> {/* ajusta si necesitas data */}
-            </TabsContent>
+              <TabsContent value="score" className="space-y-6">
+                <CVScoreCard score={cvScore} onShowBreakdown={() => setShowScoreBreakdown(true)} />
+                <RecommendationsSection recommendations={recommendations} /> {/* ajusta si necesitas data */}
+              </TabsContent>
 
-            <TabsContent value="opportunities" className="space-y-6">
-              <OpportunitiesSection opportunities={opportunities} /> {/* ajusta si necesitas data */}
-            </TabsContent>
-          </Tabs>
-          <div>
-            <div className="h-20" /> {/* Espacio para los botones sticky */}
-          </div>
+              <TabsContent value="opportunities" className="space-y-6">
+                <OpportunitiesSection opportunities={opportunities} /> {/* ajusta si necesitas data */}
+              </TabsContent>
+            </Tabs>
+            <div>
+              <div className="h-20" /> {/* Espacio para los botones sticky */}
+            </div>
 
-          {/* TODO: eliminar este componente repetido, puesto que es repetido */}
-          {/*<ActionButtons show={!showStickyButtons} /> */}
-        </motion.div>
+            {/* TODO: eliminar este componente repetido, puesto que es repetido */}
+            {/*<ActionButtons show={!showStickyButtons} /> */}
+          </motion.div>
+        </div>
+        <StickyActionButtons show={showStickyButtons} />
       </div>
-
-      <StickyActionButtons show={showStickyButtons} />
-
       <ScoreBreakdownModal
         show={showScoreBreakdown}
         onClose={() => setShowScoreBreakdown(false)}
         scoreBreakdown={resolvedBreakdown}
         totalScore={cvScore}
       />
-    </div>
+    </>
   )
 }

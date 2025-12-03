@@ -273,22 +273,22 @@ export function Navbar({ userLimit, user, needNewPayment }: NavbarProps) {
         </motion.div>
       )}
 
-      <motion.div
-        initial={{ opacity: 0, height: 0 }}
-        animate={{ opacity: 1, height: "auto" }}
-        className="bg-gradient-to-r from-blue-50 to-red-50 border-t border-blue-200"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Zap className="w-4 h-4 text-blue-500" />
-              <span className="text-sm text-blue-700">
-                La primera version de Jobby CV Score es gratuita. Próximamente agregaremos más funcionalidades premium.
-              </span>
-            </div>
-          </div>
-        </div>
-      </motion.div>
+      {/*<motion.div*/}
+      {/*  initial={{ opacity: 0, height: 0 }}*/}
+      {/*  animate={{ opacity: 1, height: "auto" }}*/}
+      {/*  className="bg-gradient-to-r from-blue-50 to-red-50 border-t border-blue-200"*/}
+      {/*>*/}
+      {/*  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">*/}
+      {/*    <div className="flex items-center justify-between">*/}
+      {/*      <div className="flex items-center space-x-2">*/}
+      {/*        <Zap className="w-4 h-4 text-blue-500" />*/}
+      {/*        <span className="text-sm text-blue-700">*/}
+      {/*          La primera version de Jobby CV Score es gratuita. Próximamente agregaremos más funcionalidades premium.*/}
+      {/*        </span>*/}
+      {/*      </div>*/}
+      {/*    </div>*/}
+      {/*  </div>*/}
+      {/*</motion.div>*/}
     </motion.nav>
   )
 }

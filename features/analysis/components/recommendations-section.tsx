@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import {AlertTriangle, CheckCircle, Lightbulb} from "lucide-react"
 import type { Recommendation } from "@/types/analysis"
+import {categoryMap} from "@/features/analysis/data/category-map";
 
 interface RecommendationsSectionProps {
   recommendations: Recommendation[]
@@ -23,7 +24,7 @@ const impactMap = {
 }
 
 export function RecommendationsSection({ recommendations }: RecommendationsSectionProps) {
-  
+
   return (
     <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
       <CardHeader>
@@ -51,7 +52,9 @@ export function RecommendationsSection({ recommendations }: RecommendationsSecti
               {iconMap[rec.icon] || <Lightbulb className="w-6 h-6 text-gray-500" />}
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-semibold text-gray-800">{rec.title}</h3>
+                  <h3 className="font-semibold text-gray-800">
+                    {categoryMap[rec.title as keyof typeof categoryMap] || rec.title}
+                  </h3>
                   <Badge variant={rec.type === "critical" ? "destructive" : "secondary"}>
                     Impacto {impactMap[rec.type]}
                   </Badge>

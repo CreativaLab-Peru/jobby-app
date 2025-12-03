@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import {useState, useTransition} from "react";
 import {
   Card,
   CardContent,
@@ -26,6 +26,7 @@ import { CvWithRelations } from "../actions/get-cv-for-current-user";
 import { softDeleteCv } from "../actions/soft-delete-cv";
 import { useToast } from "@/hooks/use-toast";
 import {TitleAndForm} from "@/components/title-and-form";
+import {updateCvTitle} from "@/features/cv/actions/update-title";
 
 interface CVCardProps {
   cv: CvWithRelations;
@@ -36,6 +37,7 @@ export function CVCard({ cv }: CVCardProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const [isPending, startTransition] = useTransition()
 
   const handleEdit = () => {
     router.push(`/cv/${cv.id}/edit`);
@@ -67,7 +69,24 @@ export function CVCard({ cv }: CVCardProps) {
   };
 
   const handleChangeTitle = async (newTitle: string) => {
-    // Todo: Implementar la lógica para cambiar el título del CV
+    if (isPending) return
+    startTransition(() => {
+      updateCvTitle(cv.id, newTitle).then((result) => {
+        if (result.success) {
+          toast({
+            title: "Título actualizado",
+            description: "El título del CV ha sido actualizado exitosamente.",
+          });
+          router.refresh();
+        } else {
+          toast({
+            title: "Error",
+            description: result.error || "No se pudo actualizar el título del CV",
+            variant: "destructive",
+          });
+        }
+      })
+    })
   }
 
   return (

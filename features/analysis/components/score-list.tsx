@@ -10,21 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/utils/format-date"
 import { CvWithRelations } from "@/features/cv/actions/get-cv-for-current-user"
-
-const categoryMap = {
-  "SUMMARY": "Resumen",
-  "EXPERIENCE": "Experiencia",
-  "CONTACT": "Contacto",
-  "SKILLS": "Habilidades",
-  "LANGUAGES": "Idiomas",
-  "CERTIFICATIONS": "Certificaciones",
-  "EDUCATION": "Educación",
-  "PROJECTS": "Proyectos",
-  "VOLUNTEERING": "Voluntariado",
-  "COMPLEMENTS": "Complementos",
-  "ACHIEVEMENTS": "Logros",
-  "INTERESTS": "Intereses"
-}
+import {categoryMap} from "@/features/analysis/data/category-map";
 
 interface ScoresListPageProps {
   cvs: CvWithRelations[]

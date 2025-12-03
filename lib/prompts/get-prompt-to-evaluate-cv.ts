@@ -23,15 +23,15 @@ Output JSON format:
   ],
   "recommendations": [
     {
-      "sectionType": string,
-      "text": string, // improvement advice
+      "sectionType": string, (It should be in SPANISH)
+      "text": string, // improvement advice (It should be in SPANISH)
       "severity": "LOW" | "MEDIUM" | "HIGH"
     }
   ]
 }
 
 Rules:
-- The section type just have this values: SUMMARY, EXPERIENCE, EDUCATION, SKILLS, PROJECTS, CERTIFICATIONS, LANGUAGES, CONTACT     
+- The section type just have this values: SUMMARY, EXPERIENCE, EDUCATION, SKILLS, PROJECTS, CERTIFICATIONS, LANGUAGES, CONTACT
 - Return ONLY valid JSON.
 - Do not include explanations, markdown, or commentary.
 `;

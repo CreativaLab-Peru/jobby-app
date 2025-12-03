@@ -12,26 +12,18 @@ import { formatDate } from "@/utils/format-date"
 import { CvWithRelations } from "@/features/cv/actions/get-cv-for-current-user"
 
 const categoryMap = {
-  "personalInformation": "Información Personal",
-  "education": "Educación",
-  "projectsExperience": "Proyectos y Experiencia",
-  "skills": "Habilidades",
-  "languages": "Idiomas",
-  "certifications": "Certificaciones",
-  "designAndLayout": "Diseño y Maquetación",
-  "contentQuality": "Calidad del Contenido",
-  "keywords": "Palabras Clave",
-  "overall": "Puntuación General",
-  "formatAndStructure": "Formato y Estructura",
-  "formatPresentation": "Formato y Presentación",
-  "formatAndPresentation": "Formato y Presentación",
-  "length": "Longitud del CV",
-  "customSections": "Secciones Personalizadas",
-  "customKeywords": "Palabras Clave Personalizadas",
-  "customDesign": "Diseño Personalizado",
-  "customContent": "Contenido Personalizado",
-  "customRecommendations": "Recomendaciones Personalizadas",
-  "customOverall": "Puntuación General Personalizada"
+  "SUMMARY": "Resumen",
+  "EXPERIENCE": "Experiencia",
+  "CONTACT": "Contacto",
+  "SKILLS": "Habilidades",
+  "LANGUAGES": "Idiomas",
+  "CERTIFICATIONS": "Certificaciones",
+  "EDUCATION": "Educación",
+  "PROJECTS": "Proyectos",
+  "VOLUNTEERING": "Voluntariado",
+  "COMPLEMENTS": "Complementos",
+  "ACHIEVEMENTS": "Logros",
+  "INTERESTS": "Intereses"
 }
 
 interface ScoresListPageProps {
@@ -149,9 +141,9 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
                               {section.score}%
                             </span>
                             </div>
-                            <Progress 
-                            value={section.score} 
-                            className="h-2.5 bg-gray-200 rounded-full [&>div]:bg-gradient-to-r [&>div]:from-indigo-500 [&>div]:via-purple-500 [&>div]:to-pink-500 [&>div]:rounded-full [&>div]:transition-all [&>div]:duration-500" 
+                            <Progress
+                            value={section.score}
+                            className="h-2.5 bg-gray-200 rounded-full [&>div]:bg-gradient-to-r [&>div]:from-indigo-500 [&>div]:via-purple-500 [&>div]:to-pink-500 [&>div]:rounded-full [&>div]:transition-all [&>div]:duration-500"
                             />
                           </div>
                           ))}

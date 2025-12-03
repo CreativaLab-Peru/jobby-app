@@ -25,6 +25,7 @@ import { formatDate } from "@/utils/format-date";
 import { CvWithRelations } from "../actions/get-cv-for-current-user";
 import { softDeleteCv } from "../actions/soft-delete-cv";
 import { useToast } from "@/hooks/use-toast";
+import {TitleAndForm} from "@/components/title-and-form";
 
 interface CVCardProps {
   cv: CvWithRelations;
@@ -62,9 +63,12 @@ export function CVCard({ cv }: CVCardProps) {
         variant: "destructive",
       });
     }
-
     setIsDeleting(false);
   };
+
+  const handleChangeTitle = async (newTitle: string) => {
+    // Todo: Implementar la lógica para cambiar el título del CV
+  }
 
   return (
     <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 group">
@@ -72,12 +76,6 @@ export function CVCard({ cv }: CVCardProps) {
         <div className="flex items-start justify-between">
           <FileText className="w-8 h-8 text-blue-500 group-hover:scale-110 transition-transform" />
           <div className="flex items-center gap-2">
-            {/* <Badge
-                            variant={lastQueueJob.status !== JobStatus.SUCCEEDED ? "default" : "secondary"}
-                            className={lastQueueJob.status === JobStatus.SUCCEEDED ? "bg-green-100 text-green-800" : "bg-orange-100 text-orange-800"}
-                        >
-                            {lastQueueJob.status}
-                        </Badge> */}
             <Button
               variant="ghost"
               size="icon"
@@ -89,7 +87,7 @@ export function CVCard({ cv }: CVCardProps) {
           </div>
         </div>
         <CardTitle className="text-xl text-gray-800 group-hover:text-blue-600 transition-colors">
-          {cv?.title || <span className="text-gray-400">Sin título</span>}
+          <TitleAndForm title={cv.title || 'Sin título'} onSubmit={handleChangeTitle} isSubmitting={false} />
         </CardTitle>
         <CardDescription>
           <span className="font-bold">Tipo de Oportunidad: </span>

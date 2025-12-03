@@ -3,7 +3,7 @@ import { getCvForCurrentUser } from "@/features/cv/actions/get-cv-for-current-us
 import { ScoresListPage } from "@/features/analysis/components/score-list";
 
 export default async function CVPage() {
-  let cvForCurrentUser = await getCvForCurrentUser();
+  const cvForCurrentUser = await getCvForCurrentUser();
   return (
     <>
       <CVListPage

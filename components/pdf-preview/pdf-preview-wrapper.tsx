@@ -1,4 +1,4 @@
-// app/(main)/test/pdf-preview-wrapper.tsx
+// app/(main)/tests/pdf-preview-wrapper.tsx
 "use client";
 
 import dynamic from "next/dynamic";
@@ -10,10 +10,10 @@ const ClientPDFPreview = dynamic(
   { ssr: false }
 );
 
-export function PdfPreviewWrapper({ 
-  cvData, 
-  sections 
-}: { 
+export function PdfPreviewWrapper({
+  cvData,
+  sections
+}: {
   cvData: CVData;
   sections: CVSection[];
 }) {

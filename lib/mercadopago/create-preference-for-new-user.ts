@@ -1,27 +1,24 @@
 "use server"
 
-import { prisma } from "@/lib/prisma";
+import {prisma} from "@/lib/prisma";
 
-import { Preference } from "mercadopago";
-import { PreferenceCreateData } from "mercadopago/dist/clients/preference/create/types";
-import { BASE_URL, mercadopago } from "@/lib/mercado-preference";
-import { PAYMEMT_PLAN_ID_BY_DIRECT } from "../shared/consts";
-import { TemporalUser } from "@prisma/client";
+import {Preference} from "mercadopago";
+import {PreferenceCreateData} from "mercadopago/dist/clients/preference/create/types";
+import {BASE_URL, mercadopago} from "@/lib/mercado-preference";
+import {PAYMEMT_PLAN_ID_BY_DIRECT} from "../shared/consts";
 
-export const createPreferenceForNewUser = async (email: string) => {
+export const createPreferenceForNewUser = async (id: string) => {
   try {
-    let currentUser: TemporalUser | null = null
-    const existingUser = await prisma.temporalUser.findFirst({
+    const currentUser = await prisma.temporalUser.findFirst({
       where: {
-        email,
+        id,
       }
     })
-    if (!existingUser) {
-      currentUser = await prisma.temporalUser.create({
-        data: {
-          email,
-        }
-      })
+    if (!currentUser) {
+      return {
+        success: false,
+        error: 'No se ha encontrado el usuario temporal',
+      }
     }
 
     const directPayment = await prisma.paymentPlan.findFirst({
@@ -43,7 +40,7 @@ export const createPreferenceForNewUser = async (email: string) => {
             id: directPayment.id,
             unit_price: Number(directPayment.priceCents) || 9.90,
             quantity: 1,
-            title: directPayment.name || 'sin-titulo',
+            title: 'Jobby pro',
             currency_id: 'PEN',
           },
         ],
@@ -67,7 +64,7 @@ export const createPreferenceForNewUser = async (email: string) => {
       redirect: preference.init_point!
     }
   } catch (error) {
-    console.error("[MERCADOPAGO][CREATE_PREFERENCE][ERROR]", error)
+    console.error("[ERROR_CREATE_PREFERENCE_FOR_NEW_USER", error)
     return {
       success: false,
       error: 'Ha ocurrido un error al procesar tu solicitud',

@@ -17,7 +17,9 @@ export function CVListPage({ cvs, disabledButton }: CvListProps) {
       <div className="max-w-6xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <CVListHeader disabledButton={disabledButton} />
-          {cvs.length > 0 ? <CVGrid cvs={cvs} /> : <CVEmptyState />}
+          {cvs.length > 0
+            ? <CVGrid cvs={cvs} />
+            : <CVEmptyState />}
         </motion.div>
       </div>
     </div>

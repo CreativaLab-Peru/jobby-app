@@ -1,5 +1,4 @@
-import { ProgressStatus } from "@/features/analysis/components/progress-status"
-import { Suspense } from "react"
+import ProgressTimeline from "@/features/analysis/components/progress-timeline";
 
 interface ProgressPageProps {
   params: Promise<{
@@ -9,11 +8,12 @@ interface ProgressPageProps {
 
 export default async function ProgressPage({ params }: ProgressPageProps) {
   const { cvId } = await params
+
+  // Todo: validation if the CV can be accessed by the user (process status is activated?)
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 flex items-center justify-center px-4">
-      <Suspense fallback={<div>Loading...</div>}>
-        <ProgressStatus cvId={cvId} />
-      </Suspense>
+    <div className="h-full bg-gradient-to-br from-green-50 via-white to-blue-50 flex items-center justify-center px-4">
+      <ProgressTimeline cvId={cvId} />
     </div>
   )
 }

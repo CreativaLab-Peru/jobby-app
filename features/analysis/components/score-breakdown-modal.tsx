@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Calculator, X, CheckCircle, AlertTriangle, Info, Award } from "lucide-react"
 import type { ScoreCategory } from "@/types/analysis"
+import {categoryMap} from "@/features/analysis/data/category-map";
 
 interface ScoreBreakdownModalProps {
   show: boolean
@@ -65,7 +66,9 @@ export function ScoreBreakdownModal({ show, onClose, scoreBreakdown, totalScore 
                             <IconComponent className="w-7 h-7" style={{ color: category.color || '#6b7280' }} />
                           </div>
                           <div>
-                            <h3 className="text-xl font-bold text-gray-800 mb-1">{category.category}</h3>
+                            <h3 className="text-xl font-bold text-gray-800 mb-1">
+                              {categoryMap[category.category as keyof typeof categoryMap] || category.category}
+                            </h3>
                             <p className="text-sm text-gray-600">
                               {category.score}/{category.maxScore} puntos obtenidos
                             </p>
@@ -97,7 +100,9 @@ export function ScoreBreakdownModal({ show, onClose, scoreBreakdown, totalScore 
                                       : "bg-red-500"
                                   }`}
                               />
-                              <span className="text-sm text-gray-700 font-medium">{item.name}</span>
+                              <span className="text-sm text-gray-700 font-medium">
+                                {item.name}
+                              </span>
                             </div>
                             <div className="flex items-center gap-3">
                               <span className="text-sm font-semibold text-gray-600 min-w-[45px] text-right">

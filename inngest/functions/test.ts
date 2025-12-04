@@ -2,11 +2,11 @@ import { inngest } from "./client";
 
 export const testOnProd = inngest.createFunction(
   {
-    id: "test-on-prod",
+    id: "tests-on-prod",
     name: "Test on prod",
     retries: 3,
   },
-  { event: "test.on.prod" },
+  { event: "tests.on.prod" },
   async ({ event }) => {
     const payload = event.data;
 

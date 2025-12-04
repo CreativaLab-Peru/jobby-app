@@ -6,6 +6,8 @@ import { savePdf } from "@/features/upload-cv/actions/save-pdf";
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import { getLimitPlanOfCurrentUser } from "@/lib/shared/get-count-availables-attempts";
+import {getTextFromPdfApi} from "@/utils/get-text-from-pdf-api";
+import {detectCv} from "@/lib/cv/verify-cv";
 
 export async function POST(req: Request) {
   try {
@@ -13,7 +15,7 @@ export async function POST(req: Request) {
     const file = formData.get("pdf") as File;
 
     if (!file) {
-      return NextResponse.json({ success: false, message: "File is required" }, { status: 400 });
+      return NextResponse.json({ success: false, message: "Archivo necesario" }, { status: 400 });
     }
 
     const currentUser = await getCurrentUser();
@@ -39,6 +41,15 @@ export async function POST(req: Request) {
     if (error) {
       return NextResponse.json(
         { success: false, message: error },
+        { status: 400 }
+      );
+    }
+
+    const textFromPdf = await getTextFromPdfApi(url);
+    const result = detectCv(textFromPdf);
+    if (!result.isCv) {
+      return NextResponse.json(
+        { success: false, message: "El archivo subido no parece ser un CV válido." },
         { status: 400 }
       );
     }
@@ -103,8 +114,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: "Error trying to update plan of current user" }, { status: 400 })
     }
 
-
-    // 3️⃣ Trigger Inngest workflow
     await inngest.send({
       name: "cv/uploaded",
       data: {

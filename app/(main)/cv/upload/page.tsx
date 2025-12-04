@@ -13,7 +13,6 @@ import { LoadingModal } from "@/components/loading-modal";
 export default function UploadCVPage() {
     const [uploadedFile, setUploadedFile] = useState<File | null>(null)
     const [loading, setLoading] = useState(false)
-    const [openModal, setOpenModal] = useState(false);
     const router = useRouter()
     const [error, setError] = useState<string | null>(null)
 
@@ -46,6 +45,7 @@ export default function UploadCVPage() {
 
             if (response.data.success === false) {
                 setLoading(false);
+                setError(response.data.message || "Algo salió mal al subir el archivo.");
                 return;
             }
 
@@ -64,7 +64,6 @@ export default function UploadCVPage() {
             }
         } finally {
             setLoading(false);
-            setOpenModal(true);
         }
     };
 
@@ -78,7 +77,6 @@ export default function UploadCVPage() {
 
     return (
         <div className="h-full bg-gradient-to-br from-orange-50 via-white to-red-50">
-            {openModal && <LoadingModal show={openModal} error={error} />}
             <div className="container mx-auto px-4 py-8">
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl mx-auto">
                     <div className="text-center mb-8">
@@ -144,7 +142,9 @@ export default function UploadCVPage() {
                                                 disabled={loading}
                                                 onClick={() => setUploadedFile(null)}
                                                 className="px-6 cursor-pointer">
-                                            Cambiar
+                                            <span className="text-gray-500">
+                                              Cambiar
+                                            </span>
                                         </Button>
                                     </div>
                                 </motion.div>

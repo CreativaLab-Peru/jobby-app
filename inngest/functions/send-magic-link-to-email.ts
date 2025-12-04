@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { JobStatus, LogAction, LogLevel } from "@prisma/client";
 import { logsService } from "@/features/share/services/logs-service";
 
+const PUBLIC_APP_URL = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+
 const required = (value: any, field: string) => {
   if (!value) throw new Error(`Missing required field: ${field}`);
 };
@@ -19,7 +21,7 @@ export const sendMagicLinkToEmail = inngest.createFunction(
       required(name, "name");
       required(name, "magicLink");
     } catch (err) {
-      console.error("[SEND_MAGIC_LINKL_VALIDATION_ERROR]:", err);
+      console.error("[SEND_MAGIC_LINK_VALIDATION_ERROR]:", err);
 
       await logsService.createLog({
         action: LogAction.EMAIL,
@@ -27,7 +29,6 @@ export const sendMagicLinkToEmail = inngest.createFunction(
         message: "Validation failed for sending magic link",
         metadata: { error: err?.message, data: event.data },
       });
-
       return;
     }
 
@@ -48,7 +49,8 @@ export const sendMagicLinkToEmail = inngest.createFunction(
     });
 
     try {
-      await addToMailerLite(email, { name, magicLink }, "welcome");
+      const UrlWithMagicLink = PUBLIC_APP_URL + `/magic-link?token=${magicLink}`;
+      await addToMailerLite(email, { name, magiclink: UrlWithMagicLink }, "magicLink");
 
       await prisma.queueJob.update({
         where: { id: job.id },

@@ -1,14 +1,13 @@
 "use client"
 
-import { useState, useEffect, useTransition } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { FileText, BarChart3, Zap, Plus, Crown } from "lucide-react"
+import { FileText, BarChart3, Zap, Plus } from "lucide-react"
 import Link from "next/link"
 import { ProfileButton } from "@/components/profile-button";
-import { createPreferenceForAuthenticatedUser } from "@/lib/mercadopago/create-preference-for-authenticated-user"
 import { LimitOfPlan } from "@/lib/shared/get-count-availables-attempts"
 
 interface NavbarProps {
@@ -22,10 +21,9 @@ interface NavbarProps {
   userLimit: LimitOfPlan
 }
 
-export function Navbar({ userLimit, user, needNewPayment }: NavbarProps) {
+export function Navbar({ userLimit, user }: NavbarProps) {
   const [mounted, setMounted] = useState(false)
   const [isClosed, setIsClosed] = useState(false)
-  const [isPending, startTransition] = useTransition()
 
   useEffect(() => {
     setMounted(true)
@@ -61,18 +59,6 @@ export function Navbar({ userLimit, user, needNewPayment }: NavbarProps) {
     return "from-red-400 to-red-600"
   }
 
-  const getPremiumSuscription = () => {
-    if (isPending) return
-    startTransition(async () => {
-      const response = await createPreferenceForAuthenticatedUser();
-      if (response.success && response.redirect) {
-        window.location.href = response.redirect;
-        return;
-      }
-      console.error("MercadoPago Preference Creation Response:", response);
-    })
-  }
-
   return (
     <motion.nav
       initial={{ opacity: 0, y: -20 }}
@@ -96,30 +82,6 @@ export function Navbar({ userLimit, user, needNewPayment }: NavbarProps) {
 
           {/* Credits Section */}
           <div className="flex items-center space-x-4">
-
-            {/* Upgrade to Premium Button */}
-            {!needNewPayment ? null : (
-              <motion.div whileHover={{ scale: 1.05 }} className="hidden sm:block">
-                <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-sm"
-                  onClick={getPremiumSuscription}
-                >
-                  <CardContent className="p-3 hover:cursor-pointer" >
-                    <div className="flex items-center space-x-3">
-                      <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg">
-                        <Crown className="w-4 h-4 text-white" />
-                      </div>
-                      <div className="flex flex-col">
-                        <div className="flex items-center space-x-2">
-                          <span className="text-sm font-medium text-gray-700">
-                            Obtener Pro
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )}
 
             {/* CV Creation Credits */}
             <motion.div whileHover={{ scale: 1.05 }} className="hidden sm:block">
@@ -273,22 +235,22 @@ export function Navbar({ userLimit, user, needNewPayment }: NavbarProps) {
         </motion.div>
       )}
 
-      <motion.div
-        initial={{ opacity: 0, height: 0 }}
-        animate={{ opacity: 1, height: "auto" }}
-        className="bg-gradient-to-r from-blue-50 to-red-50 border-t border-blue-200"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Zap className="w-4 h-4 text-blue-500" />
-              <span className="text-sm text-blue-700">
-                La primera version de Jobby CV Score es gratuita. Próximamente agregaremos más funcionalidades premium.
-              </span>
-            </div>
-          </div>
-        </div>
-      </motion.div>
+      {/*<motion.div*/}
+      {/*  initial={{ opacity: 0, height: 0 }}*/}
+      {/*  animate={{ opacity: 1, height: "auto" }}*/}
+      {/*  className="bg-gradient-to-r from-blue-50 to-red-50 border-t border-blue-200"*/}
+      {/*>*/}
+      {/*  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">*/}
+      {/*    <div className="flex items-center justify-between">*/}
+      {/*      <div className="flex items-center space-x-2">*/}
+      {/*        <Zap className="w-4 h-4 text-blue-500" />*/}
+      {/*        <span className="text-sm text-blue-700">*/}
+      {/*          La primera version de Jobby CV Score es gratuita. Próximamente agregaremos más funcionalidades premium.*/}
+      {/*        </span>*/}
+      {/*      </div>*/}
+      {/*    </div>*/}
+      {/*  </div>*/}
+      {/*</motion.div>*/}
     </motion.nav>
   )
 }

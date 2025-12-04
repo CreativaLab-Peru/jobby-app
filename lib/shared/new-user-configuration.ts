@@ -1,6 +1,7 @@
 "use server"
 import { prisma } from "@/lib/prisma";
 import { PAYMEMT_PLAN_ID_BY_DEFAULT } from "./consts";
+import {inngest} from "@/inngest/functions/client";
 
 export const newUserConfiguration = async (userId: string) => {
   try {
@@ -10,7 +11,7 @@ export const newUserConfiguration = async (userId: string) => {
       }
     })
     if (!user) {
-      console.error("[NOT_FOUND_USER]:", userId);
+      console.error("[NOT_FOUND_USER]:", userId)
       return false;
     }
 
@@ -34,6 +35,15 @@ export const newUserConfiguration = async (userId: string) => {
       console.error("[CREATING_NEW_USER_PLAN_ERROR]:", userId);
       return false;
     }
+
+      await inngest.send({
+          name: "send/welcome",
+          data: {
+              email: user.email,
+              name: user.name,
+              userId: user.id,
+          }
+      });
 
     return true;
   } catch (error) {

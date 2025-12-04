@@ -1,6 +1,6 @@
 "use server"
 import { prisma } from "@/lib/prisma";
-import { PAYMEMT_PLAN_ID_BY_DEFAULT } from "./consts";
+import { PAYMENT_PLAN_ID_BY_DEFAULT } from "./consts";
 import {inngest} from "@/inngest/functions/client";
 
 export const newUserConfiguration = async (userId: string) => {
@@ -17,17 +17,17 @@ export const newUserConfiguration = async (userId: string) => {
 
     const planFree = await prisma.paymentPlan.findFirst({
       where: {
-        id: PAYMEMT_PLAN_ID_BY_DEFAULT,
+        id: PAYMENT_PLAN_ID_BY_DEFAULT,
       }
     })
     if (!planFree) {
-      console.error("[PLAN_NOT_FOUND]", PAYMEMT_PLAN_ID_BY_DEFAULT);
+      console.error("[PLAN_NOT_FOUND]", PAYMENT_PLAN_ID_BY_DEFAULT);
       return false;
     }
 
     const userPlan = await prisma.userPayment.create({
       data: {
-        planId: PAYMEMT_PLAN_ID_BY_DEFAULT,
+        planId: PAYMENT_PLAN_ID_BY_DEFAULT,
         userId: user.id,
       }
     })

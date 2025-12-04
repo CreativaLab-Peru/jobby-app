@@ -96,7 +96,7 @@ async function processPaymentJob(jobId: string, paymentId: string) {
     }
 
     let {user_id: userId} = payment.metadata;
-    const {planId, email} = payment.metadata;
+    const {id: planId, email} = payment.metadata;
 
     const existing = await prisma.userPayment.findFirst({
       where: {

@@ -53,7 +53,7 @@ export function CVCard({ cv }: CVCardProps) {
     const result = await softDeleteCv(cv.id);
 
     if (result.success) {
-      toast({
+     toast({
         title: "CV ocultado",
         description: "El CV ha sido ocultado exitosamente. Ya no aparecerá en tu lista.",
       });

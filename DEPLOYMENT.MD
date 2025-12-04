@@ -1,9 +1,12 @@
 # WIP
 
 ### BEFORE DEPLOYMENT
+- Add variables for new flow
+  - MAILERLITE_MAGIC_LINK_GROUP_ID for mailerlite
+  - FIRST_PASSWORD for default password when user register with magic link
+
 - Add new environment variables for Jobby App
   - INNGEST_API_KEY for inngest service
-  - NEXT_PUBLIC_URL client public
   - MP_ACCESS_TOKEN token of mercado pago
 
 - Add new landing page considering the feedback

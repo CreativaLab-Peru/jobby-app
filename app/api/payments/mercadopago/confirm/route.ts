@@ -6,6 +6,9 @@ import {JobStatus, LogAction, LogLevel} from "@prisma/client";
 import {logsService} from "@/features/share/services/logs-service";
 import {inngest} from "@/inngest/functions/client";
 import {generateMagicLinkToken, hashMagicLinkToken} from "@/utils/magic-links";
+import {authClient} from "@/lib/auth-client";
+
+const FIRST_PASSWORD = process.env.FIRST_PASSWORD
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -118,15 +121,13 @@ async function processPaymentJob(jobId: string, paymentId: string) {
           where: {email},
         });
         if (!existingUser) {
-          existingUser = await prisma.user.create({
-            data: {
-              email: temporalUser.email,
-              name: "",
-              emailVerified: true,
-              happensAfterPayment: true,
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            },
+          await authClient.signUp.email({
+            email,
+            password: FIRST_PASSWORD,
+            name:"tmp"
+          })
+          existingUser = await prisma.user.findFirst({
+            where: {email},
           });
         }
         await prisma.temporalUser.delete({
@@ -151,7 +152,7 @@ async function processPaymentJob(jobId: string, paymentId: string) {
             email: existingUser.email,
             name: existingUser.name,
             userId: existingUser.id,
-            magicLink: hashedToken,
+            magicLink: token,
           }
         });
       }
@@ -165,6 +166,16 @@ async function processPaymentJob(jobId: string, paymentId: string) {
         metadata: {paymentId},
       },
     });
+    if (!newUserPayment) {
+      console.error("[ERROR_CREATING_USER_PAYMENT]", {paymentId, userId, planId});
+      await logsService.createLog({
+        action: LogAction.PAYMENT,
+        level: LogLevel.ERROR,
+        entity: "MERCADO_PAGO_INTEGRATION_CREATE_USER_PAYMENT_ERROR",
+        message: `Error creating user payment: ${paymentId}`,
+        metadata: {paymentId, userId, planId},
+      })
+    }
 
     // 7. Marcar job como completado
     await prisma.queueJob.update({
@@ -183,7 +194,7 @@ async function processPaymentJob(jobId: string, paymentId: string) {
       metadata: {newUserPayment},
     });
 
-  } catch (err: any) {
+  } catch (err) {
     await logsService.createLog({
       action: LogAction.PAYMENT,
       level: LogLevel.ERROR,

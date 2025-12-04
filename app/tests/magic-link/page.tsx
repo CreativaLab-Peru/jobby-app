@@ -1,17 +1,25 @@
 import {generateMagicLinkToken, hashMagicLinkToken} from "@/utils/magic-links";
 import {prisma} from "@/lib/prisma";
 import {inngest} from "@/inngest/functions/client";
+import {authClient} from "@/lib/auth-client";
 
-const EMAIL = "192666@unsaac.edu.pe"
+const EMAIL = "201804876h@utea.edu.pe"
+const FIRST_PASSWORD = process.env.FIRST_PASSWORD
 
 export default async function MagicLinkPage() {
 
   try {
-    const existingUser = await prisma.user.findUnique({
+    await authClient.signUp.email({
+      email: EMAIL,
+      password: FIRST_PASSWORD,
+      name:"tmp"
+    })
+
+    const existingUser = await prisma.user.findFirst({
       where: {email: EMAIL},
     });
     if (!existingUser) {
-      return <div>User not found.</div>;
+      return <div>Error creating user.</div>;
     }
 
     const token = generateMagicLinkToken();
@@ -32,7 +40,7 @@ export default async function MagicLinkPage() {
         email: existingUser.email,
         name: existingUser.name,
         userId: existingUser.id,
-        magicLink: hashedToken,
+        magicLink: token,
       }
     });
     return <div>Sending magic link...</div>;

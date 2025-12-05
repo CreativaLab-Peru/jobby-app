@@ -17,8 +17,10 @@ export const TitleAndForm = ({title, onSubmit, isSubmitting}: TitleAndFormProps)
     setValue(e.target.value);
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = () => {
+    if (!isEditMode) {
+      return;
+    }
     const trimmedValue = value.trim();
     if (trimmedValue.length === 0) {
       return;
@@ -36,7 +38,6 @@ export const TitleAndForm = ({title, onSubmit, isSubmitting}: TitleAndFormProps)
     setIsEditMode(true);
   }
 
-
   return (
     <>
       {
@@ -47,9 +48,7 @@ export const TitleAndForm = ({title, onSubmit, isSubmitting}: TitleAndFormProps)
             <Edit className="inline-block w-4 h-4 ml-2 cursor-pointer hover:text-gray-600" onClick={handleDoubleClick} />
           </span>
           )
-          : (<form
-          onSubmit={handleSubmit}
-        >
+          : (<form>
           <div className="flex items-center justify-between mb-4 relative">
             <Input
               className="p-2 mr-4 flex-grow text-gray-500"
@@ -61,7 +60,7 @@ export const TitleAndForm = ({title, onSubmit, isSubmitting}: TitleAndFormProps)
               <div className="flex items-center justify-center">
                 {isSubmitting
                   ? <Loader2 className="inline-block w-4 h-4 mr-1 animate-spin text-green-500 hover:text-green-700 cursor-pointer "/>
-                  : <Check className="inline-block w-4 h-4 mr-1 text-blue-500 hover:text-blue-700 cursor-pointer "/>}
+                  : <Check className="inline-block w-4 h-4 mr-1 text-blue-500 hover:text-blue-700 cursor-pointer" onClick={handleSubmit}/>}
               </div>
               {handleCancel && (
                 <div className="flex items-center justify-center">

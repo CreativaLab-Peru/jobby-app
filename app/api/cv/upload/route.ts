@@ -99,14 +99,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: "The current user has no attempts" }, { status: 400 })
     }
 
-    const oneMoreInUploadCvLimit = lastAvailablePaymentToUpload.manualCvsUsed + 1
+    const oneMoreInUploadCvLimit = lastAvailablePaymentToUpload.uploadCvsUsed + 1
 
     const updatePaymentPlanOfUser = await prisma.userPayment.update({
       where: {
         id: lastAvailablePaymentToUpload.id,
       },
       data: {
-        manualCvsUsed: oneMoreInUploadCvLimit
+        uploadCvsUsed: oneMoreInUploadCvLimit
       }
     })
 

@@ -1,6 +1,6 @@
 "use server"
-import { prisma } from "@/lib/prisma";
-import { PAYMENT_PLAN_ID_BY_DEFAULT } from "./consts";
+import {prisma} from "@/lib/prisma";
+import {PAYMENT_PLAN_ID_BY_DEFAULT} from "./consts";
 import {inngest} from "@/inngest/functions/client";
 
 export const newUserConfiguration = async (userId: string) => {
@@ -36,14 +36,14 @@ export const newUserConfiguration = async (userId: string) => {
       return false;
     }
 
-      await inngest.send({
-          name: "send/welcome",
-          data: {
-              email: user.email,
-              name: user.name,
-              userId: user.id,
-          }
-      });
+    await inngest.send({
+      name: "send/welcome",
+      data: {
+        email: user.email,
+        name: user.name,
+        userId: user.id,
+      }
+    });
 
     return true;
   } catch (error) {

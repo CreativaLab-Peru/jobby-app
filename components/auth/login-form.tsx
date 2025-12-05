@@ -23,7 +23,6 @@ export function LoginForm() {
     const [password, setPassword] = useState("");
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState(false);
     const router = useRouter()
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -31,7 +30,6 @@ export function LoginForm() {
         setSubmitting(true);
         try {
             setError(null);
-            // Replace with real authentication logic
             const response = await authClient.signIn.email({
                 email,
                 password
@@ -41,7 +39,6 @@ export function LoginForm() {
                 setError(errorMessage);
                 return;
             }
-            setSuccess(true);
             // Redirect to dashboard or home page after successful login
             router.push('/cv');
         } finally {
@@ -114,15 +111,6 @@ export function LoginForm() {
                                     </div>
                                 )}
 
-                                {/* Success Message */}
-                                {/* {success && (
-                                    <div className="bg-green-50 border border-green-200 rounded-md p-3">
-                                        <div className="text-green-500 text-sm">
-                                            ¡Has iniciado sesión correctamente! Redirigiendo...
-                                        </div>
-                                    </div>
-                                )} */}
-
                                 {/* Forgot Password Link */}
                                 <div className="flex items-center justify-between text-sm">
                                     <label>
@@ -192,10 +180,10 @@ export function LoginForm() {
                             <p className="text-center text-sm text-muted-foreground mt-6">
                                 No tienes una cuenta?{" "}
                                 <Link
-                                    href="/register"
+                                    href="/pro"
                                     className="text-primary hover:underline"
                                 >
-                                    Regístrate gratis
+                                    Consulta aquí
                                 </Link>
                             </p>
                         </Card>

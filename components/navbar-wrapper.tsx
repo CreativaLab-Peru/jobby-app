@@ -2,15 +2,14 @@
 
 import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/navbar";
-import { LimitOfPlan } from "@/lib/shared/get-count-availables-attempts";
+import {CreditsOfPlan} from "@/lib/shared/get-available-tokens";
 
 interface NavbarWrapperProps {
-  needNewPayment: boolean;
-  userLimit: LimitOfPlan;
+  creditsOfPlan: CreditsOfPlan;
   user: any;
 }
 
-export function NavbarWrapper({ needNewPayment, userLimit, user }: NavbarWrapperProps) {
+export function NavbarWrapper({ creditsOfPlan, user }: NavbarWrapperProps) {
   const pathname = usePathname();
 
   // 👇 List of paths where you want to hide the navbar
@@ -21,5 +20,5 @@ export function NavbarWrapper({ needNewPayment, userLimit, user }: NavbarWrapper
 
   if (shouldHide) return null;
 
-  return <Navbar needNewPayment={needNewPayment} userLimit={userLimit} user={user} />;
+  return <Navbar userLimit={creditsOfPlan} user={user} />;
 }

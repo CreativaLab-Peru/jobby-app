@@ -6,7 +6,7 @@ import { Preference } from "mercadopago";
 import { PreferenceCreateData } from "mercadopago/dist/clients/preference/create/types";
 import { BASE_URL, mercadopago } from "@/lib/mercado-preference";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
-import { PAYMEMT_PLAN_ID_BY_DIRECT } from "../shared/consts";
+import { PAYMENT_PLAN_ID_BY_DIRECT } from "../shared/consts";
 
 
 export const createPreferenceForAuthenticatedUser = async () => {
@@ -21,7 +21,7 @@ export const createPreferenceForAuthenticatedUser = async () => {
 
     const directPayment = await prisma.paymentPlan.findFirst({
       where: {
-        id: PAYMEMT_PLAN_ID_BY_DIRECT,
+        id: PAYMENT_PLAN_ID_BY_DIRECT,
       },
     })
     if (!directPayment) {

@@ -19,12 +19,18 @@ export async function POST(req: Request) {
   }
 
   // 1. Crear un job en DB
-  const job = await prisma.queueJob.create({
-    data: {
+  const job = await prisma.queueJob.upsert({
+    where: { jobId: paymentId },
+    create: {
       jobId: paymentId,
       type: "MERCADOPAGO_PAYMENT",
       status: JobStatus.PENDING,
-      payload: {paymentId},
+      payload: { paymentId },
+    },
+    update: {
+      // choose which fields to update if the record exists
+      status: JobStatus.PENDING,
+      payload: { paymentId },
     },
   });
 
@@ -90,7 +96,7 @@ async function processPaymentJob(jobId: string, paymentId: string) {
     }
 
     let {user_id: userId} = payment.metadata;
-    const {planId, email} = payment.metadata;
+    const {id: planId, email} = payment.metadata;
 
     const existing = await prisma.userPayment.findFirst({
       where: {

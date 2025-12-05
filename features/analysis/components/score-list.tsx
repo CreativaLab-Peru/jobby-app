@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { formatDate } from "@/utils/format-date"
 import { CvWithRelations } from "@/features/cv/actions/get-cv-for-current-user"
 import {categoryMap} from "@/features/analysis/data/category-map";
+import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
 
 interface ScoresListPageProps {
   cvs: CvWithRelations[]
@@ -51,12 +52,32 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
                 Analiza el rendimiento y mejora tus currículums 🚀
               </p>
             </div>
-            <Button className="bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 hover:from-purple-600 hover:via-pink-600 hover:to-red-600 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
-              disabled={disabledButton}
-              onClick={handleUploadCV}>
-              <Plus className="w-4 h-4 md:mr-2" />
-              <span className="hidden md:inline">✨ Subir CV</span>
-            </Button>
+            <Tooltip delayDuration={80}>
+              <TooltipTrigger asChild>
+                <Button
+                  className="
+                    bg-gradient-to-r from-purple-500 via-pink-500 to-red-500
+                    hover:from-purple-600 hover:via-pink-600 hover:to-red-600
+                    shadow-lg hover:shadow-xl
+                    transition-all duration-300
+                    transform hover:scale-105
+                    cursor-pointer
+                  "
+                  disabled={disabledButton}
+                  onClick={handleUploadCV}
+                >
+                  <Plus className="w-4 h-4 md:mr-2" />
+                  <span className="hidden md:inline">✨ Subir CV</span>
+                </Button>
+              </TooltipTrigger>
+
+              <TooltipContent
+                side="top"
+                className="text-xs font-medium bg-gray-900 text-white px-3 py-1.5 rounded-md shadow-xl border border-white/10"
+              >
+                Requiere <span className="font-semibold text-pink-300">2 Tokens</span>
+              </TooltipContent>
+            </Tooltip>
           </div>
 
           {/* Scores List */}

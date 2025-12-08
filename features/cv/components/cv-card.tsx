@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import {Button} from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,12 +19,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { FileText, Eye, Edit, Trash2, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { formatDate } from "@/utils/format-date";
-import { CvWithRelations } from "../actions/get-cv-for-current-user";
-import { softDeleteCv } from "../actions/soft-delete-cv";
-import { useToast } from "@/hooks/use-toast";
+import {FileText, Eye, Edit, Trash2, Loader2} from "lucide-react";
+import {useRouter} from "next/navigation";
+import {formatDate} from "@/utils/format-date";
+import {CvWithRelations} from "../actions/get-cv-for-current-user";
+import {softDeleteCv} from "../actions/soft-delete-cv";
+import {useToast} from "@/hooks/use-toast";
 import {TitleAndForm} from "@/components/title-and-form";
 import {updateCvTitle} from "@/features/cv/actions/update-title";
 
@@ -32,11 +32,11 @@ interface CVCardProps {
   cv: CvWithRelations;
 }
 
-export function CVCard({ cv }: CVCardProps) {
+export function CVCard({cv}: CVCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
-  const { toast } = useToast();
+  const {toast} = useToast();
   const [isPending, startTransition] = useTransition()
 
   const handleEdit = () => {
@@ -53,7 +53,7 @@ export function CVCard({ cv }: CVCardProps) {
     const result = await softDeleteCv(cv.id);
 
     if (result.success) {
-     toast({
+      toast({
         title: "CV ocultado",
         description: "El CV ha sido ocultado exitosamente. Ya no aparecerá en tu lista.",
       });
@@ -90,10 +90,11 @@ export function CVCard({ cv }: CVCardProps) {
   }
 
   return (
-    <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 group">
+    <Card
+      className="bg-white/90 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 group">
       <CardHeader className="relative">
         <div className="flex items-start justify-between">
-          <FileText className="w-8 h-8 text-blue-500 group-hover:scale-110 transition-transform" />
+          <FileText className="w-8 h-8 text-blue-500 group-hover:scale-110 transition-transform"/>
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
@@ -101,12 +102,13 @@ export function CVCard({ cv }: CVCardProps) {
               className="h-8 w-8 text-gray-500 hover:text-red-600 hover:bg-red-50 cursor-pointer"
               onClick={() => setShowDeleteDialog(true)}
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-4 h-4"/>
             </Button>
           </div>
         </div>
         <CardTitle className="text-xl text-gray-800 group-hover:text-blue-600 transition-colors">
-          <TitleAndForm title={cv.title || 'Sin título'} onSubmit={handleChangeTitle} isSubmitting={false} />
+          <TitleAndForm title={cv.title || 'Sin título'} onSubmit={handleChangeTitle}
+                        isSubmitting={false}/>
         </CardTitle>
         <CardDescription>
           <span className="font-bold">Tipo de Oportunidad: </span>
@@ -147,7 +149,7 @@ export function CVCard({ cv }: CVCardProps) {
             className="border-gray-200 hover:border-gray-300 hover:bg-gray-100 text-black flex-1 bg-transparent cursor-pointer"
             onClick={handleSeeDetail}
           >
-            <Eye className="w-4 h-4 mr-1" />
+            <Eye className="w-4 h-4 mr-1"/>
             Ver
           </Button>
           <Button
@@ -156,7 +158,7 @@ export function CVCard({ cv }: CVCardProps) {
             className="border-gray-200 hover:border-gray-300 hover:bg-gray-100 text-black flex-1 bg-transparent cursor-pointer"
             onClick={handleEdit}
           >
-            <Edit className="w-4 h-4 mr-1" />
+            <Edit className="w-4 h-4 mr-1"/>
             Editar
           </Button>
         </div>
@@ -168,7 +170,8 @@ export function CVCard({ cv }: CVCardProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción eliminará el CV &quot;{cv?.title || 'Sin título'}&quot; de tu lista de forma permanente. {' '}
+              Esta acción eliminará el CV &quot;{cv?.title || 'Sin título'}&quot; de tu lista de
+              forma permanente. {' '}
               <p className="font-bold">¿Deseas continuar?</p>
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -183,7 +186,7 @@ export function CVCard({ cv }: CVCardProps) {
             >
               {isDeleting ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin"/>
                   Eliminando...
                 </>
               ) : (

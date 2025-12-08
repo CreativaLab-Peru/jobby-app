@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { CreateCVModal } from "./create-cv-modal"
 import { useState } from "react"
+import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
 
 interface CVListHeaderProps {
   disabledButton?: boolean
@@ -27,12 +28,32 @@ export function CVListHeader({ disabledButton }: CVListHeaderProps) {
       <CreateCVModal
         isOpen={isModalOpen}
         onOpenChange={openModal}>
-        <Button
-          disabled={disabledButton}
-          className="bg-gradient-to-r from-emerald-400 to-blue-500 hover:from-emerald-500 hover:to-blue-600 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer">
-          <Plus className="w-4 h-4 md:mr-2" />
-          <span className="hidden md:inline">✨ Crear Nuevo CV</span>
-        </Button>
+        <Tooltip delayDuration={80}>
+          <TooltipTrigger asChild>
+            <Button
+              disabled={disabledButton}
+              className="
+                bg-gradient-to-r from-emerald-400 to-blue-500
+                hover:from-emerald-500 hover:to-blue-600
+                shadow-lg hover:shadow-xl
+                transition-all duration-300
+                transform hover:scale-105
+                cursor-pointer
+              "
+            >
+              <Plus className="w-4 h-4 md:mr-2" />
+              <span className="hidden md:inline">Crear Nuevo CV</span>
+            </Button>
+          </TooltipTrigger>
+
+          <TooltipContent
+            side="top"
+            className="text-xs font-medium bg-gray-900 text-white px-3 py-1.5 rounded-md shadow-xl border border-white/10"
+          >
+            Requiere <span className="font-semibold text-emerald-300">1 Token</span>
+          </TooltipContent>
+        </Tooltip>
+
       </CreateCVModal>
     </div>
   )

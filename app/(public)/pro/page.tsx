@@ -393,15 +393,14 @@ const Pro = () => {
 
                 {/* Call to action */}
                 <div className="mt-8 pt-6 border-t border-primary/20">
-                  <Link href="/register" className="block">
-                    <Button
-                      size="lg"
-                      className="w-full shadow-glow hover:shadow-xl transition-all duration-300 text-base font-semibold"
-                    >
-                      Pagar ahora
-                      <Star className="ml-2 h-5 w-5 fill-current"/>
-                    </Button>
-                  </Link>
+                  <Button
+                    size="lg"
+                    className="w-full shadow-glow hover:shadow-xl transition-all duration-300 text-base font-semibold"
+                    onClick={openModal}
+                  >
+                    Pagar ahora
+                    <Star className="ml-2 h-5 w-5 fill-current"/>
+                  </Button>
                 </div>
               </Card>
             </div>

@@ -5,20 +5,19 @@ import { motion } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { FileText, BarChart3, Zap, Plus } from "lucide-react"
+import { Zap, Plus } from "lucide-react"
 import Link from "next/link"
 import { ProfileButton } from "@/components/profile-button";
-import { LimitOfPlan } from "@/lib/shared/get-count-availables-attempts"
+import {CreditsOfPlan} from "@/lib/shared/get-available-tokens";
 
 interface NavbarProps {
-  needNewPayment?: boolean
   user: {
     id: string
     name: string
     email: string
     image?: string
   } | null
-  userLimit: LimitOfPlan
+  userLimit: CreditsOfPlan
 }
 
 export function Navbar({ userLimit, user }: NavbarProps) {
@@ -27,23 +26,19 @@ export function Navbar({ userLimit, user }: NavbarProps) {
 
   useEffect(() => {
     setMounted(true)
-    // Get of the localStorage to check if the banner is closed
     const closed = localStorage.getItem("cv-score-banner-closed")
-    if (closed) {
-      setIsClosed(true)
-    }
+    if (closed) setIsClosed(true)
   }, [])
 
   useEffect(() => {
-    // Save the state of the banner in localStorage
     localStorage.setItem("cv-score-banner-closed", String(isClosed))
   }, [isClosed])
 
-
   if (!mounted) return null
 
-  const cvRemaining = userLimit.cvCreations.total - userLimit.cvCreations.used
-  const scoresRemaining = userLimit.scoreAnalysis.total - userLimit.scoreAnalysis.used
+  // ---- NUEVO SISTEMA DE CRÉDITOS ----
+  const remainingCredits = userLimit.totalCredits - userLimit.usedCredits
+  const totalCredits = userLimit.totalCredits
 
   const getCreditColor = (remaining: number, total: number) => {
     const percentage = remaining / total
@@ -59,6 +54,8 @@ export function Navbar({ userLimit, user }: NavbarProps) {
     return "from-red-400 to-red-600"
   }
 
+  // ------------------------------------
+
   return (
     <motion.nav
       initial={{ opacity: 0, y: -20 }}
@@ -68,123 +65,93 @@ export function Navbar({ userLimit, user }: NavbarProps) {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo/Brand */}
+
+          {/* LOGO */}
           <div className="flex items-center">
             <Link href="/cv" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
-                {/* <span className="text-white font-bold text-sm">CV</span> */}
-              </div>
+              <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg" />
               <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 Jobby
               </span>
             </Link>
           </div>
 
-          {/* Credits Section */}
           <div className="flex items-center space-x-4">
 
-            {/* CV Creation Credits */}
+            {/* ---- NUEVA SECCIÓN DE TOKENS ---- */}
             <motion.div whileHover={{ scale: 1.05 }} className="hidden sm:block">
-              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-sm"
-              >
+              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-sm">
                 <CardContent className="p-3">
-                  <div className="flex items-center space-x-3">
-                    <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-lg">
-                      <FileText className="w-4 h-4 text-white" />
+                  <div className="flex items-center space-x-4">
+
+                    {/* ICONO DEL TOKEN */}
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-400 to-yellow-600 shadow-sm">
+                      T
                     </div>
+
+                    {/* INFORMACIÓN DEL TOKEN */}
                     <div className="flex flex-col">
                       <div className="flex items-center space-x-2">
-                        <span className="text-sm font-medium text-gray-700">CVs</span>
+                        <span className="text-sm font-medium text-gray-700">
+                          Tokens
+                        </span>
                         <Badge
-                          className={`text-xs px-2 py-1 ${getCreditColor(cvRemaining, userLimit.cvCreations.total)}`}
+                          className={`text-xs px-2 py-1 ${getCreditColor(remainingCredits, totalCredits)}`}
                         >
-                          {cvRemaining} restantes
+                          {remainingCredits} disponibles
                         </Badge>
                       </div>
+
                       <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden mt-1">
                         <div
-                          className={`h-full bg-gradient-to-r ${getProgressColor(cvRemaining, userLimit.cvCreations.total)} transition-all duration-300 `}
-                          style={{ width: `${(cvRemaining / userLimit.cvCreations.total) * 100}%` }}
+                          className={`h-full bg-gradient-to-r ${getProgressColor(remainingCredits, totalCredits)} transition-all duration-300`}
+                          style={{ width: `${(remainingCredits / totalCredits) * 100}%` }}
                         />
                       </div>
                     </div>
+
                   </div>
                 </CardContent>
               </Card>
             </motion.div>
 
-            {/* Score Analysis Credits */}
-            <motion.div whileHover={{ scale: 1.05 }} className="hidden sm:block">
-              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-sm"
-              >
-                <CardContent className="p-3">
-                  <div className="flex items-center space-x-3">
-                    <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-r from-purple-400 to-purple-600 rounded-lg">
-                      <BarChart3 className="w-4 h-4 text-white" />
-                    </div>
-                    <div className="flex flex-col">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm font-medium text-gray-700">Scores</span>
-                        {
-                          scoresRemaining !== 0 && <Badge
-                            className={`text-xs px-2 py-1 ${getCreditColor(scoresRemaining, userLimit.scoreAnalysis.total)}`}
-                          >
-                            {scoresRemaining} restantes
-                          </Badge>
-                        }
-                      </div>
-                      {
-                        scoresRemaining === 0
-                          ? <span className="text-xs text-gray-400">
-                            Necesitas plan pro
-                          </span>
-                          :
-                          <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden mt-1">
-                            <div
-                              className={`h-full bg-gradient-to-r ${getProgressColor(scoresRemaining, userLimit.scoreAnalysis.total)} transition-all duration-300`}
-                              style={{ width: `${(scoresRemaining / userLimit.scoreAnalysis.total) * 100}%` }}
-                            />
-                          </div>
-                      }
+            {/* Móvil */}
+            <div className="sm:hidden flex items-center space-x-2 bg-white/70 backdrop-blur-sm px-3 py-2 rounded-xl shadow-sm">
 
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+              {/* Icono */}
+              <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 shadow-md">
+                <span className="text-xs font-bold text-white">T</span>
+              </div>
 
-            {/* Mobile Credits */}
-            <div className="flex sm:hidden items-center space-x-2">
-              <Badge className={`text-xs px-2 py-1 ${getCreditColor(cvRemaining, userLimit.cvCreations.total)}`}>
-                <FileText className="w-3 h-3 mr-1" />
-                {cvRemaining}
-              </Badge>
-              <Badge className={`text-xs px-2 py-1 ${getCreditColor(scoresRemaining, userLimit.scoreAnalysis.total)}`}>
-                <BarChart3 className="w-3 h-3 mr-1" />
-                {scoresRemaining}
-              </Badge>
+              {/* Texto + Barra */}
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-gray-700">
+                  Tokens: {remainingCredits}
+                </span>
+                <div className="w-20 h-1.5 bg-gray-200 rounded-full overflow-hidden mt-1">
+                  <div
+                    className={`h-full bg-gradient-to-r ${getProgressColor(
+                      remainingCredits,
+                      totalCredits
+                    )} transition-all duration-300`}
+                    style={{
+                      width: `${(remainingCredits / totalCredits) * 100}%`,
+                    }}
+                  />
+                </div>
+              </div>
             </div>
-
-            {/*/!* Upgrade Button *!/*/}
-            {/*{!userLimit.isPremium && (*/}
+            {/* PERFIL */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <ProfileButton user={user} />
             </motion.div>
-            {/*)}*/}
 
-            {/*/!* Premium Badge *!/*/}
-            {/*{userLimits.isPremium && (*/}
-            {/*  <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1">*/}
-            {/*    <Crown className="w-3 h-3 mr-1" />*/}
-            {/*    Premium*/}
-            {/*  </Badge>*/}
-            {/*)}*/}
           </div>
         </div>
       </div>
 
-      {/* Warning Banner for Low Credits */}
-      {!isClosed && (cvRemaining <= 1 || scoresRemaining <= 1) && (
+      {/* ---- BANNER DE ALERTA DE CRÉDITOS ---- */}
+      {!isClosed && remainingCredits <= 1 && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
@@ -195,12 +162,9 @@ export function Navbar({ userLimit, user }: NavbarProps) {
               <div className="flex items-center space-x-2">
                 <Zap className="w-4 h-4 text-orange-500" />
                 <span className="text-sm text-orange-700">
-                  {cvRemaining <= 1 && scoresRemaining <= 1
-                    ? "Te quedan pocos créditos para CVs y Scores"
-                    : cvRemaining <= 1
-                      ? "Te quedan pocos créditos para crear CVs"
-                      : "Te quedan pocos créditos para análisis de Scores"}
+                  Te quedan muy pocos créditos disponibles
                 </span>
+
                 <div className="px-2">
                   <Button
                     size="sm"
@@ -220,37 +184,12 @@ export function Navbar({ userLimit, user }: NavbarProps) {
                 onClick={() => setIsClosed(true)}
               >
                 <span className="sr-only">Cerrar</span>
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                ✕
               </Button>
             </div>
           </div>
         </motion.div>
       )}
-
-      {/*<motion.div*/}
-      {/*  initial={{ opacity: 0, height: 0 }}*/}
-      {/*  animate={{ opacity: 1, height: "auto" }}*/}
-      {/*  className="bg-gradient-to-r from-blue-50 to-red-50 border-t border-blue-200"*/}
-      {/*>*/}
-      {/*  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">*/}
-      {/*    <div className="flex items-center justify-between">*/}
-      {/*      <div className="flex items-center space-x-2">*/}
-      {/*        <Zap className="w-4 h-4 text-blue-500" />*/}
-      {/*        <span className="text-sm text-blue-700">*/}
-      {/*          La primera version de Jobby CV Score es gratuita. Próximamente agregaremos más funcionalidades premium.*/}
-      {/*        </span>*/}
-      {/*      </div>*/}
-      {/*    </div>*/}
-      {/*  </div>*/}
-      {/*</motion.div>*/}
     </motion.nav>
   )
 }

@@ -96,9 +96,9 @@ const Header = ({ authenticated }: HeaderProps) => {
                     </Link>
                   ) : (
                     <Link href="/login">
-                      <Button variant="ghost" size="sm">
+                      <Button variant="outline" size="sm" className="hover:cursor-pointer">
                         Iniciar sesión{" "}
-                        <ChevronDown className="ml-2 h-4 w-4 inline-block" />
+                        {/*<ChevronDown className="ml-2 h-4 w-4 inline-block" />*/}
                       </Button>
                     </Link>
                   )}
@@ -136,50 +136,50 @@ const Header = ({ authenticated }: HeaderProps) => {
             </div>
 
             {/* Register - dropdown on hover */}
-            {
-              !authenticated && (
-                <div className="relative">
-                  <div className="group inline-block">
-                    <Link href="/register">
-                      <Button size="sm">
-                        Regístrate{" "}
-                        <ChevronDown className="ml-2 h-4 w-4 inline-block" />
-                      </Button>
-                    </Link>
+            {/*{*/}
+            {/*  !authenticated && (*/}
+            {/*    <div className="relative">*/}
+            {/*      <div className="group inline-block">*/}
+            {/*        <Link href="/register">*/}
+            {/*          <Button size="sm">*/}
+            {/*            Regístrate{" "}*/}
+            {/*            <ChevronDown className="ml-2 h-4 w-4 inline-block" />*/}
+            {/*          </Button>*/}
+            {/*        </Link>*/}
 
-                    {/* <div className="absolute left-0 top-full mt-2 w-56 bg-background border border-border rounded-lg shadow-md p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
-                  <Link href="/register?role=talento">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start"
-                    >
-                      Regístrate como Talento
-                    </Button>
-                  </Link>
-                  <Link href="/register?role=empresa">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start mt-1"
-                    >
-                      Regístrate como Empresa
-                    </Button>
-                  </Link>
-                  <Link href="/register?role=institucion">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start mt-1"
-                    >
-                      Regístrate como Institución
-                    </Button>
-                  </Link>
-                </div> */}
-                  </div>
-                </div>
-              )
-            }
+            {/*        /!* <div className="absolute left-0 top-full mt-2 w-56 bg-background border border-border rounded-lg shadow-md p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">*/}
+            {/*      <Link href="/register?role=talento">*/}
+            {/*        <Button*/}
+            {/*          variant="ghost"*/}
+            {/*          size="sm"*/}
+            {/*          className="w-full justify-start"*/}
+            {/*        >*/}
+            {/*          Regístrate como Talento*/}
+            {/*        </Button>*/}
+            {/*      </Link>*/}
+            {/*      <Link href="/register?role=empresa">*/}
+            {/*        <Button*/}
+            {/*          variant="ghost"*/}
+            {/*          size="sm"*/}
+            {/*          className="w-full justify-start mt-1"*/}
+            {/*        >*/}
+            {/*          Regístrate como Empresa*/}
+            {/*        </Button>*/}
+            {/*      </Link>*/}
+            {/*      <Link href="/register?role=institucion">*/}
+            {/*        <Button*/}
+            {/*          variant="ghost"*/}
+            {/*          size="sm"*/}
+            {/*          className="w-full justify-start mt-1"*/}
+            {/*        >*/}
+            {/*          Regístrate como Institución*/}
+            {/*        </Button>*/}
+            {/*      </Link>*/}
+            {/*    </div> *!/*/}
+            {/*      </div>*/}
+            {/*    </div>*/}
+            {/*  )*/}
+            {/*}*/}
           </div>
 
           {/* PRO Button (visible solo en móvil) */}
@@ -282,10 +282,10 @@ const Header = ({ authenticated }: HeaderProps) => {
                         className="w-full justify-between"
                       >
                         Iniciar sesión
-                        <ChevronDown
-                          className={`h-4 w-4 transition-transform ${mobileLoginOpen ? "rotate-180" : ""
-                            }`}
-                        />
+                        {/*<ChevronDown*/}
+                        {/*  className={`h-4 w-4 transition-transform ${mobileLoginOpen ? "rotate-180" : ""*/}
+                        {/*    }`}*/}
+                        {/*/>*/}
                       </Button>
                     ) : (
                       <Button
@@ -294,10 +294,10 @@ const Header = ({ authenticated }: HeaderProps) => {
                         className="w-full justify-between"
                       >
                         Iniciar sesión
-                        <ChevronDown
-                          className={`h-4 w-4 transition-transform ${mobileLoginOpen ? "rotate-180" : ""
-                            }`}
-                        />
+                        {/*<ChevronDown*/}
+                        {/*  className={`h-4 w-4 transition-transform ${mobileLoginOpen ? "rotate-180" : ""*/}
+                        {/*    }`}*/}
+                        {/*/>*/}
                       </Button>
                     )}
                 </div>

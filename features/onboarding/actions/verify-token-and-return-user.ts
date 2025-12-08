@@ -11,14 +11,19 @@ export async function verifyTokenAndReturnUser(token: string | undefined): Promi
     }
 
     const hashedToken = hashMagicLinkToken(token);
-    console.log("[token]:", token);
-    console.log("[hashedToken]:", hashedToken);
+    console.info("[token]:", token);
+    console.info("[hashedToken]:", hashedToken);
     const magicLink = await prisma.magicLinkToken.findFirst({
       where: {
         tokenHash: hashedToken,
+        usedAt: null,
+        expiresAt: {
+          gt: new Date(),
+        },
       },
     })
     if (!magicLink){
+      console.info("[MAGIC_LINK_NOT_FOUND]");
       return null;
     }
 
@@ -28,6 +33,7 @@ export async function verifyTokenAndReturnUser(token: string | undefined): Promi
       },
     })
     if (!user){
+      console.info("[USER_NOT_FOUND_FOR_MAGIC_LINK]");
       return null;
     }
 

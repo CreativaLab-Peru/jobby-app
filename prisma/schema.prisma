@@ -203,18 +203,36 @@ model Cv {
   deletedAt       DateTime?
 
   // Relations
-  sections    CvSection[] // logical sections (Experience, Education, Skills...)
-  evaluations CvEvaluation[] // evaluation history (one per analysis run)
-  previews    CvPreview[] // preview snapshots (after edits / before/after eval)
-  attachments Attachment[]
-  queueJobs   QueueJob[] // related queue jobs (creation, evaluation, re-eval)
-  notes       String?
+  sections      CvSection[] // logical sections (Experience, Education, Skills...)
+  evaluations   CvEvaluation[] // evaluation history (one per analysis run)
+  previews      CvPreview[] // preview snapshots (after edits / before/after eval)
+  attachments   Attachment[]
+  queueJobs     QueueJob[] // related queue jobs (creation, evaluation, re-eval)
+  opportunities Opportunity[]
+  notes         String?
 
   @@index([userId])
   @@index([language])
   @@index([opportunityType])
   @@index([cvType])
   @@map("cv")
+}
+
+model Opportunity {
+  id                 String          @id @default(uuid())
+  cv                 Cv              @relation(fields: [cvId], references: [id])
+  cvId               String
+  title              String
+  type               OpportunityType
+  deadline           DateTime?
+  match              Decimal
+  requirements       String
+  linkUrl            String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("opportunity")
 }
 
 model CvSection {
@@ -348,6 +366,7 @@ enum LogAction {
   EMAIL
   FILE_UPLOAD
   AUTH
+  OPPORTUNITY
   OTHER
 }
 

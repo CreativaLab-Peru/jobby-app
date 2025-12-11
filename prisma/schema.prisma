@@ -225,7 +225,7 @@ model Opportunity {
   title              String
   type               OpportunityType
   deadline           DateTime?
-  match              Decimal
+  match              Decimal @db.Decimal(5, 2)
   requirements       String
   linkUrl            String
 

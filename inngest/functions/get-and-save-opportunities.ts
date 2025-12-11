@@ -1,34 +1,12 @@
-import { inngest } from "./client";
-import { prisma } from "@/lib/prisma";
-import {CvSectionType, LogAction, LogLevel, OpportunityType} from "@prisma/client";
-import {axiosClient} from "@/lib/axios-client";
+import {inngest} from "./client";
+import {prisma} from "@/lib/prisma";
+import {CvSectionType, LogAction, LogLevel} from "@prisma/client";
 import {logsService} from "@/features/share/services/logs-service";
-
-type CvAnalysisBody = {
-  user_id: string;
-  skills: string[];
-  summary?: string;
-  experience_text?: string;
-  languages?: string[];
-  countries?: string[];
-}
-
-export type OpportunityResponse = {
-  user_id: string;
-  cv_id: string;
-  matches: MatchAnalysis[];
-};
-
-export type MatchAnalysis = {
-  opportunity_id: string;
-  title: string;
-  type: OpportunityType;
-  requirements: string;
-  linkUrl: string;
-  deadline: Date;
-  match_score: number;
-  components: Record<string, any>;
-};
+import {
+  CvAnalysisBody,
+  getOpportunitiesFromEngine
+} from "@/features/opportunities/get-opportunities-from-engine";
+import {saveOpportunities} from "@/features/opportunities/save-opportunities";
 
 export const getAndSaveOpportunities = inngest.createFunction(
   {
@@ -36,9 +14,9 @@ export const getAndSaveOpportunities = inngest.createFunction(
     name: "get-and-save-opportunities",
     retries: 3,
   },
-  { event: "get.and.save.opportunities" },
-  async ({ event }) => {
-    const { cvId, userId } = event.data;
+  {event: "get.and.save.opportunities"},
+  async ({event}) => {
+    const {cvId, userId} = event.data;
 
     await logsService.createLog({
       userId,
@@ -47,7 +25,7 @@ export const getAndSaveOpportunities = inngest.createFunction(
       entity: "CV_OPPORTUNITY",
       entityId: cvId,
       message: "Started getting and saving opportunities CV",
-      metadata: { cvId, userId },
+      metadata: {cvId, userId},
     });
 
     try {
@@ -66,7 +44,7 @@ export const getAndSaveOpportunities = inngest.createFunction(
       // Skills section
       let skills = []
       const skillsSection = cv.sections
-        .find(section => section.sectionType==CvSectionType.SKILLS)
+        .find(section => section.sectionType == CvSectionType.SKILLS)
       if (skillsSection && skillsSection.contentJson) {
         if (skillsSection.contentJson['soft']) {
           skills = [...skills, ...skillsSection.contentJson['soft']]
@@ -79,7 +57,7 @@ export const getAndSaveOpportunities = inngest.createFunction(
       // Summary section
       let summary = ''
       const summarySection = cv.sections
-        .find(section => section.sectionType==CvSectionType.SUMMARY)
+        .find(section => section.sectionType == CvSectionType.SUMMARY)
       if (summarySection && summarySection.contentJson) {
         if (summarySection.contentJson['text']) {
           summary = summarySection.contentJson['text']
@@ -92,34 +70,12 @@ export const getAndSaveOpportunities = inngest.createFunction(
         summary,
       }
 
-      const response = await axiosClient.post('/', buildBody);
-      const opportunities = response.data as OpportunityResponse;
-
-      for (const opp of opportunities.matches) {
-        await prisma.opportunity.upsert({
-          where: {
-            id: opp.opportunity_id,
-          },
-          create: {
-            type: opp.type,
-            title: opp.title,
-            deadline: opp.deadline,
-            requirements: opp.requirements,
-            linkUrl: opp.linkUrl,
-            match: opp.match_score,
-            cv: { connect: { id: cv.id } },
-          },
-          update: {
-            cvId: cv.id,
-            type: opp.type,
-            title: opp.title,
-            deadline: opp.deadline,
-            requirements: opp.requirements,
-            linkUrl: opp.linkUrl,
-            match: opp.match_score,
-          }
-        });
+      const opportunities = await getOpportunitiesFromEngine(userId, cvId, buildBody);
+      if (!opportunities) {
+        return;
       }
+
+      await saveOpportunities(cv.id, opportunities.matches)
       return;
     } catch (error) {
       console.log("[ERROR_GET_AND_SAVE_OPPORTUNITIES]", error)
@@ -139,6 +95,5 @@ export const getAndSaveOpportunities = inngest.createFunction(
       });
       throw error;
     }
-
   }
 );

@@ -164,6 +164,10 @@ export const processUploadedCv = inngest.createFunction(
         name: "cv/ready-for-evaluation",
         data: { cvId, userId },
       });
+      await inngest.send({
+        name: "get.and.save.opportunities",
+        data: { cvId, userId },
+      });
 
       await logsService.createLog({
         userId,

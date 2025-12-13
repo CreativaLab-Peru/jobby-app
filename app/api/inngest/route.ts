@@ -6,6 +6,7 @@ import { testOnProd } from "@/inngest/functions/test";
 import { sendWelcomeEmail } from "@/inngest/functions/send-welcome-email";
 import { sendVerifyEmail } from "@/inngest/functions/send-verify-email";
 import { sendMagicLinkToEmail } from "@/inngest/functions/send-magic-link-to-email";
+import {getAndSaveOpportunities} from "@/inngest/functions/get-and-save-opportunities";
 
 // Create an API that serves zero functions
 export const { GET, POST, PUT } = serve({
@@ -16,6 +17,7 @@ export const { GET, POST, PUT } = serve({
     testOnProd,
     sendWelcomeEmail,
     sendVerifyEmail,
-    sendMagicLinkToEmail
+    sendMagicLinkToEmail,
+    getAndSaveOpportunities
   ],
 });

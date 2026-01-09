@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Zap, Plus } from "lucide-react"
 import Link from "next/link"
-import { ProfileButton } from "@/components/profile-button";
-import {CreditsOfPlan} from "@/lib/shared/get-available-tokens";
+import { ProfileButton } from "@/components/profile-button"
+import { CreditsOfPlan } from "@/lib/shared/get-available-tokens"
 
 interface NavbarProps {
   user: {
@@ -36,76 +36,65 @@ export function Navbar({ userLimit, user }: NavbarProps) {
 
   if (!mounted) return null
 
-  // ---- NUEVO SISTEMA DE CRÉDITOS ----
   const remainingCredits = userLimit.totalCredits - userLimit.usedCredits
   const totalCredits = userLimit.totalCredits
 
-  const getCreditColor = (remaining: number, total: number) => {
+  const getCreditVariant = (remaining: number, total: number) => {
     const percentage = remaining / total
-    if (percentage > 0.6) return "text-green-600 bg-green-50 border-green-200"
-    if (percentage > 0.3) return "text-yellow-600 bg-yellow-50 border-yellow-200"
-    return "text-red-600 bg-red-50 border-red-200"
+    if (percentage > 0.6) return "default"
+    if (percentage > 0.3) return "secondary"
+    return "destructive"
   }
 
-  const getProgressColor = (remaining: number, total: number) => {
-    const percentage = remaining / total
-    if (percentage > 0.6) return "from-green-400 to-green-600"
-    if (percentage > 0.3) return "from-yellow-400 to-yellow-600"
-    return "from-red-400 to-red-600"
-  }
-
-  // ------------------------------------
+  const getProgressWidth = () =>
+    `${(remainingCredits / totalCredits) * 100}%`
 
   return (
     <motion.nav
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm"
+      className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
 
           {/* LOGO */}
-          <div className="flex items-center">
-            <Link href="/cv" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg" />
-              <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                Levely
-              </span>
-            </Link>
-          </div>
+          <Link href="/cv" className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-lg bg-primary" />
+            <span className="text-xl font-bold text-foreground">
+              Levely
+            </span>
+          </Link>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-4">
 
-            {/* ---- NUEVA SECCIÓN DE TOKENS ---- */}
+            {/* TOKENS DESKTOP */}
             <motion.div whileHover={{ scale: 1.05 }} className="hidden sm:block">
-              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-sm">
+              <Card className="bg-card shadow-sm">
                 <CardContent className="p-3">
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center gap-4">
 
-                    {/* ICONO DEL TOKEN */}
-                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-400 to-yellow-600 shadow-sm">
+                    {/* ICONO */}
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-semibold">
                       T
                     </div>
 
-                    {/* INFORMACIÓN DEL TOKEN */}
-                    <div className="flex flex-col">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm font-medium text-gray-700">
+                    {/* INFO */}
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-muted-foreground">
                           Tokens
                         </span>
-                        <Badge
-                          className={`text-xs px-2 py-1 ${getCreditColor(remainingCredits, totalCredits)}`}
-                        >
+                        <Badge variant={getCreditVariant(remainingCredits, totalCredits)}>
                           {remainingCredits} disponibles
                         </Badge>
                       </div>
 
-                      <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden mt-1">
+                      <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
                         <div
-                          className={`h-full bg-gradient-to-r ${getProgressColor(remainingCredits, totalCredits)} transition-all duration-300`}
-                          style={{ width: `${(remainingCredits / totalCredits) * 100}%` }}
+                          className="h-full bg-primary transition-all duration-300"
+                          style={{ width: getProgressWidth() }}
                         />
                       </div>
                     </div>
@@ -115,32 +104,25 @@ export function Navbar({ userLimit, user }: NavbarProps) {
               </Card>
             </motion.div>
 
-            {/* Móvil */}
-            <div className="sm:hidden flex items-center space-x-2 bg-white/70 backdrop-blur-sm px-3 py-2 rounded-xl shadow-sm">
-
-              {/* Icono */}
-              <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 shadow-md">
-                <span className="text-xs font-bold text-white">T</span>
+            {/* TOKENS MOBILE */}
+            <div className="flex items-center gap-2 rounded-xl bg-card px-3 py-2 shadow-sm sm:hidden">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">
+                T
               </div>
 
-              {/* Texto + Barra */}
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-gray-700">
+                <span className="text-xs font-medium text-muted-foreground">
                   Tokens: {remainingCredits}
                 </span>
-                <div className="w-20 h-1.5 bg-gray-200 rounded-full overflow-hidden mt-1">
+                <div className="mt-1 h-1.5 w-20 rounded-full bg-muted overflow-hidden">
                   <div
-                    className={`h-full bg-gradient-to-r ${getProgressColor(
-                      remainingCredits,
-                      totalCredits
-                    )} transition-all duration-300`}
-                    style={{
-                      width: `${(remainingCredits / totalCredits) * 100}%`,
-                    }}
+                    className="h-full bg-primary transition-all duration-300"
+                    style={{ width: getProgressWidth() }}
                   />
                 </div>
               </div>
             </div>
+
             {/* PERFIL */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <ProfileButton user={user} />
@@ -150,42 +132,40 @@ export function Navbar({ userLimit, user }: NavbarProps) {
         </div>
       </div>
 
-      {/* ---- BANNER DE ALERTA DE CRÉDITOS ---- */}
+      {/* ALERTA DE CRÉDITOS */}
       {!isClosed && remainingCredits <= 1 && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
-          className="bg-gradient-to-r from-orange-50 to-red-50 border-t border-orange-200"
+          className="border-t bg-destructive/10"
         >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+          <div className="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Zap className="w-4 h-4 text-orange-500" />
-                <span className="text-sm text-orange-700">
+
+              <div className="flex items-center gap-2 text-destructive">
+                <Zap className="h-4 w-4" />
+                <span className="text-sm">
                   Te quedan muy pocos créditos disponibles
                 </span>
 
-                <div className="px-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="text-orange-700 border-orange-300 hover:bg-orange-100 bg-transparent cursor-pointer"
-                  >
-                    <Plus className="w-3 h-3 mr-1" />
-                    Obtener más
-                  </Button>
-                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="ml-2"
+                >
+                  <Plus className="mr-1 h-3 w-3" />
+                  Obtener más
+                </Button>
               </div>
 
               <Button
                 size="sm"
                 variant="ghost"
-                className="text-gray-500 hover:text-gray-700 cursor-pointer"
                 onClick={() => setIsClosed(true)}
               >
-                <span className="sr-only">Cerrar</span>
                 ✕
               </Button>
+
             </div>
           </div>
         </motion.div>

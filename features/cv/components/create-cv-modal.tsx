@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -26,10 +25,10 @@ interface CreateCVModalProps {
 }
 
 export function CreateCVModal({
-  children,
-  isOpen,
-  onOpenChange,
-}: CreateCVModalProps) {
+                                children,
+                                isOpen,
+                                onOpenChange,
+                              }: CreateCVModalProps) {
   const [formData, setFormData] = useState<{
     title: string;
     cvType: CvType;
@@ -39,56 +38,32 @@ export function CreateCVModal({
     cvType: "TECHNOLOGY_ENGINEERING",
     opportunityType: "INTERNSHIP",
   });
+
   const [isCreating, setIsCreating] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  const handleCreateCV = async () => {
-    const { title, cvType, opportunityType } = formData;
-
-    const isValid = title.trim() && opportunityType.trim() && cvType.trim();
-    // Todo: mostrar el error al usuario
-    if (!isValid) return;
-
-    if (isCreating || isPending) return;
+  const handleCreateCV = () => {
+    if (!formData.title.trim() || isCreating || isPending) return;
 
     setIsCreating(true);
-    try {
-      if (isPending) return;
-      startTransition(() => {
-        createCVByTitleAndType(title, cvType, opportunityType).then(
-          (result) => {
-            if (result?.success) {
-              setFormData({
-                title: "",
-                opportunityType: "INTERNSHIP",
-                cvType: "TECHNOLOGY_ENGINEERING",
-              });
-              onOpenChange(false);
-              const cvId = result.data.id;
-              router.push(`/cv/${cvId}/edit`);
-            } else {
-              console.error(
-                "Error creando CV:",
-                result?.message || "Unknown error"
-              );
-            }
-          }
-        );
+
+    startTransition(() => {
+      createCVByTitleAndType(
+        formData.title,
+        formData.cvType,
+        formData.opportunityType
+      ).then((result) => {
+        if (result?.success) {
+          onOpenChange(false);
+          router.push(`/cv/${result.data.id}/edit`);
+        }
+        setIsCreating(false);
       });
-    } catch (error) {
-      console.error("Error creando CV:", error);
-    } finally {
-      setIsCreating(false);
-    }
+    });
   };
 
   const handleCancel = () => {
-    setFormData({
-      title: "",
-      cvType: "TECHNOLOGY_ENGINEERING",
-      opportunityType: "INTERNSHIP",
-    });
     onOpenChange(false);
   };
 
@@ -97,35 +72,38 @@ export function CreateCVModal({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="bg-white sm:max-w-md">
+
+      <DialogContent className="bg-background sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-emerald-500 to-blue-600 bg-clip-text text-transparent">
-            ✨ Crear Nuevo CV
+          <DialogTitle className="text-2xl font-bold">
+            <span className="text-gradient">✨ Crear nuevo CV</span>
           </DialogTitle>
-          <DialogDescription>
+
+          <DialogDescription className="text-muted-foreground">
             Completa la información básica para comenzar a crear tu currículum
           </DialogDescription>
         </DialogHeader>
 
         <CVForm formData={formData} onFormDataChange={setFormData} />
 
-        <DialogFooter className="flex gap-3">
+        <DialogFooter className="flex gap-3 pt-2">
           <Button
+            type="button"
             variant="outline"
-            className="text-black border-gray-200 hover:bg-gray-200 hover:border-gray-200"
             onClick={handleCancel}
           >
             Cancelar
           </Button>
+
           <Button
             onClick={handleCreateCV}
             disabled={!isFormValid || isCreating || isPending}
-            className="text-white bg-gradient-to-r from-emerald-400 to-blue-500 hover:from-emerald-500 hover:to-blue-600"
+            className="shadow-glow"
           >
             {isCreating ? (
               <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                Creando...
+                <div className="w-4 h-4 mr-2 rounded-full border-2 border-current border-t-transparent animate-spin" />
+                Creando…
               </>
             ) : (
               <>

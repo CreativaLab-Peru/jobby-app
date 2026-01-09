@@ -4,6 +4,7 @@ import './globals.css'
 import AnimatedBackgroundWrapper from '@/components/animated-background-wrapper'
 import { Suspense } from 'react'
 import {TooltipProvider} from "@/components/ui/tooltip";
+import {ThemeProvider} from "@/components/theme-provider";
 
 // Configura la fuente Poppins
 const poppins = Poppins({
@@ -52,14 +53,21 @@ export default async function RootLayout({
   children: React.ReactNode,
 }>) {
   return (
-    <html lang="es" className={poppins.variable}>
+    <html lang="es" className={poppins.variable} suppressHydrationWarning>
       <body className="font-poppins">
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
         <Suspense fallback={null}>
           <AnimatedBackgroundWrapper />
         </Suspense>
         <TooltipProvider>
           <div className="relative z-10">{children}</div>
         </TooltipProvider>
+      </ThemeProvider>
       </body>
     </html>
   )

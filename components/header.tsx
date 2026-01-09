@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {ChevronDown, HomeIcon, Star, User} from "lucide-react";
 import {useState} from "react";
 import Image from "next/image";
+import {ButtonToggleTheme} from "@/components/button-toggle-theme";
 
 interface HeaderProps {
   authenticated: boolean
@@ -99,8 +100,13 @@ const Header = ({authenticated}: HeaderProps) => {
             </Link>
           </div>
 
+
+
           {/* CTA Buttons with per-button hover dropdown (desktop) */}
           <div className="hidden md:flex items-center space-x-4">
+            {/* Button toggle theme */}
+            <ButtonToggleTheme />
+
             {/* Login - dropdown on hover */}
             <div className="relative">
               <div className="group inline-block">

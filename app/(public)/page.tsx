@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import Header from "@/components/header";
-import Footer from "@/components/footer";
 import TestimoniosCarousel from "@/components/testimonios";
 import Image from "next/image";
 import {
@@ -14,6 +12,8 @@ import {
   TrendingUp,
   Award,
 } from "lucide-react";
+
+export const dynamic = 'force-dynamic'
 
 const Index = () => {
   return (
@@ -74,7 +74,7 @@ const Index = () => {
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-5xl font-bold mb-4">
-              ¿Por que elegir <span className="text-gradient">Jobby?</span>
+              ¿Por que elegir <span className="text-gradient">Levely?</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Tres simples pasos para crear tu CV profesional y empezar a recibir oportunidades
@@ -220,7 +220,7 @@ const Index = () => {
                 <div className="text-4xl font-bold mb-2">S/0</div>
                 <p className="text-muted-foreground">Perfecto para empezar</p>
               </div>
-              
+
               <ul className="space-y-4 mb-8">
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
@@ -258,13 +258,13 @@ const Index = () => {
                   POPULAR
                 </span>
               </div>
-              
+
               <div className="text-center mb-6">
                 <h3 className="text-2xl font-bold mb-2">Pro</h3>
                 <div className="text-4xl font-bold mb-2">S/9.90</div>
                 <p className="text-muted-foreground">Por mes</p>
               </div>
-              
+
               <ul className="space-y-4 mb-8">
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />

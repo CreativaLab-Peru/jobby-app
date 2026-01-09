@@ -229,7 +229,7 @@ const Pro = () => {
             <div className="text-center mb-16">
               <h2 className="text-3xl sm:text-5xl font-bold mb-4">
                 ¿Por qué elegir {" "}
-                <span className="text-gradient">Jobby PRO?</span>
+                <span className="text-gradient">Levely PRO?</span>
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Invertir en tu futuro no tiene por qué ser caro
@@ -293,7 +293,7 @@ const Pro = () => {
                 </ul>
               </Card>
 
-              {/* Jobby Pro */}
+              {/* Levely Pro */}
               <Card
                 className="p-8 bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 shadow-2xl hover:shadow-glow transition-all duration-300 hover:scale-[1.02] border-2 border-primary/50 relative overflow-hidden group">
                 <div className="absolute top-4 right-4 z-10">
@@ -320,7 +320,7 @@ const Pro = () => {
 
                 <h3
                   className="text-2xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
-                  Jobby Pro
+                  Levely Pro
                 </h3>
                 <div className="flex items-baseline gap-2 mb-6">
                 <span className="text-3xl font-bold text-primary">

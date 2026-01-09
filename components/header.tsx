@@ -24,7 +24,7 @@ const Header = ({ authenticated }: HeaderProps) => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold text-gradient">Jobby</span>
+            <span className="text-2xl font-bold text-gradient">Levely</span>
           </Link>
 
           {/* Desktop Navigation */}

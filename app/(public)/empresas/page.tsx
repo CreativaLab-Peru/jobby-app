@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import Header from "@/components/header";
-import Footer from "@/components/footer";
 import { Users, Target, TrendingUp, Award, CheckCircle2, Zap } from "lucide-react";
+
+export const dynamic = 'force-dynamic'
 
 const Empresas = () => {
   return (
@@ -105,7 +105,7 @@ const Empresas = () => {
                 <div className="text-4xl font-bold text-primary mb-2">$99</div>
                 <p className="text-muted-foreground">por mes</p>
               </div>
-              
+
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-primary" />
@@ -220,7 +220,7 @@ const Empresas = () => {
             ¿Listo para <span className="text-gradient">empezar</span>?
           </h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Únete a las empresas que ya están descubriendo talento creativo con Jobby
+            Únete a las empresas que ya están descubriendo talento creativo con Levely
           </p>
           <a href="https://calendly.com/mariluzdara/asesoria" target="_blank" rel="noopener noreferrer">
             <Button size="xl" className="shadow-glow">

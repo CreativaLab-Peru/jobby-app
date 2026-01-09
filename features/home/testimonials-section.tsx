@@ -19,7 +19,7 @@ const testimonials = [
   {
     name: "Carlos Mendez",
     role: "Product Manager en Google",
-    company: "Google", 
+    company: "Google",
     content: "La IA detectó habilidades que ni yo sabía que tenía valor en el mercado. Ahora trabajo en mi empresa soñada con 40% más de salario.",
     avatar: "CM",
     rating: 5,
@@ -42,11 +42,11 @@ const testimonials = [
     name: "David Chen",
     role: "Data Scientist en Netflix",
     company: "Netflix",
-    content: "Pensé que mi experiencia no era suficiente, pero Jobby la presentó de una manera que me hizo ver como el candidato perfecto.",
+    content: "Pensé que mi experiencia no era suficiente, pero Levely la presentó de una manera que me hizo ver como el candidato perfecto.",
     avatar: "DC",
     rating: 5,
     result: "Trabajo soñado",
-    timeframe: "En 6 semanas", 
+    timeframe: "En 6 semanas",
     gradient: "from-yellow-500 to-orange-500"
   },
   {
@@ -64,7 +64,7 @@ const testimonials = [
     name: "Miguel Santos",
     role: "DevOps Engineer en Amazon",
     company: "Amazon",
-    content: "Había estado aplicando por meses sin éxito. Con Jobby, conseguí 3 ofertas simultáneas y pude negociar el mejor paquete de mi carrera.",
+    content: "Había estado aplicando por meses sin éxito. Con Levely, conseguí 3 ofertas simultáneas y pude negociar el mejor paquete de mi carrera.",
     avatar: "MS",
     rating: 5,
     result: "3 ofertas simultáneas",
@@ -102,13 +102,13 @@ export function TestimonialsSection() {
             <Quote className="w-4 h-4" />
             <span className="font-medium">Historias reales, resultados reales</span>
           </div>
-          
+
           <h2 className="text-4xl lg:text-6xl font-black mb-6">
             Así cambiamos vidas profesionales
           </h2>
-          
+
           <p className="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
-            Más de 50,000 profesionales han transformado sus carreras con Jobby. 
+            Más de 50,000 profesionales han transformado sus carreras con Levely.
             <strong className="text-white"> Estas son sus historias.</strong>
           </p>
         </motion.div>
@@ -177,7 +177,7 @@ export function TestimonialsSection() {
           <p className="text-blue-100 text-lg mb-6">
             ¿Listo para escribir tu propia historia de éxito?
           </p>
-          
+
           <div className="flex justify-center gap-8 text-sm text-blue-200">
             <div className="flex items-center gap-2">
               <Star className="w-4 h-4 text-yellow-400" />

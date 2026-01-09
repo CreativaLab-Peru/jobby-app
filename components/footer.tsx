@@ -9,7 +9,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <h3 className="text-xl font-bold text-gradient">
-              Jobby
+              Levely
             </h3>
             <p className="text-sm text-muted-foreground">
               Tu talento merece ser visible
@@ -84,7 +84,7 @@ const Footer = () => {
         {/* Línea divisoria */}
         <div className="mt-12 pt-8 border-t border-border text-sm text-muted-foreground">
           <div className="flex flex-col md:flex-row items-center md:justify-between gap-4">
-            <div className="text-center md:text-left">© 2025 Jobby - Todos los derechos reservados.</div>
+            <div className="text-center md:text-left">© 2025 Levely - Todos los derechos reservados.</div>
 
             <div className="flex flex-col md:flex-row items-center gap-3">
               <Link

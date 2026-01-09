@@ -5,7 +5,7 @@
   - MAILERLITE_MAGIC_LINK_GROUP_ID for mailerlite
   - FIRST_PASSWORD for default password when user register with magic link
 
-- Add new environment variables for Jobby App
+- Add new environment variables for Levely App
   - INNGEST_API_KEY for inngest service
   - MP_ACCESS_TOKEN token of mercado pago
 

@@ -1,7 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import Header from "@/components/header";
-import Footer from "@/components/footer";
 import { Calendar, Star, Briefcase, Code, Palette, PenTool, TrendingUp, Video } from "lucide-react";
 
 const expertos = [
@@ -60,6 +58,8 @@ const expertos = [
     description: "Productor audiovisual con trabajos para Netflix y HBO",
   },
 ];
+
+export const dynamic = 'force-dynamic'
 
 const Expertos = () => {
   return (

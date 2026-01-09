@@ -12,9 +12,38 @@ const poppins = Poppins({
   variable: '--font-poppins',
 })
 
+
 export const metadata: Metadata = {
-  title: 'Jobby - Tu talento merece ser visible',
-  description: 'Jobby potenciado con inteligencia artificial',
+  metadataBase: new URL('https://joinlevely.com'),
+
+  title: {
+    default: 'Levely - Tu talento merece ser visible',
+    template: '%s | Levely',
+  },
+
+  description: 'Levely es una plataforma potenciada con inteligencia artificial para hacer visible tu talento profesional y mejorar tus oportunidades laborales.',
+
+  openGraph: {
+    title: 'Levely - Tu talento merece ser visible',
+    description:
+      'Plataforma con inteligencia artificial para potenciar tu perfil profesional y mejorar tus oportunidades laborales.',
+    url: 'https://joinlevely.com',
+    siteName: 'Levely',
+    locale: 'es_ES',
+    type: 'website',
+  },
+
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Levely - Tu talento merece ser visible',
+    description:
+      'Haz visible tu talento profesional con ayuda de inteligencia artificial.',
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
 export default async function RootLayout({

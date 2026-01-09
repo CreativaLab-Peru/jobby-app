@@ -11,25 +11,25 @@ const testimonios = [
   {
     name: "Mónica Díaz",
     role: "Estudiante de Administración",
-    text: "Jobby me ayudó a estructurar mi CV de manera efectiva y a resaltar mis habilidades.",
+    text: "Levely me ayudó a estructurar mi CV de manera efectiva y a resaltar mis habilidades.",
     img: "/testimonios/Monica.png",
   },
   {
     name: "Brenda Mamani",
     role: "Estudiante de Arquitectura",
-    text: "La IA de Jobby transformó mis logros académicos en un CV profesional. Ahora tengo 3 ofertas de internship.",
+    text: "La IA de Levely transformó mis logros académicos en un CV profesional. Ahora tengo 3 ofertas de internship.",
     img: "/testimonios/Brenda.png",
   },
   {
     name: "Jhon Quispe",
     role: "Estudiante de Ingeniería Informática",
-    text: "Jobby me ayudó a conseguir más ofertas de trabajo al optimizar mi CV según las descripciones de las vacantes.",
+    text: "Levely me ayudó a conseguir más ofertas de trabajo al optimizar mi CV según las descripciones de las vacantes.",
     img: "/testimonios/Jhon.png",
   },
   {
     name: "Andy Huaman",
     role: "Data & Business Analyst",
-    text: "Con Jobby, pude crear un CV que realmente refleja mis habilidades técnicas y proyectos.",
+    text: "Con Levely, pude crear un CV que realmente refleja mis habilidades técnicas y proyectos.",
     img: "/testimonios/Andy.png",
   },
   {

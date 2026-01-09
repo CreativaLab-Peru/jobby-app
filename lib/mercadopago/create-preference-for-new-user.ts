@@ -40,7 +40,7 @@ export const createPreferenceForNewUser = async (id: string) => {
             id: directPayment.id,
             unit_price: Number(directPayment.priceCents) || 9.90,
             quantity: 1,
-            title: 'Jobby pro',
+            title: 'Levely pro',
             currency_id: 'PEN',
           },
         ],

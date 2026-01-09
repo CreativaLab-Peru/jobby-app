@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Users, Target, TrendingUp, Award, CheckCircle2, Zap } from "lucide-react";
+import {Users, Target, TrendingUp, Award, CheckCircle2, Zap, Sparkles} from "lucide-react";
 
 export const dynamic = 'force-dynamic'
 
@@ -12,9 +12,11 @@ const Empresas = () => {
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center space-y-8">
-            <div className="inline-block">
-              <span className="px-4 py-2 bg-accent/20 text-accent rounded-full text-sm font-semibold border border-accent/30">
-                🚀 Para Empresas
+            <div
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
+              <Sparkles className="h-4 w-4 text-primary"/>
+              <span className="text-sm font-medium text-primary">
+                Para Empresas
               </span>
             </div>
 

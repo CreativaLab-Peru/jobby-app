@@ -18,7 +18,7 @@
   - Added other type of register and login, but is hidden because not exist a model for this type of user (company, institute, expert.
   - Added the button PRO in the header.
   - /Pro contents all of content related by the PRO model and use the extra components.
-  - FAQsSection includes the question about the PRO model.
+  - FaqsSection includes the question about the PRO model.
   - AutoPlayVideo is the component used for the load the video of demostration.
 
 - Integrated a new modularized structure for create CVs, dynamic form and dynamic preciew taking the sections order.

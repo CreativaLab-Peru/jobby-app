@@ -9,30 +9,34 @@ interface CVPreviewProps {
 }
 
 export function CVPreview({ data, sections }: CVPreviewProps) {
-  // Mapeo de renderizadores para cada tipo de sección
+  // Estilos comunes para consistencia
+  const sectionTitleClasses = "text-left text-[11px] font-bold text-black mb-1.5 uppercase border-b border-black/80 tracking-tight"
+  const itemTitleClasses = "text-[10.5px] font-bold text-black"
+  const bodyTextClasses = "text-[10px] text-black/90 leading-snug"
+
   const sectionRenderers: Record<string, () => React.ReactElement | null> = {
-    achievements: () => 
+    achievements: () =>
       data.achievements?.items?.length ? (
-        <div className="mb-2">
-          <h2 className="text-sm font-bold text-black mb-3 uppercase border-b border-black text-left">LOGROS Y RECONOCIMIENTOS</h2>
-          <div className="text-xs text-black leading-relaxed text-justify list-disc">
+        <div className="mb-4">
+          <h2 className={sectionTitleClasses}>Logros y Reconocimientos</h2>
+          <ul className="list-disc ml-4 space-y-0.5">
             {data.achievements.items.map((achievement, index) => (
-              <div key={achievement.id || index}>
-                <strong>{achievement.title}:</strong> {achievement.description}
-              </div>
+              <li key={achievement.id || index} className={bodyTextClasses}>
+                <span className="font-bold">{achievement.title}:</span> {achievement.description}
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       ) : null,
 
     certifications: () =>
       data.certifications?.items?.length ? (
-        <div className="mb-2">
-          <h2 className="text-left text-sm font-bold text-black mb-2 uppercase border-b border-black">LICENCIAS Y CERTIFICACIONES</h2>
-          <div className="text-xs text-black leading-relaxed text-justify">
+        <div className="mb-4">
+          <h2 className={sectionTitleClasses}>Licencias y Certificaciones</h2>
+          <div className={`${bodyTextClasses} space-y-0.5`}>
             {data.certifications.items.map((cert, index) => (
               <div key={cert.id || index} className="line-clamp-1">
-                {cert.name} by {cert.issuer} ({new Date(cert.date).toLocaleDateString("en-US", { year: "numeric" })})
+                • {cert.name} — {cert.issuer} ({new Date(cert.date).toLocaleDateString("es-ES", { year: "numeric" })})
               </div>
             ))}
           </div>
@@ -41,23 +45,19 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
 
     education: () =>
       data.education?.items?.length ? (
-        <div className="mb-2">
-          <h2 className="text-left text-sm font-bold text-black mb-2 uppercase border-b border-black">EDUCACIÓN</h2>
+        <div className="mb-4">
+          <h2 className={sectionTitleClasses}>Educación</h2>
           {data.education.items.map((edu, index) => (
-            <div key={edu.id || index} className="mb-3">
-              <div className="flex justify-between items-start">
-                <h3 className="text-xs font-bold text-black">{edu.institution}</h3>
-                <span className="text-xs text-black whitespace-nowrap ml-2">{edu.location}</span>
+            <div key={edu.id || index} className="mb-2 last:mb-0">
+              <div className="flex justify-between items-baseline">
+                <h3 className={itemTitleClasses}>{edu.institution}</h3>
+                <span className="text-[9px] font-medium ml-2">{edu.location}</span>
               </div>
-              <div className="flex justify-between items-start">
-                <p className="text-xs text-black">{edu.title}</p>
-                <span className="text-xs text-black whitespace-nowrap ml-2 italic">{edu.year}</span>
+              <div className="flex justify-between items-baseline">
+                <p className={`${bodyTextClasses} italic`}>{edu.title}</p>
+                <span className="text-[9px] italic ml-2">{edu.year}</span>
               </div>
-              {edu.honors && (
-                <ul className="text-left text-xs text-black">
-                  <li>Honores: {edu.honors}</li>
-                </ul>
-              )}
+              {edu.honors && <p className={`${bodyTextClasses} mt-0.5`}>• {edu.honors}</p>}
             </div>
           ))}
         </div>
@@ -65,18 +65,18 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
 
     projects: () =>
       data.projects?.items?.length ? (
-        <div className="mb-2">
-          <h2 className="text-left text-sm font-bold text-black mb-3 uppercase border-b border-black">PROYECTOS ACADÉMICOS</h2>
+        <div className="mb-4">
+          <h2 className={sectionTitleClasses}>Proyectos Académicos</h2>
           {data.projects.items.map((project, index) => (
-            <div key={project.id || index} className="mb-3">
-              <div className="flex justify-between items-start">
-                <h3 className="text-xs font-bold text-black">{project.title}</h3>
-                <span className="text-xs text-black whitespace-nowrap ml-2">{project.duration}</span>
+            <div key={project.id || index} className="mb-2 last:mb-0">
+              <div className="flex justify-between items-baseline">
+                <h3 className={itemTitleClasses}>{project.title}</h3>
+                <span className="text-[9px] italic ml-2">{project.duration}</span>
               </div>
-              <p className="text-xs text-black leading-relaxed text-justify mb-1">{project.description}</p>
+              <p className={`${bodyTextClasses} text-justify mt-0.5`}>{project.description}</p>
               {project.technologies && (
-                <p className="text-xs text-black text-start">
-                  <strong>Tecnologías:</strong> {project.technologies}
+                <p className={`${bodyTextClasses} mt-0.5 font-medium`}>
+                  Tecnologías: <span className="font-normal">{project.technologies}</span>
                 </p>
               )}
             </div>
@@ -86,23 +86,21 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
 
     volunteering: () =>
       data.volunteering?.items?.length ? (
-        <div className="mb-2">
-          <h2 className="text-left text-sm font-bold text-black mb-3 uppercase border-b border-black">VOLUNTARIADOS Y ACTIVIDADES COMUNITARIAS</h2>
+        <div className="mb-4">
+          <h2 className={sectionTitleClasses}>Voluntariado</h2>
           {data.volunteering.items.map((vol, index) => (
-            <div key={vol.id || index} className="mb-3">
-              <div className="flex justify-between items-start">
-                <h3 className="text-xs font-bold text-black">{vol.organization}</h3>
-                <span className="text-xs text-black whitespace-nowrap ml-2 font-bold">{vol.location}</span>
+            <div key={vol.id || index} className="mb-2 last:mb-0">
+              <div className="flex justify-between items-baseline">
+                <h3 className={itemTitleClasses}>{vol.organization}</h3>
+                <span className="text-[9px] font-bold ml-2">{vol.location}</span>
               </div>
-              <div className="flex justify-between items-start mb-1">
-                <p className="text-xs text-black">{vol.position}</p>
-                <span className="text-xs text-black whitespace-nowrap ml-2 italic">{vol.duration}</span>
+              <div className="flex justify-between items-baseline mb-0.5">
+                <p className={`${bodyTextClasses} italic uppercase text-[9px]`}>{vol.position}</p>
+                <span className="text-[9px] italic ml-2">{vol.duration}</span>
               </div>
-              <ul className="text-xs text-black leading-relaxed text-justify">
+              <ul className="list-disc ml-4">
                 {vol.responsibilities?.split("\n").map((line, idx) => (
-                  <li key={idx} className="text-xs list-disc ml-6">
-                    {line.replace(/^[-–•]\s*/, "")}
-                  </li>
+                  <li key={idx} className={bodyTextClasses}>{line.replace(/^[-–•]\s*/, "")}</li>
                 ))}
               </ul>
             </div>
@@ -112,23 +110,21 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
 
     experience: () =>
       data.experience?.items?.length ? (
-        <div className="mb-2">
-          <h2 className="text-left text-sm font-bold text-black mb-3 uppercase border-b border-black">EXPERIENCIA LABORAL</h2>
+        <div className="mb-4">
+          <h2 className={sectionTitleClasses}>Experiencia Laboral</h2>
           {data.experience.items.map((exp, index) => (
-            <div key={exp.id || index} className="mb-3">
-              <div className="flex justify-between items-start">
-                <h3 className="text-xs] font-bold text-black">{exp.company}</h3>
-                <span className="text-xs text-black whitespace-nowrap ml-2 font-bold">{exp.location}</span>
+            <div key={exp.id || index} className="mb-3 last:mb-0">
+              <div className="flex justify-between items-baseline">
+                <h3 className={itemTitleClasses}>{exp.company}</h3>
+                <span className="text-[9px] font-bold ml-2 uppercase">{exp.location}</span>
               </div>
-              <div className="flex justify-between items-start mb-1">
-                <p className="text-xs] text-black">{exp.position}</p>
-                <span className="text-xs] text-black whitespace-nowrap ml-2 italic">{exp.duration}</span>
+              <div className="flex justify-between items-baseline mb-0.5">
+                <p className={`${bodyTextClasses} italic font-medium`}>{exp.position}</p>
+                <span className="text-[9px] italic ml-2">{exp.duration}</span>
               </div>
-              <ul className="text-xs] text-black leading-relaxed text-justify">
+              <ul className="list-disc ml-4 space-y-0.5">
                 {exp.responsibilities?.split("\n").map((line, idx) => (
-                  <li key={idx} className="text-xs list-disc ml-6">
-                    {line.replace(/^[-–•]\s*/, "")}
-                  </li>
+                  <li key={idx} className={bodyTextClasses}>{line.replace(/^[-–•]\s*/, "")}</li>
                 ))}
               </ul>
             </div>
@@ -142,25 +138,17 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
         data.skills.soft.length > 0 ||
         data.skills.languages.length > 0
       ) ? (
-        <div className="mb-2">
-          <h2 className="text-left text-sm font-bold text-black mb-2 uppercase border-b border-black">
-            HABILIDADES PROFESIONALES Y PERSONALES
-          </h2>
-          <div className="text-xs text-black leading-relaxed">
+        <div className="mb-4">
+          <h2 className={sectionTitleClasses}>Habilidades</h2>
+          <div className={`${bodyTextClasses} space-y-0.5`}>
             {data.skills.languages?.length > 0 && (
-              <p className="text-left">
-                <strong>Idiomas:</strong> {data.skills.languages.join(", ")}
-              </p>
+              <p><strong>Idiomas:</strong> {data.skills.languages.join(", ")}</p>
             )}
             {data.skills.technical?.length > 0 && (
-              <p className="text-xs text-left">
-                <strong>Habilidades Técnicas:</strong> {data.skills.technical.join(", ")}
-              </p>
+              <p><strong>Técnicas:</strong> {data.skills.technical.join(", ")}</p>
             )}
             {data.skills.soft?.length > 0 && (
-              <p className="text-xs text-left">
-                <strong>Habilidades Blandas:</strong> {data.skills.soft.join(", ")}
-              </p>
+              <p><strong>Blandas:</strong> {data.skills.soft.join(", ")}</p>
             )}
           </div>
         </div>
@@ -168,58 +156,70 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
   }
 
   return (
-    <div className="text-center bg-white p-8 min-h-[500px] font-sans text-xs" style={{ fontFamily: "Arial, sans-serif" }}>
-      {/* Header with Name */}
+    // CAMBIO: Mantener fondo blanco absoluto pero con bordes definidos por el sistema
+    <div className="bg-white p-[1in] min-h-[11in] shadow-inner text-black selection:bg-primary/20"
+         style={{ fontFamily: "'Inter', 'Arial', sans-serif" }}>
+
+      {/* Header Name */}
       {data.personal?.fullName && (
-        <div className="mb-2">
-          <h1 className="text-2xl font-bold text-black tracking-wide">{data.personal.fullName}</h1>
+        <div className="mb-3">
+          <h1 className="text-2xl font-black text-black tracking-tighter uppercase text-center leading-none">
+            {data.personal.fullName}
+          </h1>
         </div>
       )}
 
-      {/* Contact */}
-      {data.personal && (data.personal.address || data.personal.linkedin || data.personal.phone || data.personal.email) && (
-        <div className="mb-2">
-          <p className="text-xs text-black text-center leading-relaxed whitespace-nowrap overflow-hidden text-ellipsis">
+      {/* Contact Info - Usando el color PRIMARY para links */}
+      {data.personal && (
+        <div className="mb-4">
+          <p className="text-[9px] text-black text-center flex flex-wrap justify-center gap-x-2 gap-y-1 font-medium">
             {data.personal.address && <span>{data.personal.address}</span>}
-            {data.personal.address && (data.personal.linkedin || data.personal.phone || data.personal.email) && <span> • </span>}
+            {data.personal.phone && <span>• {data.personal.phone}</span>}
+            {data.personal.email && <span>• {data.personal.email}</span>}
             {data.personal.linkedin && (
-              <a
-                href={data.personal.linkedin.startsWith('http') ? data.personal.linkedin : `https://${data.personal.linkedin}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
-                {data.personal.linkedin}
-              </a>
+              <>
+                <span>•</span>
+                <a
+                  href={data.personal.linkedin.startsWith('http') ? data.personal.linkedin : `https://${data.personal.linkedin}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline font-bold"
+                >
+                  LinkedIn
+                </a>
+              </>
             )}
-            {data.personal.linkedin && (data.personal.phone || data.personal.email) && <span> • </span>}
-            {data.personal.phone && <span>{data.personal.phone}</span>}
-            {data.personal.phone && data.personal.email && <span> • </span>}
-            {data.personal.email && <span>{data.personal.email}</span>}
           </p>
-          <hr className="border-black mt-2" />
+          <div className="h-[1.5px] bg-black mt-3 w-full" />
         </div>
       )}
 
       {/* Summary */}
       {data.personal?.summary && (
-        <div className="mb-2">
-          <p className="italic text-[14px] text-black leading-relaxed text-justify">{data.personal.summary}</p>
+        <div className="mb-5">
+          <p className="text-[10px] leading-relaxed text-justify text-black/80 antialiased font-medium italic">
+            {data.personal.summary}
+          </p>
         </div>
       )}
 
-      {/* Renderizar secciones dinámicamente en el orden de la configuración */}
-      {sections.map((section) => {
-        const renderer = sectionRenderers[section.id];
-        if (!renderer) return null;
-        return <div key={section.id}>{renderer()}</div>;
-      })}
+      {/* Sections */}
+      <div className="space-y-1">
+        {sections.map((section) => {
+          const renderer = sectionRenderers[section.id];
+          if (!renderer) return null;
+          return <div key={section.id}>{renderer()}</div>;
+        })}
+      </div>
 
-      {/* Empty state */}
+      {/* Empty state - Refactorizado con tus variables */}
       {!data.personal?.fullName && (
-        <div className="text-center py-12 text-gray-400">
-          <Eye className="w-12 h-12 mx-auto mb-4 opacity-50" />
-          <p className="text-sm">Completa los campos para ver la vista previa de tu CV</p>
+        <div className="flex flex-col items-center justify-center py-32 text-muted-foreground">
+          <div className="p-4 rounded-full bg-muted mb-4">
+            <Eye className="w-10 h-10 opacity-20" />
+          </div>
+          <p className="text-sm font-medium">Completa tu información personal</p>
+          <p className="text-xs opacity-60 italic">La vista previa aparecerá aquí</p>
         </div>
       )}
     </div>

@@ -14,8 +14,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import TestimoniosCarousel from "@/components/testimonios";
-import FAQsSection from "@/components/FAQsSection";
-import AutoPlayVideo from "@/components/AutoPlayVideo";
+import FaqsSection from "@/components/faqs-section";
+import AutoPlayVideo from "@/components/auto-play-video";
 import {EmailModal} from "@/components/email-modal";
 import {useState} from "react";
 
@@ -103,87 +103,99 @@ const Pro = () => {
         </section>
 
         {/* Cómo funciona */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-card/30">
-          <div className="container mx-auto max-w-6xl">
-            <div className="text-center mb-16">
+        <section className="relative py-24 px-4 sm:px-6 lg:px-8 bg-card/30 overflow-hidden">
+          {/* Fondo IA sutil */}
+          <div className="pointer-events-none absolute inset-0">
+            <div
+              className="absolute left-1/2 top-0 -translate-x-1/2 h-96 w-96 rounded-full bg-primary/20 blur-3xl opacity-30"/>
+          </div>
+
+          <div className="relative container mx-auto max-w-6xl">
+            {/* Header */}
+            <div className="text-center mb-20">
               <h2 className="text-3xl sm:text-5xl font-bold mb-4">
                 ¿Cómo <span className="text-gradient">funciona?</span>
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Tres simples pasos para crear tu CV profesional y empezar a
-                recibir oportunidades
+                Tres simples pasos para crear tu CV profesional y empezar a recibir oportunidades
               </p>
             </div>
-            <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
-              <div
-                className="group text-center space-y-4 p-6 rounded-2xl hover:bg-card/50 transition-all duration-300">
-                <div className="relative inline-flex">
-                  <div
-                    className="absolute inset-0 bg-primary/30 rounded-full blur-xl group-hover:blur-2xl transition-all"/>
-                  <div
-                    className="relative mx-auto h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary border-2 border-primary/30 group-hover:scale-110 transition-transform">
-                    1
-                  </div>
-                </div>
-                <div className="relative inline-flex">
-                  <Upload
-                    className="h-10 w-10 mx-auto text-primary group-hover:scale-110 transition-transform"/>
-                </div>
-                <h3 className="text-xl font-bold">
-                  Crea tu cuenta, regístrate y realiza el pago
-                </h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Accede al creador inteligente de CV con recomendaciones
-                  alineadas a tu perfil profesional.
-                </p>
-              </div>
 
+            {/* Steps */}
+            <div className="relative grid md:grid-cols-3 gap-8 lg:gap-12">
+              {/* Línea conectora */}
               <div
-                className="group text-center space-y-4 p-6 rounded-2xl hover:bg-card/50 transition-all duration-300">
-                <div className="relative inline-flex">
-                  <div
-                    className="absolute inset-0 bg-secondary/30 rounded-full blur-xl group-hover:blur-2xl transition-all"/>
-                  <div
-                    className="relative mx-auto h-16 w-16 rounded-full bg-secondary/20 flex items-center justify-center text-2xl font-bold text-secondary border-2 border-secondary/30 group-hover:scale-110 transition-transform">
-                    2
-                  </div>
-                </div>
-                <div className="relative inline-flex">
-                  <Sparkles
-                    className="h-10 w-10 mx-auto text-secondary group-hover:scale-110 transition-transform"/>
-                </div>
-                <h3 className="text-xl font-bold">Crea o sube tu CV</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Genera hasta 5 CV adaptados por objetivo laboral (prácticas,
-                  becas o empleos). Cada uno optimizado con palabras clave y
-                  métricas específicas para superar filtros.
-                </p>
-              </div>
+                className="hidden md:block absolute top-16 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent"/>
 
-              <div
-                className="group text-center space-y-4 p-6 rounded-2xl hover:bg-card/50 transition-all duration-300">
-                <div className="relative inline-flex">
-                  <div
-                    className="absolute inset-0 bg-accent/30 rounded-full blur-xl group-hover:blur-2xl transition-all"/>
-                  <div
-                    className="relative mx-auto h-16 w-16 rounded-full bg-accent/20 flex items-center justify-center text-2xl font-bold text-accent border-2 border-accent/30 group-hover:scale-110 transition-transform">
-                    3
+              {[
+                {
+                  step: "1",
+                  title: "Crea tu cuenta",
+                  description:
+                    "Regístrate y accede al creador inteligente de CV con recomendaciones alineadas a tu perfil.",
+                  color: "primary",
+                },
+                {
+                  step: "2",
+                  title: "La IA optimiza tu CV",
+                  description:
+                    "Crea o sube tu CV. Nuestra IA genera versiones optimizadas con palabras clave y métricas.",
+                  color: "secondary",
+                  highlight: true,
+                },
+                {
+                  step: "3",
+                  title: "Recibe oportunidades",
+                  description:
+                    "Obtén recomendaciones personalizadas de vacantes, internships y becas alineadas a tu perfil.",
+                  color: "accent",
+                },
+              ].map(({step, title, description, color, highlight}) => (
+                <div
+                  key={step}
+                  className={`
+            group relative text-center p-8 rounded-2xl
+            bg-card border border-border
+            shadow-card transition-all duration-300
+            hover:-translate-y-1 hover:shadow-glow
+            ${highlight ? "ai-glow" : ""}
+          `}
+                >
+                  {/* Step number */}
+                  <div className="relative mb-6 flex justify-center">
+                    <div
+                      className={`
+                relative h-16 w-16 rounded-full
+                bg-${color}/20 text-${color}
+                flex items-center justify-center
+                text-2xl font-bold
+                border border-${color}/30
+                transition-transform group-hover:scale-110
+              `}
+                    >
+                      {step}
+
+                      {/* Glow */}
+                      <div
+                        className={`
+                  absolute inset-0 rounded-full blur-xl opacity-0
+                  bg-${color}/40
+                  group-hover:opacity-100 transition
+                `}
+                      />
+                    </div>
                   </div>
+
+                  <h3 className="text-xl font-semibold mb-2">{title}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {description}
+                  </p>
                 </div>
-                <div className="relative inline-flex">
-                  <TrendingUp
-                    className="h-10 w-10 mx-auto text-accent group-hover:scale-110 transition-transform"/>
-                </div>
-                <h3 className="text-xl font-bold">Recibe recomendaciones</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  La IA te sugiere oportunidades alineadas a tu perfil: vacantes,
-                  internships y becas. Recibe recomendaciones para mejorar tu
-                  perfil.
-                </p>
-              </div>
+              ))}
             </div>
           </div>
         </section>
+
 
         {/* Video section */}
         <section className="py-20 px-4 sm:px-6 lg:px-8 relative">
@@ -229,7 +241,7 @@ const Pro = () => {
             <div className="text-center mb-16">
               <h2 className="text-3xl sm:text-5xl font-bold mb-4">
                 ¿Por qué elegir {" "}
-                <span className="text-gradient">Jobby PRO?</span>
+                <span className="text-gradient">Levely PRO?</span>
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Invertir en tu futuro no tiene por qué ser caro
@@ -293,7 +305,7 @@ const Pro = () => {
                 </ul>
               </Card>
 
-              {/* Jobby Pro */}
+              {/* Levely Pro */}
               <Card
                 className="p-8 bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 shadow-2xl hover:shadow-glow transition-all duration-300 hover:scale-[1.02] border-2 border-primary/50 relative overflow-hidden group">
                 <div className="absolute top-4 right-4 z-10">
@@ -320,7 +332,7 @@ const Pro = () => {
 
                 <h3
                   className="text-2xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
-                  Jobby Pro
+                  Levely Pro
                 </h3>
                 <div className="flex items-baseline gap-2 mb-6">
                 <span className="text-3xl font-bold text-primary">
@@ -410,7 +422,7 @@ const Pro = () => {
         {/* FAQs */}
         <section className="py-20 px-4 sm:px-6 lg:px-8">
           <div className="container mx-auto max-w-6xl">
-            <FAQsSection/>
+            <FaqsSection/>
           </div>
         </section>
       </div>

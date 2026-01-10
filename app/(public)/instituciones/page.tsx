@@ -1,8 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import Header from "@/components/header";
-import Footer from "@/components/footer";
-import { GraduationCap, BarChart3, Shield, CheckCircle2, BookOpen } from "lucide-react";
+import {GraduationCap, BarChart3, Shield, CheckCircle2, BookOpen, Sparkles} from "lucide-react";
 
 const Instituciones = () => {
   return (
@@ -12,9 +10,11 @@ const Instituciones = () => {
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center space-y-8">
-            <div className="inline-block">
-              <span className="px-4 py-2 bg-secondary/20 text-secondary rounded-full text-sm font-semibold border border-secondary/30">
-                🎓 Para Instituciones
+            <div
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
+              <Sparkles className="h-4 w-4 text-primary"/>
+              <span className="text-sm font-medium text-primary">
+                Para Instituciones
               </span>
             </div>
 

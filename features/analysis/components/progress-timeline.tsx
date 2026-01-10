@@ -10,7 +10,7 @@ import {
   XCircle,
   Clock,
   FileCheck,
-  UploadCloud,
+  UploadCloud, Sparkles,
 } from "lucide-react"
 
 type CvStatus =
@@ -89,11 +89,12 @@ const variants = {
   },
 }
 
+// ... (Tipos y STEPS se mantienen igual)
+
 export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
   const router = useRouter()
   const { data: status } = useSWR<CvStatus | null>(`/api/cv/${cvId}/status`, fetcher, {
     refreshInterval: 3000,
-    refreshWhenHidden: false,
   })
 
   const activeIndex = useMemo(() => {
@@ -102,13 +103,8 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
   }, [status])
 
   useEffect(() => {
-    // If finished, wait a short animation and then navigate
-    if (
-      status?.status === "CV_EVALUATION_FINISHED" ||
-      status?.status === "CV_EVALUATION_SUCCEEDED"
-    ) {
+    if (status?.status === "CV_EVALUATION_FINISHED" || status?.status === "CV_EVALUATION_SUCCEEDED") {
       const evaluateId = (status as any).evaluateId
-      // small timeout to let the last animation play
       setTimeout(() => {
         if (evaluateId) router.push(`/evaluations/${evaluateId}`)
       }, 600)
@@ -116,215 +112,109 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
   }, [status, router])
 
   return (
-      <div>
-        <h1 className="text-2xl font-semibold mb-8 text-center text-gray-500 animate-pulse">
-          Tu CV esta en progreso
+    <div className="max-w-2xl mx-auto">
+      <div className="text-center mb-12">
+        <h1 className="text-2xl font-bold text-foreground mb-2">
+          Analizando tu potencial
         </h1>
-        <div className="flex gap-6 justify-start">
-          {/* Left column: vertical line + icons */}
-          <div className="w-12 flex flex-col items-center relative">
-            {/* vertical base line */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 top-6 bottom-6 w-0.5 bg-gray-200" />
+        <p className="text-muted-foreground animate-pulse flex items-center justify-center gap-2">
+          <Sparkles className="w-4 h-4 text-secondary" />
+          La IA de Levely está procesando tu perfil...
+        </p>
+      </div>
 
-            {/* animated fill line */}
-            <motion.div
-              className="absolute left-1/2 transform -translate-x-1/2 top-6 w-0.5 bg-gradient-to-b from-blue-500 to-green-400 origin-top"
-              initial={{ height: 0 }}
-              animate={{
-                height:
-                  activeIndex <= 0
-                    ? 0
-                    : `${(activeIndex / (STEPS.length - 1)) * 100}%`,
-              }}
-              transition={{ type: "spring", stiffness: 120, damping: 20 }}
-            />
+      <div className="flex gap-8 justify-center">
+        {/* Left column: vertical line + icons */}
+        <div className="w-12 flex flex-col items-center relative">
+          {/* vertical base line */}
+          <div className="absolute left-1/2 transform -translate-x-1/2 top-6 bottom-6 w-1 bg-muted rounded-full" />
 
-            <ol className="flex flex-col gap-y-20 w-full">
-              {STEPS.map((step, idx) => {
-                const StepIcon = step.icon
-                const state =
-                  activeIndex === -1
-                    ? "pending"
-                    : idx < activeIndex
-                      ? "completed"
-                      : idx === activeIndex
-                        ? "active"
-                        : "pending"
+          {/* animated fill line - REFACTOR: Usando ai-gradient */}
+          <motion.div
+            className="absolute left-1/2 transform -translate-x-1/2 top-6 w-1 ai-gradient rounded-full origin-top"
+            initial={{ height: 0 }}
+            animate={{
+              height: activeIndex <= 0 ? 0 : `${(activeIndex / (STEPS.length - 1)) * 100}%`,
+            }}
+            transition={{ type: "spring", stiffness: 50, damping: 20 }}
+          />
 
-                // detect failures
-                const isFailure =
-                  (status?.status === "CV_FAILED" && idx === 0) ||
-                  (status?.status === "CV_EVALUATION_FAILED" && idx === 3)
+          <ol className="flex flex-col gap-y-16 w-full relative z-10">
+            {STEPS.map((step, idx) => {
+              const StepIcon = step.icon
+              const state = activeIndex === -1 ? "pending" : idx < activeIndex ? "completed" : idx === activeIndex ? "active" : "pending"
+              const isFailure = (status?.status === "CV_FAILED" && idx === 0) || (status?.status === "CV_EVALUATION_FAILED" && idx === 3)
 
-                return (
-                  <li key={step.key} className="relative">
-                    <motion.div
-                      variants={variants.step}
-                      animate={state}
-                      className="flex items-center justify-center h-10 w-10 rounded-full"
-                    >
-                      <div
-                        aria-hidden
-                        className={`flex items-center justify-center h-10 w-10 rounded-full shadow-sm
-                          ${state === "completed" ? "bg-white" : "bg-white"}`}
-                      >
-                        <AnimatePresence mode="wait">
-                          {state === "completed" ? (
-                            <motion.span
-                              key="check"
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              exit={{ opacity: 0 }}
-                            >
-                              <CheckCircle className="w-6 h-6 text-green-500" />
-                            </motion.span>
-                          ) : isFailure ? (
-                            <motion.span
-                              key="fail"
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                            >
-                              <XCircle className="w-6 h-6 text-red-500" />
-                            </motion.span>
-                          ) : state === "active" ? (
-                            <motion.span
-                              key="loader"
-                              initial={{ rotate: 0 }}
-                              animate={{ rotate: 360 }}
-                              transition={{ repeat: Infinity, duration: 1 }}
-                            >
-                              <Loader2 className="w-6 h-6 text-blue-500" />
-                            </motion.span>
-                          ) : (
-                            <motion.span
-                              key="icon"
-                              initial={{ opacity: 0.6 }}
-                              animate={{ opacity: 0.9 }}
-                            >
-                              <StepIcon className="w-5 h-5 text-gray-400" />
-                            </motion.span>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    </motion.div>
-                  </li>
-                )
-              })}
-            </ol>
-          </div>
-
-          {/* Right column: titles and descriptions */}
-          <div className="flex-1 max-w-[400px]">
-            <ol className="space-y-8">
-              {STEPS.map((step, idx) => {
-                const state =
-                  activeIndex === -1
-                    ? "pending"
-                    : idx < activeIndex
-                      ? "completed"
-                      : idx === activeIndex
-                        ? "active"
-                        : "pending"
-
-                const isActive = state === "active"
-                const isCompleted = state === "completed"
-                const isFailure =
-                  (status?.status === "CV_FAILED" && idx === 0) ||
-                  (status?.status === "CV_EVALUATION_FAILED" && idx === 3)
-
-                return (
-                  <li key={step.key} className="group">
-                    <motion.div
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.04 }}
-                      className={`p-4 rounded-md transition-shadow focus:outline-none focus:ring-2 focus:ring-offset-2 group-hover:shadow-lg
-                        ${isActive ? "bg-blue-50" : "bg-transparent"}`}
-                      role="listitem"
-                      aria-current={isActive ? "step" : undefined}
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3">
-                            <h3 className={`font-medium text-sm ${isActive ? "text-blue-800" : "text-gray-800"}`}>
-                              {step.title}
-                            </h3>
-                            {isCompleted && (
-                              <span className="text-xs text-green-600">Completed</span>
-                            )}
-                            {isFailure && (
-                              <span className="text-xs text-red-600">Failed</span>
-                            )}
-                          </div>
-                          <p className="mt-1 text-xs text-gray-500">{step.desc}</p>
-                        </div>
-
-                        {/* small status badge */}
-                        <div className="shrink-0">
-                          <AnimatePresence>
-                            {isActive ? (
-                              <motion.div
-                                key="active-badge"
-                                initial={{ opacity: 0, x: 6 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: 6 }}
-                                className="inline-flex items-center gap-2 px-2 py-1 rounded-full bg-white/80 shadow-sm"
-                              >
-                                <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />
-                                <span className="text-xs text-blue-700">In progress</span>
-                              </motion.div>
-                            ) : isCompleted ? (
-                              <motion.div
-                                key="done-badge"
-                                initial={{ opacity: 0, x: 6 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: 6 }}
-                                className="inline-flex items-center gap-2 px-2 py-1 rounded-full bg-white/80 shadow-sm"
-                              >
-                                <CheckCircle className="w-4 h-4 text-green-500" />
-                                <span className="text-xs text-green-700">Done</span>
-                              </motion.div>
-                            ) : isFailure ? (
-                              <motion.div
-                                key="fail-badge"
-                                initial={{ opacity: 0, x: 6 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: 6 }}
-                                className="inline-flex items-center gap-2 px-2 py-1 rounded-full bg-white/80 shadow-sm"
-                              >
-                                <XCircle className="w-4 h-4 text-red-500" />
-                                <span className="text-xs text-red-700">Failed</span>
-                              </motion.div>
-                            ) : (
-                              <motion.div
-                                key="pending-badge"
-                                initial={{ opacity: 0, x: 6 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: 6 }}
-                                className="inline-flex items-center gap-2 px-2 py-1 rounded-full bg-white/80 shadow-sm"
-                              >
-                                <Clock className="w-4 h-4 text-yellow-500" />
-                                <span className="text-xs text-yellow-700">Pending</span>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                      </div>
-                    </motion.div>
-                  </li>
-                )
-              })}
-            </ol>
-          </div>
+              return (
+                <li key={step.key}>
+                  <motion.div
+                    variants={variants.step}
+                    animate={state}
+                    className={`flex items-center justify-center h-12 w-12 rounded-full border-4 transition-colors duration-500
+                      ${state === "completed" ? "bg-card border-secondary" :
+                      state === "active" ? "bg-card border-primary shadow-glow" :
+                        "bg-muted border-muted"}`}
+                  >
+                    <AnimatePresence mode="wait">
+                      {isFailure ? (
+                        <motion.div key="fail" initial={{ scale: 0 }} animate={{ scale: 1 }}>
+                          <XCircle className="w-6 h-6 text-destructive" />
+                        </motion.div>
+                      ) : state === "completed" ? (
+                        <motion.div key="check" initial={{ scale: 0 }} animate={{ scale: 1 }}>
+                          <CheckCircle className="w-6 h-6 text-secondary" />
+                        </motion.div>
+                      ) : state === "active" ? (
+                        <motion.div key="loader" animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }}>
+                          <Loader2 className="w-6 h-6 text-primary" />
+                        </motion.div>
+                      ) : (
+                        <StepIcon className="w-5 h-5 text-muted-foreground/50" />
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                </li>
+              )
+            })}
+          </ol>
         </div>
 
-        {/* Small footer message when no status */}
-        {!status && (
-          <div className="mt-6 text-center text-sm text-gray-500">
-            <XCircle className="w-5 h-5 mx-auto text-red-400" />
-            <p className="mt-2">Error con el CV</p>
-          </div>
-        )}
+        {/* Right column: titles and descriptions */}
+        <div className="flex-1 space-y-16 py-1">
+          {STEPS.map((step, idx) => {
+            const state = activeIndex === -1 ? "pending" : idx < activeIndex ? "completed" : idx === activeIndex ? "active" : "pending"
+            const isActive = state === "active"
+            const isCompleted = state === "completed"
+            const isFailure = (status?.status === "CV_FAILED" && idx === 0) || (status?.status === "CV_EVALUATION_FAILED" && idx === 3)
+
+            return (
+              <motion.div
+                key={step.key}
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className={`transition-all duration-500 ${isActive ? "scale-105" : "scale-100 opacity-60"}`}
+              >
+                <div className={`p-4 rounded-xl border transition-all
+                  ${isActive ? "bg-card shadow-card border-primary/20" : "bg-transparent border-transparent"}`}
+                >
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-2">
+                      <h3 className={`font-bold text-base ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
+                        {step.title}
+                      </h3>
+                      {isCompleted && <span className="text-[10px] font-bold uppercase tracking-widest text-secondary">Listo</span>}
+                      {isFailure && <span className="text-[10px] font-bold uppercase tracking-widest text-destructive">Error</span>}
+                    </div>
+                    <p className={`text-sm mt-1 leading-relaxed ${isActive ? "text-muted-foreground" : "text-muted-foreground/60"}`}>
+                      {step.desc}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            )
+          })}
+        </div>
       </div>
+    </div>
   )
 }

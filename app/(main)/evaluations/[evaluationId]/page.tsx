@@ -10,7 +10,7 @@ interface ScoreAnalysisPageProps {
 
 export default async function EvaluationPageId({ params }: ScoreAnalysisPageProps) {
   const { evaluationId } = await params;
-  const evaluation = await getEvaluationById(evaluationId);
+  const {evaluation, opportunities} = await getEvaluationById(evaluationId);
 
   if (!evaluation) {
     return <div className="text-center text-gray-500">No score analysis available.</div>;
@@ -22,6 +22,7 @@ export default async function EvaluationPageId({ params }: ScoreAnalysisPageProp
   return (
     <AnalysisScore
       scoreBreakdown={scoreBreakdown}
+      opportunities={opportunities}
       cvScore={scoreAnalysis?.overallScore ?? 0}
       recommendations={recommendations}
     />

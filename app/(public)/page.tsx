@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import Header from "@/components/header";
-import Footer from "@/components/footer";
 import TestimoniosCarousel from "@/components/testimonios";
 import Image from "next/image";
 import {
@@ -15,6 +13,8 @@ import {
   Award,
 } from "lucide-react";
 
+export const dynamic = 'force-dynamic'
+
 const Index = () => {
   return (
     <div className="min-h-screen">
@@ -22,11 +22,17 @@ const Index = () => {
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center space-y-8 animate-fade-in">
-            <div className="inline-block">
-              <span className="px-4 py-2 bg-secondary/20 text-secondary rounded-full text-sm font-semibold border border-secondary/30">
-                ✨ Powered by CreativaLab
-              </span>
-            </div>
+            <span
+              className="
+                inline-flex items-center gap-2 px-4 py-2 rounded-full
+                ai-gradient text-primary-foreground
+                text-sm font-medium
+                shadow-sm
+              "
+            >
+              <Sparkles className="h-4 w-4" />
+              Powered by CreativaLab
+            </span>
 
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight">
               Transforma tu talento en un{" "}
@@ -35,84 +41,101 @@ const Index = () => {
 
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
               Optimiza tu perfil, recibe recomendaciones personalizadas y conecta con
-              oportunidades locales, nacionales e internacionales desde prácticas,
-              internships y becas alrededor del mundo.
+              oportunidades locales, nacionales e internacionales.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/register">
-                <Button size="xl" className="w-full sm:w-auto shadow-glow">
+                <Button size="xl" className="ai-glow bg-primary hover:opacity-90 transition">
                   Crear mi CV
                   <Sparkles className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              {/* <Button variant="outline" size="xl" className="w-full sm:w-auto">
-                Ver ejemplo
-              </Button> */}
             </div>
 
             <div className="flex flex-wrap justify-center gap-6 pt-8 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-primary" />
-                <span>Gratis para empezar</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-primary" />
-                <span>Sin tarjeta requerida</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-primary" />
-                <span>Lista en minutos</span>
-              </div>
+              {[
+                "Gratis para empezar",
+                "Sin tarjeta requerida",
+                "Lista en minutos",
+              ].map((text) => (
+                <div key={text} className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-primary" />
+                  {text}
+                </div>
+              ))}
             </div>
+
           </div>
         </div>
       </section>
 
+
       {/* Diferenciadores */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-card/30">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/40">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-5xl font-bold mb-4">
-              ¿Por que elegir <span className="text-gradient">Jobby?</span>
+              ¿Por que elegir <span className="text-gradient">Levely?</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Tres simples pasos para crear tu CV profesional y empezar a recibir oportunidades
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="p-8 bg-card shadow-card hover:shadow-glow transition-all hover:scale-105">
-              <div className="h-12 w-12 rounded-lg bg-primary/20 flex items-center justify-center mb-6">
-                <Target className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold mb-3">Compatible con ATS</h3>
-              <p className="text-muted-foreground">
-                Diseñado para superar sistemas de seguimiento de candidatos y
-                llegar directamente a reclutadores.
-              </p>
-            </Card>
+            {[
+              {
+                title: "Compatible con ATS",
+                description:
+                  "Diseñado para superar sistemas de seguimiento de candidatos y llegar directamente a reclutadores.",
+                icon: Target,
+              },
+              {
+                title: "Optimizado con IA",
+                description:
+                  "Nuestra IA analiza tu perfil y sugiere mejoras basadas en tendencias del mercado laboral.",
+                icon: Zap,
+              },
+              {
+                title: "Enfocado en creativos",
+                description:
+                  "Especializado en perfiles creativos y juniors: diseño, marketing, desarrollo y contenido.",
+                icon: Award,
+              },
+            ].map(({ title, description, icon: Icon }) => (
+              <Card
+                key={title}
+                className="
+                    group p-8 bg-card border border-border
+                    shadow-card transition-all duration-300
+                    hover:-translate-y-1 hover:shadow-glow
+                  "
+              >
+                {/* Icon */}
+                <div
+                  className="
+                      mb-6 h-12 w-12 rounded-xl
+                      bg-primary/10 ring-1 ring-primary/20
+                      flex items-center justify-center
+                      transition group-hover:scale-105
+                    "
+                >
+                  <Icon className="h-6 w-6 text-primary" />
+                </div>
 
-            <Card className="p-8 bg-card shadow-card hover:shadow-glow transition-all hover:scale-105">
-              <div className="h-12 w-12 rounded-lg bg-secondary/20 flex items-center justify-center mb-6">
-                <Zap className="h-6 w-6 text-secondary" />
-              </div>
-              <h3 className="text-xl font-bold mb-3">Optimizado con IA</h3>
-              <p className="text-muted-foreground">
-                Nuestra IA analiza tu perfil y sugiere mejoras basadas en
-                tendencias del mercado laboral.
-              </p>
-            </Card>
+                <h3 className="text-xl font-semibold mb-3">
+                  {title === "Optimizado con IA" ? (
+                    <span className="ai-gradient-text">{title}</span>
+                  ) : (
+                    title
+                  )}
+                </h3>
 
-            <Card className="p-8 bg-card shadow-card hover:shadow-glow transition-all hover:scale-105">
-              <div className="h-12 w-12 rounded-lg bg-accent/20 flex items-center justify-center mb-6">
-                <Award className="h-6 w-6 text-accent" />
-              </div>
-              <h3 className="text-xl font-bold mb-3">Enfocado en creativos</h3>
-              <p className="text-muted-foreground">
-                Especializado en perfiles creativos y juniors: diseño, marketing,
-                desarrollo, contenido y más.
-              </p>
-            </Card>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {description}
+                </p>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
@@ -152,9 +175,11 @@ const Index = () => {
 
 
       {/* Cómo funciona */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-card/30 overflow-hidden">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-muted/40">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
+
+          {/* Header */}
+          <div className="text-center mb-20">
             <h2 className="text-3xl sm:text-5xl font-bold mb-4">
               ¿Cómo <span className="text-gradient">funciona?</span>
             </h2>
@@ -163,144 +188,70 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-12">
-            <div className="text-center space-y-4">
-              <div className="mx-auto h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary">
-                1
-              </div>
-              <Upload className="h-8 w-8 mx-auto text-primary" />
-              <h3 className="text-xl font-bold">Completa tu información</h3>
-              <p className="text-muted-foreground">
-                Ingresa tus datos personales, educación, experiencia y habilidades de forma rápida.
-              </p>
-            </div>
+          {/* Steps */}
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                step: "1",
+                title: "Completa tu información",
+                description:
+                  "Ingresa tus datos personales, educación, experiencia y habilidades de forma rápida.",
+                icon: Upload,
+              },
+              {
+                step: "2",
+                title: "La IA optimiza tu CV",
+                description:
+                  "Nuestra inteligencia artificial transforma tus logros en un CV profesional y atractivo.",
+                icon: Sparkles,
+              },
+              {
+                step: "3",
+                title: "Recibe oportunidades",
+                description:
+                  "Descarga tu CV y accede a oportunidades alineadas a tu perfil.",
+                icon: TrendingUp,
+              },
+            ].map(({ step, title, description, icon: Icon }) => (
+              <div
+                key={step}
+                className="
+            relative p-8 rounded-2xl bg-card border border-border
+            shadow-card transition-all
+            hover:-translate-y-1 hover:shadow-glow
+            text-center
+          "
+              >
+                {/* Step number */}
+                <div
+                  className="
+              absolute -top-5 left-1/2 -translate-x-1/2
+              h-10 w-10 rounded-full
+              bg-primary text-primary-foreground
+              flex items-center justify-center
+              text-sm font-bold shadow
+            "
+                >
+                  {step}
+                </div>
 
-            <div className="text-center space-y-4">
-              <div className="mx-auto h-16 w-16 rounded-full bg-secondary/20 flex items-center justify-center text-2xl font-bold text-secondary">
-                2
-              </div>
-              <Sparkles className="h-8 w-8 mx-auto text-secondary" />
-              <h3 className="text-xl font-bold">IA transforma tus logros</h3>
-              <p className="text-muted-foreground">
-                Nuestra inteligencia artificial optimiza tu contenido y genera un CV ganador.
-              </p>
-            </div>
+                {/* Icon */}
+                <div className="mx-auto mt-6 mb-4 h-14 w-14 rounded-xl bg-primary/10 ring-1 ring-primary/20 flex items-center justify-center">
+                  <Icon className="h-6 w-6 text-primary" />
+                </div>
 
-            <div className="text-center space-y-4">
-              <div className="mx-auto h-16 w-16 rounded-full bg-accent/20 flex items-center justify-center text-2xl font-bold text-accent">
-                3
+                <h3 className="text-xl font-semibold mb-2">{title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  {description}
+                </p>
               </div>
-              <TrendingUp className="h-8 w-8 mx-auto text-accent" />
-              <h3 className="text-xl font-bold">Recibe oportunidades</h3>
-              <p className="text-muted-foreground">
-                Descarga tu CV y recibe hasta 5 oportunidades personalizadas alineadas a tu perfil.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Planes y Precios */}
-      {/* <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-5xl font-bold mb-4">
-              Planes y <span className="text-gradient">precios</span>
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Elige el plan que mejor se adapte a tus necesidades
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto"> */}
-      {/* Plan Gratis */}
-      {/* <Card className="p-8 bg-card shadow-card hover:shadow-lg transition-all">
-              <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold mb-2">Gratis</h3>
-                <div className="text-4xl font-bold mb-2">S/0</div>
-                <p className="text-muted-foreground">Perfecto para empezar</p>
-              </div>
-              
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span className="text-sm">CV básico optimizado</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span className="text-sm">Plantilla profesional</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span className="text-sm">Descarga en PDF</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span className="text-sm">Hasta 5 oportunidades</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span className="text-sm">Soporte técnico</span>
-                </li>
-              </ul>
-
-              <Link href="/register" className="block">
-                <Button variant="outline" className="w-full">
-                  Comenzar gratis
-                </Button>
-              </Link>
-            </Card> */}
-
-      {/* Plan Pro */}
-      {/* <Card className="p-8 bg-linear-to-br from-secondary/20 to-primary/20 shadow-glow border-2 border-primary/50 relative overflow-hidden">
-              <div className="absolute top-4 right-4">
-                <span className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-xs font-bold">
-                  POPULAR
-                </span>
-              </div>
-              
-              <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold mb-2">Pro</h3>
-                <div className="text-4xl font-bold mb-2">S/9.90</div>
-                <p className="text-muted-foreground">Por mes</p>
-              </div>
-              
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span className="text-sm">Todo del plan Gratis</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span className="text-sm font-semibold">CV optimizado con IA avanzada</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span className="text-sm font-semibold">5 oportunidades personalizadas</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span className="text-sm">Análisis de compatibilidad</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                  <span className="text-sm">Soporte prioritario</span>
-                </li>
-              </ul>
-
-              <Link href="/register" className="block">
-                <Button className="w-full shadow-glow">
-                  Comenzar ahora
-                  <Star className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </Card>
-          </div>
-        </div>
-      </section> */}
-
       {/* Testimonios */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-card/30">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/40">
         <div className="container mx-auto max-w-6xl">
           <TestimoniosCarousel />
         </div>
@@ -309,24 +260,22 @@ const Index = () => {
       {/* CTA Final */}
       <section className="py-32 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-4xl text-center">
-          <div className="space-y-8">
-            <h2 className="text-4xl sm:text-6xl font-bold leading-tight">
-              Tu talento merece ser visible.{" "}
-              <span className="text-gradient">Empieza hoy.</span>
-            </h2>
+          <h2 className="text-4xl sm:text-6xl font-bold leading-tight">
+            Tu talento merece ser visible.{" "}
+            <span className="text-gradient">Empieza hoy.</span>
+          </h2>
 
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Únete a estudiantes y jóvenes profesionales que ya están transformando sus oportunidades laborales y perfil profesional.
-            </p>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mt-6">
+            Únete a estudiantes y jóvenes profesionales que ya están transformando sus oportunidades.
+          </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-              <Link href="/register">
-                <Button size="lg" className="w-full sm:w-auto shadow-glow">
-                  Crear mi CV
-                  <Sparkles className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-            </div>
+          <div className="mt-10">
+            <Link href="/register">
+              <Button size="xl" className="ai-glow bg-primary hover:opacity-90 transition">
+                Crear mi CV
+                <Sparkles className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

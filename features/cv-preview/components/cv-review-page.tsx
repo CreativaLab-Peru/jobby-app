@@ -27,19 +27,22 @@ export function PreviewCVComponent({ cv: cvData, cvId, opportunityType, cvType, 
   const sections = useMemo(() => {
     const allSections = getSections(opportunityType, cvType);
     const sectionMap = new Map(allSections.map(s => [s.id, s]));
-    // Mantener el orden de sectionIds
     return sectionIds.map(id => sectionMap.get(id)).filter(Boolean) as typeof allSections;
   }, [opportunityType, cvType, sectionIds]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
+    <div className="min-h-screen bg-gradient-primary">
       <div className="container mx-auto px-4 py-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-6xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-6xl mx-auto"
+        >
           <div className="grid lg:grid-cols-4 gap-8">
             {/* CV Preview */}
             <div className="lg:col-span-3">
-              <Card className="shadow-xl border-0 bg-white">
-                <CardContent className="p-0">
+              <Card className="shadow-card border-0 bg-card">
+                <CardContent className="p-0 text-card-foreground">
                   <PdfPreviewWrapper cvData={cvData} sections={sections} />
                 </CardContent>
               </Card>

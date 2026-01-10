@@ -22,14 +22,16 @@ export function StickyActionButtons({ show }: StickyActionButtonsProps) {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t-2 border-gray-100 shadow-2xl"
+          className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-lg border-t-2 border-border shadow-card"
         >
           <div className="container mx-auto px-4 py-4">
             <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-2xl mx-auto">
+
+              {/* Botón Principal */}
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1">
                 <Button
                   size="lg"
-                  className="w-full px-6 py-4 text-lg bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 shadow-xl hover:shadow-2xl transition-all duration-300"
+                  className="w-full px-6 py-4 text-lg bg-gradient-primary hover:opacity-90 shadow-card transition-all duration-300 text-primary-foreground"
                   onClick={handleGoCreativaAcademy}
                 >
                   <motion.div
@@ -59,13 +61,14 @@ export function StickyActionButtons({ show }: StickyActionButtonsProps) {
                   </motion.div>
                 </Button>
               </motion.div>
-              
-              {/* TODO: Implementar botón de ver más oportunidades */}
-              {/* <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1">
+
+              {/* TODO: Botón secundario (descomentado si se implementa) */}
+              {/*
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1">
                 <Button
                   size="lg"
                   variant="outline"
-                  className="text-black border-gray-200 w-full px-6 py-4 text-lg border-2 bg-white/90 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border-purple-300 shadow-xl hover:shadow-2xl transition-all duration-300"
+                  className="w-full px-6 py-4 text-lg border-border text-foreground bg-card/90 hover:bg-muted shadow-card transition-all duration-300"
                   onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}
                 >
                   <motion.div
@@ -94,8 +97,12 @@ export function StickyActionButtons({ show }: StickyActionButtonsProps) {
                     🚀
                   </motion.div>
                 </Button>
-              </motion.div> */}
+              </motion.div>
+              */}
+
             </div>
+
+            {/* Barra animada */}
             <motion.div
               animate={{
                 opacity: [0.5, 1, 0.5],
@@ -107,8 +114,9 @@ export function StickyActionButtons({ show }: StickyActionButtonsProps) {
               }}
               className="flex justify-center mt-2"
             >
-              <div className="w-12 h-1 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full" />
+              <div className="w-12 h-1 bg-gradient-primary rounded-full" />
             </motion.div>
+
           </div>
         </motion.div>
       )}

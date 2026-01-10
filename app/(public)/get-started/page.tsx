@@ -8,18 +8,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {Upload, FileText, CheckCircle, Lock, Rocket, BarChart3} from "lucide-react"
 import {RegisterModal} from "@/features/user/components/register-modal";
 
+export const dynamic = 'force-dynamic'
+
 export default function UploadHomePage() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [loading] = useState(false)
   const [openModal, setOpenModal] = useState(false);
-  
+
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0]
     if (file && file.type === "application/pdf") {
       setUploadedFile(file)
     }
   }, [])
-  
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
@@ -27,7 +29,7 @@ export default function UploadHomePage() {
     },
     maxFiles: 1,
   })
-  
+
   return (
   <div className="bg-white relative h-full overflow-hidden">
       {/* Blobs decorativos */}
@@ -37,10 +39,10 @@ export default function UploadHomePage() {
       <svg className="absolute bottom-0 right-0 w-72 h-72 opacity-15" viewBox="0 0 200 200">
         <path fill="#C26AFF" d="M50,-70C60,-55,70,-40,75,-20C80,0,75,20,65,35C55,50,35,60,15,65C-5,70,-25,70,-40,60C-55,50,-65,35,-70,15C-75,-5,-75,-25,-65,-40C-55,-55,-40,-65,-20,-70C0,-75,20,-75,40,-70C60,-65,50,-70Z" transform="translate(100 100)" />
       </svg>
-      
+
       {/* Capa de degradado animado */}
       <div className="absolute inset-0 z-0 bg-animated"></div>
-      
+
       <div className="container mx-auto px-4 py-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
@@ -52,11 +54,11 @@ export default function UploadHomePage() {
             >
               <Upload className="w-8 h-8 text-white" />
             </motion.div>
-            
+
             <h1 className="text-4xl font-bold text-gray-800 mb-4">Sube tu CV</h1>
             <p className="text-xl text-gray-600">Analiza y mejora tu CV existente con nuestra IA avanzada</p>
           </div>
-          
+
           <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="text-center text-2xl text-gray-800">Selecciona tu archivo PDF</CardTitle>
@@ -94,7 +96,7 @@ export default function UploadHomePage() {
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-4">
                     <RegisterModal
                       isOpen={openModal}
@@ -139,7 +141,7 @@ export default function UploadHomePage() {
                 </CardContent>
               </Card>
             </motion.div>
-            
+
             <motion.div
               className="text-center"
               initial={{ opacity: 0, y: 20 }}
@@ -156,7 +158,7 @@ export default function UploadHomePage() {
                 </CardContent>
               </Card>
             </motion.div>
-            
+
             <motion.div
               className="text-center"
               initial={{ opacity: 0, y: 20 }}

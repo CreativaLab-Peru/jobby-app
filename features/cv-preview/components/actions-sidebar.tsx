@@ -13,15 +13,19 @@ interface ActionsSidebarProps {
 }
 
 export function ActionsSidebar({ onEditCV, onHome, isDisabled }: ActionsSidebarProps) {
-
   return (
-    <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
-      <CardContent className="p-6 space-y-4">
-        <h3 className="text-xl font-semibold text-gray-800 mb-2">Acciones</h3>
+    <Card className="shadow-card border-0 bg-card/90 backdrop-blur-sm">
+      <CardContent className="p-6 space-y-4 text-card-foreground">
+        <h3 className="text-xl font-semibold mb-2">
+          Acciones
+        </h3>
+
         <Button
           disabled={isDisabled}
           variant="outline"
-          onClick={onHome} className="text-black w-full bg-transparent cursor-pointer border-gray-300 hover:bg-gray-100">
+          className="w-full bg-transparent border-border text-foreground hover:bg-muted"
+          onClick={onHome}
+        >
           <Home className="w-4 h-4 mr-2" />
           Home
         </Button>
@@ -29,7 +33,9 @@ export function ActionsSidebar({ onEditCV, onHome, isDisabled }: ActionsSidebarP
         <Button
           disabled={isDisabled}
           variant="outline"
-          onClick={onEditCV} className="text-black w-full bg-transparent cursor-pointer border-gray-300 hover:bg-gray-100">
+          className="w-full bg-transparent border-border text-foreground hover:bg-muted"
+          onClick={onEditCV}
+        >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Editar CV
         </Button>

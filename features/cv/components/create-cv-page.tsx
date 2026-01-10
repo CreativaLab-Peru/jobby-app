@@ -4,7 +4,7 @@ import { useState, useCallback, useTransition } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Eye } from "lucide-react"
+import { Eye, CloudCheck, CloudUpload } from "lucide-react"
 import { getSections } from "@/lib/cv-sections"
 import { NavigationButtons } from "@/features/cv/components/navigation-buttons"
 import { CVSectionForm } from "@/features/cv/components/cv-section-form"
@@ -28,6 +28,7 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
   const [isPending, startTransition] = useTransition()
 
   const sections = getSections(opportunityType, cvType)
+
   const submit = () => {
     if (isPending) return
     startTransition(() => {
@@ -66,16 +67,18 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
   const currentSection = sections[activeSection]
 
   return (
-    <div className="h-full bg-gradient-to-br from-green-50 via-white to-blue-50">
-      <div className="container mx-auto px-4 py-4">
+    // CAMBIO: Fondo usando la variable de background y un toque sutil de tu gradiente IA
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Decoración de fondo sutil para dar profundidad */}
+      <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none ai-gradient" />
+
+      <div className="container py-8 relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-7xl mx-auto">
-          {/* Progress Bar */}
-          <div className={`grid gap-4 ${showPreview ? "lg:grid-cols-2" : "lg:grid-cols-1"}`}>
+
+          <div className={`grid gap-6 ${showPreview ? "lg:grid-cols-2" : "lg:grid-cols-1"}`}>
+
             {/* Form Section */}
             <div className="space-y-4">
-              <div className="flex items-center justify-between mb-2">
-                {/* <ProgressBar currentStep={activeSection} totalSteps={sections.length} />   */}
-              </div>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeSection}
@@ -84,20 +87,17 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-                    <CardHeader>
-                      {/* Render the icon as a JSX component instead of invoking it like a function */}
-                      <CardTitle className="flex items-center text-2xl text-gray-800">
+                  {/* CAMBIO: Card con shadow-card y border-border */}
+                  <Card className="shadow-card border-border bg-card/50 backdrop-blur-md">
+                    <CardHeader className="border-b border-border/50">
+                      <CardTitle className="flex items-center text-2xl text-foreground">
                         <div className="flex items-center flex-1">
-                          {/**
-                         * Guardamos el componente en una variable para usarlo en JSX.
-                         * Esto evita el error “icon is not a function”.
-                         */}
                           {(() => {
                             const Icon = currentSection.icon
-                            return <Icon className="w-8 h-8 mr-3 text-blue-500" />
+                            // CAMBIO: Icono ahora usa el color primary
+                            return <Icon className="w-8 h-8 mr-3 text-primary" />
                           })()}
-                          {currentSection.title}
+                          <span className="font-bold">{currentSection.title}</span>
                         </div>
                         <NavigationButtons
                           currentStep={activeSection}
@@ -107,7 +107,7 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
                         />
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-6">
+                    <CardContent className="p-6 space-y-6">
                       <CVSectionForm
                         section={currentSection}
                         data={cvData[currentSection.id] || {}}
@@ -117,7 +117,6 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
                   </Card>
                 </motion.div>
               </AnimatePresence>
-
             </div>
 
             {/* Preview Section */}
@@ -130,26 +129,32 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
                   transition={{ duration: 0.3 }}
                   className="sticky top-8"
                 >
-                  <Card className="shadow-xl border-0 bg-white">
-                    <CardHeader>
-                      <CardTitle className="flex items-center text-xl text-gray-800">
-                        <Eye className="w-6 h-6 mr-2 text-green-500" />
-                        Vista Previa del CV
-                        <div className="ml-auto flex items-center">
+                  {/* CAMBIO: Card de Preview más limpia con el sistema de marca */}
+                  <Card className="shadow-card border-border bg-card overflow-hidden">
+                    <CardHeader className="bg-muted/30 border-b border-border">
+                      <CardTitle className="flex items-center text-lg text-foreground">
+                        <Eye className="w-5 h-5 mr-2 text-primary" />
+                        Vista Previa
+
+                        <div className="ml-auto">
                           {isPending ? (
-                            <span className="ml-2 text-sm text-yellow-500 animate-pulse border-yellow-500">
-                              Guardando...
-                            </span>
+                            <div className="flex items-center gap-2 text-xs font-medium text-accent animate-pulse">
+                              <CloudUpload className="w-4 h-4" />
+                              Sincronizando...
+                            </div>
                           ) : (
-                            <span className="ml-2 text-sm text-green-500">
-                              Guardado
-                            </span>
+                            <div className="flex items-center gap-2 text-xs font-medium text-secondary">
+                              <CloudCheck className="w-4 h-4" />
+                              Cambios guardados
+                            </div>
                           )}
                         </div>
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-0">
-                      <div className="max-h-[85vh] overflow-y-auto">
+                    <CardContent className="p-0 bg-white">
+                      {/* Nota: CVPreview suele requerir fondo blanco para simular papel A4,
+                          pero el contenedor es el que respeta el modo oscuro */}
+                      <div className="max-h-[75vh] overflow-y-auto custom-scrollbar">
                         <CVPreview data={cvData} sections={sections} />
                       </div>
                     </CardContent>
@@ -158,11 +163,8 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
               )}
             </AnimatePresence>
           </div>
-
         </motion.div>
-
       </div>
-
     </div>
   )
 }

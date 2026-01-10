@@ -6,8 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
-import { Lock } from "lucide-react";
-import { updatePassword } from "@/lib/shared/update-password";
+import { Lock } from "lucide-react"
+import { updatePassword } from "@/lib/shared/update-password"
 
 interface ChangePasswordProps {
   user: {
@@ -64,21 +64,27 @@ export default function ChangePassword({ user }: ChangePasswordProps) {
   }
 
   return (
-    <div className="bg-gradient-to-br from-purple-50 via-white to-pink-50 p-6 flex items-center justify-center">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="w-full max-w-md">
-        <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg">
+    <div className="bg-gradient-primary p-6 flex items-center justify-center min-h-screen">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full max-w-md"
+      >
+        <Card className="bg-card/90 backdrop-blur-sm border-0 shadow-card">
           <CardHeader className="text-center">
-            <Lock className="w-12 h-12 text-purple-500 mx-auto mb-3" />
-            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 bg-clip-text text-transparent">
+            <Lock className="w-12 h-12 text-accent mx-auto mb-3" />
+            <CardTitle className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
               Nueva Contraseña
             </CardTitle>
-            <CardDescription className="text-gray-600 mt-1">
+            <CardDescription className="text-muted-foreground mt-1">
               Actualiza tu contraseña para mantener tu cuenta segura 🔒
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+
             <div>
-              <label className="text-sm font-medium text-gray-700">Correo</label>
+              <label className="text-sm font-medium text-foreground">Correo</label>
               <Input
                 type="text"
                 value={email}
@@ -88,8 +94,9 @@ export default function ChangePassword({ user }: ChangePasswordProps) {
                 placeholder="user@gmail.com"
               />
             </div>
+
             <div>
-              <label className="text-sm font-medium text-gray-700">Nueva Contraseña</label>
+              <label className="text-sm font-medium text-foreground">Nueva Contraseña</label>
               <Input
                 type="password"
                 value={newPassword}
@@ -98,8 +105,9 @@ export default function ChangePassword({ user }: ChangePasswordProps) {
                 placeholder="••••••••"
               />
             </div>
+
             <div>
-              <label className="text-sm font-medium text-gray-700">Confirmar Nueva Contraseña</label>
+              <label className="text-sm font-medium text-foreground">Confirmar Nueva Contraseña</label>
               <Input
                 type="password"
                 value={confirmPassword}
@@ -109,11 +117,11 @@ export default function ChangePassword({ user }: ChangePasswordProps) {
               />
             </div>
 
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-            {success && <p className="text-green-600 text-sm">{success}</p>}
+            {error && <p className="text-destructive text-sm">{error}</p>}
+            {success && <p className="text-secondary text-sm">{success}</p>}
 
             <Button
-              className="w-full mt-4 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 hover:from-purple-600 hover:via-pink-600 hover:to-red-600 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              className="w-full mt-4 bg-gradient-primary hover:opacity-90 shadow-card hover:shadow-xl transition-all duration-300 transform hover:scale-105 text-primary-foreground"
               onClick={handleChangePassword}
               disabled={loading}
             >
@@ -122,7 +130,7 @@ export default function ChangePassword({ user }: ChangePasswordProps) {
 
             <Button
               variant="ghost"
-              className="w-full text-purple-600 hover:text-purple-800 mt-2"
+              className="w-full text-accent hover:text-accent-foreground mt-2"
               onClick={() => router.push("/dashboard")}
             >
               Cancelar

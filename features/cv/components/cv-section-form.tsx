@@ -14,6 +14,7 @@ interface CVSectionFormProps {
 }
 
 export function CVSectionForm({ section, data, onChange }: CVSectionFormProps) {
+  // ... (Lógica de estado y handlers se mantiene igual)
   const [formData, setFormData] = useState(() => {
     if (section.multiple) {
       return {
@@ -79,23 +80,27 @@ export function CVSectionForm({ section, data, onChange }: CVSectionFormProps) {
         {items.map((item: any, index: number) => (
           <motion.div
             key={index}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-6 border-2 border-dashed border-gray-200 rounded-lg bg-gray-50/50"
+            // REFACTOR: Usamos border-border y bg-muted/30 para un look más limpio
+            className="p-6 border border-border rounded-xl bg-muted/20 relative group transition-colors hover:border-primary/30"
           >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-700">
-                {section.title} {index + 1}
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                {section.title} #{index + 1}
               </h3>
+
               {items.length > 1 && (
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
                   onClick={() => removeItem(index)}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                  // REFACTOR: Usamos destructive para acciones de borrado
+                  className="text-destructive hover:text-destructive-foreground hover:bg-destructive transition-all"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Eliminar
                 </Button>
               )}
             </div>
@@ -118,10 +123,13 @@ export function CVSectionForm({ section, data, onChange }: CVSectionFormProps) {
           type="button"
           variant="outline"
           onClick={addItem}
-          className="w-full border-2 border-dashed border-gray-300 hover:border-indigo-400 hover:bg-indigo-50 text-gray-600 hover:text-indigo-600 bg-transparent"
+          // REFACTOR: Estilo tipo "Empty state" usando tus variables de marca
+          className="w-full py-8 border-2 border-dashed border-border hover:border-primary hover:bg-primary/5 text-muted-foreground hover:text-primary transition-all rounded-xl group"
         >
-          <Plus className="w-5 h-5 mr-2" />
-          Agregar {section.title.toLowerCase()}
+          <div className="flex flex-col items-center gap-2">
+            <Plus className="w-6 h-6 transition-transform group-hover:scale-110" />
+            <span className="font-medium">Agregar {section.title.toLowerCase()}</span>
+          </div>
         </Button>
       </div>
     )

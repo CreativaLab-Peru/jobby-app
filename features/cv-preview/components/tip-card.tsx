@@ -6,17 +6,25 @@ interface TipCardProps {
 
 export function TipCard({ opportunityType }: TipCardProps) {
   return (
-    <Card className="shadow-lg border-0 bg-gradient-to-br from-yellow-50 to-orange-50">
+    <Card className="shadow-card border-border bg-muted/50 overflow-hidden relative">
+      {/* Decoración sutil: Un toque del gradiente de marca en el borde izquierdo */}
+      <div className="absolute left-0 top-0 bottom-0 w-1 ai-gradient" />
+
       <CardContent className="p-6">
-        <h4 className="font-semibold text-gray-800 mb-2">💡 Consejo</h4>
-        <p className="text-sm text-gray-600">
-          Tu CV está optimizado para {" "}
-          <span className="font-bold">
+        {/* Usamos foreground para el texto principal para asegurar contraste */}
+        <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+          <span>💡</span> Consejo
+        </h4>
+
+        {/* Usamos muted-foreground para el texto secundario */}
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Tu CV está optimizado para{" "}
+          <span className="font-bold text-foreground">
             {opportunityType === "INTERNSHIP" && "Prácticas"}
             {opportunityType === "SCHOLARSHIP" && "Becas"}
             {opportunityType === "EXCHANGE_PROGRAM" && "Programas de Intercambio"}
             {opportunityType === "EMPLOYMENT" && "Empleos"}
-            {!opportunityType && <span className="text-gray-400">No especificado</span>}
+            {!opportunityType && <span className="text-muted italic">No especificado</span>}
           </span>. El análisis te mostrará cómo mejorarlo aún más.
         </p>
       </CardContent>

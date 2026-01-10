@@ -15,13 +15,21 @@ export function NavigationButtons({ currentStep, totalSteps, onPrevious, onNext 
 
   return (
     <div className="flex justify-between">
-      <Button variant="outline" onClick={onPrevious} disabled={isFirstStep} className="border-gray-300 px-8 bg-transparent cursor-pointer">
-        <span className="text-black">← </span>
-        <span className="text-black hidden md:inline-block"></span>
+      {/* Botón Anterior */}
+      <Button
+        variant="outline"
+        onClick={onPrevious}
+        disabled={isFirstStep}
+        className="border-border bg-transparent text-foreground px-8 cursor-pointer"
+      >
+        <span>← </span>
+        <span className="hidden md:inline-block"></span>
       </Button>
+
+      {/* Botón Siguiente */}
       <Button
         onClick={onNext}
-        className="px-8 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 cursor-pointer"
+        className="px-8 bg-gradient-primary hover:opacity-90 cursor-pointer text-primary-foreground"
       >
         <span className="hidden md:inline-block">
           {isLastStep ? "Finalizar" : ""}

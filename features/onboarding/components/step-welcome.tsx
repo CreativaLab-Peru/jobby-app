@@ -6,7 +6,8 @@ import {
 } from "lucide-react";
 import {StepProps} from "@/features/onboarding/components/onboarding-flow";
 import {finishOnboarding} from "@/features/onboarding/actions/finish-onboarding";
-import {useToast} from "@/hooks/use-toast";
+// TODO: Replace with another library or custom toast
+// import {useToast} from "@/hooks/use-toast";
 import {useRouter} from "next/navigation";
 import {authClient} from "@/lib/auth-client";
 
@@ -14,7 +15,7 @@ const FIRST_PASSWORD = process.env.FIRST_PASSWORD || "UANDAC@123ASD11323CA12"
 
 export const StepWelcome: React.FC<StepProps> = ({data}) => {
   const [pending, startTransition] = useTransition();
-  const {toast} = useToast();
+  // const {toast} = useToast();
   const router = useRouter();
 
   const signInAndUpdateData = async () => {
@@ -55,11 +56,11 @@ export const StepWelcome: React.FC<StepProps> = ({data}) => {
   useEffect(() => {
     signInAndUpdateData().then((response)=> {
       if (response?.error) {
-        toast({
-          title: "Error",
-          description: response?.error || "Ocurrió un error al finalizar la configuración de tu cuenta.",
-          variant: "destructive",
-        });
+        // toast({
+        //   title: "Error",
+        //   description: response?.error || "Ocurrió un error al finalizar la configuración de tu cuenta.",
+        //   variant: "destructive",
+        // });
       }
       if (pending) {
         return;
@@ -68,11 +69,11 @@ export const StepWelcome: React.FC<StepProps> = ({data}) => {
         const response = await finishOnboarding(data)
         console.log("[finishOnboarding response]:", response);
         if (response?.error) {
-          toast({
-            title: "Error",
-            description: response?.error || "Ocurrió un error al finalizar la configuración de tu cuenta.",
-            variant: "destructive",
-          });
+          // toast({
+          //   title: "Error",
+          //   description: response?.error || "Ocurrió un error al finalizar la configuración de tu cuenta.",
+          //   variant: "destructive",
+          // });
         }
         if (!response?.success) {
           return;

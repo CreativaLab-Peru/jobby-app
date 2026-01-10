@@ -1,16 +1,16 @@
-import {Opportunity} from ".prisma/client";
-import {Badge} from "@/components/ui/badge";
-import {Progress} from "@/components/ui/progress";
-import {Button} from "@/components/ui/button";
-import {ExternalLink} from "lucide-react";
-import {motion} from "framer-motion";
-import {formatDate} from "@/utils/format-date";
+import { Opportunity } from "@prisma/client";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { ExternalLink, CalendarDays } from "lucide-react";
+import { motion } from "framer-motion";
+import { formatDate } from "@/utils/format-date";
 
 interface OpportunityCardProps {
   opportunity: Opportunity
 }
 
-export function OpportunityCard({opportunity}: OpportunityCardProps) {
+export function OpportunityCard({ opportunity }: OpportunityCardProps) {
   const numberFormatted = Number(opportunity.match) * 100 || 0;
   const deadlineFormatted = formatDate(opportunity.deadline);
 
@@ -18,45 +18,63 @@ export function OpportunityCard({opportunity}: OpportunityCardProps) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.3 }}
-      className="p-6 border rounded-lg hover:shadow-lg transition-shadow bg-white"
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.3 }}
+      // REFACTOR: bg-card y shadow-card para consistencia con el Dashboard
+      className="p-6 border border-border rounded-xl bg-card shadow-sm hover:shadow-card transition-all"
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
-          <h3 className="text-xl font-semibold text-gray-800 mb-2">{opportunity.title}</h3>
-          <div className="flex items-center gap-4 mb-3">
-            <Badge className="text-black bg-blue-100">
+          <h3 className="text-xl font-bold text-foreground mb-2 leading-tight">
+            {opportunity.title}
+          </h3>
+          <div className="flex flex-wrap items-center gap-3 mb-3">
+            {/* Badge con estilo muted/primary */}
+            <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-semibold">
               {opportunity.type}
             </Badge>
-            <span className="text-sm text-gray-500">
-                    <span className="font-bold">Fecha límite:</span> {deadlineFormatted}
-                  </span>
+            <div className="flex items-center gap-1.5 text-sm text-muted-foreground font-medium">
+              <CalendarDays className="w-4 h-4" />
+              <span>Límite: {deadlineFormatted}</span>
+            </div>
           </div>
-        </div>opportunities
+        </div>
+
         <div className="text-right">
-          <div className="text-3xl font-bold text-green-600 mb-1">{numberFormatted}%</div>
-          <p className="text-sm text-gray-500">Match</p>
+          {/* Match Score usando el color secondary (verde lima) */}
+          <div className="text-3xl font-black text-secondary tracking-tighter">
+            {Math.round(numberFormatted)}%
+          </div>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Match</p>
         </div>
       </div>
-      <div className="mb-4">
-        <h4 className="font-medium text-gray-700 mb-2">Requisitos:</h4>
+
+      <div className="mb-6">
+        <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">Requisitos clave</h4>
         <div className="flex flex-wrap gap-2">
-          {/*{opp.requirements.map((req, reqIndex) => (*/}
-          {/*  <Badge key={reqIndex} variant="secondary" className="text-xs">*/}
-          {/*    {req}*/}
-          {/*  </Badge>*/}
-          {/*))}*/}
-          {opportunity.requirements &&
-            <Badge variant="secondary" className="text-xs">
+          {opportunity.requirements && (
+            <Badge variant="secondary" className="bg-muted text-foreground border-transparent text-xs py-1">
               {opportunity.requirements}
             </Badge>
-          }
+          )}
         </div>
       </div>
-      <div className="flex items-center justify-between">
-        <Progress value={numberFormatted} className="h-4 bg-gray-200 [&>div]:bg-gradient-to-r [&>div]:from-indigo-500 [&>div]:via-purple-500 [&>div]:to-pink-500" />
-        <Button size="sm" className="text-black border-2 border-yellow-200 bg-yellow-100 hover:bg-yellow-200 ml-4">
-          <ExternalLink className="w-4 h-4 mr-1" />
+
+      <div className="flex items-center gap-4">
+        {/* Progress bar con el gradiente de marca */}
+        <div className="flex-1">
+          <Progress
+            value={numberFormatted}
+            className="h-2.5 bg-muted [&>div]:ai-gradient"
+          />
+        </div>
+
+        {/* Botón usando el color secondary para destacar la acción */}
+        <Button
+          size="sm"
+          className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold px-4 shadow-sm transition-all"
+        >
+          <ExternalLink className="w-4 h-4 mr-2" />
           Ver más
         </Button>
       </div>

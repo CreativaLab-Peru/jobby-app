@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, Shield, Bell, User, Sun, Moon } from "lucide-react";
+import { Loader2, Shield, Bell, User, Sun, Moon, Settings } from "lucide-react";
 
 export default function SettingsPage() {
   const [form, setForm] = useState({
@@ -34,42 +34,51 @@ export default function SettingsPage() {
     setLoading(true);
     try {
       await new Promise((r) => setTimeout(r, 1000));
-      alert("Configuraciones guardadas correctamente");
+      // Aquí podrías usar un toast personalizado de tu sistema
+      console.log("Configuraciones guardadas");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="bg-white min-h-screen py-12 px-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="bg-background min-h-screen py-12 px-4">
+      <div className="max-w-3xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <Card className="shadow-2xl border border-orange-100 bg-white/95 backdrop-blur-md">
-            <CardHeader>
-              <CardTitle className="text-3xl font-bold text-gray-900 text-center">
-                Configuración de Cuenta
-              </CardTitle>
+          <Card className="shadow-card border-border bg-card/50 backdrop-blur-md overflow-hidden">
+            {/* Header con un toque de marca */}
+            <CardHeader className="border-b border-border bg-muted/20 pb-8">
+              <div className="flex flex-col items-center gap-2">
+                <div className="p-3 rounded-2xl bg-primary/10 mb-2">
+                  <Settings className="w-8 h-8 text-primary" />
+                </div>
+                <CardTitle className="text-3xl font-bold text-foreground">
+                  Configuración
+                </CardTitle>
+                <p className="text-muted-foreground text-sm"> Gestiona tu perfil y preferencias de cuenta </p>
+              </div>
             </CardHeader>
 
             <CardContent className="space-y-10 p-8">
               <form onSubmit={handleSubmit} className="space-y-10">
+
                 {/* Perfil */}
-                <section>
-                  <div className="flex items-center gap-2 mb-4">
-                    <User className="w-5 h-5 text-orange-600" />
-                    <h2 className="text-lg font-semibold text-gray-800">
+                <section className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <User className="w-5 h-5 text-primary" />
+                    <h2 className="text-lg font-bold text-foreground uppercase tracking-tight">
                       Información Personal
                     </h2>
                   </div>
-                  <Separator className="mb-4" />
+                  <Separator />
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
                     <div className="space-y-2">
-                      <Label htmlFor="name" className="text-gray-700">
+                      <Label htmlFor="name" className="font-semibold text-muted-foreground">
                         Nombre completo
                       </Label>
                       <Input
@@ -78,11 +87,11 @@ export default function SettingsPage() {
                         value={form.name}
                         onChange={handleChange}
                         placeholder="John Doe"
-                        className="border-gray-300 focus-visible:ring-orange-500"
+                        className="bg-background border-border focus-visible:ring-primary"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-gray-700">
+                      <Label htmlFor="email" className="font-semibold text-muted-foreground">
                         Correo electrónico
                       </Label>
                       <Input
@@ -92,23 +101,23 @@ export default function SettingsPage() {
                         value={form.email}
                         onChange={handleChange}
                         placeholder="johndoe@example.com"
-                        className="border-gray-300 focus-visible:ring-orange-500"
+                        className="bg-background border-border focus-visible:ring-primary"
                       />
                     </div>
                   </div>
                 </section>
 
                 {/* Seguridad */}
-                <section>
-                  <div className="flex items-center gap-2 mb-4">
-                    <Shield className="w-5 h-5 text-red-600" />
-                    <h2 className="text-lg font-semibold text-gray-800">
+                <section className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Shield className="w-5 h-5 text-primary" />
+                    <h2 className="text-lg font-bold text-foreground uppercase tracking-tight">
                       Seguridad
                     </h2>
                   </div>
-                  <Separator className="mb-4" />
-                  <div className="space-y-2">
-                    <Label htmlFor="password" className="text-gray-700">
+                  <Separator />
+                  <div className="space-y-2 pt-2">
+                    <Label htmlFor="password" className="font-semibold text-muted-foreground">
                       Cambiar contraseña
                     </Label>
                     <Input
@@ -118,74 +127,58 @@ export default function SettingsPage() {
                       value={form.password}
                       onChange={handleChange}
                       placeholder="••••••••"
-                      className="border-gray-300 focus-visible:ring-orange-500"
+                      className="bg-background border-border focus-visible:ring-primary max-w-md"
                     />
                   </div>
                 </section>
 
                 {/* Preferencias */}
-                <section>
-                  <div className="flex items-center gap-2 mb-4">
-                    <Bell className="w-5 h-5 text-orange-500" />
-                    <h2 className="text-lg font-semibold text-gray-800">
+                <section className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Bell className="w-5 h-5 text-primary" />
+                    <h2 className="text-lg font-bold text-foreground uppercase tracking-tight">
                       Preferencias
                     </h2>
                   </div>
-                  <Separator className="mb-4" />
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-700">Notificaciones por correo</span>
+                  <Separator />
+                  <div className="space-y-1 pt-2">
+                    <div className="flex items-center justify-between p-4 rounded-xl hover:bg-muted/30 transition-colors">
+                      <div className="space-y-0.5">
+                        <span className="text-sm font-bold text-foreground">Notificaciones</span>
+                        <p className="text-xs text-muted-foreground text-left">Recibe alertas sobre el estado de tus análisis</p>
+                      </div>
                       <Switch
-                        disabled
                         checked={form.notifications}
                         onCheckedChange={() => handleSwitchChange("notifications")}
+                        className="data-[state=checked]:bg-secondary"
                       />
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-700 flex items-center gap-2">
-                        {form.darkMode ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
-                        Modo oscuro
-                      </span>
+
+                    <div className="flex items-center justify-between p-4 rounded-xl hover:bg-muted/30 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-muted rounded-lg">
+                          {form.darkMode ? <Moon className="w-4 h-4 text-primary" /> : <Sun className="w-4 h-4 text-secondary" />}
+                        </div>
+                        <div className="space-y-0.5 text-left">
+                          <span className="text-sm font-bold text-foreground">Modo visual</span>
+                          <p className="text-xs text-muted-foreground">Alternar entre tema claro y oscuro</p>
+                        </div>
+                      </div>
                       <Switch
-                        disabled
                         checked={form.darkMode}
                         onCheckedChange={() => handleSwitchChange("darkMode")}
+                        className="data-[state=checked]:bg-secondary"
                       />
                     </div>
                   </div>
                 </section>
 
-                {/* Cuentas Vinculadas */}
-                {/* <section>
-                  <div className="flex items-center gap-2 mb-4">
-                    <LinkIcon className="w-5 h-5 text-purple-600" />
-                    <h2 className="text-lg font-semibold text-gray-800">
-                      Cuentas vinculadas
-                    </h2>
-                  </div>
-                  <Separator className="mb-4" />
-                  <div className="space-y-3">
-                    <Button
-                      variant="outline"
-                      className="w-full border-gray-300 hover:border-orange-400 hover:bg-orange-50"
-                    >
-                      Conectar con Google
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="w-full border-gray-300 hover:border-orange-400 hover:bg-orange-50"
-                    >
-                      Conectar con GitHub
-                    </Button>
-                  </div>
-                </section> */}
-
-                {/* Botón Guardar */}
-                <div>
+                {/* Botón Guardar - REFACTOR: Usando ai-gradient */}
+                <div className="pt-4">
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="w-full h-12 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white text-lg"
+                    className="w-full h-12 ai-gradient text-primary-foreground font-bold text-lg shadow-glow hover:opacity-90 transition-all rounded-xl"
                   >
                     {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Guardar Cambios"}
                   </Button>

@@ -19,13 +19,14 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
   }
 
   return (
-    <Card className="shadow-xl border-0 bg-gradient-to-br from-white via-indigo-50/30 to-purple-50/30 backdrop-blur-sm overflow-hidden relative">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-200/20 to-purple-200/20 rounded-full -translate-y-16 translate-x-16"></div>
-      <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-purple-200/20 to-pink-200/20 rounded-full translate-y-12 -translate-x-12"></div>
+    <Card className="shadow-card border-border bg-card/50 backdrop-blur-md overflow-hidden relative">
+      {/* Decoración de fondo usando colores de marca sutiles */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full -translate-y-16 translate-x-16 blur-2xl"></div>
+      <div className="absolute bottom-0 left-0 w-24 h-24 bg-secondary/10 rounded-full translate-y-12 -translate-x-12 blur-2xl"></div>
 
       <CardHeader className="relative">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center text-3xl text-gray-800">
+          <CardTitle className="flex items-center text-3xl text-foreground">
             <motion.div
               animate={{
                 rotate: [0, 10, -10, 0],
@@ -37,7 +38,8 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
                 repeatDelay: 5,
               }}
             >
-              <Star className="w-10 h-10 mr-4 text-yellow-500" />
+              {/* Star usa un tono ambar de los globales o primary si prefieres */}
+              <Star className="w-10 h-10 mr-4 text-secondary fill-secondary/20" />
             </motion.div>
             Tu CV Score
           </CardTitle>
@@ -45,9 +47,9 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
             <Button
               onClick={onShowBreakdown}
               variant="outline"
-              className="bg-white/80 backdrop-blur-sm border-2 border-indigo-200 hover:border-indigo-400 hover:bg-indigo-50 text-indigo-700 font-semibold"
+              className="bg-background/50 border-border hover:border-primary hover:bg-primary/5 text-foreground font-semibold"
             >
-              <Calculator className="w-4 h-4 mr-2" />
+              <Calculator className="w-4 h-4 mr-2 text-primary" />
               Ver Desglose
             </Button>
           </motion.div>
@@ -61,7 +63,7 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
-              className="text-7xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-3"
+              className="text-7xl font-bold ai-gradient-text mb-3"
             >
               {score}/100
             </motion.div>
@@ -69,7 +71,7 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7 }}
-              className="text-xl font-semibold text-gray-700"
+              className="text-xl font-semibold text-muted-foreground"
             >
               {getScoreLabel(score)}
             </motion.p>
@@ -90,13 +92,13 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
                   stroke="currentColor"
                   strokeWidth="12"
                   fill="transparent"
-                  className="text-gray-200"
+                  className="text-muted/30"
                 />
                 <motion.circle
                   cx="80"
                   cy="80"
                   r="70"
-                  stroke="url(#gradient)"
+                  stroke="url(#ai-score-gradient)"
                   strokeWidth="12"
                   fill="transparent"
                   strokeDasharray={`${2 * Math.PI * 70}`}
@@ -106,10 +108,10 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
                   strokeLinecap="round"
                 />
                 <defs>
-                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#6366f1" />
-                    <stop offset="50%" stopColor="#8b5cf6" />
-                    <stop offset="100%" stopColor="#ec4899" />
+                  <linearGradient id="ai-score-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    {/* Usamos los colores HSL definidos en tu globals.css */}
+                    <stop offset="0%" stopColor="hsl(var(--primary))" />
+                    <stop offset="100%" stopColor="hsl(var(--secondary))" />
                   </linearGradient>
                 </defs>
               </svg>
@@ -118,7 +120,7 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 1.2, type: "spring", stiffness: 200 }}
-                  className="text-2xl font-bold text-indigo-600"
+                  className="text-2xl font-bold text-primary"
                 >
                   {score}%
                 </motion.div>
@@ -131,9 +133,13 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ delay: 1, duration: 1.5, ease: "easeOut" }}
-          className=" origin-left"
+          className="origin-left"
         >
-          <Progress value={score} className="h-4 bg-gray-200 [&>div]:bg-gradient-to-r [&>div]:from-indigo-500 [&>div]:via-purple-500 [&>div]:to-pink-500" />
+          {/* Progress bar ahora usa ai-gradient a través de utility o inline gradient */}
+          <Progress
+            value={score}
+            className="h-4 bg-muted [&>div]:ai-gradient"
+          />
         </motion.div>
       </CardContent>
     </Card>

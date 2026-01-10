@@ -5,6 +5,8 @@ import {StepCredentials} from "@/features/onboarding/components/step-credentials
 import {StepProfile} from "@/features/onboarding/components/step-profile";
 import {StepWelcome} from "@/features/onboarding/components/step-welcome";
 import {User} from "@prisma/client";
+import {Check} from "lucide-react";
+import { motion } from "framer-motion";
 
 export type OnboardingData = {
   email: string;
@@ -29,7 +31,6 @@ export interface OnboardingFlowProps {
 }
 
 export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ user, token }) => {
-
   const [currentStep, setCurrentStep] = useState<Step>(1);
   const [formData, setFormData] = useState<OnboardingData>({
     email: user?.email || "unknown@example.com",
@@ -44,11 +45,41 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ user, token }) =
   };
 
   const handleNext = () => {
-    setCurrentStep((prev) => Math.min(3, (prev + 1)) as Step);
+    setCurrentStep((prev) => Math.min(3, prev + 1) as Step);
   };
 
   const handlePrev = () => {
-    setCurrentStep((prev) => Math.max(1, (prev - 1)) as Step);
+    setCurrentStep((prev) => Math.max(1, prev - 1) as Step);
+  };
+
+  const StepIndicator: React.FC<{ step: number; title: string }> = ({ step, title }) => {
+    const isCompleted = currentStep > step;
+    const isActive = currentStep === step;
+
+    return (
+      <div
+        className={`flex flex-col items-center p-3 transition-all duration-500 relative z-10
+          ${isActive || isCompleted ? "text-foreground" : "text-muted-foreground"}`}
+      >
+        <button
+          onClick={() => currentStep >= step && setCurrentStep(step as Step)}
+          disabled={currentStep < step}
+          className={`w-10 h-10 flex items-center justify-center rounded-full font-bold transition-all duration-500 border-2
+            ${isActive
+            ? "bg-primary text-primary-foreground border-primary shadow-glow scale-110"
+            : isCompleted
+              ? "bg-secondary text-secondary-foreground border-secondary"
+              : "bg-muted text-muted-foreground border-border cursor-not-allowed"
+          }`}
+        >
+          {isCompleted ? <Check className="w-5 h-5 stroke-[3px]" /> : step}
+        </button>
+        <span className={`text-[10px] font-bold uppercase tracking-wider mt-2 hidden sm:block
+          ${isActive ? "text-primary" : "text-muted-foreground"}`}>
+          {title}
+        </span>
+      </div>
+    );
   };
 
   const renderStep = () => {
@@ -60,62 +91,37 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ user, token }) =
     };
 
     switch (currentStep) {
-      case 1:
-        return <StepCredentials {...commonProps} />;
-      case 2:
-        return <StepProfile {...commonProps} />;
-      case 3:
-        return <StepWelcome {...commonProps} />;
-      default:
-        return <div>Error de paso en el flujo.</div>;
+      case 1: return <StepCredentials {...commonProps} />;
+      case 2: return <StepProfile {...commonProps} />;
+      case 3: return <StepWelcome {...commonProps} />;
+      default: return null;
     }
   };
 
-  const StepIndicator: React.FC<{ step: number; title: string }> = ({ step, title }) => (
-    <div
-      className={`flex flex-col items-center p-3 transition-all duration-500 cursor-pointer z-1 ${
-        currentStep >= step ? "text-blue-600" : "text-gray-400"
-      }`}
-      onClick={() => {
-        // Solo permitir retroceder a pasos ya completados o el actual
-        if (currentStep >= step) {
-          setCurrentStep(step as Step);
-        }
-      }}
-    >
-      <div
-        className={`w-8 h-8 flex items-center justify-center rounded-full font-bold transition-all duration-500 border-2 ${
-          currentStep === step
-            ? "bg-blue-500 text-white border-blue-500 shadow-md"
-            : currentStep > step
-              ? "bg-blue-100 text-blue-600 border-blue-600"
-              : "bg-gray-100 text-gray-400 border-gray-400"
-        }`}
-      >
-        {step}
-      </div>
-      <span className="text-xs mt-1 hidden sm:block">{title}</span>
-    </div>
-  );
-
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4 sm:p-8">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 sm:p-8">
       <div className="w-full max-w-2xl">
+
         {/* Cabecera y Barra de Progreso */}
-        <div className="mb-8 p-4 bg-white rounded-xl shadow-lg border border-gray-100">
-          <h1 className="text-3xl font-extrabold text-center text-gray-800 mb-6">
-            Configura tu Cuenta
+        <div className="mb-8 p-6 bg-card rounded-2xl shadow-card border border-border overflow-hidden relative">
+          {/* Decoración de fondo sutil */}
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl" />
+
+          <h1 className="text-2xl font-black text-center text-foreground mb-8 tracking-tight uppercase">
+            Comienza con <span className="ai-gradient-text">Levely</span>
           </h1>
-          <div className="relative flex justify-between items-center w-full">
-            {/* 1. Contenedor de las líneas de progreso para limitar su ancho */}
-            <div className="absolute inset-x-0 mx-10 top-1/2 -translate-y-1/2 h-1 z-0">
-              {/* 2. Línea de progreso (Track - Fondo) */}
-              <div className="bg-gray-200 w-full h-full"></div>
-              {/* 3. Línea de progreso (Progress - Relleno) */}
-              <div
-                className="absolute top-0 h-full bg-blue-500 transition-all duration-500"
-                style={{ width: `${((currentStep - 1) / 2) * 100}%` }}
-              ></div>
+
+          <div className="relative flex justify-between items-center w-full px-4 sm:px-10">
+            {/* Track Line */}
+            <div className="absolute inset-x-0 mx-14 sm:mx-20 top-[32%] -translate-y-1/2 h-1 z-0">
+              <div className="bg-muted w-full h-full rounded-full" />
+              {/* Progress Line con ai-gradient */}
+              <motion.div
+                className="absolute top-0 h-full ai-gradient rounded-full"
+                initial={{ width: "0%" }}
+                animate={{ width: `${((currentStep - 1) / 2) * 100}%` }}
+                transition={{ type: "spring", stiffness: 100, damping: 20 }}
+              />
             </div>
 
             <StepIndicator step={1} title="Credenciales" />
@@ -124,14 +130,28 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ user, token }) =
           </div>
         </div>
 
-        {/* Contenido del Paso */}
-        <div className="bg-white/90 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 p-8 rounded-xl border-gray-100 min-h-[400px]">
+        {/* Contenedor del Paso */}
+        <motion.div
+          key={currentStep}
+          initial={{ opacity: 0, x: 10 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -10 }}
+          className="bg-card border border-border shadow-card p-8 rounded-2xl min-h-[420px] relative overflow-hidden"
+        >
           {renderStep()}
-        </div>
+        </motion.div>
 
-        <p className="mt-4 text-xs text-center text-gray-400">
-          Token de acceso: <span className="font-mono text-gray-500">{"raaa"}</span>
-        </p>
+        {/* Footer info */}
+        <div className="mt-8 flex flex-col items-center gap-2">
+          <p className="text-[10px] font-bold tracking-widest text-muted-foreground/40 uppercase">
+            Sistema de Evaluación Inteligente v1.0
+          </p>
+          <div className="px-3 py-1 bg-muted/50 rounded-full border border-border">
+            <p className="text-[9px] font-mono text-muted-foreground">
+              Secure Node: <span className="text-primary">{token.substring(0, 8)}...</span>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

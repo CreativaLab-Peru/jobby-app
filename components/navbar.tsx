@@ -9,6 +9,7 @@ import { Zap, Plus } from "lucide-react"
 import Link from "next/link"
 import { ProfileButton } from "@/components/profile-button"
 import { CreditsOfPlan } from "@/lib/shared/get-available-tokens"
+import {ButtonToggleTheme} from "@/components/button-toggle-theme";
 
 interface NavbarProps {
   user: {
@@ -68,6 +69,7 @@ export function Navbar({ userLimit, user }: NavbarProps) {
           </Link>
 
           <div className="flex items-center gap-4">
+            <ButtonToggleTheme />
 
             {/* TOKENS DESKTOP */}
             <motion.div whileHover={{ scale: 1.05 }} className="hidden sm:block">
@@ -98,7 +100,6 @@ export function Navbar({ userLimit, user }: NavbarProps) {
                         />
                       </div>
                     </div>
-
                   </div>
                 </CardContent>
               </Card>

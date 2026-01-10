@@ -1,8 +1,8 @@
 "use client"
 
-import {useState, useEffect} from "react"
-import {motion} from "framer-motion"
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
+import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   User,
   GraduationCap,
@@ -16,16 +16,15 @@ import {
   Folder
 } from "lucide-react"
 
-// Components
-import {AnalysisHeader} from "@/features/analysis/components/analysis-header"
-import {CVScoreCard} from "@/features/analysis/components/cv-score-card"
-import {RecommendationsSection} from "@/features/analysis/components/recommendations-section"
-import {OpportunitiesSection} from "@/features/analysis/components/opportunities-section"
-import {StickyActionButtons} from "@/features/analysis/components/sticky-action-buttons"
-import {ScoreBreakdownModal} from "@/features/analysis/components/score-breakdown-modal"
+import { AnalysisHeader } from "@/features/analysis/components/analysis-header"
+import { CVScoreCard } from "@/features/analysis/components/cv-score-card"
+import { RecommendationsSection } from "@/features/analysis/components/recommendations-section"
+import { OpportunitiesSection } from "@/features/analysis/components/opportunities-section"
+import { StickyActionButtons } from "@/features/analysis/components/sticky-action-buttons"
+import { ScoreBreakdownModal } from "@/features/analysis/components/score-breakdown-modal"
 
-import {Recommendation, ScoreCategory} from "@/types/analysis"
-import {Opportunity} from ".prisma/client";
+import { Recommendation, ScoreCategory } from "@/types/analysis"
+import { Opportunity } from "@prisma/client";
 
 interface AnalysisScoreProps {
   scoreBreakdown: ScoreCategory[]
@@ -34,18 +33,8 @@ interface AnalysisScoreProps {
   opportunities: Opportunity[]
 }
 
-// Icon lookup map (client-side)
 const ICONS: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
-  User,
-  GraduationCap,
-  Briefcase,
-  Languages,
-  FileText,
-  Code,
-  Target,
-  Award,
-  Sparkles,
-  Folder
+  User, GraduationCap, Briefcase, Languages, FileText, Code, Target, Award, Sparkles, Folder
 }
 
 export default function AnalysisScore({
@@ -57,10 +46,9 @@ export default function AnalysisScore({
   const [showScoreBreakdown, setShowScoreBreakdown] = useState(false)
   const [showStickyButtons, setShowStickyButtons] = useState(false)
 
-  // Resolve iconName to actual component at render time
   const resolvedBreakdown = scoreBreakdown.map((cat) => {
     const Icon = ICONS[cat.icon] || Award
-    return {...cat, Icon}
+    return { ...cat, Icon }
   })
 
   useEffect(() => {
@@ -78,68 +66,59 @@ export default function AnalysisScore({
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-        <div className="container mx-auto px-4 py-8">
+      {/* REFACTOR: Fondo usando la variable background y decoración sutil */}
+      <div className="min-h-screen bg-background relative">
+        <div className="absolute inset-0 bg-grid-slate-200/[0.05] pointer-events-none" />
+
+        <div className="container relative z-10 py-8">
           <motion.div
-            initial={{opacity: 0, y: 20}}
-            animate={{opacity: 1, y: 0}}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             className="max-w-6xl mx-auto"
           >
-            <AnalysisHeader/>
+            <AnalysisHeader />
 
             <Tabs defaultValue="score" className="space-y-8">
-              <TabsList
-                className="grid w-full grid-cols-1 h-16 text-lg bg-white shadow-lg rounded-xl border-2 border-gray-100">
+              {/* REFACTOR: Tabs con el sistema de marca Levely */}
+              <TabsList className="grid w-full grid-cols-2 h-16 p-1.5 bg-card shadow-card rounded-xl border border-border">
                 <TabsTrigger
                   value="score"
-                  className="text-gray-400 flex items-center gap-3 h-12 text-base font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
+                  className="flex items-center gap-3 h-full text-base font-bold transition-all duration-300
+                    text-muted-foreground
+                    data-[state=active]:ai-gradient data-[state=active]:text-primary data-[state=active]:shadow-glow"
                 >
-                  <Target className="w-6 h-6"/>
-                  Score y Recomendaciones
+                  <Target className="w-5 h-5" />
+                  Score y Sugerencias
                 </TabsTrigger>
-              </TabsList>
 
-              {/* TODO: Implementar pestaña de Oportunidades, ahora estamos usando oportunidades hardcodeadas */}
-              <TabsList
-                className="grid w-full grid-cols-2 h-16 text-lg bg-white shadow-lg rounded-xl border-2 border-gray-100">
-                <TabsTrigger
-                  value="score"
-                  className="text-gray-400 flex items-center gap-3 h-12 text-base font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
-                >
-                  <Target className="w-6 h-6"/>
-                  Score y Recomendaciones
-                </TabsTrigger>
                 <TabsTrigger
                   value="opportunities"
-                  className="text-gray-400 flex items-center gap-3 h-12 text-base font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
+                  className="flex items-center gap-3 h-full text-base font-bold transition-all duration-300
+                    text-muted-foreground
+                    data-[state=active]:ai-gradient data-[state=active]:text-primary data-[state=active]:shadow-glow"
                 >
-                  <Award className="w-6 h-6"/>
+                  <Award className="w-5 h-5" />
                   Oportunidades
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="score" className="space-y-6">
-                <CVScoreCard score={cvScore} onShowBreakdown={() => setShowScoreBreakdown(true)}/>
-                <RecommendationsSection
-                  recommendations={recommendations}/> {/* ajusta si necesitas data */}
+              <TabsContent value="score" className="space-y-8 focus-visible:outline-none">
+                {/* CVScoreCard heredará los estilos del sistema */}
+                <CVScoreCard score={cvScore} onShowBreakdown={() => setShowScoreBreakdown(true)} />
+                <RecommendationsSection recommendations={recommendations} />
               </TabsContent>
 
-              <TabsContent value="opportunities" className="space-y-6">
-                <OpportunitiesSection
-                  opportunities={opportunities}/> {/* ajusta si necesitas data */}
+              <TabsContent value="opportunities" className="space-y-8 focus-visible:outline-none">
+                <OpportunitiesSection opportunities={opportunities} />
               </TabsContent>
             </Tabs>
-            <div>
-              <div className="h-20"/>
-              {/* Espacio para los botones sticky */}
-            </div>
 
-            {/* TODO: eliminar este componente repetido, puesto que es repetido */}
-            {/*<ActionButtons show={!showStickyButtons} /> */}
+            <div className="h-24" />
           </motion.div>
         </div>
-        <StickyActionButtons show={showStickyButtons}/>
+        <StickyActionButtons show={showStickyButtons} />
       </div>
+
       <ScoreBreakdownModal
         show={showScoreBreakdown}
         onClose={() => setShowScoreBreakdown(false)}

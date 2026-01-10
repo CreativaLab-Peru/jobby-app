@@ -57,7 +57,7 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
               <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
                 Scores de CVs
               </h1>
-              <p className="text-muted mt-2">
+              <p className="text-muted-foreground mt-2">
                 Analiza el rendimiento y mejora tus currículums 🚀
               </p>
             </div>

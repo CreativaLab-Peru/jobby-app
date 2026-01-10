@@ -1,35 +1,37 @@
-import { getUser } from "@/lib/shared/get-user";
-import { TermsModal } from "@/components/terms-modal";
+import {getUser} from "@/lib/shared/get-user";
+import {TermsModal} from "@/components/terms-modal";
 import "../globals.css";
-import { NavbarWrapper } from "@/components/navbar-wrapper";
-import { getAvailableTokens } from "@/lib/shared/get-available-tokens";
+import {NavbarWrapper} from "@/components/navbar-wrapper";
+import {getAvailableTokens} from "@/lib/shared/get-available-tokens";
+import {SidebarProvider} from "@/components/ui/sidebar";
+import AppSidebar from "@/components/app-sidebar";
 
 export const dynamic = "force-dynamic";
 
 export default async function RootLayout({
                                            children,
-                                         }: Readonly<{
-  children: React.ReactNode;
-}>) {
+                                         }: Readonly<{ children: React.ReactNode }>) {
   const limitPlanOfCurrentUser = await getAvailableTokens();
   const user = await getUser();
   const isTermsAccepted =
     (user?.acceptedTermsAndConditions && user?.acceptedPrivacyPolicy) || false;
 
   return (
-    <div className="relative min-h-screen w-full bg-background text-foreground">
-      <div className="flex min-h-screen flex-col">
-        <NavbarWrapper
-          creditsOfPlan={limitPlanOfCurrentUser}
-          user={user}
-        />
+    <SidebarProvider>
+      {/* Sidebar lateral */}
+      <AppSidebar/>
 
-        <main className="flex-1 transition-colors duration-300">
-          {children}
-        </main>
-
-        <TermsModal isOpen={!isTermsAccepted} userId={user?.id} />
-      </div>
-    </div>
+      {/* Contenido Principal */}
+      <main className="flex flex-1 flex-col">
+        {/* Header/Navbar */}
+        <NavbarWrapper creditsOfPlan={limitPlanOfCurrentUser} user={user}/>
+        <div className="md:pl-64">
+          <div className="mx-auto w-full max-w-8xl pl-0">
+            {children}
+          </div>
+        </div>
+      </main>
+      <TermsModal isOpen={!isTermsAccepted} userId={user?.id}/>
+    </SidebarProvider>
   );
 }

@@ -44,14 +44,11 @@ export async function queryGemini<T = any>(
       }),
     });
 
-
-
     if (!response.ok) {
       return { success: false, message: "Failed to fetch response from Gemini.", data: null };
     }
 
     const data = (await response.json()) as GeminiResponse;
-    console.log("[data]:", data);
     const responseText = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 
     if (!responseText) {

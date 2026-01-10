@@ -57,7 +57,7 @@ export function Navbar({ userLimit, user }: NavbarProps) {
       transition={{ duration: 0.6 }}
       className="w-full border-b bg-background/90 backdrop-blur-md shadow-sm"
     >
-      <div className="mx-auto max-w-full px-4 sm:px-6 lg:px-10">
+      <div className="mx-auto max-w-full px-4 sm:px-20 lg:px-44">
         <div className="flex h-16 items-center justify-between">
 
           {/* SIDEBAR BUTTON just mobile */}

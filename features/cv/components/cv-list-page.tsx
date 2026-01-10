@@ -13,7 +13,7 @@ interface CvListProps {
 
 export function CVListPage({ cvs, disabledButton }: CvListProps) {
   return (
-    <section className="bg-background px-6 py-8">
+    <section className="px-6 py-8">
       <div className="mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

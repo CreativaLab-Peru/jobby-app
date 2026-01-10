@@ -44,7 +44,7 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
   }
 
   return (
-    <div className="bg-gradient-to-br from-background/50 via-background to-background/10 p-6 h-full">
+    <div className="p-6 h-full">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

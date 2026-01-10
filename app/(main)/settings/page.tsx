@@ -42,7 +42,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="bg-background min-h-screen py-12 px-4">
+    <div className="min-h-screen py-12 px-4">
       <div className="max-w-3xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

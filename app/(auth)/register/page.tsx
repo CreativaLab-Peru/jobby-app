@@ -1,6 +1,6 @@
 import {getSession} from "@/lib/shared/session";
 import {redirect} from "next/navigation";
-import {RegisterForm} from "@/features/auth/components/register-form";
+import {RegisterForm} from "@/features/authentication/components/register-form";
 import {Card} from "@/components/ui/card";
 
 export default async function RegisterPage() {

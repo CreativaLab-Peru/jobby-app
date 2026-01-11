@@ -1,8 +1,8 @@
 "use server"
 
 import {prisma} from "@/lib/prisma";
-import {PAYMENT_PLAN_ID_BY_DEFAULT} from "./consts";
 import {inngest} from "@/inngest/functions/client";
+import {PAYMENT_PLAN_ID_BY_DEFAULT} from "@/features/billing/consts/payment-plant-ids";
 
 export const newUserConfiguration = async (userId: string) => {
   try {

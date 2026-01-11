@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Eye, CloudCheck, CloudUpload } from "lucide-react"
-import { getSections } from "@/lib/cv-sections"
+import {getSections} from "@/features/cv/helpers";
 import { NavigationButtons } from "@/features/cv/components/navigation-buttons"
 import { CVSectionForm } from "@/features/cv/components/cv-section-form"
 import { CVPreview } from "@/features/cv/components/cv-preview"

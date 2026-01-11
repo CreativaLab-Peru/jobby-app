@@ -1,6 +1,6 @@
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import { getSession } from "@/lib/shared/session";
+import { getSession } from "@/features/authentication/actions/get-session";;
 
 export default async function PublicLayout({
   children,

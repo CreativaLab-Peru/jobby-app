@@ -3,7 +3,7 @@ import { transformCVToDTO } from "@/features/cv/dto/transform-cv.dto";
 import { redirect } from "next/navigation";
 import { getCvById } from "@/features/cv/actions/get-cv-by-id";
 import { PreviewCVComponent } from "@/features/cv-preview/components/cv-review-page";
-import { getSections } from "@/lib/cv-sections";
+import {getSections} from "@/features/cv/helpers";
 
 interface PreviewCVPageProps {
   params: Promise<{

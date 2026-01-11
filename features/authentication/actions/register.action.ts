@@ -1,8 +1,8 @@
 "use server";
 
 import { authClient } from "@/lib/auth-client";
-import { newUserConfiguration } from "@/lib/shared/new-user-configuration";
-import {registerSchema} from "@/features/auth/schemas/register-schema";
+import {registerSchema} from "@/features/authentication/schemas/register-schema";
+import {newUserConfiguration} from "@/features/authentication/actions/new-user-configuration";
 
 export async function registerAction(formData: unknown) {
   const parsed = await registerSchema.safeParseAsync(formData);

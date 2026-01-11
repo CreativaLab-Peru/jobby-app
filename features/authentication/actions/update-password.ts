@@ -1,7 +1,6 @@
 "use server"
 
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 
 export const updatePassword = async (password: string) => {

@@ -1,6 +1,6 @@
 "use server"
 
-import { getSession } from "@/lib/shared/session";
+import { getSession } from "@/features/authentication/actions/get-session";;
 import { prisma } from "@/lib/prisma";
 
 export const getUser = async () => {

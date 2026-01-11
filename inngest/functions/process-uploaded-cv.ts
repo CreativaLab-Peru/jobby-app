@@ -1,10 +1,10 @@
 import { inngest } from "./client";
 import { prisma } from "@/lib/prisma";
 import { JobStatus, LogAction, LogLevel } from "@prisma/client";
-import { getPromptToGetCv } from "@/lib/prompts/get-prompt-to-get-cv";
-import { queryGemini } from "@/lib/queries/query-gemini";
 import { getTextFromPdfApi } from "@/utils/get-text-from-pdf-api";
 import { logsService } from "@/features/share/services/logs-service";
+import {getPromptToGetCv} from "@/features/cv/prompts/get-prompt-to-get-cv";
+import {queryGemini} from "@/features/cv/queries/query-gemini";
 
 export const processUploadedCv = inngest.createFunction(
   { id: "process-uploaded-cv" },

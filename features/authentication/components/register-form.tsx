@@ -7,7 +7,7 @@ import { FormField } from "@/components/form-field";
 import { registerAction } from "../actions/register.action";
 import { Button } from "@/components/ui/button";
 import { Mail, Lock, User } from "lucide-react";
-import {RegisterFormData, registerSchema} from "@/features/auth/schemas/register-schema";
+import {RegisterFormData, registerSchema} from "@/features/authentication/schemas/register-schema";
 
 export function RegisterForm() {
   const router = useRouter();

@@ -1,11 +1,11 @@
-import {getUser} from "@/lib/shared/get-user";
 import {TermsModal} from "@/components/terms-modal";
 import "../globals.css";
 import {NavbarWrapper} from "@/components/navbar-wrapper";
-import {getAvailableTokens} from "@/lib/shared/get-available-tokens";
 import {SidebarProvider} from "@/components/ui/sidebar";
 import AppSidebar from "@/components/app-sidebar";
 import {redirect} from "next/navigation";
+import {getAvailableTokens} from "@/features/billing/actions/get-available-tokens";
+import {getUser} from "@/features/authentication/actions/get-user";
 
 export const dynamic = "force-dynamic";
 

@@ -1,7 +1,8 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { AlertTriangle, RefreshCw, Home } from "lucide-react"
+import { ShieldAlert, RefreshCcw, Home, Terminal } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export default function GlobalError({
                                       error,
@@ -11,93 +12,94 @@ export default function GlobalError({
   reset: () => void
 }) {
   return (
-    <html>
-    <body>
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50 flex items-center justify-center">
-      <div className="container mx-auto px-4 py-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="max-w-2xl mx-auto text-center"
-        >
-          {/* Critical Error Icon */}
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            className="mb-8"
-          >
+    <html lang="es" className="dark">
+    <body className="bg-background text-foreground antialiased">
+    <div className="min-h-screen flex items-center justify-center relative px-4">
+      {/* Fondo con efecto de interferencia AI */}
+      <div className="absolute inset-0 z-0 opacity-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--primary)_0%,transparent_50%)] blur-3xl" />
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="max-w-xl w-full z-10"
+      >
+        <div className="text-center space-y-8">
+          {/* Icono de Error Estilo Levely */}
+          <div className="relative inline-block">
             <motion.div
               animate={{
-                rotate: [0, -10, 10, 0],
-                scale: [1, 1.1, 1],
+                rotateY: [0, 180, 360],
+                boxShadow: ["0 0 20px rgba(var(--primary), 0.2)", "0 0 40px rgba(var(--primary), 0.5)", "0 0 20px rgba(var(--primary), 0.2)"]
               }}
-              transition={{
-                duration: 2,
-                repeat: Number.POSITIVE_INFINITY,
-                repeatDelay: 1,
-              }}
-              className="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-r from-red-600 to-orange-600 rounded-full mb-6 shadow-2xl"
+              transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+              className="w-24 h-24 rounded-3xl bg-card border-2 border-border flex items-center justify-center relative z-10"
             >
-              <AlertTriangle className="w-16 h-16 text-white" />
+              <ShieldAlert className="w-12 h-12 text-primary" />
             </motion.div>
-          </motion.div>
-          
-          {/* Error Message */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="mb-8"
-          >
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent mb-4">
-              Error Crítico
+            <div className="absolute -inset-4 bg-primary/10 blur-2xl rounded-full -z-10" />
+          </div>
+
+          {/* Mensaje de Error */}
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter italic">
+              Sistema <span className="ai-gradient-text text-white">Interrumpido</span>
             </h1>
-            <p className="text-xl text-gray-600 mb-6">
-              Ha ocurrido un error crítico en la aplicación. Por favor, recarga la página.
+            <p className="text-muted-foreground font-medium text-lg">
+              La IA ha detectado una anomalía crítica en el flujo de datos. No te preocupes, el explorador sigue a salvo.
             </p>
-          </motion.div>
-          
-          {/* Action Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
-            <button
+          </div>
+
+          {/* Acciones */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button
               onClick={reset}
-              className="inline-flex items-center px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-red-500 to-orange-600 hover:from-red-600 hover:to-orange-700 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+              size="lg"
+              className="h-14 px-8 ai-gradient text-white font-black uppercase tracking-widest border-none shadow-glow hover:scale-105 transition-all"
             >
-              <RefreshCw className="w-5 h-5 mr-2" />
-              Recargar Aplicación
-            </button>
-            
-            <button
-              onClick={() => (window.location.href = "/")}
-              className="inline-flex items-center px-8 py-4 text-lg font-semibold text-gray-700 bg-white border-2 border-gray-300 hover:bg-gray-50 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+              <RefreshCcw className="w-5 h-5 mr-2" />
+              Reiniciar Núcleo
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={() => (window.location.href = "/dashboard")}
+              size="lg"
+              className="h-14 px-8 border-2 font-black uppercase tracking-widest hover:bg-muted"
             >
               <Home className="w-5 h-5 mr-2" />
               Ir al Inicio
-            </button>
-          </motion.div>
-          
-          {/* Error details for development */}
-          {process.env.NODE_ENV === "development" && (
+            </Button>
+          </div>
+
+          {/* Debug Section (Console Style) */}
+          {(process.env.NODE_ENV === "development" || true) && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-              className="mt-8 p-4 bg-gray-100 rounded-lg text-left"
+              transition={{ delay: 0.5 }}
+              className="mt-12 text-left"
             >
-              <h4 className="font-semibold text-gray-700 mb-2">Información técnica:</h4>
-              <p className="text-sm text-gray-600 font-mono break-all">{error.message}</p>
-              {error.digest && <p className="text-xs text-gray-500 mt-2">Error ID: {error.digest}</p>}
+              <div className="bg-card border border-border rounded-2xl shadow-2xl">
+                <div className="bg-muted px-4 py-2 flex items-center gap-2 border-b border-border">
+                  <Terminal className="w-4 h-4 text-secondary" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Log de Error Crítico</span>
+                </div>
+                <div className="p-6 font-mono text-xs space-y-2 overflow-auto max-h-[200px]">
+                  <p className="text-red-400 font-bold tracking-tight">{error.name}: {error.message}</p>
+                  {error.digest && (
+                    <p className="text-muted-foreground">ID_SESION: <span className="text-secondary">{error.digest}</span></p>
+                  )}
+                  <p className="text-[10px] text-muted-foreground/50 italic leading-relaxed">
+                    Timestamp: {new Date().toISOString()}
+                  </p>
+                </div>
+              </div>
             </motion.div>
           )}
-        </motion.div>
-      </div>
+        </div>
+      </motion.div>
     </div>
     </body>
     </html>

@@ -5,14 +5,19 @@ import {NavbarWrapper} from "@/components/navbar-wrapper";
 import {getAvailableTokens} from "@/lib/shared/get-available-tokens";
 import {SidebarProvider} from "@/components/ui/sidebar";
 import AppSidebar from "@/components/app-sidebar";
+import {redirect} from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
 export default async function RootLayout({
                                            children,
                                          }: Readonly<{ children: React.ReactNode }>) {
-  const limitPlanOfCurrentUser = await getAvailableTokens();
   const user = await getUser();
+  if (!user) {
+    return redirect("/login");
+  }
+
+  const limitPlanOfCurrentUser = await getAvailableTokens();
   const isTermsAccepted =
     (user?.acceptedTermsAndConditions && user?.acceptedPrivacyPolicy) || false;
 

@@ -11,6 +11,15 @@ import { FormField } from "@/components/form-field";
 import { loginSchema, LoginFormData } from "../schemas/login-schema";
 import { loginAction } from "../actions/login.action";
 import { useState } from "react";
+import {authClient} from "@/lib/auth-client";
+
+const errorMapper: Record<string, string> = {
+  "Invalid password": "Contraseña incorrecta",
+  "User not found": "Usuario no encontrado",
+  "Email not verified": "Correo electrónico no verificado",
+  "Too many requests": "Demasiadas solicitudes, intenta más tarde",
+  "Invalid email or password": "Correo electrónico o contraseña inválidos",
+};
 
 export function LoginForm() {
   const router = useRouter();
@@ -29,6 +38,15 @@ export function LoginForm() {
     setFormError(null);
 
     const result = await loginAction(data);
+    const { email, password } = data;
+    const response = await authClient.signIn.email({
+      email,
+      password,
+    });
+    if (!response.data) {
+      setFormError(errorMapper[response.error.message] || "Error desconocido");
+      return;
+    }
 
     if (!result.success) {
       if (result.fieldErrors) {
@@ -36,15 +54,10 @@ export function LoginForm() {
           setError(key as any, { message: value?.[0] });
         });
       }
-
-      if (result.formError) {
-        setFormError(result.formError);
-      }
-
       return;
     }
 
-    router.push("/dashboard/cv");
+    router.push("/dashboard");
   };
 
   return (

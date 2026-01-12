@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, CheckCircle2, Zap } from "lucide-react"
+import { ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface NavigationButtonsProps {

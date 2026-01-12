@@ -1,8 +1,8 @@
-import { addToMailerLite } from "@/lib/email/mailerlite";
 import { inngest } from "./client";
 import { prisma } from "@/lib/prisma";
 import { JobStatus, LogAction, LogLevel } from "@prisma/client";
 import { logsService } from "@/features/share/services/logs-service";
+import {addToMailerLite} from "@/features/authentication/actions/mailerlite";
 
 const required = (value: any, field: string) => {
   if (!value) throw new Error(`Missing required field: ${field}`);

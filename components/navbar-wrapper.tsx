@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/navbar";
-import {CreditsOfPlan} from "@/lib/shared/get-available-tokens";
+import {CreditsOfPlan} from "@/features/billing/actions/get-available-tokens";
 
 interface NavbarWrapperProps {
   creditsOfPlan: CreditsOfPlan;

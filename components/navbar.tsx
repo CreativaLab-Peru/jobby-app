@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Zap, Plus } from "lucide-react";
 import { ProfileButton } from "@/components/profile-button";
-import { CreditsOfPlan } from "@/lib/shared/get-available-tokens";
-import { ButtonToggleTheme } from "@/components/button-toggle-theme";
+import { ThemeToggleSwitch } from "@/components/button-toggle-theme";
 import {SidebarTrigger} from "@/components/ui/sidebar";
+import {CreditsOfPlan} from "@/features/billing/actions/get-available-tokens";
 
 interface NavbarProps {
   user: {
@@ -68,7 +68,7 @@ export function Navbar({ userLimit, user }: NavbarProps) {
 
           <div className="flex items-center gap-4">
             {/* TOGGLE THEME */}
-            <ButtonToggleTheme />
+            <ThemeToggleSwitch />
 
             {/* TOKENS */}
             <motion.div whileHover={{ scale: 1.05 }} className="hidden sm:block">

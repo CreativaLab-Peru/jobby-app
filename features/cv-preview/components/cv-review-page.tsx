@@ -9,7 +9,7 @@ import { TipCard } from "@/features/cv-preview/components/tip-card"
 import { CVData } from "@/types/cv"
 import { PdfPreviewWrapper } from "@/components/pdf-preview/pdf-preview-wrapper"
 import { OpportunityType, CvType } from "@prisma/client"
-import { getSections } from "@/lib/cv-sections"
+import {getSections} from "@/features/cv/helpers";
 
 interface PreviewCVComponentProps {
   cv: CVData

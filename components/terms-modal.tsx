@@ -4,8 +4,8 @@ import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/
 import { Button } from "@/components/ui/button";
 import {useTransition} from "react";
 import {useRouter} from "next/navigation";
-import {acceptTerms} from "@/lib/accept-terms";
 import {Loader2} from "lucide-react";
+import {acceptTerms} from "@/features/authentication/actions/accept-terms";
 
 interface TermsModalProps {
   isOpen: boolean;
@@ -15,7 +15,7 @@ interface TermsModalProps {
 export function TermsModal({ isOpen, userId }: TermsModalProps) {
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
-  
+
   const onAccept = () => {
     if (!userId) {
       console.error("User ID is required to accept terms");
@@ -32,7 +32,7 @@ export function TermsModal({ isOpen, userId }: TermsModalProps) {
       })
     })
   };
-  
+
   return (
     <Dialog open={isOpen}>
       <DialogContent className="max-w-xl bg-white/95 backdrop-blur-sm border border-orange-100 shadow-xl">
@@ -59,10 +59,10 @@ export function TermsModal({ isOpen, userId }: TermsModalProps) {
             >
               Política de Privacidad
             </a>{" "}
-            
+
             antes de continuar.
           </p>
-          
+
           <Button
             disabled={isPending}
             onClick={onAccept}

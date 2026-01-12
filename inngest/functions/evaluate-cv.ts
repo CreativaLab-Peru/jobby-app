@@ -1,9 +1,9 @@
 import { inngest } from "./client";
 import { prisma } from "@/lib/prisma";
-import { queryGemini } from "@/lib/queries/query-gemini";
-import { getPromptToEvaluateCv } from "@/lib/prompts/get-prompt-to-evaluate-cv";
 import { CvSectionType, JobStatus, LogAction, LogLevel } from "@prisma/client";
 import { logsService } from "@/features/share/services/logs-service";
+import {getPromptToEvaluateCv} from "@/features/cv/prompts/get-prompt-to-evaluate-cv";
+import {queryGemini} from "@/features/cv/queries/query-gemini";
 
 type EvaluateCvResponse = {
   overallScore: number;

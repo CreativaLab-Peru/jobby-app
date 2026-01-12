@@ -5,13 +5,14 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Eye, CloudCheck, CloudUpload } from "lucide-react"
-import { getSections } from "@/lib/cv-sections"
+import {getSections} from "@/features/cv/helpers";
 import { NavigationButtons } from "@/features/cv/components/navigation-buttons"
 import { CVSectionForm } from "@/features/cv/components/cv-section-form"
 import { CVPreview } from "@/features/cv/components/cv-preview"
 import { CVData } from "@/types/cv";
 import { updateCvAndSections } from "@/features/cv/actions/update-cv-and-sections";
 import { OpportunityType, CvType } from "@prisma/client"
+import {routes} from "@/lib/routes";
 
 interface CreateCVPageProps {
   cv: CVData
@@ -43,11 +44,14 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
   }
 
   const handleNext = () => {
+    console.log("Submitting CV data...", activeSection, sections.length - 1)
+
     submit()
     if (activeSection < sections.length - 1) {
       setActiveSection(activeSection + 1)
     } else {
-      router.push(`/cv/${id}/preview`)
+      console.log("All sections completed, redirecting to preview...")
+      router.push(routes.app.cv.preview(id))
     }
   }
 

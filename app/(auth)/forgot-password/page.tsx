@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatedBackground } from "@/components/animated-background";
-import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
+import {ForgotPasswordForm} from "@/features/authentication/components/forgot-password-form";
 
 export default function ForgotPasswordPage() {
   return (

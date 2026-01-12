@@ -67,7 +67,7 @@ export default function AnalysisScore({
   return (
     <>
       {/* REFACTOR: Fondo usando la variable background y decoración sutil */}
-      <div className="min-h-screen bg-background relative">
+      <div className="min-h-screen relative">
         <div className="absolute inset-0 bg-grid-slate-200/[0.05] pointer-events-none" />
 
         <div className="container relative z-10 py-8">

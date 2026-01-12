@@ -20,5 +20,8 @@ export const config = {
         "/preview",
         "/analyzing",
         "/analysis",
+        "/opportunities",
+        "/settings",
+        "/billing",
     ],
 };

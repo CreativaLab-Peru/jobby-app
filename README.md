@@ -4,6 +4,7 @@
 1. Bun 1.3.3
 2. Docker and Docker Compose
 3. Node.js 20.x
+4. Install bun
 
 ## Setup Instructions
 1. Generate SSH keys and add them to your GitHub account:
@@ -13,11 +14,16 @@
    ```bash
    git clone git@github.com:CreativaLab-Peru/jobby-app.git
    ```
-3. Run the script to set up the environment: (linux)
+3. Install dependencies
+   ```bash
+   bun install
+   ```
+4. Run the script to set up the environment: (linux)
    ```bash
    ./setup.sh
    ```
-4. Start de app (linux)
+5. Start de app (linux)
   ```bash 
     ./start_dev.sh
   ```
+Aux

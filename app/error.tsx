@@ -1,214 +1,128 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertTriangle, RefreshCw, Home, Bug, ArrowLeft } from "lucide-react"
+import { useEffect } from "react";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { RefreshCw, Home, Bug, ArrowLeft, Cpu, AlertCircle } from "lucide-react";
 
 export default function Error({
                                 error,
                                 reset,
                               }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
-    console.error("Application error:", error)
-  }, [error])
-  // TODO: Integrate with an error reporting service like Sentry or LogRocket
+    // Aquí podrías integrar Sentry o LogRocket
+    console.error("Segment error caught:", error);
+  }, [error]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-red-50 flex items-center justify-center">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-[80vh] w-full flex items-center justify-center p-4 relative">
+      {/* Background Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 blur-[120px] rounded-full -z-10" />
+
+      <div className="container max-w-2xl relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="max-w-2xl mx-auto text-center"
+          className="text-center space-y-8"
         >
-          {/* Animated Error Icon */}
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            className="mb-8"
-          >
-            <div className="relative">
+          {/* Hero Icon Section */}
+          <div className="relative inline-block">
+            <motion.div
+              animate={{
+                rotate: [0, -5, 5, 0],
+                y: [0, -10, 0]
+              }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="w-28 h-28 bg-card border-2 border-border rounded-[2.5rem] flex items-center justify-center shadow-glow relative z-10"
+            >
+              <Cpu className="w-14 h-14 text-primary" />
               <motion.div
-                animate={{
-                  rotate: [0, -5, 5, 0],
-                  scale: [1, 1.05, 1],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Number.POSITIVE_INFINITY,
-                  repeatDelay: 3,
-                }}
-                className="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-r from-yellow-500 to-red-500 rounded-full mb-6 shadow-2xl"
+                animate={{ opacity: [1, 0.4, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute top-2 right-2"
               >
-                <AlertTriangle className="w-16 h-16 text-white" />
+                <AlertCircle className="w-6 h-6 text-secondary" />
               </motion.div>
-              
-              {/* Warning indicators */}
-              <motion.div
-                animate={{
-                  scale: [1, 1.2, 1],
-                  opacity: [0.5, 1, 0.5],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Number.POSITIVE_INFINITY,
-                }}
-                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center"
-              >
-                <span className="text-white text-xs font-bold">!</span>
-              </motion.div>
-              
-              <motion.div
-                animate={{
-                  y: [0, -8, 0],
-                  opacity: [0.3, 0.7, 0.3],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Number.POSITIVE_INFINITY,
-                  delay: 0.5,
-                }}
-                className="absolute -bottom-4 -left-4 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full opacity-60"
-              />
-            </div>
-          </motion.div>
-          
-          {/* Error Message */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="mb-8"
-          >
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-yellow-600 to-red-600 bg-clip-text text-transparent mb-4">
-              ¡Oops! Algo salió mal
-            </h1>
-            <p className="text-xl text-gray-600 mb-6">
-              Ha ocurrido un error inesperado. No te preocupes, nuestro equipo ha sido notificado.
-            </p>
-          </motion.div>
-          
-          {/* Error Details Card */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.6 }}
-            className="mb-8"
-          >
-            <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center text-xl text-gray-800">
-                  <Bug className="w-6 h-6 mr-3 text-yellow-500" />
-                  Detalles del Error
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="text-left">
-                  <h4 className="font-semibold text-gray-700 mb-2">¿Qué puedes hacer?</h4>
-                  <div className="space-y-2">
-                    <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2 flex-shrink-0" />
-                      <p className="text-gray-600">Intenta recargar la página usando el botón &quot;Intentar de nuevo&quot;</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0" />
-                      <p className="text-gray-600">Si el problema persiste, regresa al inicio y vuelve a intentar</p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0" />
-                      <p className="text-gray-600">Contacta a soporte si continúas experimentando problemas</p>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Error details for development */}
-                {process.env.NODE_ENV === "development" && (
-                  <div className="mt-6 p-4 bg-gray-100 rounded-lg text-left">
-                    <h4 className="font-semibold text-gray-700 mb-2">Información técnica:</h4>
-                    <p className="text-sm text-gray-600 font-mono break-all">{error.message}</p>
-                    {error.digest && <p className="text-xs text-gray-500 mt-2">Error ID: {error.digest}</p>}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </motion.div>
-          
-          {/* Action Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button
-                onClick={reset}
-                className="px-8 py-4 text-lg bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                <motion.div
-                  animate={{
-                    rotate: [0, 360],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Number.POSITIVE_INFINITY,
-                    ease: "linear",
-                  }}
-                >
-                  <RefreshCw className="w-5 h-5 mr-2" />
-                </motion.div>
-                Intentar de Nuevo
-                <motion.div
-                  animate={{
-                    opacity: [0.5, 1, 0.5],
-                  }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Number.POSITIVE_INFINITY,
-                  }}
-                  className="ml-2"
-                >
-                  🔄
-                </motion.div>
-              </Button>
             </motion.div>
-            
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <div className="absolute -inset-2 bg-secondary/20 blur-2xl rounded-full -z-10 animate-pulse" />
+          </div>
+
+          {/* Error Message */}
+          <div className="space-y-3">
+            <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter italic">
+              Proceso <span className="ai-gradient-text text-white">Interrumpido</span>
+            </h1>
+            <p className="text-muted-foreground font-medium text-lg max-w-md mx-auto leading-relaxed">
+              La IA encontró un obstáculo inesperado al procesar esta sección. No es tu culpa, vamos a reintentarlo.
+            </p>
+          </div>
+
+          {/* Action Card */}
+          <Card className="bg-card/50 border-border backdrop-blur-xl shadow-2xl">
+            <CardHeader className="bg-muted/30 border-b border-border py-4 px-6 text-left">
+              <CardTitle className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2">
+                <Bug className="w-4 h-4 text-secondary" /> Protocolo de recuperación
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 text-left space-y-6">
+              <div className="grid gap-4">
+                {[
+                  { text: "Intentar reiniciar el motor de la página", color: "bg-primary" },
+                  { text: "Verificar si hay problemas de conexión", color: "bg-secondary" },
+                  { text: "Navegar de vuelta al centro de mando", color: "bg-muted-foreground" },
+                ].map((step, i) => (
+                  <div key={i} className="flex items-center gap-4 group">
+                    <div className={`w-1.5 h-1.5 rounded-full ${step.color} shadow-[0_0_10px_rgba(0,0,0,0.5)]`} />
+                    <p className="text-sm font-bold text-muted-foreground group-hover:text-foreground transition-colors">
+                      {step.text}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              {process.env.NODE_ENV === "development" && (
+                <div className="mt-4 p-4 rounded-xl bg-black/40 border border-white/5 font-mono text-[10px] text-red-400/80 break-all leading-relaxed">
+                  <p className="font-bold text-red-400 mb-1 tracking-widest uppercase underline">Trace log:</p>
+                  {error.message}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Final Actions */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button
+              onClick={reset}
+              className="h-14 px-10 ai-gradient text-white font-black uppercase tracking-widest border-none shadow-glow hover:scale-105 transition-all w-full sm:w-auto"
+            >
+              <RefreshCw className="w-5 h-5 mr-2" />
+              Intentar de nuevo
+            </Button>
+
+            <div className="flex gap-2 w-full sm:w-auto">
               <Button
                 variant="outline"
-                onClick={() => (window.location.href = "/")}
-                className="px-8 py-4 text-lg border-2 bg-white/90 hover:bg-gradient-to-r hover:from-yellow-50 hover:to-orange-50 hover:border-yellow-300 shadow-lg hover:shadow-xl transition-all duration-300"
+                onClick={() => (window.location.href = "/dashboard")}
+                className="h-14 flex-1 sm:px-8 border-2 font-black uppercase tracking-widest hover:bg-muted"
               >
-                <Home className="w-5 h-5 mr-2" />
-                Ir al Inicio
+                <Home className="w-5 h-5" />
               </Button>
-            </motion.div>
-            
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
                 variant="ghost"
                 onClick={() => window.history.back()}
-                className="px-8 py-4 text-lg hover:bg-gray-100 transition-all duration-300"
+                className="h-14 flex-1 sm:px-8 font-black uppercase tracking-widest hover:text-primary"
               >
                 <ArrowLeft className="w-5 h-5 mr-2" />
-                Regresar
+                Atrás
               </Button>
-            </motion.div>
-          </motion.div>
-          
-          {/* Decorative Elements */}
-          <div className="absolute top-10 left-10 w-24 h-24 bg-gradient-to-r from-yellow-200/20 to-orange-200/20 rounded-full blur-xl" />
-          <div className="absolute bottom-10 right-10 w-32 h-32 bg-gradient-to-r from-orange-200/20 to-red-200/20 rounded-full blur-xl" />
-          <div className="absolute top-1/3 right-5 w-16 h-16 bg-gradient-to-r from-yellow-300/10 to-red-300/10 rounded-full blur-lg" />
+            </div>
+          </div>
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

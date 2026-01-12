@@ -1,5 +1,5 @@
-import {queryGemini} from "@/lib/queries/query-gemini";
 import {NextResponse} from "next/server";
+import {queryGemini} from "@/features/cv/queries/query-gemini";
 
 export async function GET(request: Request) {
   try {

@@ -31,7 +31,7 @@ export function StickyActionButtons({ show }: StickyActionButtonsProps) {
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1">
                 <Button
                   size="lg"
-                  className="w-full px-6 py-4 text-lg bg-gradient-primary hover:opacity-90 shadow-card transition-all duration-300 text-primary-foreground"
+                  className="w-full px-6 py-4 text-lg bg-primary hover:opacity-90 shadow-card transition-all duration-300 text-primary-foreground"
                   onClick={handleGoCreativaAcademy}
                 >
                   <motion.div

@@ -2,7 +2,9 @@
 
 import {prisma} from "@/lib/prisma";
 import {TemporalUser} from "@prisma/client";
-import {createPreferenceForNewUser} from "@/lib/mercadopago/create-preference-for-new-user";
+import {
+  createPreferenceForNewUser
+} from "@/features/billing/actions/create-preference-for-new-user";
 
 export const sendEmailToPay = async (email: string) => {
   try {

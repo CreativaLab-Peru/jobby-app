@@ -5,9 +5,9 @@ import { CvType, Language, OpportunityType } from "@prisma/client";
 import { savePdf } from "@/features/upload-cv/actions/save-pdf";
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
-import { getLimitPlanOfCurrentUser } from "@/lib/shared/get-count-availables-attempts";
 import {getTextFromPdfApi} from "@/utils/get-text-from-pdf-api";
-import {detectCv} from "@/lib/cv/verify-cv";
+import {getLimitPlanOfCurrentUser} from "@/features/billing/actions/get-count-availables-attempts";
+import {detectCv} from "@/features/cv/actions/verify-cv";
 
 export async function POST(req: Request) {
   try {

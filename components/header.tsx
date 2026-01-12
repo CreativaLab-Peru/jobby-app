@@ -3,10 +3,10 @@
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import {Button} from "@/components/ui/button";
-import {ChevronDown, HomeIcon, Star, User} from "lucide-react";
+import {ChevronDown, Star, User} from "lucide-react";
 import {useState} from "react";
 import Image from "next/image";
-import {ButtonToggleTheme} from "@/components/button-toggle-theme";
+import {ThemeToggleSwitch} from "@/components/button-toggle-theme";
 
 interface HeaderProps {
   authenticated: boolean
@@ -105,7 +105,7 @@ const Header = ({authenticated}: HeaderProps) => {
           {/* CTA Buttons with per-button hover dropdown (desktop) */}
           <div className="hidden md:flex items-center space-x-4">
             {/* Button toggle theme */}
-            <ButtonToggleTheme />
+            <ThemeToggleSwitch />
 
             {/* Login - dropdown on hover */}
             <div className="relative">
@@ -159,15 +159,6 @@ const Header = ({authenticated}: HeaderProps) => {
                           Regístrate como Empresa
                         </Button>
                       </Link>
-                      {/*<Link href="/register?role=institucion">*/}
-                      {/*  <Button*/}
-                      {/*    variant="ghost"*/}
-                      {/*    size="sm"*/}
-                      {/*    className="w-full justify-start mt-1"*/}
-                      {/*  >*/}
-                      {/*    Regístrate como Institución*/}
-                      {/*  </Button>*/}
-                      {/*</Link>*/}
                     </div>
                   </div>
                 </div>
@@ -249,13 +240,6 @@ const Header = ({authenticated}: HeaderProps) => {
             >
               Para instituciones
             </Link>
-            {/* <Link
-              href="/expertos"
-              className="block text-sm font-medium text-foreground/80 hover:text-primary"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Expertos
-            </Link> */}
             <div className="flex flex-col space-y-2 pt-4">
               <div>
                 <div
@@ -272,136 +256,58 @@ const Header = ({authenticated}: HeaderProps) => {
                 >
                   {
                     !authenticated ? (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="w-full justify-between"
-                      >
-                        Iniciar sesión
-                        {/*<ChevronDown*/}
-                        {/*  className={`h-4 w-4 transition-transform ${mobileLoginOpen ? "rotate-180" : ""*/}
-                        {/*    }`}*/}
-                        {/*/>*/}
-                      </Button>
+                      <Link href="/login">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="w-full justify-between"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              setMobileRegisterOpen((s) => !s);
+                            }
+                          }}
+                        >
+                          Iniciar sesión
+                        </Button>
+                      </Link>
+
                     ) : (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="w-full justify-between"
-                      >
-                        Iniciar sesión
-                        {/*<ChevronDown*/}
-                        {/*  className={`h-4 w-4 transition-transform ${mobileLoginOpen ? "rotate-180" : ""*/}
-                        {/*    }`}*/}
-                        {/*/>*/}
-                      </Button>
+                      <Link href="/cv">
+                        <Button size="md" className="cursor-pointer w-full">
+                          <User className="mr-2 h-4 w-4 inline-block"/>
+                          Ver mis CV's
+                        </Button>
+                      </Link>
                     )}
                 </div>
-                {/* {mobileLoginOpen && (
-                  <div className="mt-2 space-y-1">
-                    <Link
-                      href="/login?role=talento"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="w-full justify-start"
-                      >
-                        Para Talento
-                      </Button>
-                    </Link>
-                    <Link
-                      href="/login?role=empresa"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="w-full justify-start"
-                      >
-                        Para Empresa
-                      </Button>
-                    </Link>
-                    <Link
-                      href="/login?role=institucion"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="w-full justify-start"
-                      >
-                        Para Institución
-                      </Button>
-                    </Link>
-                  </div>
-                )} */}
               </div>
 
               <div>
-                <div
-                  role="button"
-                  tabIndex={0}
-                  className="w-full text-left cursor-pointer"
-                  onClick={() => setMobileRegisterOpen((s) => !s)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setMobileRegisterOpen((s) => !s);
-                    }
-                  }}
-                >
-                  <Link href="/register" aria-label="Registrate">
-                    <Button size="sm" className="w-full justify-between">
-                      Regístrate
-                      <ChevronDown
-                        className={`h-4 w-4 transition-transform ${mobileRegisterOpen ? "rotate-180" : ""
-                        }`}
-                      />
-                    </Button>
-                  </Link>
-                </div>
-                {/* {mobileRegisterOpen && (
-                  <div className="mt-2 space-y-1">
-                    <Link
-                      href="/register?role=talento"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="w-full justify-start"
-                      >
-                        Regístrate como Talento
-                      </Button>
-                    </Link>
-                    <Link
-                      href="/register?role=empresa"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="w-full justify-start"
-                      >
-                        Regístrate como Empresa
-                      </Button>
-                    </Link>
-                    <Link
-                      href="/register?role=institucion"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="w-full justify-start"
-                      >
-                        Regístrate como Institución
+                { !authenticated && (
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    className="w-full text-left cursor-pointer"
+                    onClick={() => setMobileRegisterOpen((s) => !s)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setMobileRegisterOpen((s) => !s);
+                      }
+                    }}
+                  >
+                    <Link href="/register" aria-label="Registrate">
+                      <Button size="sm" className="w-full justify-between">
+                        Regístrate
+                        {/*<ChevronDown*/}
+                        {/*  className={`h-4 w-4 transition-transform ${mobileRegisterOpen ? "rotate-180" : ""*/}
+                        {/*  }`}*/}
+                        {/*/>*/}
                       </Button>
                     </Link>
                   </div>
-                )} */}
+                )}
               </div>
             </div>
           </div>

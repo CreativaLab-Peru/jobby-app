@@ -7,6 +7,7 @@ interface FormFieldProps {
   error?: string;
   icon?: LucideIcon;
   type?: string;
+  placeholder?: string;
   register: any;
 }
 
@@ -16,6 +17,7 @@ export function FormField({
                             icon: Icon,
                             type = "text",
                             register,
+                            placeholder
                           }: FormFieldProps) {
   return (
     <div className="space-y-2">
@@ -26,6 +28,7 @@ export function FormField({
         )}
         <Input
           type={type}
+          placeholder={placeholder}
           className={Icon ? "pl-10" : ""}
           {...register}
         />

@@ -1,14 +1,7 @@
-import {getSession} from "@/lib/shared/session";
-import {redirect} from "next/navigation";
 import {RegisterForm} from "@/features/authentication/components/register-form";
 import {Card} from "@/components/ui/card";
 
 export default async function RegisterPage() {
-  const session = await getSession()
-  if (session?.success) {
-    return redirect('/cv');
-  }
-
   return (
     <div className="relative flex items-center justify-center min-h-screen">
       <div className="relative z-10">

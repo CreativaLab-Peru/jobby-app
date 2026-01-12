@@ -12,6 +12,7 @@ import { loginSchema, LoginFormData } from "../schemas/login-schema";
 import { loginAction } from "../actions/login.action";
 import { useState } from "react";
 import {authClient} from "@/lib/auth-client";
+import {routes} from "@/lib/routes";
 
 const errorMapper: Record<string, string> = {
   "Invalid password": "Contraseña incorrecta",
@@ -57,7 +58,7 @@ export function LoginForm() {
       return;
     }
 
-    router.push("/dashboard");
+    router.push(routes.app.dashboard);
   };
 
   return (
@@ -76,6 +77,7 @@ export function LoginForm() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               label="Correo electrónico"
+              placeholder="tu@email.com"
               icon={Mail}
               register={register("email")}
               error={errors.email?.message}
@@ -83,6 +85,7 @@ export function LoginForm() {
 
             <FormField
               label="Contraseña"
+              placeholder="••••••••"
               icon={Lock}
               type="password"
               register={register("password")}
@@ -119,8 +122,8 @@ export function LoginForm() {
 
           <p className="text-center text-sm text-muted-foreground mt-6">
             ¿No tienes cuenta?{" "}
-            <Link href="/pro" className="text-primary hover:underline">
-              Consulta aquí
+            <Link href="/register" className="text-primary hover:underline">
+              Regístrate aquí
             </Link>
           </p>
         </Card>

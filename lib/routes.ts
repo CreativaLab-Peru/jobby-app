@@ -12,6 +12,7 @@ export const routes = {
       root: "/cv",
       detail: (cvId: string) => `/cv/${cvId}`,
       edit: (cvId: string) => `/cv/${cvId}/edit`,
+      preview: (cvId: string) => `/cv/${cvId}/preview`,
     },
 
     evaluations: {

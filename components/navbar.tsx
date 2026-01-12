@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Zap, Plus } from "lucide-react";
 import { ProfileButton } from "@/components/profile-button";
-import { CreditsOfPlan } from "@/lib/shared/get-available-tokens";
 import { ThemeToggleSwitch } from "@/components/button-toggle-theme";
 import {SidebarTrigger} from "@/components/ui/sidebar";
+import {CreditsOfPlan} from "@/features/billing/actions/get-available-tokens";
 
 interface NavbarProps {
   user: {

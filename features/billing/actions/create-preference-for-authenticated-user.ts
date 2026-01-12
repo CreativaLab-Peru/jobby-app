@@ -4,9 +4,9 @@ import { prisma } from "@/lib/prisma";
 
 import { Preference } from "mercadopago";
 import { PreferenceCreateData } from "mercadopago/dist/clients/preference/create/types";
-import { BASE_URL, mercadopago } from "@/lib/mercado-preference";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
-import { PAYMENT_PLAN_ID_BY_DIRECT } from "../shared/consts";
+import {PAYMENT_PLAN_ID_BY_DIRECT} from "@/features/billing/consts/payment-plant-ids";
+import {BASE_URL, mercadopago} from "@/features/billing/domain/mercado-preference";
 
 
 export const createPreferenceForAuthenticatedUser = async () => {

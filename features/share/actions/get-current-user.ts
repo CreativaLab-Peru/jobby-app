@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { getSession } from "@/features/authentication/actions/get-session";;
+import { getSession } from "@/features/authentication/actions/get-session";
 
 export const getCurrentUser = async () => {
   try {

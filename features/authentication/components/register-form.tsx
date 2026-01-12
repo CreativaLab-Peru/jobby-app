@@ -7,7 +7,11 @@ import { FormField } from "@/components/form-field";
 import { registerAction } from "../actions/register.action";
 import { Button } from "@/components/ui/button";
 import { Mail, Lock, User } from "lucide-react";
-import {RegisterFormData, registerSchema} from "@/features/authentication/schemas/register-schema";
+import {
+  RegisterFormData,
+  registerSchema,
+} from "@/features/authentication/schemas/register-schema";
+import { routes } from "@/lib/routes";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -33,13 +37,14 @@ export function RegisterForm() {
       return;
     }
 
-    router.push("/cv");
+    router.push(routes.app.cv.root);
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <FormField
         label="Nombre completo"
+        placeholder="Juan Pérez"
         icon={User}
         register={register("name")}
         error={errors.name?.message}
@@ -47,6 +52,7 @@ export function RegisterForm() {
 
       <FormField
         label="Correo electrónico"
+        placeholder="tu@email.com"
         icon={Mail}
         register={register("email")}
         error={errors.email?.message}
@@ -54,6 +60,7 @@ export function RegisterForm() {
 
       <FormField
         label="Contraseña"
+        placeholder="••••••••"
         icon={Lock}
         type="password"
         register={register("password")}
@@ -62,6 +69,7 @@ export function RegisterForm() {
 
       <FormField
         label="Confirmar contraseña"
+        placeholder="••••••••"
         icon={Lock}
         type="password"
         register={register("confirmPassword")}

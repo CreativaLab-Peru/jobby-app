@@ -1,5 +1,5 @@
-import { getUser } from "@/lib/shared/get-user";
 import ChangePassword from "@/features/user/components/change-password";
+import {getUser} from "@/features/authentication/actions/get-user";
 
 export const dynamic = "force-dynamic";
 export default async function ChangePasswordPage() {

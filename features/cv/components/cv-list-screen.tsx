@@ -11,7 +11,7 @@ interface CvListProps {
   disabledButton?: boolean
 }
 
-export function CVListPage({ cvs, disabledButton }: CvListProps) {
+export function CvListScreen({ cvs, disabledButton }: CvListProps) {
   return (
     <section className="px-6 py-8">
       <div className="mx-auto max-w-6xl">

@@ -58,6 +58,8 @@ export default function SettingsPage() {
                 </div>
                 <CardTitle className="text-3xl font-bold text-foreground">
                   Configuración
+                  Información Personal
+
                 </CardTitle>
                 <p className="text-muted-foreground text-sm"> Gestiona tu perfil y preferencias de cuenta </p>
               </div>

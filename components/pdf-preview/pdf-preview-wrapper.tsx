@@ -1,4 +1,4 @@
-// app/(main)/tests/pdf-preview-wrapper.tsx
+// app/(authenticated)/tests/pdf-preview-wrapper.tsx
 "use client";
 
 import dynamic from "next/dynamic";

@@ -1,5 +1,4 @@
 import {prisma} from "@/lib/prisma"
-import {mercadopago} from "@/lib/mercado-preference"
 import {Payment} from "mercadopago"
 import {NextResponse} from "next/server"
 import {JobStatus, LogAction, LogLevel} from "@prisma/client";
@@ -7,6 +6,7 @@ import {logsService} from "@/features/share/services/logs-service";
 import {inngest} from "@/inngest/functions/client";
 import {generateMagicLinkToken, hashMagicLinkToken} from "@/utils/magic-links";
 import {authClient} from "@/lib/auth-client";
+import {mercadopago} from "@/features/billing/domain/mercado-preference";
 
 const FIRST_PASSWORD = process.env.FIRST_PASSWORD
 

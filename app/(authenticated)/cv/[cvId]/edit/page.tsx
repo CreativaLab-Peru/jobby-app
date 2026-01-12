@@ -21,6 +21,7 @@ export default async function EditCVPage({ params }: EditCVPageProps) {
   if (!cv) {
     return redirect('/404');
   }
+
   const cvData: CVData = transformCVToDTO(cv);
   return (
     <CreateCVPage

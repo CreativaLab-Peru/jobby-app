@@ -2,7 +2,7 @@ import { inngest } from "@/inngest/functions/client";
 import { NextResponse } from "next/server";
 import { CVData } from "@/types/cv";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
-import { getLimitPlanOfCurrentUser } from "@/lib/shared/get-count-availables-attempts";
+import {getLimitPlanOfCurrentUser} from "@/features/billing/actions/get-count-availables-attempts";
 
 interface CvBody {
   cvId: string;

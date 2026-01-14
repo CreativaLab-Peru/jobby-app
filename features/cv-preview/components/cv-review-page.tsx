@@ -53,6 +53,7 @@ export function PreviewCVComponent({ cv: cvData, cvId, opportunityType, cvType, 
               <ActionsSidebar
                 isDisabled={isDisabled}
                 cvData={cvData}
+                sections={sections}
                 onHome={() => router.push('/cv')}
                 onEditCV={() => router.push(`/cv/${cvId}/edit`)}
               />

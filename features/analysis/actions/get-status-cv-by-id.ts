@@ -10,7 +10,8 @@ export type CvStatus =
   | { status: "CV_EVALUATION_IN_PROGRESS" }
   | { status: "CV_EVALUATION_FAILED" }
   | { status: "CV_EVALUATION_SUCCEEDED", evaluateId: string }
-  | { status: "CV_EVALUATION_FINISHED", evaluateId: string };
+  | { status: "CV_EVALUATION_FINISHED", evaluateId: string }
+  | { status: "CV_READY_FOR_ANALYSIS" };
 
 export const getStatusCvById = async (cvId: string): Promise<CvStatus | null> => {
   try {
@@ -26,23 +27,15 @@ export const getStatusCvById = async (cvId: string): Promise<CvStatus | null> =>
 
     if (!cv) return null;
 
+    // Check for queue job (only exists for uploaded CVs)
     const queueJob = await prisma.queueJob.findFirst({
       where: { cvId: cv.id },
       orderBy: {
         createdAt: "desc",
       },
     });
-    if (!queueJob) return null;
 
-    const statusQueueJob = queueJob.status;
-    if (statusQueueJob === JobStatus.IN_PROGRESS) {
-      return { status: "CV_IN_PROGRESS" };
-    }
-
-    if (statusQueueJob === JobStatus.FAILED) {
-      return { status: "CV_FAILED" };
-    }
-
+    // Get latest evaluation
     const evaluateJob = await prisma.cvEvaluation.findFirst({
       where: { cvId: cv.id },
       orderBy: {
@@ -50,11 +43,36 @@ export const getStatusCvById = async (cvId: string): Promise<CvStatus | null> =>
       },
     });
 
-    if (statusQueueJob === JobStatus.SUCCEEDED && !evaluateJob) {
-      return { status: "CV_SUCCEEDED" };
+    // For uploaded CVs (have queueJob)
+    if (queueJob) {
+      const statusQueueJob = queueJob.status;
+      
+      if (statusQueueJob === JobStatus.IN_PROGRESS) {
+        return { status: "CV_IN_PROGRESS" };
+      }
+
+      if (statusQueueJob === JobStatus.FAILED) {
+        return { status: "CV_FAILED" };
+      }
+
+      if (statusQueueJob === JobStatus.SUCCEEDED && !evaluateJob) {
+        return { status: "CV_SUCCEEDED" };
+      }
+    }
+
+    // For manual CVs or after upload processing is done
+    // Check evaluation status
+    if (!evaluateJob) {
+      // Manual CV ready for analysis (no evaluation yet)
+      return { status: "CV_READY_FOR_ANALYSIS" };
     }
 
     const statusEvaluateJob = evaluateJob.status;
+    
+    if (statusEvaluateJob === JobStatus.PENDING) {
+      return { status: "CV_EVALUATION_PENDING_EVALUATION" };
+    }
+    
     if (statusEvaluateJob === JobStatus.IN_PROGRESS) {
       return { status: "CV_EVALUATION_IN_PROGRESS" };
     }

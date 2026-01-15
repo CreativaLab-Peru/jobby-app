@@ -1,38 +1,32 @@
 import { JsonValue } from "@prisma/client/runtime/library";
 
 export const getPromptToEvaluateCv = (text: JsonValue) => {
-  return `
-You are an expert career evaluator and recruiter.
+  return `You are an expert career evaluator. Analyze this CV and return ONLY a valid JSON object.
 
-Analyze the following CV data and produce a structured JSON evaluation.
-The goal is to rate the quality of this CV based on clarity, content, and relevance.
-
-Input (CV data):
+CV Data:
 ${JSON.stringify(text, null, 2)}
 
-Output JSON format:
+Return this exact JSON structure (no markdown, no explanation, just raw JSON):
 {
-  "overallScore": number, // 0-100
-  "summary": string, // short overall feedback
+  "overallScore": <number 0-100>,
+  "summary": "<brief feedback in Spanish, max 200 chars>",
   "sectionScores": [
-    {
-      "sectionType": string, // e.g. "Education", "Experience", "Skills"
-      "score": number, // 0-100
-      "details": { "criterion": number, "criterion2": number } // internal breakdown
-    }
+    {"sectionType": "SUMMARY", "score": <0-100>, "details": {"clarity": <0-100>, "impact": <0-100>}},
+    {"sectionType": "EXPERIENCE", "score": <0-100>, "details": {"relevance": <0-100>, "achievements": <0-100>}},
+    {"sectionType": "EDUCATION", "score": <0-100>, "details": {"completeness": <0-100>}},
+    {"sectionType": "SKILLS", "score": <0-100>, "details": {"relevance": <0-100>, "variety": <0-100>}}
   ],
   "recommendations": [
-    {
-      "sectionType": string, (It should be in SPANISH)
-      "text": string, // improvement advice (It should be in SPANISH)
-      "severity": "LOW" | "MEDIUM" | "HIGH"
-    }
+    {"sectionType": "EXPERIENCE", "text": "<advice in Spanish>", "severity": "HIGH"},
+    {"sectionType": "SKILLS", "text": "<advice in Spanish>", "severity": "MEDIUM"}
   ]
 }
 
-Rules:
-- The section type just have this values: SUMMARY, EXPERIENCE, EDUCATION, SKILLS, PROJECTS, CERTIFICATIONS, LANGUAGES, CONTACT
-- Return ONLY valid JSON.
-- Do not include explanations, markdown, or commentary.
-`;
+CRITICAL RULES:
+- Return ONLY the JSON object, nothing else
+- sectionType must be one of: SUMMARY, EXPERIENCE, EDUCATION, SKILLS, PROJECTS, CERTIFICATIONS, LANGUAGES, CONTACT
+- severity must be: LOW, MEDIUM, or HIGH
+- All text fields in Spanish
+- No trailing commas
+- Valid JSON only`;
 };

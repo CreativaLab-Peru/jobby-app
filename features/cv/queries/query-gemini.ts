@@ -67,8 +67,23 @@ export async function queryGemini<T = any>(
       };
     }
 
-    const match = responseText.match(/{[\s\S]*}/);
-    if (!match) {
+    // Try to find and parse JSON from the response
+    // First, try to find JSON block markers
+    let jsonString = responseText;
+    
+    // Remove markdown code blocks if present
+    const codeBlockMatch = responseText.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (codeBlockMatch) {
+      jsonString = codeBlockMatch[1].trim();
+    } else {
+      // Try to extract JSON object
+      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        jsonString = jsonMatch[0];
+      }
+    }
+
+    if (!jsonString || (!jsonString.startsWith('{') && !jsonString.startsWith('['))) {
       return {
         success: false,
         message: "No valid JSON found in response.",
@@ -76,13 +91,27 @@ export async function queryGemini<T = any>(
       };
     }
 
-    const jsonResponse = JSON.parse(match[0]) as T;
+    // Try to fix common JSON issues from LLM responses
+    try {
+      // Remove trailing commas before closing brackets
+      jsonString = jsonString.replace(/,(\s*[\}\]])/g, '$1');
+      
+      const jsonResponse = JSON.parse(jsonString) as T;
 
-    return {
-      success: true,
-      data: jsonResponse,
-      message: "Success",
-    };
+      return {
+        success: true,
+        data: jsonResponse,
+        message: "Success",
+      };
+    } catch (parseError) {
+      console.error("JSON parse error:", parseError);
+      console.error("Attempted to parse:", jsonString.substring(0, 500));
+      return {
+        success: false,
+        message: `Failed to parse JSON: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`,
+        data: null,
+      };
+    }
   } catch (error) {
     console.error("Failed to extract CV data:", error);
     return {

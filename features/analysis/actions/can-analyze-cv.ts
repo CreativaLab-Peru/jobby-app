@@ -5,9 +5,11 @@ import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import { getLimitPlanOfCurrentUser } from "@/features/billing/actions/get-count-availables-attempts";
 import { JobStatus } from "@prisma/client";
 
-export type CanAnalyzeResult = 
-  | { canAnalyze: true }
-  | { canAnalyze: false; reason: string; code: AnalyzeErrorCode };
+export type CanAnalyzeResult = {
+  canAnalyze: boolean;
+  reason?: string;
+  code?: AnalyzeErrorCode;
+};
 
 export type AnalyzeErrorCode = 
   | "NO_TOKENS"
@@ -95,7 +97,7 @@ export async function canAnalyzeCv(cvId: string): Promise<CanAnalyzeResult> {
     }
 
     // All checks passed - allow analysis if user has tokens
-    return { canAnalyze: true };
+    return { canAnalyze: true, reason: undefined, code: undefined };
 
   } catch (error) {
     console.error("[CAN_ANALYZE_CV_ERROR]", error);

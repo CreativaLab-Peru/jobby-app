@@ -1,7 +1,7 @@
 import {prisma} from "@/lib/prisma";
 import {CvSectionType} from "@prisma/client";
 import {
-  CvAnalysisBody,
+  CvContent,
   getOpportunitiesFromEngine
 } from "@/features/opportunities/get-opportunities-from-engine";
 import {saveOpportunities} from "@/features/opportunities/save-opportunities";
@@ -60,13 +60,15 @@ export async function GET(request: Request) {
       }
     }
 
-    const buildBody: CvAnalysisBody = {
-      user_id: userId,
+    const cvContent: CvContent = {
       skills,
       summary,
     }
 
-    const opportunities = await getOpportunitiesFromEngine(userId, cvId, buildBody);
+    const opportunities = await getOpportunitiesFromEngine(userId, cvId, {
+      cv: cvContent,
+      top_k: 5
+    });
     if (!opportunities) {
       return;
     }

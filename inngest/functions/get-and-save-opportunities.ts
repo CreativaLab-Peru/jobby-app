@@ -3,7 +3,7 @@ import {prisma} from "@/lib/prisma";
 import {CvSectionType, LogAction, LogLevel} from "@prisma/client";
 import {logsService} from "@/features/share/services/logs-service";
 import {
-  CvAnalysisBody,
+  CvContent,
   getOpportunitiesFromEngine
 } from "@/features/opportunities/get-opportunities-from-engine";
 import {saveOpportunities} from "@/features/opportunities/save-opportunities";
@@ -64,13 +64,15 @@ export const getAndSaveOpportunities = inngest.createFunction(
         }
       }
 
-      const buildBody: CvAnalysisBody = {
-        user_id: userId,
+      const cvContent: CvContent = {
         skills,
         summary,
       }
 
-      const opportunities = await getOpportunitiesFromEngine(userId, cvId, buildBody);
+      const opportunities = await getOpportunitiesFromEngine(userId, cvId, {
+        cv: cvContent,
+        top_k: 5
+      });
       if (!opportunities) {
         return;
       }

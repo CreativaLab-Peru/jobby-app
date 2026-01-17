@@ -40,9 +40,19 @@ export const getEvaluationById = async (analyzeId: string): Promise<GetScoreAndO
       }
     })
 
+    const serializedOpportunities = opportunities.map(opp => ({
+      ...opp,
+      match: opp.match.toNumber(),
+      createdAt: opp.createdAt,
+      updatedAt: opp.updatedAt,
+      deadline: opp.deadline,
+    }));
+
+    // We cast to any here to match the component expectation which uses the Prisma type
+    // In a real scenario we should update the component prop types to expect number instead of Decimal
     const scoreAndOpportunities: GetScoreAndOpportunityById = {
       evaluation: cvEvaluation,
-      opportunities,
+      opportunities: serializedOpportunities as unknown as Opportunity[],
     }
 
     return scoreAndOpportunities;

@@ -67,6 +67,12 @@ export async function POST(request: Request) {
       data: { cvId, userId: currentUser.id },
     });
 
+    // Send event to get and save opportunities
+    await inngest.send({
+      name: "get.and.save.opportunities",
+      data: { cvId, userId: currentUser.id },
+    });
+
     return NextResponse.json(
       {
         success: true,

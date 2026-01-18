@@ -3,10 +3,11 @@ import {getCvForCurrentUser} from "@/features/cv/actions/get-cv-for-current-user
 
 export default async function CVPage() {
   const cvForCurrentUser = await getCvForCurrentUser();
+
   return (
     <CvListScreen
-      cvs={cvForCurrentUser.manuals.cvs}
-      disabledButton={!cvForCurrentUser.manuals.activeSubscription}
+      cvs={cvForCurrentUser?.manuals?.cvs ?? []}
+      disabledButton={!cvForCurrentUser?.manuals?.activeSubscription}
     />
   );
 }

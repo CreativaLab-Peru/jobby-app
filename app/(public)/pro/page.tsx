@@ -27,7 +27,7 @@ const Pro = () => {
     <>
       <div className="min-h-screen">
         {/* Sección principal */}
-        <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="min-h-screen flex items-center pt-32 pb-20 px-4 sm:px-6 lg:px-8">
           {/* Background gradient effect */}
           <div
             className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none"/>

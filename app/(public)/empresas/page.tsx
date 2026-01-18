@@ -9,7 +9,7 @@ const Empresas = () => {
     <div className="min-h-screen">
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+      <section className="min-h-screen flex items-center pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center space-y-8">
             <div

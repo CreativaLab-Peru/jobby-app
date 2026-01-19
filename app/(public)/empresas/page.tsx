@@ -9,7 +9,16 @@ const Empresas = () => {
     <div className="min-h-screen">
 
       {/* Hero Section */}
-      <section className="min-h-screen flex items-center pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+      <section 
+        className="
+          min-h-screen 
+          flex items-center 
+          pt-32 pb-20 px-4 
+          sm:px-6 lg:px-8
+          bg-cover bg-center bg-no-repeat
+          bg-[url('/hero/hero_white.png')]
+          dark:bg-[url('/hero/hero_black.png')]
+        ">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center space-y-8">
             <div

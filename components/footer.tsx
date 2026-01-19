@@ -16,7 +16,7 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               <a
-                href="https://www.instagram.com/creativalab.pe/"
+                href="https://www.instagram.com/joinlevely/"
                 rel="noopener noreferrer"
                 target="_blank"
                 className="text-foreground/60 hover:text-primary transition-colors"
@@ -24,7 +24,7 @@ const Footer = () => {
                 <Instagram className="h-5 w-5" />
               </a>
               <a
-                href="https://www.linkedin.com/company/creativalab-tech"
+                href="https://www.linkedin.com/company/joinlevely/"
                 rel="noopener noreferrer"
                 target="_blank"
                 className="text-foreground/60 hover:text-primary transition-colors"
@@ -84,7 +84,7 @@ const Footer = () => {
         {/* Línea divisoria */}
         <div className="mt-12 pt-8 border-t border-border text-sm text-muted-foreground">
           <div className="flex flex-col md:flex-row items-center md:justify-between gap-4">
-            <div className="text-center md:text-left">© 2025 Levely - Todos los derechos reservados.</div>
+            <div className="text-center md:text-left">© 2026 Levely - Todos los derechos reservados.</div>
 
             <div className="flex flex-col md:flex-row items-center gap-3">
               <Link

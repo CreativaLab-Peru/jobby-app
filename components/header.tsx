@@ -6,7 +6,13 @@ import {Button} from "@/components/ui/button";
 import {ChevronDown, Star, User} from "lucide-react";
 import {useState} from "react";
 import Image from "next/image";
-import {ThemeToggleSwitch} from "@/components/button-toggle-theme";
+import {ThemeToggle} from "@/components/button-toggle-theme";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface HeaderProps {
   authenticated: boolean
@@ -82,22 +88,61 @@ const Header = ({authenticated}: HeaderProps) => {
                   className="absolute top-2 right-2 w-1 h-1 bg-white rounded-full opacity-0 group-hover:opacity-75 group-hover:animate-ping"></span>
               </Button>
             </Link>
-            <Link
-              href="/empresas"
-              className={`text-sm font-medium transition-colors hover:text-primary ${isActive("/empresas") ? "text-primary" : "text-foreground/80"
-              }`}
-            >
-              Para empresas
-            </Link>
-            <Link
-              href="/instituciones"
-              className={`text-sm font-medium transition-colors hover:text-primary ${isActive("/instituciones")
-                ? "text-primary"
-                : "text-foreground/80"
-              }`}
-            >
-              Para instituciones
-            </Link>
+            {/* Para empresas Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                className={`group flex items-center gap-1 text-sm font-medium transition-colors hover:text-primary outline-none focus:outline-none ${
+                  isActive("/empresas") ? "text-primary" : "text-foreground/80"
+                }`}
+              >
+                Para empresas
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="8"
+                  height="8"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="transition-transform duration-200 group-data-[state=open]:rotate-180"
+                >
+                  <path d="M12 21l-12-18h24z" />
+                </svg>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link href="/empresas" className="w-full cursor-pointer">
+                    Inicio Empresas
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Para instituciones Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                className={`group flex items-center gap-1 text-sm font-medium transition-colors hover:text-primary outline-none focus:outline-none ${
+                  isActive("/instituciones") ? "text-primary" : "text-foreground/80"
+                }`}
+              >
+                Para instituciones
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="8"
+                  height="8"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="transition-transform duration-200 group-data-[state=open]:rotate-180"
+                >
+                  <path d="M12 21l-12-18h24z" />
+                </svg>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link href="/instituciones" className="w-full cursor-pointer">
+                    Inicio Instituciones
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
 
@@ -105,7 +150,7 @@ const Header = ({authenticated}: HeaderProps) => {
           {/* CTA Buttons with per-button hover dropdown (desktop) */}
           <div className="hidden md:flex items-center space-x-4">
             {/* Button toggle theme */}
-            <ThemeToggleSwitch />
+            <ThemeToggle />
 
             {/* Login - dropdown on hover */}
             <div className="relative">
@@ -120,7 +165,7 @@ const Header = ({authenticated}: HeaderProps) => {
                     </Link>
                   ) : (
                     <Link href="/login">
-                      <Button variant="outline" size="sm" className="hover:cursor-pointer">
+                      <Button variant="outline" size="md" className="hover:cursor-pointer">
                         Iniciar sesión{" "}
                         {/*<ChevronDown className="ml-2 h-4 w-4 inline-block"/>*/}
                       </Button>
@@ -134,7 +179,7 @@ const Header = ({authenticated}: HeaderProps) => {
               !authenticated && (
                 <div className="relative">
                   <div className="group inline-block">
-                    <Button size="sm">
+                    <Button size="md">
                       Regístrate{" "}
                       <ChevronDown className="ml-2 h-4 w-4 inline-block"/>
                     </Button>
@@ -144,7 +189,7 @@ const Header = ({authenticated}: HeaderProps) => {
                       <Link href="/register?role=talento">
                         <Button
                           variant="ghost"
-                          size="sm"
+                          size="md"
                           className="w-full justify-start"
                         >
                           Regístrate como Talento
@@ -153,7 +198,7 @@ const Header = ({authenticated}: HeaderProps) => {
                       <Link href="/register?role=empresa">
                         <Button
                           variant="ghost"
-                          size="sm"
+                          size="md"
                           className="w-full justify-start mt-1"
                         >
                           Regístrate como Empresa

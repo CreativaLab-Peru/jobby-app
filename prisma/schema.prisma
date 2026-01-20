@@ -7,6 +7,316 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model TemporalUser {
+  id    String   @id @default(uuid())
+  email String   @unique
+  date  DateTime @default(now())
+
+  @@map("temporal_user")
+}
+
+model User {
+  id                         String           @id @default(uuid())
+  name                       String
+  email                      String           @unique
+  emailVerified              Boolean
+  image                      String?
+  updatedPassword            Boolean          @default(false)
+  isBlocked                  Boolean          @default(false)
+  lastLoginAt                DateTime?
+  happensAfterPayment        Boolean          @default(false)
+  acceptedTermsAndConditions Boolean          @default(false)
+  acceptedTermsAt            DateTime?
+  acceptedPrivacyPolicy      Boolean          @default(false)
+  acceptedPrivacyPolicyAt    DateTime?
+  acceptedCookiePolicy       Boolean          @default(false)
+  acceptedSecurityPolicy     Boolean          @default(false)
+  acceptedSecurityPolicyAt   DateTime?
+  createdAt                  DateTime
+  updatedAt                  DateTime
+  accounts                   Account[]
+  cvs                        Cv[]
+  logs                       LogEntry[]
+  magicLinks                 MagicLinkToken[]
+  sessions                   Session[]
+  payments                   UserPayment[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("account")
+}
+
+model PaymentPlan {
+  id            String        @id @default(uuid())
+  slug          String        @unique
+  name          String
+  description   String?
+  paymentType   PaymentType   @default(ONE_TIME)
+  priceCents    Decimal       @default(0) @db.Decimal(10, 2)
+  currency      String        @default("USD")
+  features      Json?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  manualCvLimit Int           @default(0)
+  uploadCvLimit Int           @default(0)
+  payments      UserPayment[]
+
+  @@map("subscription_plan")
+}
+
+model UserPayment {
+  id            String      @id @default(uuid())
+  userId        String
+  planId        String
+  startedAt     DateTime    @default(now())
+  expiresAt     DateTime?
+  active        Boolean     @default(true)
+  manualCvsUsed Int         @default(0)
+  uploadCvsUsed Int         @default(0)
+  metadata      Json?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  plan          PaymentPlan @relation(fields: [planId], references: [id])
+  user          User        @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([planId])
+  @@index([active])
+  @@map("user_subscription")
+}
+
+model Cv {
+  id              String          @id @default(uuid())
+  userId          String?
+  createdByJobId  String?
+  language        Language        @default(EN)
+  opportunityType OpportunityType
+  cvType          CvType
+  title           String?
+  extractedJson   Json?
+  fullTextSearch  String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  deletedAt       DateTime?
+  notes           String?
+  attachments     Attachment[]
+  user            User?           @relation(fields: [userId], references: [id])
+  evaluations     CvEvaluation[]
+  previews        CvPreview[]
+  sections        CvSection[]
+  opportunities   Opportunity[]
+  queueJobs       QueueJob[]
+
+  @@index([userId])
+  @@index([language])
+  @@index([opportunityType])
+  @@index([cvType])
+  @@map("cv")
+}
+
+model Opportunity {
+  id           String          @id @default(uuid())
+  cvId         String
+  title        String
+  type         OpportunityType
+  deadline     DateTime?
+  match        Decimal         @db.Decimal(5, 2)
+  requirements String
+  linkUrl      String
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  cv           Cv              @relation(fields: [cvId], references: [id])
+
+  @@map("opportunity")
+}
+
+model CvSection {
+  id          String        @id @default(uuid())
+  cvId        String
+  sectionType CvSectionType
+  title       String?
+  contentJson Json?
+  order       Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  cv          Cv            @relation(fields: [cvId], references: [id])
+
+  @@index([cvId, sectionType])
+  @@index([cvId, order])
+  @@map("cv_section")
+}
+
+model CvEvaluation {
+  id              String            @id @default(uuid())
+  cvId            String
+  startedAt       DateTime          @default(now())
+  finishedAt      DateTime?
+  status          JobStatus         @default(PENDING)
+  overallScore    Float?
+  summary         String?
+  extractorOutput Json?
+  createdByJobId  String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  cv              Cv                @relation(fields: [cvId], references: [id])
+  scores          EvaluationScore[]
+  recommendations Recommendation[]
+
+  @@index([cvId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("cv_evaluation")
+}
+
+model EvaluationScore {
+  id           String        @id @default(uuid())
+  evaluationId String
+  sectionType  CvSectionType
+  score        Float
+  confidence   Float?
+  detailsJson  Json?
+  createdAt    DateTime      @default(now())
+  evaluation   CvEvaluation  @relation(fields: [evaluationId], references: [id])
+
+  @@index([evaluationId, sectionType])
+  @@map("evaluation_score")
+}
+
+model Recommendation {
+  id           String         @id @default(uuid())
+  evaluationId String
+  sectionType  CvSectionType?
+  text         String
+  severity     String?
+  metadata     Json?
+  createdAt    DateTime       @default(now())
+  evaluation   CvEvaluation   @relation(fields: [evaluationId], references: [id])
+
+  @@index([evaluationId])
+  @@map("recommendation")
+}
+
+model CvPreview {
+  id           String   @id @default(uuid())
+  cvId         String
+  snapshotHtml String?
+  snapshotJson Json?
+  createdAt    DateTime @default(now())
+  createdBy    String?
+  note         String?
+  cv           Cv       @relation(fields: [cvId], references: [id])
+
+  @@index([cvId, createdAt])
+  @@map("cv_preview")
+}
+
+model Attachment {
+  id        String   @id @default(uuid())
+  cvId      String
+  filename  String
+  mimeType  String?
+  url       String
+  size      Int?
+  createdAt DateTime @default(now())
+  cv        Cv       @relation(fields: [cvId], references: [id])
+
+  @@index([cvId])
+  @@map("attachment")
+}
+
+model QueueJob {
+  id          String    @id @default(uuid())
+  jobId       String    @unique
+  type        String
+  payload     Json
+  status      JobStatus @default(PENDING)
+  attempts    Int       @default(0)
+  maxAttempts Int       @default(5)
+  lastError   String?
+  startedAt   DateTime?
+  finishedAt  DateTime?
+  cvId        String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  cv          Cv?       @relation(fields: [cvId], references: [id])
+
+  @@index([status])
+  @@index([type])
+  @@index([cvId])
+  @@map("queue_job")
+}
+
+model MagicLinkToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String
+  purpose   String?
+  createdAt DateTime  @default(now())
+  expiresAt DateTime
+  usedAt    DateTime?
+  usedByIp  String?
+  usedByUa  String?
+  metadata  Json?
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("magic_link_token")
+}
+
+model LogEntry {
+  id        String    @id @default(uuid())
+  userId    String?
+  email     String?
+  action    LogAction
+  entity    String?
+  entityId  String?
+  level     LogLevel  @default(INFO)
+  message   String
+  metadata  Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime  @default(now())
+  user      User?     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([action])
+  @@index([level])
+  @@map("log_entry")
+}
+
 /// ---------- Enums ----------
 enum Language {
   EN
@@ -66,294 +376,6 @@ enum JobStatus {
   CANCELLED
 }
 
-model TemporalUser {
-  id    String @id @default(uuid())
-  email String
-
-  date DateTime @default(now())
-
-  @@unique([email])
-  @@map("temporal_user")
-}
-
-model User {
-  id              String  @id @default(uuid())
-  name            String
-  email           String
-  emailVerified   Boolean
-  image           String?
-  updatedPassword Boolean @default(false)
-
-  isBlocked   Boolean   @default(false)
-  lastLoginAt DateTime?
-
-  happensAfterPayment Boolean @default(false)
-
-  // Main fields for user agreements
-  acceptedTermsAndConditions Boolean   @default(false)
-  acceptedTermsAt            DateTime?
-  acceptedPrivacyPolicy      Boolean   @default(false)
-  acceptedPrivacyPolicyAt    DateTime?
-
-  // Optional fields for security policies
-  acceptedCookiePolicy     Boolean   @default(false)
-  acceptedSecurityPolicy   Boolean   @default(false)
-  acceptedSecurityPolicyAt DateTime?
-
-  createdAt  DateTime
-  updatedAt  DateTime
-  sessions   Session[]
-  accounts   Account[]
-  payments   UserPayment[]
-  cvs        Cv[]
-  logs       LogEntry[]
-  magicLinks MagicLinkToken[]
-
-  @@unique([email])
-  @@map("user")
-}
-
-model Session {
-  id        String   @id
-  expiresAt DateTime
-  token     String
-  createdAt DateTime
-  updatedAt DateTime
-  ipAddress String?
-  userAgent String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([token])
-  @@map("session")
-}
-
-model Account {
-  id                    String    @id
-  accountId             String
-  providerId            String
-  userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken           String?
-  refreshToken          String?
-  idToken               String?
-  accessTokenExpiresAt  DateTime?
-  refreshTokenExpiresAt DateTime?
-  scope                 String?
-  password              String?
-  createdAt             DateTime
-  updatedAt             DateTime
-
-  @@map("account")
-}
-
-model PaymentPlan {
-  id            String      @id @default(uuid())
-  slug          String      @unique // e.g. "free", "pro", "enterprise"
-  name          String
-  description   String?
-  paymentType   PaymentType @default(ONE_TIME)
-  priceCents    Decimal     @default(0) @db.Decimal(10, 2) // price in cents
-  currency      String      @default("USD")
-  features      Json? // JSON list of features/pricing tiers
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  manualCvLimit Int         @default(0) // number of manual CVs allowed
-  uploadCvLimit Int         @default(0) // number of uploaded CVs allowed
-
-  payments UserPayment[]
-
-  @@map("subscription_plan")
-}
-
-model UserPayment {
-  id            String      @id @default(uuid())
-  user          User        @relation(fields: [userId], references: [id])
-  userId        String
-  plan          PaymentPlan @relation(fields: [planId], references: [id])
-  planId        String
-  startedAt     DateTime    @default(now())
-  expiresAt     DateTime?
-  active        Boolean     @default(true)
-  manualCvsUsed Int         @default(0) // number of manual CVs created
-  uploadCvsUsed Int         @default(0) // number of uploaded CVs created
-  metadata      Json? // e.g. billing provider ids, coupon info
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-
-  @@index([userId])
-  @@index([planId])
-  @@index([active])
-  @@map("user_subscription")
-}
-
-model Cv {
-  id              String          @id @default(uuid())
-  user            User?           @relation(fields: [userId], references: [id])
-  userId          String?
-  createdByJobId  String?
-  language        Language        @default(EN)
-  opportunityType OpportunityType
-  cvType          CvType
-  title           String?
-  extractedJson   Json?
-  fullTextSearch  String?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  deletedAt       DateTime?
-
-  // Relations
-  sections      CvSection[] // logical sections (Experience, Education, Skills...)
-  evaluations   CvEvaluation[] // evaluation history (one per analysis run)
-  previews      CvPreview[] // preview snapshots (after edits / before/after eval)
-  attachments   Attachment[]
-  queueJobs     QueueJob[] // related queue jobs (creation, evaluation, re-eval)
-  opportunities Opportunity[]
-  notes         String?
-
-  @@index([userId])
-  @@index([language])
-  @@index([opportunityType])
-  @@index([cvType])
-  @@map("cv")
-}
-
-model Opportunity {
-  id                 String          @id @default(uuid())
-  cv                 Cv              @relation(fields: [cvId], references: [id])
-  cvId               String
-  title              String
-  type               OpportunityType
-  deadline           DateTime?
-  match              Decimal @db.Decimal(5, 2)
-  requirements       String
-  linkUrl            String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("opportunity")
-}
-
-model CvSection {
-  id          String        @id @default(uuid())
-  cv          Cv            @relation(fields: [cvId], references: [id])
-  cvId        String
-  sectionType CvSectionType
-  title       String? // e.g. "Work Experience"
-  contentJson Json? // structured content for that section (array of items)
-  order       Int           @default(0)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-
-  // Section-level latest score may be stored in EvaluationScore per evaluation run.
-  @@index([cvId, sectionType])
-  @@index([cvId, order])
-  @@map("cv_section")
-}
-
-model CvEvaluation {
-  id              String    @id @default(uuid())
-  cv              Cv        @relation(fields: [cvId], references: [id])
-  cvId            String
-  startedAt       DateTime  @default(now())
-  finishedAt      DateTime?
-  status          JobStatus @default(PENDING)
-  overallScore    Float? // aggregated score 0..100 or custom range
-  summary         String? // summary produced by evaluator
-  extractorOutput Json? // optional extra extractor output saved for this evaluation
-  createdByJobId  String? // queue job id
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  scores          EvaluationScore[]
-  recommendations Recommendation[]
-
-  @@index([cvId])
-  @@index([status])
-  @@index([createdAt])
-  @@map("cv_evaluation")
-}
-
-model EvaluationScore {
-  id           String        @id @default(uuid())
-  evaluation   CvEvaluation  @relation(fields: [evaluationId], references: [id])
-  evaluationId String
-  sectionType  CvSectionType
-  score        Float // e.g. 0..100
-  confidence   Float? // optional confidence measure 0..1
-  detailsJson  Json? // per-section breakdown: { bullets: [...], missing_fields: [...] }
-  createdAt    DateTime      @default(now())
-
-  @@index([evaluationId, sectionType])
-  @@map("evaluation_score")
-}
-
-model Recommendation {
-  id           String         @id @default(uuid())
-  evaluation   CvEvaluation   @relation(fields: [evaluationId], references: [id])
-  evaluationId String
-  sectionType  CvSectionType?
-  text         String
-  severity     String? // e.g. "low", "medium", "high" or numeric
-  metadata     Json? // e.g. suggestions, example snippets
-  createdAt    DateTime       @default(now())
-
-  @@index([evaluationId])
-  @@map("recommendation")
-}
-
-model CvPreview {
-  id           String   @id @default(uuid())
-  cv           Cv       @relation(fields: [cvId], references: [id])
-  cvId         String
-  snapshotHtml String? // rendered HTML preview (keep small or store in object storage and reference here)
-  snapshotJson Json? // structured preview (positions, layout)
-  createdAt    DateTime @default(now())
-  createdBy    String? // user id or system
-  note         String? // e.g. "after edit: changed skills"
-
-  @@index([cvId, createdAt])
-  @@map("cv_preview")
-}
-
-model Attachment {
-  id        String   @id @default(uuid())
-  cv        Cv       @relation(fields: [cvId], references: [id])
-  cvId      String
-  filename  String
-  mimeType  String?
-  url       String // object storage URL
-  size      Int?
-  createdAt DateTime @default(now())
-
-  @@index([cvId])
-  @@map("attachment")
-}
-
-model QueueJob {
-  id          String    @id @default(uuid())
-  jobId       String    @unique // external queue job id (BullMQ, Rabbit, etc.)
-  type        String // e.g. "CREATE_CV", "EVALUATE_CV", "RE_EVALUATE"
-  payload     Json
-  status      JobStatus @default(PENDING)
-  attempts    Int       @default(0)
-  maxAttempts Int       @default(5)
-  lastError   String?
-  startedAt   DateTime?
-  finishedAt  DateTime?
-  cv          Cv?       @relation(fields: [cvId], references: [id])
-  cvId        String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  @@index([status])
-  @@index([type])
-  @@index([cvId])
-  @@map("queue_job")
-}
-
-// Monitoring
 enum LogAction {
   CREATE
   UPDATE
@@ -375,58 +397,4 @@ enum LogLevel {
   WARNING
   ERROR
   CRITICAL
-}
-
-model MagicLinkToken {
-  id        String    @id @default(uuid())
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tokenHash String // e.g. SHA256(token)
-  purpose   String? // e.g. "post_payment_signin"
-  createdAt DateTime  @default(now())
-  expiresAt DateTime
-  usedAt    DateTime?
-  usedByIp  String?
-  usedByUa  String?
-  metadata  Json?
-
-  @@index([userId])
-  @@index([tokenHash])
-  @@map("magic_link_token")
-}
-
-model LogEntry {
-  id String @id @default(uuid())
-
-  // User who triggered the event (optional, some logs may be system-triggered)
-  userId String?
-  email  String?
-  user   User?   @relation(fields: [userId], references: [id])
-
-  // What type of action happened?
-  action LogAction
-
-  // Optional entity reference for tracing
-  entity   String? // e.g. "CV", "PAYMENT", "ACCOUNT"
-  entityId String? // ID of the affected entity
-
-  // Log severity
-  level LogLevel @default(INFO)
-
-  // Free text description
-  message String
-
-  // JSON with useful details
-  metadata Json? // old/new values, payload, request data, etc.
-
-  ipAddress String?
-  userAgent String?
-
-  createdAt DateTime @default(now())
-
-  @@index([userId])
-  @@index([entity, entityId])
-  @@index([action])
-  @@index([level])
-  @@map("log_entry")
 }

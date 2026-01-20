@@ -1,13 +1,35 @@
 import {axiosClient} from "@/lib/axios-client";
 import {OpportunityType} from "@prisma/client";
 
-export type CvAnalysisBody = {
-  user_id: string;
-  skills: string[];
+export type MatchRequest = {
+  cv_data: CVAnalysis;
+  preferences?: UserPreferences;
+  filters?: SearchFilters;
+}
+
+export type CVAnalysis = {
+  text?: string;
   summary?: string;
   experience_text?: string;
-  languages?: string[];
+  skills: string[];
+  level?: "JUNIOR" | "MID" | "SENIOR" | "LEAD";
+  location?: string;
   countries?: string[];
+  languages?: string[];
+  type?: string;
+}
+
+export type UserPreferences = {
+  modality?: "REMOTE" | "HYBRID" | "ON_SITE";
+  min_salary?: number;
+  currency?: string;
+  field_of_study?: string;
+  top_k?: number;
+}
+
+export type SearchFilters = {
+  exclude_expired?: boolean;
+  only_eligible?: boolean;
 }
 
 export type OpportunityResponse = {
@@ -19,26 +41,34 @@ export type OpportunityResponse = {
 export type MatchAnalysis = {
   opportunity_id: string;
   title: string;
-  type: OpportunityType;
-  requirements: string;
-  linkUrl: string;
-  deadline: Date;
+  organization?: string;
   match_score: number;
-  components: Record<string, any>;
-};
-
-export type CvContent = {
-  summary?: string;
-  experience_text?: string;
-  skills: string[];
-  countries?: string[];
-  languages?: string[];
+  breakdown?: {
+    semantic?: number;
+    skills?: number;
+    eligibility?: number;
+  };
+  details?: {
+    modality?: string;
+    deadline?: string | Date;
+    salary?: {
+      min?: number;
+      max?: number;
+    };
+    currency?: string;
+    url?: string;
+    organization_name?: string;
+    organization_logo?: string;
+    requirements?: string; // Adding this locally just in case, though not in example
+  };
+  // Keeping these for backward compatibility if needed, or mapping
+  type?: string; 
 };
 
 export const getOpportunitiesFromEngine = async (
   userId: string, 
   cvId: string, 
-  body: { cv: CvContent, top_k?: number }
+  body: MatchRequest
 ): Promise<OpportunityResponse | null> => {
   try {
     const route = `/api/match/users/${userId}/cvs/${cvId}`;

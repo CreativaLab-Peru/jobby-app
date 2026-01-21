@@ -36,7 +36,7 @@ export async function verifyCodeAction(userId: string, code: string) {
       }),
     ]);
 
-    await newUserConfiuration(userId);
+    await newUserConfiguration(userId);
 
     revalidatePath("/dashboard");
     return { success: true };

@@ -19,57 +19,77 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center space-y-8 animate-fade-in">
-            <span
-              className="
-                inline-flex items-center gap-2 px-4 py-2 rounded-full
-                ai-gradient text-primary-foreground
-                text-sm font-medium
-                shadow-sm
-              "
-            >
-              <Sparkles className="h-4 w-4" />
-              Powered by CreativaLab
-            </span>
+      <section
+        className="
+          min-h-screen flex
+          items-end
+          pt-32 pb-20 px-6 lg:px-12
+          bg-cover bg-center bg-no-repeat
+          bg-[url('/hero/hero_white.png')]
+          dark:bg-[url('/hero/hero_black.png')]
+        "
+      >
+        <div className="w-full max-w-7xl xl:max-w-[1600px] mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 h-full items-end">
 
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight">
-              Transforma tu talento en un{" "}
-              <span className="text-gradient">CV inteligente</span>
-            </h1>
+            {/* Columna izquierda – Título grande */}
+            <div className="
+              space-y-6
+              text-left
+              lg:pr-24
+            ">
 
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-              Optimiza tu perfil, recibe recomendaciones personalizadas y conecta con
-              oportunidades locales, nacionales e internacionales.
-            </p>
+              <h1 className="
+                text-4xl
+                sm:text-5xl
+                lg:text-[80px]
+                xl:text-[90px]
+                font-extrabold
+                tracking-wide
+              ">
+                CONVIERTE <br />
+                TU PERFIL EN{" "}
+                <span className="block text-blue-500">OPORTUNIDADES</span>
+                <span className="block text-lime-400">REALES</span>
+              </h1>
+            </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            {/* Columna derecha – Descripción + CTA */}
+            <div className="
+              space-y-8
+              text-left
+              w-full
+              lg:max-w-4xl
+              lg:pl-24
+            ">
+
+              <p className="
+              text-lg
+              sm:text-2xl
+              lg:text-3xl
+              leading-relaxed
+              text-black dark:text-white/90
+              ">
+              Optimiza tu perfil hasta 10x más empleable y conecta con oportunidades globales.
+              <br />
+              <span className="font-semibold">
+                La plataforma para conseguir tus primeras prácticas, trabajos y becas.
+              </span>
+              </p>
+
               <Link href="/register">
-                <Button size="xl" className="ai-glow bg-primary hover:opacity-90 transition">
-                  Crear mi CV
-                  <Sparkles className="ml-2 h-5 w-5" />
-                </Button>
+              <Button
+                size="xl"
+                className="ai-glow bg-blue-600 hover:bg-blue-700 transition"
+              >
+                Crear mi CV
+                <Sparkles className="ml-2 h-5 w-5" />
+              </Button>
               </Link>
             </div>
-
-            <div className="flex flex-wrap justify-center gap-6 pt-8 text-sm text-muted-foreground">
-              {[
-                "Gratis para empezar",
-                "Sin tarjeta requerida",
-                "Lista en minutos",
-              ].map((text) => (
-                <div key={text} className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-primary" />
-                  {text}
-                </div>
-              ))}
-            </div>
-
           </div>
         </div>
       </section>
-
 
       {/* Diferenciadores */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/40">

@@ -117,7 +117,7 @@ export default function AppSidebar() {
                 asChild
                 className="h-11 rounded-xl text-muted-foreground hover:text-primary transition-all"
               >
-                <Link href="/users" className="flex items-center gap-3">
+                <Link href="#" className="flex items-center gap-3">
                   <Users className="w-5 h-5" />
                   <span className="font-bold text-sm">Networking</span>
                 </Link>

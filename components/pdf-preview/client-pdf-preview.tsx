@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { useState, useEffect } from "react";
 import { pdf } from "@react-pdf/renderer";
 import { Document, Page, pdfjs } from "react-pdf";
@@ -22,6 +23,8 @@ export function ClientPDFPreview({
   const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
   const [numPages, setNumPages] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  const [containerWidth, setContainerWidth] = useState<number | null>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const generatePdf = async () => {
@@ -37,6 +40,28 @@ export function ClientPDFPreview({
 
     generatePdf();
   }, [cvData, sections]);
+
+  // Medición inicial y observación de cambios
+  React.useLayoutEffect(() => {
+    if (!containerRef.current) return;
+
+    const updateWidth = () => {
+      if (containerRef.current) {
+        // contentRect.width es el ancho interno (sin padding)
+        const newWidth = containerRef.current.clientWidth - 32; // clientWidth menos el padding total aproximado
+        setContainerWidth(Math.min(newWidth, 800));
+      }
+    };
+
+    updateWidth();
+
+    const observer = new ResizeObserver(() => {
+      updateWidth();
+    });
+
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [loading]); // Re-ejecutar cuando loading cambia para que encuentre el ref
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     setNumPages(numPages);
@@ -54,9 +79,12 @@ export function ClientPDFPreview({
   }
 
   return (
-    <div className="h-[90vh] overflow-auto rounded-lg bg-muted/20 p-4 scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+    <div 
+      ref={containerRef}
+      className="h-[50vh] sm:h-[90vh] overflow-auto rounded-lg bg-muted/20 p-2 sm:p-4 scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+    >
       <div className="flex flex-col items-center gap-4">
-        {pdfBlob && (
+        {pdfBlob && containerWidth ? (
           <Document
             file={pdfBlob}
             onLoadSuccess={onDocumentLoadSuccess}
@@ -74,10 +102,15 @@ export function ClientPDFPreview({
                 className="shadow-lg mb-4"
                 renderTextLayer={false}
                 renderAnnotationLayer={false}
-                width={800}
+                width={containerWidth}
               />
             ))}
           </Document>
+        ) : pdfBlob && (
+           <div className="flex flex-col items-center gap-2 py-12">
+             <Loader2 className="w-8 h-8 animate-spin text-primary" />
+             <p className="text-sm text-muted-foreground transition-opacity">Ajustando vista previa...</p>
+           </div>
         )}
       </div>
     </div>

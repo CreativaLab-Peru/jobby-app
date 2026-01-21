@@ -22,7 +22,7 @@ export function StickyActionButtons({ show }: StickyActionButtonsProps) {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-lg border-t-2 border-border shadow-card"
+          className="fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-lg border-t-2 border-border shadow-card"
         >
           <div className="container mx-auto px-4 py-4">
             <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-2xl mx-auto">

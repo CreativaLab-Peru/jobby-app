@@ -5,9 +5,12 @@ Your task is to extract and structure all relevant information from the CV text 
 
 **CRITICAL INSTRUCTIONS:**
 - Return ONLY a valid JSON object, no markdown blocks, no explanations.
-- Ensure ALL strings are properly escaped (use \\" for quotes inside strings, \\n for newlines).
+- Ensure ALL strings are properly escaped (use \\" for quotes inside strings).
 - Do NOT include trailing commas after the last element in arrays or objects.
 - Every array element must be separated by commas.
+- If text contains quotes, escape them properly.
+- Do not include actual newlines in strings, use spaces instead.
+- Double-check that the JSON is valid before returning.
 
 ---
 
@@ -63,6 +66,7 @@ You must return **only one valid JSON object** following this structure:
 7. Return **ONLY valid JSON** — without markdown code blocks, explanations, or comments.
 
 8. **IMPORTANT**: Escape special characters in strings properly. Replace actual newlines with spaces.
+9. **VALIDATION**: Before returning, mentally validate: every opening brace/bracket has a closing one, all strings are quoted, array elements are separated by commas.
 
 ---
 

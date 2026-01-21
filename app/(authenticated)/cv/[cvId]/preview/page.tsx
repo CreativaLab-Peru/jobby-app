@@ -3,7 +3,8 @@ import { transformCVToDTO } from "@/features/cv/dto/transform-cv.dto";
 import { redirect } from "next/navigation";
 import { getCvById } from "@/features/cv/actions/get-cv-by-id";
 import { PreviewCVComponent } from "@/features/cv-preview/components/cv-review-page";
-import {getSections} from "@/features/cv/helpers";
+import { getSections } from "@/features/cv/helpers";
+import { canAnalyzeCv, getRemainingAnalysisTokens } from "@/features/analysis/actions/can-analyze-cv";
 
 interface PreviewCVPageProps {
   params: Promise<{
@@ -26,6 +27,10 @@ export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
   // Extraer solo los IDs de las secciones (sin los iconos/funciones)
   const sectionIds = sections.map(s => s.id);
 
+  // Get analysis eligibility
+  const canAnalyzeResult = await canAnalyzeCv(cvId);
+  const analysisTokens = await getRemainingAnalysisTokens();
+
   return (
     <PreviewCVComponent
       cv={cvData}
@@ -33,6 +38,8 @@ export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
       cvId={cv.id}
       cvType={cv.cvType}
       sectionIds={sectionIds}
+      canAnalyze={canAnalyzeResult.canAnalyze}
+      analysisTokens={analysisTokens}
     />
   )
 }

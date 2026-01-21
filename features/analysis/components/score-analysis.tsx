@@ -22,6 +22,8 @@ import { RecommendationsSection } from "@/features/analysis/components/recommend
 import { OpportunitiesSection } from "@/features/analysis/components/opportunities-section"
 import { StickyActionButtons } from "@/features/analysis/components/sticky-action-buttons"
 import { ScoreBreakdownModal } from "@/features/analysis/components/score-breakdown-modal"
+import { useSidebar } from "@/components/ui/sidebar"
+
 
 import { Recommendation, ScoreCategory } from "@/types/analysis"
 import { Opportunity } from "@prisma/client";
@@ -45,6 +47,8 @@ export default function AnalysisScore({
                                       }: AnalysisScoreProps) {
   const [showScoreBreakdown, setShowScoreBreakdown] = useState(false)
   const [showStickyButtons, setShowStickyButtons] = useState(false)
+  const { openMobile } = useSidebar()
+
 
   const resolvedBreakdown = scoreBreakdown.map((cat) => {
     const Icon = ICONS[cat.icon] || Award
@@ -53,6 +57,9 @@ export default function AnalysisScore({
 
   useEffect(() => {
     const handleScroll = () => {
+      // Si el menú móvil está abierto, no hacemos nada para evitar conflictos de re-renderizado
+      if (openMobile) return
+
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop
       const scrollHeight = document.documentElement.scrollHeight
       const clientHeight = document.documentElement.clientHeight
@@ -60,9 +67,11 @@ export default function AnalysisScore({
       setShowStickyButtons(scrollPercentage > 0.8)
     }
 
+
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+  }, [openMobile])
+
 
   return (
     <>
@@ -80,25 +89,25 @@ export default function AnalysisScore({
 
             <Tabs defaultValue="score" className="space-y-8">
               {/* REFACTOR: Tabs con el sistema de marca Levely */}
-              <TabsList className="grid w-full grid-cols-2 h-16 p-1.5 bg-card shadow-card rounded-xl border border-border">
+              <TabsList className="grid w-full grid-cols-2 h-auto min-h-[4rem] p-1 bg-card shadow-card rounded-xl border border-border">
                 <TabsTrigger
                   value="score"
-                  className="flex items-center gap-3 h-full text-base font-bold transition-all duration-300
+                  className="flex items-center justify-center gap-2 h-full py-3 text-sm sm:text-base font-bold transition-all duration-300
                     text-muted-foreground
                     data-[state=active]:ai-gradient data-[state=active]:text-primary data-[state=active]:shadow-glow"
                 >
-                  <Target className="w-5 h-5" />
-                  Score y Sugerencias
+                  <Target className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="text-center">Score y Sugerencias</span>
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="opportunities"
-                  className="flex items-center gap-3 h-full text-base font-bold transition-all duration-300
+                  className="flex items-center justify-center gap-2 h-full py-3 text-sm sm:text-base font-bold transition-all duration-300
                     text-muted-foreground
                     data-[state=active]:ai-gradient data-[state=active]:text-primary data-[state=active]:shadow-glow"
                 >
-                  <Award className="w-5 h-5" />
-                  Oportunidades
+                  <Award className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="text-center">Oportunidades</span>
                 </TabsTrigger>
               </TabsList>
 

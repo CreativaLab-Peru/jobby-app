@@ -3,8 +3,8 @@ import {prisma} from "@/lib/prisma";
 import {CvSectionType, LogAction, LogLevel} from "@prisma/client";
 import {logsService} from "@/features/share/services/logs-service";
 import {
-  CvAnalysisBody,
-  getOpportunitiesFromEngine
+  getOpportunitiesFromEngine,
+  MatchRequest
 } from "@/features/opportunities/get-opportunities-from-engine";
 import {saveOpportunities} from "@/features/opportunities/save-opportunities";
 
@@ -42,15 +42,21 @@ export const getAndSaveOpportunities = inngest.createFunction(
       }
 
       // Skills section
-      let skills = []
+      let skills: string[] = []
       const skillsSection = cv.sections
         .find(section => section.sectionType == CvSectionType.SKILLS)
-      if (skillsSection && skillsSection.contentJson) {
-        if (skillsSection.contentJson['soft']) {
-          skills = [...skills, ...skillsSection.contentJson['soft']]
+      if (skillsSection && skillsSection.contentJson && Array.isArray(skillsSection.contentJson)) {
+        // Handle different structures if needed, assuming array of strings or objects
+        // Original code handled 'soft' and 'technical' keys, but check if it's direct array
+        const json: any = skillsSection.contentJson;
+        if (json['soft']) {
+           skills = [...skills, ...json['soft']]
         }
-        if (skillsSection.contentJson['technical']) {
-          skills = [...skills, ...skillsSection.contentJson['technical']]
+        if (json['technical']) {
+           skills = [...skills, ...json['technical']]
+        }
+        if (Array.isArray(json)) {
+             skills = [...skills, ...json.map((s: any) => typeof s === 'string' ? s : s.name)]
         }
       }
 
@@ -59,18 +65,51 @@ export const getAndSaveOpportunities = inngest.createFunction(
       const summarySection = cv.sections
         .find(section => section.sectionType == CvSectionType.SUMMARY)
       if (summarySection && summarySection.contentJson) {
-        if (summarySection.contentJson['text']) {
-          summary = summarySection.contentJson['text']
+        const json: any = summarySection.contentJson;
+        if (json['text']) {
+          summary = json['text']
         }
       }
 
-      const buildBody: CvAnalysisBody = {
-        user_id: userId,
-        skills,
-        summary,
+      // Experience section (NEW)
+      let experience_text = ''
+      const experienceSection = cv.sections.find(s => s.sectionType === CvSectionType.EXPERIENCE)
+      if (experienceSection && experienceSection.contentJson && Array.isArray(experienceSection.contentJson)) {
+          const items = experienceSection.contentJson as any[];
+          experience_text = items.map(item => {
+              return `${item.title || ''} at ${item.company || ''}. ${item.description || ''} ${item.summary || ''}`
+          }).join('. ');
       }
 
-      const opportunities = await getOpportunitiesFromEngine(userId, cvId, buildBody);
+      // Languages section (NEW)
+      let languages: string[] = []
+      const languagesSection = cv.sections.find(s => s.sectionType === CvSectionType.LANGUAGES)
+      if (languagesSection && languagesSection.contentJson && Array.isArray(languagesSection.contentJson)) {
+          const items = languagesSection.contentJson as any[];
+          languages = items.map(item => item.language || item.name || '').filter(Boolean);
+      }
+
+      const cvAnalysis: any = {
+        skills,
+        summary,
+        experience_text,
+        languages,
+        type: cv.opportunityType, // Using the strict type from DB
+        location: "PE", // Defaulting to PE as per examples if not found, or maybe we should leave it empty? User examples show explicit location.
+        // We could verify if we have a location in contact info, but for now let's respect the user saying "si o si tiene que ser el tipo de CV"
+        // The type is critical.
+      }
+
+      // Construct the MatchRequest
+      // We can add preferences if we had them stored in User or elsewhere
+      const matchRequest = {
+        cv_data: cvAnalysis,
+        preferences: {
+            top_k: 5
+        }
+      };
+
+      const opportunities = await getOpportunitiesFromEngine(userId, cvId, matchRequest);
       if (!opportunities) {
         return;
       }

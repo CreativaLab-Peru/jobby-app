@@ -52,12 +52,13 @@ export function RecommendationsSection({ recommendations }: RecommendationsSecti
             <div className="flex items-start gap-3">
               {iconMap[rec.icon] || <Lightbulb className="w-6 h-6 text-muted-foreground" />}
               <div className="flex-1">
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                   <h3 className="font-semibold text-foreground">
                     {categoryMap[rec.title as keyof typeof categoryMap] || rec.title}
                   </h3>
                   <Badge
                     variant={rec.type === "critical" ? "destructive" : "secondary"}
+                    className="w-fit"
                   >
                     Impacto {impactMap[rec.type]}
                   </Badge>

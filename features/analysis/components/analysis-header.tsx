@@ -15,11 +15,11 @@ export function AnalysisHeader() {
         <TrendingUp className="w-8 h-8 text-primary" />
       </motion.div>
 
-      <h1 className="text-4xl font-bold text-foreground mb-4">
+      <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4 px-2">
         Análisis Completo de tu CV
       </h1>
 
-      <p className="text-xl text-muted-foreground">
+      <p className="text-lg sm:text-xl text-muted-foreground px-4">
         Descubre tu potencial y las mejores oportunidades para ti
       </p>
     </div>

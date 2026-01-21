@@ -17,9 +17,19 @@ interface PreviewCVComponentProps {
   opportunityType: OpportunityType
   cvType: CvType
   sectionIds: string[]
+  canAnalyze: boolean
+  analysisTokens: number
 }
 
-export function PreviewCVComponent({ cv: cvData, cvId, opportunityType, cvType, sectionIds }: PreviewCVComponentProps) {
+export function PreviewCVComponent({ 
+  cv: cvData, 
+  cvId, 
+  opportunityType, 
+  cvType, 
+  sectionIds,
+  canAnalyze,
+  analysisTokens 
+}: PreviewCVComponentProps) {
   const [isDisabled] = useState(false)
   const router = useRouter()
 
@@ -53,6 +63,10 @@ export function PreviewCVComponent({ cv: cvData, cvId, opportunityType, cvType, 
               <ActionsSidebar
                 isDisabled={isDisabled}
                 cvData={cvData}
+                sections={sections}
+                cvId={cvId}
+                canAnalyze={canAnalyze}
+                analysisTokens={analysisTokens}
                 onHome={() => router.push('/cv')}
                 onEditCV={() => router.push(`/cv/${cvId}/edit`)}
               />

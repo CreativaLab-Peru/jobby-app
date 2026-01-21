@@ -1,8 +1,8 @@
 import {prisma} from "@/lib/prisma";
 import {CvSectionType} from "@prisma/client";
 import {
-  CvAnalysisBody,
-  getOpportunitiesFromEngine
+  getOpportunitiesFromEngine,
+  MatchRequest
 } from "@/features/opportunities/get-opportunities-from-engine";
 import {saveOpportunities} from "@/features/opportunities/save-opportunities";
 import {NextResponse} from "next/server";
@@ -38,16 +38,20 @@ export async function GET(request: Request) {
     }
 
     // Skills section
-    let skills = []
+    let skills: string[] = []
     const skillsSection = cv.sections
       .find(section => section.sectionType == CvSectionType.SKILLS)
-    if (skillsSection && skillsSection.contentJson) {
-      if (skillsSection.contentJson['soft']) {
-        skills = [...skills, ...skillsSection.contentJson['soft']]
-      }
-      if (skillsSection.contentJson['technical']) {
-        skills = [...skills, ...skillsSection.contentJson['technical']]
-      }
+    if (skillsSection && skillsSection.contentJson && Array.isArray(skillsSection.contentJson)) {
+        const json: any = skillsSection.contentJson;
+        if (json['soft']) {
+           skills = [...skills, ...json['soft']]
+        }
+        if (json['technical']) {
+           skills = [...skills, ...json['technical']]
+        }
+        if (Array.isArray(json)) {
+             skills = [...skills, ...json.map((s: any) => typeof s === 'string' ? s : s.name)]
+        }
     }
 
     // Summary section
@@ -55,18 +59,47 @@ export async function GET(request: Request) {
     const summarySection = cv.sections
       .find(section => section.sectionType == CvSectionType.SUMMARY)
     if (summarySection && summarySection.contentJson) {
-      if (summarySection.contentJson['text']) {
-        summary = summarySection.contentJson['text']
-      }
+      const json: any = summarySection.contentJson;
+        if (json['text']) {
+          summary = json['text']
+        }
     }
 
-    const buildBody: CvAnalysisBody = {
-      user_id: userId,
+    // Experience section
+    let experience_text = ''
+    const experienceSection = cv.sections.find(s => s.sectionType === CvSectionType.EXPERIENCE)
+    if (experienceSection && experienceSection.contentJson && Array.isArray(experienceSection.contentJson)) {
+        const items = experienceSection.contentJson as any[];
+        experience_text = items.map(item => {
+            return `${item.title || ''} at ${item.company || ''}. ${item.description || ''} ${item.summary || ''}`
+        }).join('. ');
+    }
+
+    // Languages section
+    let languages: string[] = []
+    const languagesSection = cv.sections.find(s => s.sectionType === CvSectionType.LANGUAGES)
+    if (languagesSection && languagesSection.contentJson && Array.isArray(languagesSection.contentJson)) {
+        const items = languagesSection.contentJson as any[];
+        languages = items.map(item => item.language || item.name || '').filter(Boolean);
+    }
+
+    const cvAnalysis: any = {
       skills,
       summary,
+      experience_text,
+      languages,
+      type: cv.opportunityType,
+      location: "PE", // Default
     }
 
-    const opportunities = await getOpportunitiesFromEngine(userId, cvId, buildBody);
+    const matchRequest: MatchRequest = {
+      cv_data: cvAnalysis,
+      preferences: {
+        top_k: 5
+      }
+    };
+
+    const opportunities = await getOpportunitiesFromEngine(userId, cvId, matchRequest);
     if (!opportunities) {
       return;
     }

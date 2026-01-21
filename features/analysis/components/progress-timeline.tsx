@@ -30,8 +30,8 @@ interface ProgressStatusProps {
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
-// Timeline steps single source of truth
-const STEPS = [
+// Timeline steps for uploaded CVs
+const UPLOAD_STEPS = [
   {
     key: "upload",
     title: "Subido",
@@ -64,8 +64,30 @@ const STEPS = [
   },
 ]
 
-// Map backend statuses to timeline indices
-const STATUS_TO_INDEX: Record<string, number> = {
+// Timeline steps for manual CVs (simpler flow)
+const MANUAL_STEPS = [
+  {
+    key: "ready",
+    title: "CV Listo",
+    desc: "Tu CV está listo para ser analizado.",
+    icon: FileCheck,
+  },
+  {
+    key: "inProgress",
+    title: "Evaluación en progreso",
+    desc: "Ejecutando el análisis — detectando fortalezas y sugerencias.",
+    icon: Loader2,
+  },
+  {
+    key: "finished",
+    title: "Finalizado",
+    desc: "Listo — haz clic para ver los resultados.",
+    icon: FileCheck,
+  },
+]
+
+// Map backend statuses to timeline indices for uploaded CVs
+const UPLOAD_STATUS_TO_INDEX: Record<string, number> = {
   CV_SUCCEEDED: 0, // upload completed
   CV_IN_PROGRESS: 1, // processing
   CV_EVALUATION_PENDING_EVALUATION: 2,
@@ -73,7 +95,17 @@ const STATUS_TO_INDEX: Record<string, number> = {
   CV_EVALUATION_SUCCEEDED: 4,
   CV_EVALUATION_FINISHED: 4,
   CV_FAILED: 0, // treat as upload step but with error marker
-  CV_EVALUATION_FAILED: 3, // mark evaluation step as failed
+  CV_EVALUATION_FAILED: 3,
+}
+
+// Map backend statuses to timeline indices for manual CVs
+const MANUAL_STATUS_TO_INDEX: Record<string, number> = {
+  CV_READY_FOR_ANALYSIS: 0,
+  CV_EVALUATION_PENDING_EVALUATION: 0,
+  CV_EVALUATION_IN_PROGRESS: 1,
+  CV_EVALUATION_SUCCEEDED: 2,
+  CV_EVALUATION_FINISHED: 2,
+  CV_EVALUATION_FAILED: 1,
 }
 
 const variants = {
@@ -89,7 +121,11 @@ const variants = {
   },
 }
 
-// ... (Tipos y STEPS se mantienen igual)
+// Determine if CV is manual based on status
+const isManualCv = (status: string | undefined): boolean => {
+  return status === "CV_READY_FOR_ANALYSIS" || 
+         (status?.startsWith("CV_EVALUATION") && !["CV_IN_PROGRESS", "CV_SUCCEEDED", "CV_FAILED"].includes(status || ""));
+}
 
 export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
   const router = useRouter()
@@ -97,10 +133,21 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
     refreshInterval: 3000,
   })
 
+  // Determine which steps and status map to use
+  const isManual = useMemo(() => {
+    if (!status?.status) return false;
+    // If status starts with CV_READY or we don't have upload-specific statuses
+    return status.status === "CV_READY_FOR_ANALYSIS" || 
+           !["CV_IN_PROGRESS", "CV_SUCCEEDED", "CV_FAILED"].includes(status.status);
+  }, [status]);
+
+  const STEPS = isManual ? MANUAL_STEPS : UPLOAD_STEPS;
+  const STATUS_TO_INDEX = isManual ? MANUAL_STATUS_TO_INDEX : UPLOAD_STATUS_TO_INDEX;
+
   const activeIndex = useMemo(() => {
     if (!status?.status) return -1
     return STATUS_TO_INDEX[status.status] ?? -1
-  }, [status])
+  }, [status, STATUS_TO_INDEX])
 
   useEffect(() => {
     if (status?.status === "CV_EVALUATION_FINISHED" || status?.status === "CV_EVALUATION_SUCCEEDED") {
@@ -143,7 +190,10 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
             {STEPS.map((step, idx) => {
               const StepIcon = step.icon
               const state = activeIndex === -1 ? "pending" : idx < activeIndex ? "completed" : idx === activeIndex ? "active" : "pending"
-              const isFailure = (status?.status === "CV_FAILED" && idx === 0) || (status?.status === "CV_EVALUATION_FAILED" && idx === 3)
+              // For manual CVs, failure is at index 1; for uploads, failure can be at 0 or 3
+              const isFailure = isManual 
+                ? (status?.status === "CV_EVALUATION_FAILED" && idx === 1)
+                : ((status?.status === "CV_FAILED" && idx === 0) || (status?.status === "CV_EVALUATION_FAILED" && idx === 3))
 
               return (
                 <li key={step.key}>
@@ -185,7 +235,10 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
             const state = activeIndex === -1 ? "pending" : idx < activeIndex ? "completed" : idx === activeIndex ? "active" : "pending"
             const isActive = state === "active"
             const isCompleted = state === "completed"
-            const isFailure = (status?.status === "CV_FAILED" && idx === 0) || (status?.status === "CV_EVALUATION_FAILED" && idx === 3)
+            // For manual CVs, failure is at index 1; for uploads, failure can be at 0 or 3
+            const isFailure = isManual 
+              ? (status?.status === "CV_EVALUATION_FAILED" && idx === 1)
+              : ((status?.status === "CV_FAILED" && idx === 0) || (status?.status === "CV_EVALUATION_FAILED" && idx === 3))
 
             return (
               <motion.div

@@ -1,51 +1,44 @@
 import { Button } from "@/components/ui/button";
-import { Sparkles, Target, Zap } from "lucide-react";
-import {useOnboardingStore} from "@/features/onboarding/store/talent-onboarding-store";
+import { ArrowRight, Sparkles } from "lucide-react";
+import { useOnboardingStore } from "@/features/onboarding/store/talent-onboarding-store";
 
 export function WelcomeStep() {
   const { setStep } = useOnboardingStore();
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-10 py-10 animate-in fade-in zoom-in-95 duration-500">
-      {/* Header de la página que solicitaste */}
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">
-          Configura tu <span className="text-primary text-gradient">perfil de match</span>
+    <div className="flex flex-col items-center justify-center min-h-[60vh] max-w-2xl mx-auto text-center px-6 animate-in fade-in slide-in-from-bottom-3 duration-1000">
+
+      {/* Icono sutil de bienvenida */}
+      <div className="mb-8 p-4 bg-primary/5 rounded-full">
+        <Sparkles className="w-10 h-10 text-primary" />
+      </div>
+
+      {/* Título conciso y directo */}
+      <div className="space-y-4 mb-10">
+        <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+          ¡Hola! Vamos a preparar <br />
+          <span className="text-primary">tu perfil de match</span>
         </h1>
-        <p className="text-muted-foreground text-xl max-w-lg mx-auto leading-relaxed">
-          Solo te tomará 2 minutos. Queremos asegurarnos de mostrarte lo que realmente buscas.
+        <p className="text-muted-foreground text-lg italic">
+          "Solo te tomará 2 minutos configurar tu experiencia."
         </p>
       </div>
 
-      {/* Beneficios rápidos para incentivar al usuario */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-2xl">
-        <div className="flex flex-col items-center text-center p-4 space-y-2">
-          <div className="p-3 rounded-full bg-primary/10">
-            <Target className="w-6 h-6 text-primary" />
-          </div>
-          <p className="text-sm font-medium">Matches Precisos</p>
-        </div>
-        <div className="flex flex-col items-center text-center p-4 space-y-2">
-          <div className="p-3 rounded-full bg-primary/10">
-            <Zap className="w-6 h-6 text-primary" />
-          </div>
-          <p className="text-sm font-medium">Ahorra Tiempo</p>
-        </div>
-        <div className="flex flex-col items-center text-center p-4 space-y-2">
-          <div className="p-3 rounded-full bg-primary/10">
-            <Sparkles className="w-6 h-6 text-primary" />
-          </div>
-          <p className="text-sm font-medium">IA Personalizada</p>
-        </div>
-      </div>
+      {/* Acción principal única */}
+      <div className="w-full max-w-xs space-y-6">
+        <Button
+          size="lg"
+          className="w-full h-14 text-lg font-semibold rounded-xl group transition-all"
+          onClick={() => setStep(1)}
+        >
+          Empezar ahora
+          <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+        </Button>
 
-      <Button
-        size="lg"
-        className="h-14 px-10 text-lg font-bold shadow-glow hover:scale-105 transition-transform"
-        onClick={() => setStep(1)}
-      >
-        Empezar configuración
-      </Button>
+        <p className="text-xs text-muted-foreground/60 uppercase tracking-widest font-medium">
+          Paso 1
+        </p>
+      </div>
     </div>
   );
 }

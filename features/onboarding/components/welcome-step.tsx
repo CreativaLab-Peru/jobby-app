@@ -29,7 +29,7 @@ export function WelcomeStep() {
         <Button
           size="lg"
           className="w-full h-14 text-lg font-semibold rounded-xl group transition-all"
-          onClick={() => setStep(1)}
+          onClick={() => setStep(2)}
         >
           Empezar ahora
           <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />

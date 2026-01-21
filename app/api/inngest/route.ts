@@ -7,6 +7,7 @@ import { sendWelcomeEmail } from "@/inngest/functions/send-welcome-email";
 import { sendVerifyEmail } from "@/inngest/functions/send-verify-email";
 import { sendMagicLinkToEmail } from "@/inngest/functions/send-magic-link-to-email";
 import {getAndSaveOpportunities} from "@/inngest/functions/get-and-save-opportunities";
+import {sendVerifyEmailv2} from "@/inngest/functions/send-verify-email-v2";
 
 // Create an API that serves zero functions
 export const { GET, POST, PUT } = serve({
@@ -18,6 +19,7 @@ export const { GET, POST, PUT } = serve({
     sendWelcomeEmail,
     sendVerifyEmail,
     sendMagicLinkToEmail,
-    getAndSaveOpportunities
+    getAndSaveOpportunities,
+    sendVerifyEmailv2
   ],
 });

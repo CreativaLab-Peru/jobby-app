@@ -5,6 +5,7 @@ import AnimatedBackgroundWrapper from '@/components/animated-background-wrapper'
 import { Suspense } from 'react'
 import {TooltipProvider} from "@/components/ui/tooltip";
 import {ThemeProvider} from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner"
 
 // Configura la fuente Poppins
 const poppins = Poppins({
@@ -67,6 +68,7 @@ export default async function RootLayout({
         <TooltipProvider>
           <div className="relative z-10">{children}</div>
         </TooltipProvider>
+        <Toaster />
       </ThemeProvider>
       </body>
     </html>

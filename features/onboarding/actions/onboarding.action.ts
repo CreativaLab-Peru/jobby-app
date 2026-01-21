@@ -2,54 +2,76 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import {talentOnboardingSchema} from "@/features/onboarding/schemas";
+import { TalentOnboardingFormData } from "@/features/onboarding/schemas";
+import { inngest } from "@/inngest/functions/client";
+import { generateNumericCode } from "@/utils/digicts";
 
-export async function completeTalentOnboardingAction(userId: string, rawData: unknown) {
-  const validated = talentOnboardingSchema.safeParse(rawData);
-
-  if (!validated.success) {
-    return { error: "Datos inválidos" };
-  }
-
-  const { data } = validated;
+export async function completeOnboardingAction(email: string, body: TalentOnboardingFormData) {
+  const data = body;
 
   try {
-    await prisma.$transaction([
-      // 1. Crear o actualizar preferencias
-      prisma.userPreference.upsert({
-        where: { userId },
+    const codeSixDigits = generateNumericCode();
+
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      return { error: "Usuario no encontrado." };
+    }
+
+    // Usamos una transacción para asegurar que todo se cree correctamente
+    await prisma.$transaction(async (tx) => {
+      // 1. Guardar preferencias
+      await tx.userPreference.upsert({
+        where: { userId: user.id },
         update: {
           minSalary: data.minSalary,
           currency: data.currency,
-          work: data.work,
-          availability: [data.availability], // Ajustado a tu esquema array
+          workModality: data.workModality,
+          availability: data.availability,
           preferredRoles: data.preferredRoles,
           targetIndustries: data.targetIndustries,
         },
         create: {
-          userId,
+          userId: user.id,
           minSalary: data.minSalary,
           currency: data.currency,
-          work: data.work,
-          availability: [data.availability],
+          workModality: data.workModality,
+          availability: data.availability,
           preferredRoles: data.preferredRoles,
           targetIndustries: data.targetIndustries,
         },
-      }),
-      // 2. Marcar al usuario con el onboarding completado
-      prisma.user.update({
-        where: { id: userId },
+      });
+
+      // 2. Crear el código de verificación
+      await tx.verificationCode.create({
         data: {
-          // Aquí puedes usar un flag o actualizar el updatedAt
-          updatedAt: new Date()
-        }
-      })
-    ]);
+          userId: user.id,
+          code: codeSixDigits,
+          expiresAt: new Date(Date.now() + 3600000), // Expira en 1 hora
+        },
+      });
+    });
+
+    // 3. Enviar evento a Inngest (fuera de la tx para evitar bloqueos)
+    await inngest.send({
+      name: "send.verification.code",
+      data: {
+        email: data.email, // Asegúrate que 'data.email' venga en el body
+        name: data.name,
+        codeSixDigits,
+      }
+    });
 
     revalidatePath("/dashboard");
     return { success: true };
-  } catch (error) {
-    console.error("Onboarding Error:", error);
-    return { error: "Error interno del servidor" };
+
+  } catch (error: any) {
+    console.error("Registration Error:", error);
+    if (error.code === 'P2002') {
+      return { error: "Este correo electrónico ya está registrado." };
+    }
+    return { error: "Error interno al procesar el registro." };
   }
 }

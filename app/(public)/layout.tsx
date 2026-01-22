@@ -9,10 +9,13 @@ export default async function PublicLayout({
 }) {
   const session = await getSession();
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="min-h-screen flex-col">
       <Header authenticated={session?.success} />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 pt-16 lg:pt-20">
+        {children}
+      </main>
       <Footer />
     </div>
   );
 }
+

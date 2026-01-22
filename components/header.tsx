@@ -2,415 +2,222 @@
 
 import * as React from "react";
 import Link from "next/link";
-import {usePathname, useRouter} from "next/navigation";
-import {Button} from "@/components/ui/button";
-import {ChevronDown, Star, User} from "lucide-react";
-import {useState} from "react";
 import Image from "next/image";
-import {ThemeToggle} from "@/components/button-toggle-theme";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
-import {cn} from "@/lib/utils";
+import { usePathname } from "next/navigation";
+import { Menu, X, ChevronDown, User } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/button-toggle-theme";
 
 interface HeaderProps {
-  authenticated: boolean
+  authenticated: boolean;
 }
 
-const Header = ({authenticated}: HeaderProps) => {
-  const pathname = usePathname();
-  const router = useRouter();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mobileLoginOpen, setMobileLoginOpen] = useState(false);
-  const [mobileRegisterOpen, setMobileRegisterOpen] = useState(false);
-  const [menuValue, setMenuValue] = useState<string | undefined>(undefined);
+const navItems = [
+  { name: "CV Builder", href: "/cv-builder" },
+  { name: "Career Accelerator", href: "/career-accelerator" },
+  { name: "Partners", href: "/partners" },
+  { name: "Empresas", href: "/empresas" },
+  { name: "Resources", href: "/resources" },
+];
 
-  const isActive = (path: string) => pathname === path;
+export default function Header({ authenticated }: HeaderProps) {
+  const pathname = usePathname();
+
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [mobileRegisterOpen, setMobileRegisterOpen] = React.useState(false);
 
   return (
-    <header
-      className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          {/* Logo */}
-          {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <div className="relative w-40 h-40">
-              {/* Light mode */}
-              <Image
-                src="/logo_light.png"
-                alt="Levely logo"
-                fill
-                priority
-                className="block dark:hidden object-contain"
-              />
+    <header className="fixed top-0 z-50 w-full border-b bg-background/80 backdrop-blur">
+      {/* NAVBAR */}
+      <nav className="container mx-auto flex h-16 items-center justify-between px-4 lg:h-20">
 
-              {/* Dark mode */}
-              <Image
-                src="/logo_dark.png"
-                alt="Levely logo dark"
-                fill
-                priority
-                className="hidden dark:block object-contain"
-              />
-            </div>
-          </Link>
+        {/* Logo */}
+        <Link href="/" className="relative h-30 w-40 lg:h-40 lg:w-52">
+          <Image
+            src="/logo_light.png"
+            alt="Levely"
+            fill
+            priority
+            className="object-contain dark:hidden"
+          />
+          <Image
+            src="/logo_dark.png"
+            alt="Levely dark"
+            fill
+            priority
+            className="hidden object-contain dark:block"
+          />
+        </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
-            {/* Ir a PRO - Fuera del NavigationMenu para evitar estilos de trigger */}
-            <Link href="/pro" aria-label="Ir a PRO">
-              <Button
-                className="relative group inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-primary-foreground font-bold shadow-md hover:shadow-xl hover:shadow-primary/30 transform hover:scale-105 transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary overflow-hidden">
-                {/* Animated background shine */}
-                <span className="absolute inset-0 pointer-events-none">
-                  <span
-                    className="absolute left-0 top-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></span>
-                </span>
+        {/* Desktop navigation */}
+        <div className="hidden lg:flex items-center gap-2">
+          {navItems.map((item) => {
+            const active = pathname === item.href;
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`rounded-full px-4 py-2 text-sm font-medium transition
+                  ${
+                    active
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                  }`}
+              >
+                {item.name}
+              </Link>
+            );
+          })}
+        </div>
 
-                {/* Star icon with subtle rotation */}
-                <span
-                  className="relative z-10 flex items-center justify-center w-6 h-6 rounded-full bg-white/15 backdrop-blur-sm transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
-                  <Star className="h-3.5 w-3.5 fill-current text-primary-foreground"/>
-                </span>
+        {/* Desktop actions */}
+        <div className="hidden lg:flex items-center gap-3">
+          <ThemeToggle />
 
-                {/* Text content */}
-                <span className="relative z-10 flex items-center gap-2">
-                  <span className="uppercase tracking-wider text-sm font-bold">
-                    PRO
-                  </span>
-                  <span
-                    className="inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-sm group-hover:bg-white/25 transition-colors duration-200">
-                    Nuevo
-                  </span>
-                </span>
-                {/* Subtle sparkle on hover */}
-                <span
-                  className="absolute top-2 right-2 w-1 h-1 bg-white rounded-full opacity-0 group-hover:opacity-75 group-hover:animate-ping"></span>
-              </Button>
+          {authenticated ? (
+            <Link href="/cv">
+                <Button variant="ghost" className="border border-gray-300 ">
+                <User className="mr-2 h-4 w-4" />
+                Ver mis CVs
+                </Button>
             </Link>
+          ) : (
+            <>
+              <Link href="/login">
+                <Button variant="ghost">Iniciar sesión</Button>
+              </Link>
 
-            <NavigationMenu value={menuValue} onValueChange={setMenuValue}>
-              <NavigationMenuList className="space-x-2">
-                {/* Para empresas */}
-                <NavigationMenuItem value="empresas">
-                  <NavigationMenuTrigger
-                    onClick={() => {
-                      router.push("/empresas");
-                      setMenuValue(undefined); // Cerrar menú al navegar
-                    }}
-                    className={cn(
-                      "bg-transparent text-sm font-medium transition-colors hover:!text-primary focus:!text-primary data-[state=open]:!text-primary !bg-none data-[state=open]:!bg-transparent data-[state=active]:!bg-transparent focus:!bg-transparent",
-                      isActive("/empresas") ? "text-primary font-bold" : "text-foreground/80"
-                    )}
+              {/* Register dropdown (desktop) */}
+              <div className="relative">
+                <div className="group">
+                  <Button>
+                    Regístrate
+                    <ChevronDown className="ml-2 h-4 w-4" />
+                  </Button>
+
+                  <div
+                    className="invisible absolute left-0 top-full z-50 mt-2 w-56 rounded-lg border bg-background p-2 shadow-md
+                               opacity-0 transition
+                               group-hover:visible group-hover:opacity-100"
                   >
-                    Para empresas
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] lg:w-[345px]">
-                      <ListItem
-                        title="Dashboard de Reclutamiento"
-                        href="/empresas"
-                        onClick={() => setMenuValue(undefined)}
+                    <Link href="/register?role=talento">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start"
                       >
-                        Gestiona tus vacantes y encuentra los mejores talentos con IA.
-                      </ListItem>
-                      <ListItem
-                        title="Búsqueda de Talento"
-                        href="/empresas"
-                        onClick={() => setMenuValue(undefined)}
-                      >
-                        Filtros avanzados para encontrar exactamente lo que buscas.
-                      </ListItem>
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-
-                {/* Para instituciones */}
-                <NavigationMenuItem value="instituciones">
-                  <NavigationMenuTrigger
-                    onClick={() => {
-                      router.push("/instituciones");
-                      setMenuValue(undefined); // Cerrar menú al navegar
-                    }}
-                    className={cn(
-                      "bg-transparent text-sm font-medium transition-colors hover:!text-primary focus:!text-primary data-[state=open]:!text-primary !bg-none data-[state=open]:!bg-transparent data-[state=active]:!bg-transparent focus:!bg-transparent",
-                      isActive("/instituciones") ? "text-primary font-bold" : "text-foreground/80"
-                    )}
-                  >
-                    Para instituciones
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] lg:w-[345px]">
-                      <ListItem
-                        title="Gestión Educativa"
-                        href="/instituciones"
-                        onClick={() => setMenuValue(undefined)}
-                      >
-                        Panel de control para conectar alumnos con oportunidades.
-                      </ListItem>
-                      <ListItem
-                        title="Seguimiento de Egresados"
-                        href="/instituciones"
-                        onClick={() => setMenuValue(undefined)}
-                      >
-                        Mantén el contacto y mide el éxito de tus alumnos.
-                      </ListItem>
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
-          </div>
-
-
-
-          {/* CTA Buttons with per-button hover dropdown (desktop) */}
-          <div className="hidden md:flex items-center space-x-4">
-            {/* Button toggle theme */}
-            <ThemeToggle />
-
-            {/* Login - dropdown on hover */}
-            <div className="relative">
-              <div className="group inline-block">
-                {
-                  authenticated ? (
-                    <Link href="/cv">
-                      <Button variant="outline" size="md" className="cursor-pointer">
-                        <User className="mr-2 h-4 w-4 inline-block"/>
-                        Ver mis CV's
+                        Regístrate como Talento
                       </Button>
                     </Link>
-                  ) : (
-                    <Link href="/login">
-                      <Button variant="outline" size="md" className="hover:cursor-pointer">
-                        Iniciar sesión{" "}
-                        {/*<ChevronDown className="ml-2 h-4 w-4 inline-block"/>*/}
+
+                    <Link href="/register?role=empresa">
+                      <Button
+                        variant="ghost"
+                        className="mt-1 w-full justify-start"
+                      >
+                        Regístrate como Empresa
                       </Button>
                     </Link>
-                  )}
+                  </div>
+                </div>
               </div>
-            </div>
+            </>
+          )}
+        </div>
 
-            {/* Register - dropdown on hover */}
-            {
-              !authenticated && (
-                <div className="relative">
-                  <div className="group inline-block">
-                    <Button size="md">
-                      Regístrate{" "}
-                      <ChevronDown className="ml-2 h-4 w-4 inline-block"/>
-                    </Button>
+        {/* Mobile menu button */}
+        <button
+          onClick={() => {
+            setIsOpen((v) => !v);
+            setMobileRegisterOpen(false);
+          }}
+          className="lg:hidden"
+          aria-label="Toggle menu"
+        >
+          {isOpen ? <X /> : <Menu />}
+        </button>
+      </nav>
 
-                    <div
-                      className="absolute left-0 top-full mt-2 w-56 bg-background border border-border rounded-lg shadow-md p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
+      {/* MOBILE MENU */}
+      {isOpen && (
+        <div className="lg:hidden border-t bg-background px-4 py-4 space-y-3">
+
+          {/* Mobile navigation */}
+          {navItems.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              onClick={() => setIsOpen(false)}
+              className={`block rounded-lg px-4 py-2 text-sm
+                ${
+                  pathname === item.href
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                }`}
+            >
+              {item.name}
+            </Link>
+          ))}
+
+          <div className="border-t pt-4 space-y-2">
+            {authenticated ? (
+              <Link href="/cv">
+                <Button className="w-full">
+                  <User className="mr-2 h-4 w-4" />
+                  Ver mis CVs
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost" className="w-full">
+                    Iniciar sesión
+                  </Button>
+                </Link>
+
+                {/* Mobile register accordion */}
+                <div>
+                  <button
+                    onClick={() =>
+                      setMobileRegisterOpen((v) => !v)
+                    }
+                    className="flex w-full items-center justify-between rounded-lg px-4 py-2 text-sm font-medium hover:bg-primary/10"
+                  >
+                    Regístrate
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${
+                        mobileRegisterOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {mobileRegisterOpen && (
+                    <div className="mt-2 space-y-2 pl-4">
                       <Link href="/register?role=talento">
                         <Button
                           variant="ghost"
-                          size="md"
                           className="w-full justify-start"
                         >
-                          Regístrate como Talento
+                          Como Talento
                         </Button>
                       </Link>
+
                       <Link href="/register?role=empresa">
                         <Button
                           variant="ghost"
-                          size="md"
-                          className="w-full justify-start mt-1"
+                          className="w-full justify-start"
                         >
-                          Regístrate como Empresa
+                          Como Empresa
                         </Button>
                       </Link>
                     </div>
-                  </div>
+                  )}
                 </div>
-              )
-            }
-          </div>
-
-          {/* PRO Button (visible solo en móvil) */}
-          <div className="flex items-center space-x-2 md:hidden">
-            <Link href="/pro" aria-label="Ir a PRO">
-              <Button
-                className="relative group inline-flex items-center gap-2 rounded-full px-4 py-2 bg-gradient-to-r from-primary to-primary/90 text-primary-foreground font-bold shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary overflow-hidden">
-                {/* Shine */}
-                <span className="absolute inset-0 pointer-events-none">
-                  <span
-                    className="absolute left-0 top-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></span>
-                </span>
-
-                {/* Star icon */}
-                <span
-                  className="relative z-10 flex items-center justify-center w-5 h-5 rounded-full bg-white/15 backdrop-blur-sm transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
-                  <Star className="h-3 w-3 fill-current text-primary-foreground"/>
-                </span>
-
-                <span className="relative z-10 uppercase tracking-wider text-xs font-bold">
-                  PRO
-                </span>
-              </Button>
-            </Link>
-
-            {/* Mobile Menu Button */}
-            <button
-              className="relative w-10 h-10 flex flex-col justify-center items-center group"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Abrir menú"
-            >
-              {/* Linea superior */}
-              <span
-                className={`block w-6 h-0.5 bg-foreground rounded-sm transition-all duration-300 ease-in-out ${mobileMenuOpen
-                  ? "rotate-45 translate-y-1.5"
-                  : "-translate-y-1.5"
-                }`}
-              ></span>
-
-              {/* Linea del medio */}
-              <span
-                className={`block w-6 h-0.5 bg-foreground rounded-sm transition-all duration-300 ease-in-out ${mobileMenuOpen ? "opacity-0" : "opacity-100"
-                }`}
-              ></span>
-
-              {/* Linea inferior */}
-              <span
-                className={`block w-6 h-0.5 bg-foreground rounded-sm transition-all duration-300 ease-in-out ${mobileMenuOpen
-                  ? "-rotate-45 -translate-y-1.5"
-                  : "translate-y-1.5"
-                }`}
-              ></span>
-            </button>
+              </>
+            )}
           </div>
         </div>
-
-        {/* Mobile Menu */}
-        <div
-          className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${mobileMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
-          }`}
-        >
-          <div className="text-center py-4 space-y-4">
-            <Link
-              href="/empresas"
-              className="block text-sm font-medium text-foreground/80 hover:text-primary transform transition-all duration-200 hover:translate-x-1"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Para empresas
-            </Link>
-            <Link
-              href="/instituciones"
-              className="block text-sm font-medium text-foreground/80 hover:text-primary transform transition-all duration-200 hover:translate-x-1"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Para instituciones
-            </Link>
-            <div className="flex flex-col space-y-2 pt-4">
-              <div>
-                <div
-                  role="button"
-                  tabIndex={0}
-                  className="w-full text-left cursor-pointer"
-                  onClick={() => setMobileLoginOpen((s) => !s)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setMobileLoginOpen((s) => !s);
-                    }
-                  }}
-                >
-                  {
-                    !authenticated ? (
-                      <Link href="/login">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="w-full justify-between"
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              setMobileRegisterOpen((s) => !s);
-                            }
-                          }}
-                        >
-                          Iniciar sesión
-                        </Button>
-                      </Link>
-
-                    ) : (
-                      <Link href="/cv">
-                        <Button size="md" className="cursor-pointer w-full">
-                          <User className="mr-2 h-4 w-4 inline-block"/>
-                          Ver mis CV's
-                        </Button>
-                      </Link>
-                    )}
-                </div>
-              </div>
-
-              <div>
-                { !authenticated && (
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    className="w-full text-left cursor-pointer"
-                    onClick={() => setMobileRegisterOpen((s) => !s)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        setMobileRegisterOpen((s) => !s);
-                      }
-                    }}
-                  >
-                    <Link href="/register" aria-label="Registrate">
-                      <Button size="sm" className="w-full justify-between">
-                        Regístrate
-                        {/*<ChevronDown*/}
-                        {/*  className={`h-4 w-4 transition-transform ${mobileRegisterOpen ? "rotate-180" : ""*/}
-                        {/*  }`}*/}
-                        {/*/>*/}
-                      </Button>
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
+      )}
     </header>
   );
-};
-
-const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a"> & { title: string; href: string }
->(({ className, title, children, href, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <Link
-          ref={ref}
-          href={href}
-          className={cn(
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-all duration-300 hover:bg-primary/10 group",
-            className
-          )}
-          {...props}
-        >
-          <div className="text-sm font-semibold leading-none transition-colors group-hover:text-primary">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground transition-colors group-hover:text-primary/80">
-            {children}
-          </p>
-        </Link>
-      </NavigationMenuLink>
-    </li>
-  )
-})
-ListItem.displayName = "ListItem"
-
-export default Header;
+}

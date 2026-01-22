@@ -7,8 +7,6 @@ import { cn } from "@/lib/utils";
 export function SkillsStep() {
   const { formData, updateFormData } = useOnboardingStore();
 
-  // 1. Consolidar habilidades de TODAS las industrias seleccionadas
-  // Usamos Set para eliminar duplicados automáticamente
   const selectedIndustries = formData.targetIndustries || [];
 
   const availableSkills = Array.from(

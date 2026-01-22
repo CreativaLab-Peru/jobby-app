@@ -1,4 +1,5 @@
 "use client";
+
 import { useOnboardingStore } from "@/features/onboarding/store/talent-onboarding-store";
 import { Briefcase, GraduationCap, Award, Check } from "lucide-react";
 import { cn } from "@/lib/utils";

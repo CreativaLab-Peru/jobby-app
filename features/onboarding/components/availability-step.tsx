@@ -1,6 +1,5 @@
 "use client";
 import { useOnboardingStore } from "@/features/onboarding/store/talent-onboarding-store";
-import { Label } from "@/components/ui/label";
 import { Clock, Calendar, Briefcase, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 

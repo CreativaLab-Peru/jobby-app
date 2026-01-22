@@ -1,3 +1,9 @@
+# 1.1.1 - 2025-01-22
+
+## Hotfix
+- Error on build process for the schema modifications
+
+
 # 1.1.0 - 2025-01-22
 
 ## Fixes

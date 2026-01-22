@@ -32,6 +32,10 @@ export async function completeOnboardingAction(email: string, body: TalentOnboar
           availability: data.availability,
           preferredRoles: data.preferredRoles,
           targetIndustries: data.targetIndustries,
+          expLevel: data.expLevel,
+          portfolioUrl: data.portfolioUrl,
+          skills: data.skills,
+          relocation: data.relocation,
         },
         create: {
           userId: user.id,
@@ -41,6 +45,10 @@ export async function completeOnboardingAction(email: string, body: TalentOnboar
           availability: data.availability,
           preferredRoles: data.preferredRoles,
           targetIndustries: data.targetIndustries,
+          expLevel: data.expLevel,
+          portfolioUrl: data.portfolioUrl,
+          skills: data.skills,
+          relocation: data.relocation,
         },
       });
 

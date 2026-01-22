@@ -1,4 +1,4 @@
-# WIP
+# 1.1.0 - 2025-01-22
 
 ## Fixes
 - [JB-86adpv36f](https://app.clickup.com/t/86adpv36f) Upload cv count issue

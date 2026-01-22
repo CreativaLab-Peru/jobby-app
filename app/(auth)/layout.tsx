@@ -1,5 +1,5 @@
 import Footer from "@/components/footer";
-import Header from "@/components/header";
+import NavbarPublic from "@/components/navbar-public";
 import { getSession } from "@/features/authentication/actions/get-session";
 import {redirect} from "next/navigation";
 import {routes} from "@/lib/routes";
@@ -15,7 +15,7 @@ export default async function PublicLayout({
   }
   return (
     <div className="flex min-h-screen flex-col">
-      <Header authenticated={session?.success} />
+      <NavbarPublic authenticated={session?.success} />
       <main className="flex-1">{children}</main>
       <Footer />
     </div>

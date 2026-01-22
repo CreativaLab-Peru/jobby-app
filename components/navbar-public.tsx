@@ -1,35 +1,23 @@
 "use client";
 
-import * as React from "react";
 import Link from "next/link";
-import {usePathname, useRouter} from "next/navigation";
+import {usePathname} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {ChevronDown, Star, User} from "lucide-react";
 import {useState} from "react";
 import Image from "next/image";
 import {ThemeToggle} from "@/components/button-toggle-theme";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
-import {cn} from "@/lib/utils";
+// import {ThemeToggleSwitch} from "@/components/button-toggle-theme";
 
 interface HeaderProps {
   authenticated: boolean
 }
 
-const Header = ({authenticated}: HeaderProps) => {
+const NavbarPublic = ({authenticated}: HeaderProps) => {
   const pathname = usePathname();
-  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileLoginOpen, setMobileLoginOpen] = useState(false);
   const [mobileRegisterOpen, setMobileRegisterOpen] = useState(false);
-  const [menuValue, setMenuValue] = useState<string | undefined>(undefined);
 
   const isActive = (path: string) => pathname === path;
 
@@ -63,8 +51,7 @@ const Header = ({authenticated}: HeaderProps) => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
-            {/* Ir a PRO - Fuera del NavigationMenu para evitar estilos de trigger */}
+          <div className="hidden md:flex items-center space-x-8">
             <Link href="/pro" aria-label="Ir a PRO">
               <Button
                 className="relative group inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-primary-foreground font-bold shadow-md hover:shadow-xl hover:shadow-primary/30 transform hover:scale-105 transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary overflow-hidden">
@@ -90,83 +77,28 @@ const Header = ({authenticated}: HeaderProps) => {
                     Nuevo
                   </span>
                 </span>
+
                 {/* Subtle sparkle on hover */}
                 <span
                   className="absolute top-2 right-2 w-1 h-1 bg-white rounded-full opacity-0 group-hover:opacity-75 group-hover:animate-ping"></span>
               </Button>
             </Link>
-
-            <NavigationMenu value={menuValue} onValueChange={setMenuValue}>
-              <NavigationMenuList className="space-x-2">
-                {/* Para empresas */}
-                <NavigationMenuItem value="empresas">
-                  <NavigationMenuTrigger
-                    onClick={() => {
-                      router.push("/empresas");
-                      setMenuValue(undefined); // Cerrar menú al navegar
-                    }}
-                    className={cn(
-                      "bg-transparent text-sm font-medium transition-colors hover:!text-primary focus:!text-primary data-[state=open]:!text-primary !bg-none data-[state=open]:!bg-transparent data-[state=active]:!bg-transparent focus:!bg-transparent",
-                      isActive("/empresas") ? "text-primary font-bold" : "text-foreground/80"
-                    )}
-                  >
-                    Para empresas
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] lg:w-[345px]">
-                      <ListItem
-                        title="Dashboard de Reclutamiento"
-                        href="/empresas"
-                        onClick={() => setMenuValue(undefined)}
-                      >
-                        Gestiona tus vacantes y encuentra los mejores talentos con IA.
-                      </ListItem>
-                      <ListItem
-                        title="Búsqueda de Talento"
-                        href="/empresas"
-                        onClick={() => setMenuValue(undefined)}
-                      >
-                        Filtros avanzados para encontrar exactamente lo que buscas.
-                      </ListItem>
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-
-                {/* Para instituciones */}
-                <NavigationMenuItem value="instituciones">
-                  <NavigationMenuTrigger
-                    onClick={() => {
-                      router.push("/instituciones");
-                      setMenuValue(undefined); // Cerrar menú al navegar
-                    }}
-                    className={cn(
-                      "bg-transparent text-sm font-medium transition-colors hover:!text-primary focus:!text-primary data-[state=open]:!text-primary !bg-none data-[state=open]:!bg-transparent data-[state=active]:!bg-transparent focus:!bg-transparent",
-                      isActive("/instituciones") ? "text-primary font-bold" : "text-foreground/80"
-                    )}
-                  >
-                    Para instituciones
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] lg:w-[345px]">
-                      <ListItem
-                        title="Gestión Educativa"
-                        href="/instituciones"
-                        onClick={() => setMenuValue(undefined)}
-                      >
-                        Panel de control para conectar alumnos con oportunidades.
-                      </ListItem>
-                      <ListItem
-                        title="Seguimiento de Egresados"
-                        href="/instituciones"
-                        onClick={() => setMenuValue(undefined)}
-                      >
-                        Mantén el contacto y mide el éxito de tus alumnos.
-                      </ListItem>
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
+            <Link
+              href="/empresas"
+              className={`text-sm font-medium transition-colors hover:text-primary ${isActive("/empresas") ? "text-primary" : "text-foreground/80"
+              }`}
+            >
+              Para empresas
+            </Link>
+            <Link
+              href="/instituciones"
+              className={`text-sm font-medium transition-colors hover:text-primary ${isActive("/instituciones")
+                ? "text-primary"
+                : "text-foreground/80"
+              }`}
+            >
+              Para instituciones
+            </Link>
           </div>
 
 
@@ -189,7 +121,7 @@ const Header = ({authenticated}: HeaderProps) => {
                     </Link>
                   ) : (
                     <Link href="/login">
-                      <Button variant="outline" size="md" className="hover:cursor-pointer">
+                      <Button variant="outline" size="sm" className="hover:cursor-pointer">
                         Iniciar sesión{" "}
                         {/*<ChevronDown className="ml-2 h-4 w-4 inline-block"/>*/}
                       </Button>
@@ -203,31 +135,31 @@ const Header = ({authenticated}: HeaderProps) => {
               !authenticated && (
                 <div className="relative">
                   <div className="group inline-block">
-                    <Button size="md">
+                    <Button size="sm">
                       Regístrate{" "}
                       <ChevronDown className="ml-2 h-4 w-4 inline-block"/>
                     </Button>
 
                     <div
                       className="absolute left-0 top-full mt-2 w-56 bg-background border border-border rounded-lg shadow-md p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
-                      <Link href="/register?role=talento">
+                      <Link href="/onboarding/talents">
                         <Button
                           variant="ghost"
-                          size="md"
+                          size="sm"
                           className="w-full justify-start"
                         >
                           Regístrate como Talento
                         </Button>
                       </Link>
-                      <Link href="/register?role=empresa">
-                        <Button
-                          variant="ghost"
-                          size="md"
-                          className="w-full justify-start mt-1"
-                        >
-                          Regístrate como Empresa
-                        </Button>
-                      </Link>
+                      {/*<Link href="/register?role=empresa">*/}
+                      {/*  <Button*/}
+                      {/*    variant="ghost"*/}
+                      {/*    size="sm"*/}
+                      {/*    className="w-full justify-start mt-1"*/}
+                      {/*  >*/}
+                      {/*    Regístrate como Empresa*/}
+                      {/*  </Button>*/}
+                      {/*</Link>*/}
                     </div>
                   </div>
                 </div>
@@ -366,7 +298,7 @@ const Header = ({authenticated}: HeaderProps) => {
                       }
                     }}
                   >
-                    <Link href="/register" aria-label="Registrate">
+                    <Link href="/onboarding/talents" aria-label="Registrate">
                       <Button size="sm" className="w-full justify-between">
                         Regístrate
                         {/*<ChevronDown*/}
@@ -386,31 +318,4 @@ const Header = ({authenticated}: HeaderProps) => {
   );
 };
 
-const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a"> & { title: string; href: string }
->(({ className, title, children, href, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <Link
-          ref={ref}
-          href={href}
-          className={cn(
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-all duration-300 hover:bg-primary/10 group",
-            className
-          )}
-          {...props}
-        >
-          <div className="text-sm font-semibold leading-none transition-colors group-hover:text-primary">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground transition-colors group-hover:text-primary/80">
-            {children}
-          </p>
-        </Link>
-      </NavigationMenuLink>
-    </li>
-  )
-})
-ListItem.displayName = "ListItem"
-
-export default Header;
+export default NavbarPublic;

@@ -1,4 +1,4 @@
-# WIP
+# 1.1.0 - 2025-01-22
 
 ## Fixes
 - [JB-86adpv36f](https://app.clickup.com/t/86adpv36f) Upload cv count issue
@@ -13,3 +13,5 @@
 - Refactor the database schema to improve performance and scalability.
 - [JB-86acz99x8](https://app.clickup.com/t/86acz99x8) Integrated a new modularized structure for create CVs, dynamic form and dynamic preciew, taking the sections and printing all content in this order.
 - The Schema was modified, its added the section VOLUNTEERING in CvSectionType, and all names of CvType was changed with other more descriptives.
+- Onboarding for talents
+- Email service integration

@@ -6,8 +6,6 @@ import {newUserConfiguration} from "@/features/authentication/actions/new-user-c
 
 export async function verifyCodeAction(userId: string, code: string) {
   try {
-    console.log("Verifying code action...");
-    console.log({ userId, code });
     // 1. Buscar el código en la BD
     const verificationRecord = await prisma.verificationCode.findFirst({
       where: {

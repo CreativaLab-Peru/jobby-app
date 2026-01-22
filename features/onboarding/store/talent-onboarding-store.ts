@@ -70,7 +70,6 @@ export const useOnboardingStore = create<OnboardingStore>()(
           8: talentOnboardingBaseSchema.pick({ portfolioUrl: true }),
           9: talentOnboardingSchema,
         };
-        console.log(stepSchemas);
 
         const currentSchema = stepSchemas[step];
         if (!currentSchema) return { success: true };

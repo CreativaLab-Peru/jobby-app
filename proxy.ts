@@ -20,7 +20,6 @@ export async function proxy(request: NextRequest) {
 export const config = {
   // Agregamos /onboarding y usamos un patrón más escalable
   matcher: [
-    // "/onboarding", // <--- Faltaba esta
     "/cv/:path*",  // Usar :path* protege la ruta y todas sus sub-rutas
     "/create",
     "/upload-cv",

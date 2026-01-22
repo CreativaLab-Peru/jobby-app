@@ -12,7 +12,7 @@ interface HeaderProps {
   authenticated: boolean
 }
 
-const Header = ({authenticated}: HeaderProps) => {
+const NavbarPublic = ({authenticated}: HeaderProps) => {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileLoginOpen, setMobileLoginOpen] = useState(false);
@@ -141,7 +141,7 @@ const Header = ({authenticated}: HeaderProps) => {
 
                     <div
                       className="absolute left-0 top-full mt-2 w-56 bg-background border border-border rounded-lg shadow-md p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
-                      <Link href="/register?role=talento">
+                      <Link href="/onboarding/talents">
                         <Button
                           variant="ghost"
                           size="sm"
@@ -150,15 +150,15 @@ const Header = ({authenticated}: HeaderProps) => {
                           Regístrate como Talento
                         </Button>
                       </Link>
-                      <Link href="/register?role=empresa">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="w-full justify-start mt-1"
-                        >
-                          Regístrate como Empresa
-                        </Button>
-                      </Link>
+                      {/*<Link href="/register?role=empresa">*/}
+                      {/*  <Button*/}
+                      {/*    variant="ghost"*/}
+                      {/*    size="sm"*/}
+                      {/*    className="w-full justify-start mt-1"*/}
+                      {/*  >*/}
+                      {/*    Regístrate como Empresa*/}
+                      {/*  </Button>*/}
+                      {/*</Link>*/}
                     </div>
                   </div>
                 </div>
@@ -297,7 +297,7 @@ const Header = ({authenticated}: HeaderProps) => {
                       }
                     }}
                   >
-                    <Link href="/register" aria-label="Registrate">
+                    <Link href="/onboarding/talents" aria-label="Registrate">
                       <Button size="sm" className="w-full justify-between">
                         Regístrate
                         {/*<ChevronDown*/}
@@ -317,4 +317,4 @@ const Header = ({authenticated}: HeaderProps) => {
   );
 };
 
-export default Header;
+export default NavbarPublic;

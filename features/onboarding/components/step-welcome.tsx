@@ -6,8 +6,6 @@ import {
 } from "lucide-react";
 import {StepProps} from "@/features/onboarding/components/onboarding-flow";
 import {finishOnboarding} from "@/features/onboarding/actions/finish-onboarding";
-// TODO: Replace with another library or custom toast
-// import {useToast} from "@/hooks/use-toast";
 import {useRouter} from "next/navigation";
 import {authClient} from "@/lib/auth-client";
 
@@ -15,7 +13,6 @@ const FIRST_PASSWORD = process.env.FIRST_PASSWORD || "UANDAC@123ASD11323CA12"
 
 export const StepWelcome: React.FC<StepProps> = ({data}) => {
   const [pending, startTransition] = useTransition();
-  // const {toast} = useToast();
   const router = useRouter();
 
   const signInAndUpdateData = async () => {

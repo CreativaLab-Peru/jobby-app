@@ -2,29 +2,33 @@ import { inngest } from "./client";
 import { prisma } from "@/lib/prisma";
 import { JobStatus, LogAction, LogLevel } from "@prisma/client";
 import { logsService } from "@/features/share/services/logs-service";
-import {sendWelcomeEmailResent} from "@/features/authentication/actions/send-welcome-email-resent";
+import {addToMailerLite} from "@/features/authentication/actions/mailerlite";
+import {sendVerificationEmail} from "@/features/authentication/actions/send-verification-email";
 
 const required = (value: any, field: string) => {
   if (!value) throw new Error(`Missing required field: ${field}`);
 };
 
-export const sendWelcomeEmail = inngest.createFunction(
-  { id: "send-welcome-email" },
-  { event: "send/welcome" },
+export const sendVerifyEmailv2 = inngest.createFunction(
+  { id: "send-verification-email-v2" },
+  { event: "send.verification.code" },
   async ({ event }) => {
-    const { email, name, userId } = event.data;
+    const { email, name, codeSixDigits } = event.data;
 
     try {
       required(email, "email");
       required(name, "name");
-    } catch (err) {
-      console.error("[WELCOME_EMAIL_VALIDATION_ERROR]:", err);
+    } catch (err: any) {
+      console.error("[VALIDATION_ERROR]:", err);
 
       await logsService.createLog({
         action: LogAction.EMAIL,
         level: LogLevel.ERROR,
-        message: "Validation failed for welcome email",
-        metadata: { error: err?.message, data: event.data },
+        message: "Validation failed for verification email",
+        metadata: {
+          error: err?.message,
+          data: event.data,
+        },
       });
 
       return;
@@ -39,20 +43,24 @@ export const sendWelcomeEmail = inngest.createFunction(
       },
       create: {
         jobId: event.id,
-        type: "SEND_EMAIL_WELCOME",
+        type: "SEND_EMAIL_VERIFICATION",
         payload: event.data,
         status: JobStatus.IN_PROGRESS,
         startedAt: new Date(),
       },
     });
 
+    await logsService.createLog({
+      action: LogAction.EMAIL,
+      level: LogLevel.INFO,
+      entity: "QUEUE_JOB",
+      entityId: job.id,
+      message: "Started verification email job",
+      metadata: { email, name, codeSixDigits },
+    });
+
     try {
-
-      // DEPRECATED: MailerLite integration is currently disabled
-      // await addToMailerLite(email, { name }, "welcome");
-
-      // Resend welcome email
-      await sendWelcomeEmailResent(email, name);
+      await sendVerificationEmail(email, name, codeSixDigits); // Genera un código real en producción
 
       await prisma.queueJob.update({
         where: { id: job.id },
@@ -63,20 +71,16 @@ export const sendWelcomeEmail = inngest.createFunction(
       });
 
       await logsService.createLog({
-        userId,
         action: LogAction.EMAIL,
         level: LogLevel.INFO,
         entity: "QUEUE_JOB",
         entityId: job.id,
-        message: `Welcome email sent to ${email}`,
-        metadata: {
-          email,
-          name,
-        },
+        message: `Verification email sent to ${email}`,
+        metadata: { email, name, codeSixDigits },
       });
 
     } catch (err: any) {
-      console.error("[SEND_WELCOME_EMAIL_ERROR]:", err);
+      console.error("[SEND_VERIFICATION_EMAIL_ERROR]:", err);
 
       await prisma.queueJob.update({
         where: { id: job.id },
@@ -88,16 +92,16 @@ export const sendWelcomeEmail = inngest.createFunction(
       });
 
       await logsService.createLog({
-        userId,
         action: LogAction.EMAIL,
         level: LogLevel.ERROR,
         entity: "QUEUE_JOB",
         entityId: job.id,
-        message: "Failed to send welcome email",
+        message: "Failed to send verification email",
         metadata: {
           error: err?.message,
           email,
           name,
+          codeSixDigits,
         },
       });
 

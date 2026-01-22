@@ -11,6 +11,7 @@ export async function registerAction(formData: unknown) {
     return {
       success: false,
       fieldErrors: parsed.error.flatten().fieldErrors,
+      formError: "Por favor corrige los errores en el formulario.",
     };
   }
 
@@ -34,5 +35,5 @@ export async function registerAction(formData: unknown) {
     await newUserConfiguration(userId);
   }
 
-  return { success: true };
+  return { success: true, formError: null };
 }

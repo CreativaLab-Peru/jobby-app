@@ -1,3 +1,8 @@
+# WIP
+
+## Enhancements
+- Colors and logo for sending emails
+
 # 1.1.1 - 2025-01-22
 
 ## Hotfix

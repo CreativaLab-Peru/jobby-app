@@ -51,7 +51,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
           formData: { ...state.formData, ...data },
         })),
 
-      reset: () => set({ step: 0, formData: initialFormData }),
+      reset: () => set({ step: 1, formData: initialFormData }),
 
       validateCurrentStep: () => {
         const { step, formData } = get();

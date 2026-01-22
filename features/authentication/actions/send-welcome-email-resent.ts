@@ -3,10 +3,10 @@
 import { resend } from "@/lib/resend";
 import WelcomeMasterEmail from "@/features/authentication/templates/welcome-master";
 
-export async function sendWelcomeEmail(email: string, name: string) {
+export async function sendWelcomeEmailResent(email: string, name: string) {
   try {
     const { data, error } = await resend.emails.send({
-      from: 'Levely AI <hola@levely.ai>',
+      from: 'Levely AI <contact@joinlevely.com>',
       to: [email],
       subject: '🚀 Bienvenido a Levely - Tu carrera empieza aquí',
       react: WelcomeMasterEmail({ userName: name }),

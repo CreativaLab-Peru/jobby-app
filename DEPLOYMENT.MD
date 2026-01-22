@@ -1,4 +1,15 @@
-# WIP
+# 1.0.2
+
+### BEFORE DEPLOYMENT
+- Add new environment variable
+  - RESEND_API_KEY
+- Remove old environment variable
+  - MAILERLITE_API_KEY
+  - MAILERLITE_WELCOME_GROUP_ID
+  - MAILERLITE_VERIFY_GROUP_ID
+  - MAILERLITE_MAGIC_LINK_GROUP_ID
+
+# 1.0.0
 
 ### BEFORE DEPLOYMENT
 - Add variables for new flow
@@ -8,19 +19,3 @@
 - Add new environment variables for Levely App
   - INNGEST_API_KEY for inngest service
   - MP_ACCESS_TOKEN token of mercado pago
-
-- Add new landing page considering the feedback
-  - Hidden "Expertos" section.
-  - Added carousel of testimonies.
-  - Adden link of Calendat to many buttons
-  - Solving responsive problems.
-  - Hidden prices and extra buttons.
-  - Added other type of register and login, but is hidden because not exist a model for this type of user (company, institute, expert.
-  - Added the button PRO in the header.
-  - /Pro contents all of content related by the PRO model and use the extra components.
-  - FaqsSection includes the question about the PRO model.
-  - AutoPlayVideo is the component used for the load the video of demostration.
-
-- Integrated a new modularized structure for create CVs, dynamic form and dynamic preciew taking the sections order.
-- Add VOLUNTEERING in CvSectionType
-- All names of CvType was changed with other more descriptives.

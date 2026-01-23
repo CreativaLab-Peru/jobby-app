@@ -21,7 +21,7 @@ interface NavbarProps {
   userLimit: CreditsOfPlan;
 }
 
-export function Navbar({ userLimit, user }: NavbarProps) {
+export function NavbarPrivate({ userLimit, user }: NavbarProps) {
   const [mounted, setMounted] = useState(false);
   const [isClosed, setIsClosed] = useState(false);
 

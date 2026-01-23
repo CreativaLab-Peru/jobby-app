@@ -1,5 +1,5 @@
 import Footer from "@/components/footer";
-import Header from "@/components/header";
+import NavbarPublic from "@/components/navbar-public";
 import { getSession } from "@/features/authentication/actions/get-session";;
 
 export default async function PublicLayout({

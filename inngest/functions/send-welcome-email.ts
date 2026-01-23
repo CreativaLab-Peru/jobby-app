@@ -2,7 +2,7 @@ import { inngest } from "./client";
 import { prisma } from "@/lib/prisma";
 import { JobStatus, LogAction, LogLevel } from "@prisma/client";
 import { logsService } from "@/features/share/services/logs-service";
-import {addToMailerLite} from "@/features/authentication/actions/mailerlite";
+import {sendWelcomeEmailResent} from "@/features/authentication/actions/send-welcome-email-resent";
 
 const required = (value: any, field: string) => {
   if (!value) throw new Error(`Missing required field: ${field}`);
@@ -47,7 +47,12 @@ export const sendWelcomeEmail = inngest.createFunction(
     });
 
     try {
-      await addToMailerLite(email, { name }, "welcome");
+
+      // DEPRECATED: MailerLite integration is currently disabled
+      // await addToMailerLite(email, { name }, "welcome");
+
+      // Resend welcome email
+      await sendWelcomeEmailResent(email, name);
 
       await prisma.queueJob.update({
         where: { id: job.id },

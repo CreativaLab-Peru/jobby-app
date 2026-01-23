@@ -1,27 +1,34 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
+import {NextRequest, NextResponse} from "next/server";
+import {getSessionCookie} from "better-auth/cookies";
 
 export async function proxy(request: NextRequest) {
-    const sessionCookie = getSessionCookie(request);
-    if (!sessionCookie) {
-        return NextResponse.redirect(new URL("/404", request.url));
-    }
+  const sessionCookie = getSessionCookie(request);
+  const {pathname} = request.nextUrl;
 
-    return NextResponse.next();
+  // 1. Si NO hay sesión y el usuario intenta entrar a una ruta protegida
+  if (!sessionCookie) {
+    // Redirigir al login en lugar de 404 para mejorar la UX
+    const loginUrl = new URL("/login", request.url);
+    // Opcional: guardar la URL de origen para volver después del login
+    loginUrl.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
-    // Secure paths
-    matcher: [
-        "/onboarding",
-        "/cv",
-        "/create",
-        "/upload-cv",
-        "/preview",
-        "/analyzing",
-        "/analysis",
-        "/opportunities",
-        "/settings",
-        "/billing",
-    ],
+  // Agregamos /onboarding y usamos un patrón más escalable
+  matcher: [
+    "/cv/:path*",  // Usar :path* protege la ruta y todas sus sub-rutas
+    "/create",
+    "/upload-cv",
+    "/preview",
+    "/analyzing",
+    "/analysis",
+    "/opportunities",
+    "/settings",
+    "/billing",
+    "/app/:path*" // Recomendación: agrupar rutas protegidas bajo /app
+  ],
 };

@@ -1,8 +1,8 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Navbar } from "@/components/navbar";
 import {CreditsOfPlan} from "@/features/billing/actions/get-available-tokens";
+import {NavbarPrivate} from "@/components/navbar-private";
 
 interface NavbarWrapperProps {
   creditsOfPlan: CreditsOfPlan;
@@ -20,5 +20,5 @@ export function NavbarWrapper({ creditsOfPlan, user }: NavbarWrapperProps) {
 
   if (shouldHide) return null;
 
-  return <Navbar userLimit={creditsOfPlan} user={user} />;
+  return <NavbarPrivate userLimit={creditsOfPlan} user={user} />;
 }

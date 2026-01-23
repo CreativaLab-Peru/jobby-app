@@ -60,6 +60,8 @@ const Index = () => {
       <section
         className="
           relative
+            min-h-screen
+            w-full
           overflow-hidden
           bg-[url('/hero/hero_white.png')]
           dark:bg-[url('/hero/hero_black.png')]

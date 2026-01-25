@@ -1,4 +1,7 @@
 -- CreateEnum
+CREATE TYPE "TransactionType" AS ENUM ('RECHARGE', 'CONSUMPTION', 'REFUND', 'BONUS');
+
+-- CreateEnum
 CREATE TYPE "Language" AS ENUM ('EN', 'ES');
 
 -- CreateEnum
@@ -49,7 +52,7 @@ CREATE TABLE "user" (
     "acceptedCookiePolicy" BOOLEAN NOT NULL DEFAULT false,
     "acceptedSecurityPolicy" BOOLEAN NOT NULL DEFAULT false,
     "acceptedSecurityPolicyAt" TIMESTAMP(3),
-    "birthdate" TIMESTAMP(3),
+    "birthday" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -310,6 +313,29 @@ CREATE TABLE "magic_link_token" (
 );
 
 -- CreateTable
+CREATE TABLE "user_credit_balance" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "amount" INTEGER NOT NULL DEFAULT 0,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "user_credit_balance_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "credit_transaction" (
+    "id" TEXT NOT NULL,
+    "balanceId" TEXT NOT NULL,
+    "amount" INTEGER NOT NULL,
+    "type" "TransactionType" NOT NULL,
+    "description" TEXT,
+    "metadata" JSONB,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "credit_transaction_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "log_entry" (
     "id" TEXT NOT NULL,
     "userId" TEXT,
@@ -409,6 +435,12 @@ CREATE INDEX "magic_link_token_userId_idx" ON "magic_link_token"("userId");
 CREATE INDEX "magic_link_token_tokenHash_idx" ON "magic_link_token"("tokenHash");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "user_credit_balance_userId_key" ON "user_credit_balance"("userId");
+
+-- CreateIndex
+CREATE INDEX "credit_transaction_balanceId_idx" ON "credit_transaction"("balanceId");
+
+-- CreateIndex
 CREATE INDEX "log_entry_userId_idx" ON "log_entry"("userId");
 
 -- CreateIndex
@@ -467,6 +499,12 @@ ALTER TABLE "queue_job" ADD CONSTRAINT "queue_job_cvId_fkey" FOREIGN KEY ("cvId"
 
 -- AddForeignKey
 ALTER TABLE "magic_link_token" ADD CONSTRAINT "magic_link_token_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "user_credit_balance" ADD CONSTRAINT "user_credit_balance_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "credit_transaction" ADD CONSTRAINT "credit_transaction_balanceId_fkey" FOREIGN KEY ("balanceId") REFERENCES "user_credit_balance"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "log_entry" ADD CONSTRAINT "log_entry_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE SET NULL ON UPDATE CASCADE;

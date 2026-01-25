@@ -15,22 +15,23 @@ model TemporalUser {
   @@map("temporal_user")
 }
 
+// Usuarios registrados
 model User {
-  id                         String             @id @default(uuid())
+  id                         String              @id @default(uuid())
   name                       String
-  email                      String             @unique
+  email                      String              @unique
   emailVerified              Boolean
   image                      String?
-  updatedPassword            Boolean            @default(false)
-  isBlocked                  Boolean            @default(false)
+  updatedPassword            Boolean             @default(false)
+  isBlocked                  Boolean             @default(false)
   lastLoginAt                DateTime?
-  happensAfterPayment        Boolean            @default(false)
-  acceptedTermsAndConditions Boolean            @default(false)
+  happensAfterPayment        Boolean             @default(false)
+  acceptedTermsAndConditions Boolean             @default(false)
   acceptedTermsAt            DateTime?
-  acceptedPrivacyPolicy      Boolean            @default(false)
+  acceptedPrivacyPolicy      Boolean             @default(false)
   acceptedPrivacyPolicyAt    DateTime?
-  acceptedCookiePolicy       Boolean            @default(false)
-  acceptedSecurityPolicy     Boolean            @default(false)
+  acceptedCookiePolicy       Boolean             @default(false)
+  acceptedSecurityPolicy     Boolean             @default(false)
   acceptedSecurityPolicyAt   DateTime?
   birthday                   DateTime?
   createdAt                  DateTime
@@ -43,10 +44,12 @@ model User {
   payments                   UserPayment[]
   verificationCode           VerificationCode[]
   userPreference             UserPreference[]
+  userCreditBalance          UserCreditBalance[]
 
   @@map("user")
 }
 
+// Códigos de verificación para acciones como registro o recuperación de contraseña
 model VerificationCode {
   id        String   @id @default(uuid())
   code      String
@@ -58,6 +61,7 @@ model VerificationCode {
   @@map("verification_code")
 }
 
+// Preferencias del usuario para búsqueda de empleo
 model UserPreference {
   id     String @id @default(uuid())
   userId String @unique
@@ -342,6 +346,33 @@ model MagicLinkToken {
   @@map("magic_link_token")
 }
 
+// Balance de créditos del usuario
+model UserCreditBalance {
+  id                String              @id @default(uuid())
+  userId            String              @unique
+  amount            Int                 @default(0) // Usamos Int para evitar problemas de coma flotante
+  updatedAt         DateTime            @updatedAt
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  creditTransaction CreditTransaction[]
+
+  @@map("user_credit_balance")
+}
+
+// Registro de transacciones de créditos (recargas y consumos)
+model CreditTransaction {
+  id          String            @id @default(uuid())
+  balanceId   String
+  amount      Int // Positivo para recargas, negativo para consumos
+  type        TransactionType
+  description String?
+  metadata    Json? // Para guardar ID de pago de Stripe o ID de CV generado
+  createdAt   DateTime          @default(now())
+  balance     UserCreditBalance @relation(fields: [balanceId], references: [id])
+
+  @@index([balanceId])
+  @@map("credit_transaction")
+}
+
 model LogEntry {
   id        String    @id @default(uuid())
   userId    String?
@@ -362,6 +393,13 @@ model LogEntry {
   @@index([action])
   @@index([level])
   @@map("log_entry")
+}
+
+enum TransactionType {
+  RECHARGE // Compra de créditos
+  CONSUMPTION // Gasto por usar la IA
+  REFUND // Devolución por error en proceso
+  BONUS // Regalo por registro o promoción
 }
 
 /// ---------- Enums ----------

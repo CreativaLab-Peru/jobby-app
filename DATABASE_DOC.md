@@ -43,15 +43,24 @@ Contenedor de resultados de IA para un CV específico.
 
 ---
 
-## 💳 4. Dominio de Negocio (Monetización)
+## 💳 4. Dominio de Negocio (Monetización) 
 
-### `subscription_plan` (Mapeado como `subscription_plan`)
+### `subscription_plan` (Mapeado como `subscription_plan`) (deprecated)
 Define los límites del producto.
 - **Límites:** `manualCvLimit` (creación manual) y `uploadCvLimit` (carga de archivos).
 
-### `user_subscription` (Mapeado como `user_subscription`)
+### `user_subscription` (Mapeado como `user_subscription`) (deprecated)
 Relación activa entre un usuario y un plan.
 - **Control de Cuota:** Rastrea el uso mediante `manualCvsUsed` y `uploadCvsUsed`.
+
+### `user_credit_balance` y `credit_transaction` agregados para un sistema de créditos más flexible.
+- **`user_credit_balance`**: Saldo actual de créditos del usuario.
+- **`credit_transaction`**: Historial detallado de transacciones de créditos (adiciones y deducciones).
+
+### Example Workflows de Créditos:
+- **Adquisición de Créditos:** Compra de paquetes de créditos que incrementan `user_credit_balance`.
+- **Consumo de Créditos:** Deducción de créditos al procesar CVs para evaluaciones de IA, reflejado en `credit_transaction`.
+- **Recarga Automática:** Si el saldo de créditos cae por debajo de un umbral, se puede activar una recarga automática (si está habilitada).
 
 ---
 

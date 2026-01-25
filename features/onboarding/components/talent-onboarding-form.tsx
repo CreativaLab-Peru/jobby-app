@@ -50,14 +50,16 @@ export function OnboardingForm() {
     startTransition(async () => {
       try {
         // A. Registro en el sistema de autenticación
-        const newUser = await authClient.signUp.email({
+        const body = {
           email: formData.email,
           password: formData.password,
           name: formData.name,
-          callbackURL: "/account/verify"
-        });
+        };
+        console.log("[DEBUG] Registro de usuario con datos:", body);
+        const newUser = await authClient.signUp.email(body);
 
         if (newUser?.error) {
+          console.error("[ERROR_SIGNUP]", newUser.error);
           toast.error("Hubo un problema al crear tu cuenta. Intenta con otro correo.");
           return;
         }

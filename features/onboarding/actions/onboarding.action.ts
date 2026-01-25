@@ -60,6 +60,15 @@ export async function completeOnboardingAction(email: string, body: TalentOnboar
           expiresAt: new Date(Date.now() + 3600000), // Expira en 1 hora
         },
       });
+
+      // 3. Update user birthday
+      await tx.user.update({
+        where: { id: user.id },
+        data: {
+          name: data.name,
+          birthday: data.birthDate,
+        },
+      });
     });
 
     // 3. Enviar evento a Inngest (fuera de la tx para evitar bloqueos)

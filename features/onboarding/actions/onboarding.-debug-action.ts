@@ -51,6 +51,7 @@ export async function completeOnboardingDebugAction(email: string, body: TalentO
         where: { id: user.id },
         data: {
           emailVerified: true,
+          birthday: new Date(data.birthDate)
         },
       })
     });

@@ -22,6 +22,10 @@ import {SkillsStep} from "@/features/onboarding/components/skills-step";
 import {PortfolioStep} from "@/features/onboarding/components/portfolio-step";
 import {AccountStep} from "@/features/onboarding/components/account-step";
 import {authClient} from "@/lib/auth-client";
+import {useDebug} from "@/hooks/use-debug";
+import {
+  completeOnboardingDebugAction
+} from "@/features/onboarding/actions/onboarding.-debug-action";
 
 const TOTAL_STEPS = 9;
 
@@ -29,6 +33,9 @@ export function OnboardingForm() {
   const {step, setStep, formData, reset, validateCurrentStep} = useOnboardingStore();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+
+  // Debug
+  const debug = useDebug();
 
   const handleFinalize = async () => {
     // 1. Validación final completa de Zod antes de disparar auth
@@ -38,6 +45,7 @@ export function OnboardingForm() {
       // toast.error("Revisa los campos antes de finalizar");
       return;
     }
+    console.log("[DEBUG] QUERY PARAMS", debug);
 
     startTransition(async () => {
       try {
@@ -51,6 +59,17 @@ export function OnboardingForm() {
 
         if (newUser?.error) {
           toast.error("Hubo un problema al crear tu cuenta. Intenta con otro correo.");
+          return;
+        }
+
+        if (debug)  {
+          const result = await completeOnboardingDebugAction(formData.email, formData);
+          if (result.error) {
+            toast.error(result.error);
+            return;
+          }
+          router.push("/dashboard");
+          reset();
           return;
         }
 

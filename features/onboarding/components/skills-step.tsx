@@ -80,7 +80,7 @@ export function SkillsStep() {
                 className={cn(
                   "group relative flex items-center justify-between p-4 rounded-2xl border-2 transition-all duration-200",
                   isSelected
-                    ? "border-primary bg-primary/[0.02] shadow-sm"
+                    ? "border-primary bg-primary/[0.1] shadow-sm"
                     : "border-muted bg-card",
                   isDisabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer hover:border-slate-300"
                 )}
@@ -95,7 +95,7 @@ export function SkillsStep() {
                   </div>
                   <span className={cn(
                     "font-bold transition-colors",
-                    isSelected ? "text-primary" : "text-foreground"
+                    isSelected ? "text-white" : "text-gray-400"
                   )}>
                     {skill}
                   </span>
@@ -110,7 +110,7 @@ export function SkillsStep() {
                       type="button"
                       className={cn(
                         "px-3 py-1 rounded-full text-[10px] font-black transition-all",
-                        selection.level === 'Intermedio' ? "bg-secondary text-foreground" : "text-muted-foreground/30"
+                        selection.level === 'Intermedio' ? "bg-secondary text-gray-300" : "text-gray-400"
                       )}
                     >
                       Intermedio
@@ -119,7 +119,7 @@ export function SkillsStep() {
                       type="button"
                       className={cn(
                         "px-3 py-1 rounded-full text-[10px] font-black transition-all flex items-center gap-1",
-                        selection.level === 'Avanzado' ? "bg-primary text-white shadow-sm" : "text-muted-foreground/30"
+                        selection.level === 'Avanzado' ? "bg-primary text-black shadow-sm" : "text-gray-400"
                       )}
                     >
                       {selection.level === 'Avanzado' && <Sparkles className="w-3 h-3" />}

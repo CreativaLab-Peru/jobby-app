@@ -19,14 +19,14 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
   }
 
   return (
-    <Card className="shadow-card border-border bg-card/50 backdrop-blur-md overflow-hidden relative">
-      {/* Decoración de fondo usando colores de marca sutiles */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full -translate-y-16 translate-x-16 blur-2xl"></div>
-      <div className="absolute bottom-0 left-0 w-24 h-24 bg-secondary/10 rounded-full translate-y-12 -translate-x-12 blur-2xl"></div>
+    <Card className="shadow-xl border-0 bg-gradient-to-br from-white via-blue-50 to-coral-50 dark:from-[#20232a] dark:via-[#181b1f] dark:to-blue-950 backdrop-blur-md overflow-hidden relative">
+      {/* Fondo decorativo degradado */}
+      <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-gradient-to-br from-blue-200 via-coral-200 to-transparent opacity-20 dark:from-blue-900 dark:via-coral-950 dark:to-transparent z-0 blur-2xl" />
+      <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full bg-gradient-to-br from-coral-100 via-blue-100 to-transparent opacity-20 dark:from-coral-950 dark:via-blue-900 dark:to-transparent z-0 blur-2xl" />
 
-      <CardHeader className="relative p-4 sm:p-6">
+      <CardHeader className="relative p-6 z-10">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <CardTitle className="flex items-center text-2xl sm:text-3xl text-foreground">
+          <CardTitle className="flex items-center text-2xl sm:text-3xl text-blue-500 dark:text-blue-300 font-black">
             <motion.div
               animate={{
                 rotate: [0, 10, -10, 0],
@@ -38,7 +38,7 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
                 repeatDelay: 5,
               }}
             >
-              <Star className="w-8 h-8 sm:w-10 sm:h-10 mr-3 sm:mr-4 text-secondary fill-secondary/20" />
+              <Star className="w-8 h-8 sm:w-10 sm:h-10 mr-3 sm:mr-4 text-yellow-400 dark:text-yellow-300 fill-yellow-400/20" />
             </motion.div>
             Tu CV Score
           </CardTitle>
@@ -46,23 +46,23 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
             <Button
               onClick={onShowBreakdown}
               variant="outline"
-              className="w-full sm:w-auto bg-background/50 border-border hover:border-primary hover:bg-primary/5 text-foreground font-semibold"
+              className="w-full sm:w-auto bg-white/80 dark:bg-[#23272f] border-2 border-blue-400 dark:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-blue-700 dark:text-blue-200 font-bold shadow-sm"
             >
-              <Calculator className="w-4 h-4 mr-2 text-primary" />
+              <Calculator className="w-4 h-4 mr-2 text-blue-500 dark:text-blue-300" />
               Ver Desglose
             </Button>
           </motion.div>
         </div>
       </CardHeader>
 
-      <CardContent className="relative p-4 sm:p-6">
+      <CardContent className="relative p-6 z-10">
         <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-8">
           <div className="text-center md:text-left">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
-              className="text-5xl sm:text-7xl font-bold ai-gradient-text mb-3"
+              className="text-5xl sm:text-7xl font-black text-blue-500 dark:text-blue-300 mb-3 drop-shadow"
             >
               {score}/100
             </motion.div>
@@ -70,7 +70,7 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7 }}
-              className="text-lg sm:text-xl font-semibold text-muted-foreground"
+              className="text-lg sm:text-xl font-bold text-blue-400 dark:text-blue-300"
             >
               {getScoreLabel(score)}
             </motion.p>
@@ -88,10 +88,10 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
                   cx="80"
                   cy="80"
                   r="70"
-                  stroke="currentColor"
+                  stroke="#e5e7eb"
                   strokeWidth="12"
                   fill="transparent"
-                  className="text-muted/30"
+                  className="dark:stroke-[#23272f]"
                 />
                 <motion.circle
                   cx="80"
@@ -105,11 +105,12 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
                   animate={{ strokeDashoffset: `${2 * Math.PI * 70 * (1 - score / 100)}` }}
                   transition={{ delay: 0.8, duration: 2, ease: "easeOut" }}
                   strokeLinecap="round"
+                  style={{ filter: 'drop-shadow(0 2px 8px rgba(59,130,246,0.15)) drop-shadow(0 0 8px rgba(59,130,246,0.10))' }}
                 />
                 <defs>
                   <linearGradient id="ai-score-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="hsl(var(--primary))" />
-                    <stop offset="100%" stopColor="hsl(var(--secondary))" />
+                    <stop offset="0%" stopColor="#3b82f6" />
+                    <stop offset="100%" stopColor="#fb7185" />
                   </linearGradient>
                 </defs>
               </svg>
@@ -118,7 +119,7 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 1.2, type: "spring", stiffness: 200 }}
-                  className="text-xl sm:text-2xl font-bold text-primary"
+                  className="text-xl sm:text-2xl font-black text-blue-500 dark:text-blue-300 drop-shadow"
                 >
                   {score}%
                 </motion.div>
@@ -131,11 +132,11 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ delay: 1, duration: 1.5, ease: "easeOut" }}
-          className="origin-left"
+          className="origin-left mt-2"
         >
           <Progress
             value={score}
-            className="h-4 bg-muted [&>div]:ai-gradient"
+            className="h-4 bg-blue-100 dark:bg-blue-900 [&>div]:bg-gradient-to-r [&>div]:from-blue-400 [&>div]:via-coral-400 [&>div]:to-blue-200 dark:[&>div]:from-blue-500 dark:[&>div]:via-coral-600 dark:[&>div]:to-blue-900"
           />
         </motion.div>
       </CardContent>

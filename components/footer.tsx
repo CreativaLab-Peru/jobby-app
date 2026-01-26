@@ -1,110 +1,90 @@
 import Link from "next/link";
-import { Instagram, Linkedin } from "lucide-react";
+import { InstagramIcon, LinkedinIcon } from "lucide-react";
 
-const Footer = () => {
+const footerLinks = {
+  Producto: [
+    { name: "CV Builder", href: "/cv-builder" },
+    { name: "Career Accelerator", href: "/career-accelerator" },
+    { name: "Resources", href: "/resources" },
+  ],
+  Empresa: [
+    { name: "Partners", href: "/partners" },
+    //{ name: "Empresas", href: "/empresas" },
+  ],
+  Legal: [
+    { name: "Términos", href: "/terminos-y-condiciones" },
+    { name: "Privacidad", href: "/politica-de-privacidad" },
+  ],
+};
+
+export function Footer() {
   return (
-    <footer className="bg-card border-t border-border">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+    <footer className="py-32 bg-white dark:bg-background text-gray-800 dark:text-gray-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 section-padding">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold text-gradient">
-              Levely
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              Tu talento merece ser visible
+          <div className="col-span-2 md:col-span-1">
+            <Link href="/" className="inline-block">
+              <span className="text-2xl font-extrabold tracking-tight">
+                Levely
+              </span>
+            </Link>
+            <p className="mt-4 text-sm text-gray-600 dark:text-gray-400 max-w-xs">
+              Optimiza tu perfil profesional y accede a oportunidades alineadas con tu potencial.
             </p>
-            <div className="flex space-x-4">
-              <a
-                href="https://www.instagram.com/joinlevely/"
-                rel="noopener noreferrer"
-                target="_blank"
-                className="text-foreground/60 hover:text-primary transition-colors"
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a
-                href="https://www.linkedin.com/company/joinlevely/"
-                rel="noopener noreferrer"
-                target="_blank"
-                className="text-foreground/60 hover:text-primary transition-colors"
-              >
-                <Linkedin className="h-5 w-5" />
-              </a>
+          </div>
+
+          {/* Links */}
+          {Object.entries(footerLinks).map(([category, links]) => (
+            <div key={category}>
+              <h4 className="font-semibold mb-4">{category}</h4>
+              <ul className="space-y-3">
+                {links.map((link) => (
+                  <li key={link.name}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
-
-          {/* Product */}
-          <div className="space-y-4">
-            <h4 className="font-semibold text-foreground">Producto</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link
-                  href="/"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Crear CV
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Oportunidades
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Para */}
-          <div className="space-y-4">
-            <h4 className="font-semibold text-foreground">Para</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link
-                  href="/empresas"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Empresas
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/instituciones"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Instituciones
-                </Link>
-              </li>
-            </ul>
-          </div>
+          ))}
         </div>
 
-        {/* Línea divisoria */}
-        <div className="mt-12 pt-8 border-t border-border text-sm text-muted-foreground">
-          <div className="flex flex-col md:flex-row items-center md:justify-between gap-4">
-            <div className="text-center md:text-left">© 2026 Levely - Todos los derechos reservados.</div>
-
-            <div className="flex flex-col md:flex-row items-center gap-3">
-              <Link
-                href="/terminos-y-condiciones"
-                className="underline hover:text-primary transition-colors text-center md:text-left"
-              >
-                Términos y condiciones
-              </Link>
-              <Link
-                href="/politica-de-privacidad"
-                className="underline hover:text-primary transition-colors text-center md:text-left"
-              >
-                Política de privacidad y Cookies
-              </Link>
-            </div>
+        <div className="mt-12 pt-8 border-t border-gray-300 dark:border-gray-700 space-y-4">
+          <div className="flex justify-center space-x-4">
+            <a
+              href="https://instagram.com/joinlevely/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+            >
+              <InstagramIcon className="w-5 h-5" />
+            </a>
+            <a
+              href="https://linkedin.com/company/joinlevely/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+            >
+              <LinkedinIcon className="w-5 h-5" />
+            </a>
           </div>
+          <p className="text-sm text-gray-600 dark:text-gray-400 text-center font-medium">
+            Respaldado por Proinnóvate del Ministerio de la Producción
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-500 text-center">
+            © {new Date().getFullYear()} Levely. Todos los derechos reservados.
+          </p>
         </div>
       </div>
     </footer>
   );
-};
+}
 
 export default Footer;

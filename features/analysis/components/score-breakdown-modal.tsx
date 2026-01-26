@@ -66,29 +66,29 @@ export function ScoreBreakdownModal({ show, onClose, scoreBreakdown, totalScore 
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className="border border-border rounded-xl p-6 bg-card hover:border-primary/30 transition-all shadow-sm"
+                      className="border border-gray-200 dark:border-blue-900 rounded-xl p-6 bg-gradient-to-br from-white via-gray-50 to-blue-50 dark:from-[#101624] dark:via-[#181b2a] dark:to-blue-950 hover:border-blue-300 dark:hover:border-blue-500 transition-all shadow-xl"
                     >
                       <div className="flex items-start justify-between mb-6">
                         <div className="flex items-center gap-4">
-                          <div className="p-3 rounded-xl bg-muted">
-                            <IconComponent className="w-7 h-7 text-primary" />
+                          <div className="p-3 rounded-xl bg-gray-100 dark:bg-gray-900">
+                            <IconComponent className="w-7 h-7 text-blue-500 dark:text-blue-300" />
                           </div>
                           <div>
-                            <h3 className="text-lg font-bold text-foreground">
+                            <h3 className="text-lg font-black text-blue-600 dark:text-blue-300">
                               {categoryMap[category.category as keyof typeof categoryMap] || category.category}
                             </h3>
-                            <p className="text-sm text-muted-foreground">
-                              <span className="font-bold text-foreground">{category.score}</span> de {category.maxScore} pts
+                            <p className="text-sm text-gray-700 dark:text-gray-200">
+                              <span className="font-black text-blue-500 dark:text-blue-300">{category.score}</span> de {category.maxScore} pts
                             </p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-black text-primary">
+                          <div className="text-2xl font-black text-blue-600 dark:text-blue-300">
                             {Math.round((category.score / category.maxScore) * 100)}%
                           </div>
                           <Progress
                             value={(category.score / category.maxScore) * 100}
-                            className="bg-muted w-28 h-2 mt-2 [&>div]:ai-gradient"
+                            className="w-28 h-2 mt-2 rounded-full [&>div]:bg-gradient-to-r [&>div]:from-blue-300 [&>div]:via-blue-400 [&>div]:to-accent [&>div]:rounded-full"
                           />
                         </div>
                       </div>
@@ -97,19 +97,19 @@ export function ScoreBreakdownModal({ show, onClose, scoreBreakdown, totalScore 
                         {category.items.map((item, itemIndex) => (
                           <div
                             key={itemIndex}
-                            className="flex items-center justify-between py-3 px-4 bg-muted/30 hover:bg-muted/60 rounded-lg transition-colors border border-transparent hover:border-border"
+                            className="flex items-center justify-between py-3 px-4 bg-gray-50 dark:bg-[#181b2a]/70 hover:bg-blue-50 dark:hover:bg-blue-900/60 rounded-lg transition-colors border border-transparent hover:border-blue-200 dark:hover:border-blue-500"
                           >
                             <div className="flex items-center gap-3 flex-1">
                               {item.status === "complete" && <CheckCircle className="w-4 h-4 text-secondary" />}
                               {item.status === "partial" && <AlertTriangle className="w-4 h-4 text-orange-400" />}
                               {item.status === "missing" && <X className="w-4 h-4 text-destructive" />}
 
-                              <span className="text-sm text-foreground font-medium">
+                              <span className="text-sm text-gray-700 dark:text-gray-200 font-bold">
                                 {item.name}
                               </span>
                             </div>
                             <div className="flex items-center gap-3">
-                              <span className="text-xs font-bold text-muted-foreground bg-muted px-2 py-1 rounded">
+                              <span className="text-xs font-black text-blue-500 dark:text-blue-300 bg-blue-50 dark:bg-blue-900 px-2 py-1 rounded">
                                 {item.points} pts
                               </span>
                             </div>
@@ -122,17 +122,17 @@ export function ScoreBreakdownModal({ show, onClose, scoreBreakdown, totalScore 
               </div>
 
               {/* Tips Section REFACTOR */}
-              <div className="mt-8 p-6 bg-primary/5 rounded-xl border border-primary/20 relative overflow-hidden group">
+              <div className="mt-8 p-6 bg-gradient-to-br from-coral-50 via-blue-50 to-white dark:from-coral-900 dark:via-blue-900 dark:to-[#23272f] rounded-xl border border-coral-200 dark:border-coral-800 relative overflow-hidden group shadow-sm">
                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                  <Sparkles className="w-12 h-12 text-primary" />
+                  <Sparkles className="w-12 h-12 text-coral-400 dark:text-coral-300" />
                 </div>
                 <div className="flex items-start gap-4 relative z-10">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <Info className="w-6 h-6 text-primary" />
+                  <div className="p-2 bg-coral-100 dark:bg-coral-900 rounded-lg">
+                    <Info className="w-6 h-6 text-coral-500 dark:text-coral-300" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-foreground mb-2">¿Cómo mejorar tu score con Levely?</h4>
-                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-sm text-muted-foreground">
+                    <h4 className="font-black text-coral-500 dark:text-coral-300 mb-2">¿Cómo mejorar tu score con Levely?</h4>
+                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-sm text-coral-700 dark:text-coral-200">
                       <li className="flex items-center gap-2">• Completa campos obligatorios</li>
                       <li className="flex items-center gap-2">• Agrega resultados medibles</li>
                       <li className="flex items-center gap-2">• Incluye certificaciones</li>

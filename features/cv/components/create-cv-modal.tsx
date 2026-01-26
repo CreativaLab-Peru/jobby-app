@@ -73,24 +73,27 @@ export function CreateCVModal({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
-      <DialogContent className="bg-background sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-gradient-to-br from-white via-blue-50 to-coral-50 dark:from-[#101624]/80 dark:via-[#181b2a]/80 dark:to-blue-950/90 rounded-3xl shadow-2xl border border-gray-100 dark:border-blue-900 backdrop-blur-md p-8">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">
-            <span className="text-gradient">✨ Crear nuevo CV</span>
+          <DialogTitle className="text-2xl font-black text-blue-700 dark:text-blue-200 animate-fade-in">
+            <span className="ai-gradient-text">✨ Crear nuevo CV</span>
           </DialogTitle>
 
-          <DialogDescription className="text-muted-foreground">
+          <DialogDescription className="text-base text-gray-500 dark:text-blue-300 mt-2 font-medium animate-fade-in">
             Completa la información básica para comenzar a crear tu currículum
           </DialogDescription>
         </DialogHeader>
 
-        <CVForm formData={formData} onFormDataChange={setFormData} />
+        <div className="py-2">
+          <CVForm formData={formData} onFormDataChange={setFormData} />
+        </div>
 
-        <DialogFooter className="flex gap-3 pt-2">
+        <DialogFooter className="flex gap-4 pt-4">
           <Button
             type="button"
             variant="outline"
             onClick={handleCancel}
+            className="px-6 py-3 rounded-xl font-bold text-blue-500 dark:text-blue-200 border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/40 hover:scale-105 transition-all"
           >
             Cancelar
           </Button>
@@ -98,7 +101,7 @@ export function CreateCVModal({
           <Button
             onClick={handleCreateCV}
             disabled={!isFormValid || isCreating || isPending}
-            className="shadow-glow"
+            className="px-7 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-blue-500 via-blue-400 to-accent shadow-glow transition-all duration-300 hover:scale-105 hover:shadow-glow-lg hover:bg-gradient-to-r hover:from-blue-600 hover:via-blue-500 hover:to-accent disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isCreating ? (
               <>
@@ -107,7 +110,7 @@ export function CreateCVModal({
               </>
             ) : (
               <>
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus className="w-4 h-4 mr-2 text-white drop-shadow animate-fade-in" />
                 Crear CV
               </>
             )}

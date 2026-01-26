@@ -64,18 +64,18 @@ export function AreaAndRoleStep() {
                 className={cn(
                   "flex items-center justify-between p-4 rounded-xl border-2 transition-all text-left",
                   isSelected
-                    ? "border-primary bg-primary/[0.03] ring-1 ring-primary"
-                    : "border-muted bg-card hover:border-slate-300"
+                    ? "border-primary bg-primary/20 ring-1 ring-primary"
+                    : "border-muted bg-card hover:border-slate-500"
                 )}
               >
-                <span className={cn("font-bold", isSelected ? "text-primary" : "text-foreground")}>
+                <span className={cn("font-bold", isSelected ? "text-primary" : "text-muted-foreground")}>
                   {industry}
                 </span>
                 <div className={cn(
                   "w-5 h-5 rounded-md border flex items-center justify-center transition-all",
                   isSelected ? "bg-primary border-primary" : "border-muted-foreground/30"
                 )}>
-                  {isSelected && <Check className="w-3 h-3 text-white" strokeWidth={4} />}
+                  {isSelected && <Check className="w-3 h-3 text-gray-500" strokeWidth={4} />}
                 </div>
               </button>
             );
@@ -104,12 +104,12 @@ export function AreaAndRoleStep() {
                   className={cn(
                     "inline-flex items-center px-4 py-2 rounded-full border text-sm font-medium transition-all",
                     isSelected
-                      ? "bg-primary text-white border-primary shadow-md scale-105"
+                      ? "bg-primary text-primary-foreground border-primary shadow-md scale-105"
                       : "bg-background border-input hover:border-primary/40 text-muted-foreground"
                   )}
                 >
                   {role}
-                  {isSelected && <Check className="ml-2 w-3 h-3" strokeWidth={3} />}
+                  {isSelected && <Check className="ml-2 w-3 h-3 text-gray-500" strokeWidth={3} />}
                 </button>
               );
             })}

@@ -33,16 +33,16 @@ const testimonios = [
     img: "/testimonios/Andy.png",
   },
   {
-    name: "Daniela Banegas",
-    role: "Creadora de Contenido",
-    text: "Pude destacar mis proyectos personales y obtener una práctica en una agencia digital.",
-    img: "/testimonios/Daniela.png",
+    name: "Aaron Orellana",
+    role: "Experto Legal",
+    text: "Las recomendaciones de IA son muy precisas. Encontré varias becas que ni sabía que existían y gané 1.",
+    img: "/testimonios/Aaron.png",
   },
 ];
 
 export default function TestimoniosCarousel() {
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-card/30 overflow-hidden">
+    <section className="bg-transparent py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-5xl font-bold mb-4">

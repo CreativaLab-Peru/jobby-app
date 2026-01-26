@@ -17,7 +17,7 @@ const navItems = [
   { name: "CV Builder", href: "/cv-builder" },
   { name: "Career Accelerator", href: "/career-accelerator" },
   { name: "Partners", href: "/partners" },
-  { name: "Empresas", href: "/empresas" },
+  // { name: "Empresas", href: "/empresas" },
   { name: "Resources", href: "/resources" },
 ];
 
@@ -28,7 +28,7 @@ export default function Header({ authenticated }: HeaderProps) {
   const [mobileRegisterOpen, setMobileRegisterOpen] = React.useState(false);
 
   return (
-    <header className="fixed top-0 z-50 w-full border-b bg-background/80 backdrop-blur">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-gray-300 dark:border-gray-700">
       {/* NAVBAR */}
       <nav className="container mx-auto flex h-16 items-center justify-between px-4 lg:h-20">
 
@@ -73,29 +73,39 @@ export default function Header({ authenticated }: HeaderProps) {
 
         {/* Desktop actions */}
         <div className="hidden lg:flex items-center gap-3">
-          <ThemeToggle />
+          <ThemeToggle className="text-muted-foreground dark:text-secondary-dark hover:bg-primary/10 dark:hover:bg-secondary-dark/10" />
 
           {authenticated ? (
-            <Link href="/cv">
-                <Button variant="ghost" className="border border-gray-300 dark:border-gray-700">
-                <User className="mr-2 h-4 w-4" />
-                Ver mis CVs
+            <Link href="/dashboard">
+                <Button
+                  variant="ghost"
+                  className="border border-gray-300 dark:border-gray-700 text-primary dark:text-primary-dark"
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  Ver mis CVs
                 </Button>
             </Link>
           ) : (
             <>
               <Link href="/login">
-                <Button variant="ghost">Iniciar sesión</Button>
+                <Button
+                  variant="ghost"
+                  className="w-full text-muted-foreground dark:text-secondary-dark hover:bg-primary/10 dark:hover:bg-secondary-dark/10"
+                >
+                  Iniciar sesión
+                </Button>
               </Link>
 
               {/* Register dropdown (desktop) */}
               <div className="relative">
                 <div className="group">
-                  <Button>
-                    Regístrate
-                    <ChevronDown className="ml-2 h-4 w-4" />
-                  </Button>
-
+                  <Link href="/register">
+                    <Button variant="hero">
+                      Empezar
+                      {/*<ChevronDown className="ml-2 h-4 w-4" />*/}
+                    </Button>
+                  </Link>  
+                  {/*
                   <div
                     className="invisible absolute left-0 top-full z-50 mt-2 w-56 rounded-lg border bg-background p-2 shadow-md
                                opacity-0 transition
@@ -119,6 +129,7 @@ export default function Header({ authenticated }: HeaderProps) {
                       </Button>
                     </Link>
                   </div>
+                  */}
                 </div>
               </div>
             </>
@@ -126,38 +137,41 @@ export default function Header({ authenticated }: HeaderProps) {
         </div>
 
         {/* Mobile menu button */}
-        <button
-          onClick={() => {
-            setIsOpen((v) => !v);
-            setMobileRegisterOpen(false);
-          }}
-          className="lg:hidden"
-          aria-label="Toggle menu"
-        >
-          {isOpen ? <X /> : <Menu />}
-        </button>
+        <div className="px-4 flex justify-between items-center lg:hidden">
+          <ThemeToggle className="text-muted-foreground dark:text-secondary-dark hover:bg-primary/10 dark:hover:bg-secondary-dark/10" />
+          <button
+            onClick={() => {
+              setIsOpen((v) => !v);
+              setMobileRegisterOpen(false);
+            }}
+            className="px-5 lg:hidden"
+            aria-label="Toggle menu"
+          >
+            {isOpen ? <X /> : <Menu />}
+          </button>
+        </div>
       </nav>
 
       {/* MOBILE MENU */}
       {isOpen && (
         <div className="lg:hidden border-t bg-background px-4 py-4 space-y-3">
 
-          {/* Mobile navigation */}
-          {navItems.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              onClick={() => setIsOpen(false)}
-              className={`block rounded-lg px-4 py-2 text-sm
-                ${
-                  pathname === item.href
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-primary/10 hover:text-primary"
-                }`}
-            >
-              {item.name}
-            </Link>
-          ))}
+    {/* Mobile navigation */}
+    {navItems.map((item) => (
+      <Link
+        key={item.name}
+        href={item.href}
+        onClick={() => setIsOpen(false)}
+        className={`block rounded-lg px-4 py-2 text-sm
+          ${
+            pathname === item.href
+              ? "bg-primary/10 text-primary"
+              : "text-muted-foreground hover:bg-primary/10 hover:text-primary"
+          }`}
+      >
+        {item.name}
+      </Link>
+    ))}
 
           <div className="border-t pt-4 space-y-2">
             {authenticated ? (
@@ -170,27 +184,32 @@ export default function Header({ authenticated }: HeaderProps) {
             ) : (
               <>
                 <Link href="/login">
-                  <Button variant="ghost" className="w-full">
+                  <Button
+                    variant="ghost"
+                    className="w-full text-muted-foreground dark:text-secondary-dark hover:bg-primary/10 dark:hover:bg-secondary-dark/10"
+                  >
                     Iniciar sesión
                   </Button>
                 </Link>
 
                 {/* Mobile register accordion */}
                 <div>
-                  <button
+                  <Button
+                    variant="hero"
                     onClick={() =>
                       setMobileRegisterOpen((v) => !v)
                     }
-                    className="flex w-full items-center justify-between rounded-lg px-4 py-2 text-sm font-medium hover:bg-primary/10"
+                    className="w-full text-muted-foreground dark:text-black hover:bg-primary/10 dark:hover:bg-secondary-dark/10"
                   >
-                    Regístrate
+                    Empezar
+                    {/*
                     <ChevronDown
                       className={`h-4 w-4 transition-transform ${
                         mobileRegisterOpen ? "rotate-180" : ""
                       }`}
-                    />
-                  </button>
-
+                    />*/}
+                  </Button>
+                  {/*      
                   {mobileRegisterOpen && (
                     <div className="mt-2 space-y-2 pl-4">
                       <Link href="/register?role=talento">
@@ -212,6 +231,7 @@ export default function Header({ authenticated }: HeaderProps) {
                       </Link>
                     </div>
                   )}
+                  */}  
                 </div>
               </>
             )}

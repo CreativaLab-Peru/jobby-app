@@ -61,19 +61,19 @@ export function AvailabilityStep() {
               className={cn(
                 "relative flex items-center justify-between p-5 rounded-2xl border-2 transition-all duration-200 text-left w-full",
                 isSelected
-                  ? "border-primary bg-primary/[0.03] shadow-sm"
+                  ? "border-primary bg-primary/[0.1] shadow-sm"
                   : "border-muted bg-card hover:border-slate-300"
               )}
             >
               <div className="flex items-center gap-4">
                 <div className={cn(
                   "p-3 rounded-xl transition-colors",
-                  isSelected ? "bg-primary text-white" : "bg-secondary text-muted-foreground"
+                  isSelected ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
                 )}>
                   <Icon className="w-5 h-5" />
                 </div>
                 <div className="flex flex-col">
-                  <span className={cn("font-bold", isSelected ? "text-primary" : "text-foreground")}>
+                  <span className={cn("font-bold", isSelected ? "text-white" : "text-gray-400")}>
                     {label}
                   </span>
                   <span className="text-xs text-muted-foreground font-medium">
@@ -87,7 +87,7 @@ export function AvailabilityStep() {
                 "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all",
                 isSelected ? "bg-primary border-primary scale-110" : "border-muted"
               )}>
-                {isSelected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
+                {isSelected && <Check className="w-3.5 h-3.5 text-gray-600" strokeWidth={3} />}
               </div>
             </button>
           );

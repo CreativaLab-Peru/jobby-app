@@ -92,33 +92,32 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
                   transition={{ duration: 0.3 }}
                 >
                   {/* CAMBIO: Card con shadow-card y border-border */}
-                  <Card className="shadow-card border-border bg-card/50 backdrop-blur-md">
-                    <CardHeader className="border-b border-border/50">
-                      <CardTitle className="flex items-center text-2xl text-foreground">
-                        <div className="flex items-center flex-1">
-                          {(() => {
-                            const Icon = currentSection.icon
-                            // CAMBIO: Icono ahora usa el color primary
-                            return <Icon className="w-8 h-8 mr-3 text-primary" />
-                          })()}
-                          <span className="font-bold">{currentSection.title}</span>
-                        </div>
-                        <NavigationButtons
-                          currentStep={activeSection}
-                          totalSteps={sections.length}
-                          onPrevious={handlePrevious}
-                          onNext={handleNext}
-                        />
+                    <Card className="shadow-card border border-blue-900 bg-blue-950/80 backdrop-blur-lg">
+                    <CardHeader className="border border-blue-900/60 bg-blue-900/30">
+                      <CardTitle className="flex items-center text-2xl text-white">
+                      <div className="flex items-center flex-1">
+                        {(() => {
+                        const Icon = currentSection.icon
+                        return <Icon className="w-8 h-8 mr-3 text-white" />
+                        })()}
+                        <span className="font-bold">{currentSection.title}</span>
+                      </div>
+                      <NavigationButtons
+                        currentStep={activeSection}
+                        totalSteps={sections.length}
+                        onPrevious={handlePrevious}
+                        onNext={handleNext}
+                      />
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-6 space-y-6">
+                    <CardContent className="p-6 space-y-6 bg-blue-950/60">
                       <CVSectionForm
-                        section={currentSection}
-                        data={cvData[currentSection.id] || {}}
-                        onChange={(data) => updateCVData(currentSection.id, data)}
+                      section={currentSection}
+                      data={cvData[currentSection.id] || {}}
+                      onChange={(data) => updateCVData(currentSection.id, data)}
                       />
                     </CardContent>
-                  </Card>
+                    </Card>
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -134,21 +133,21 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
                   className="sticky top-8"
                 >
                   {/* CAMBIO: Card de Preview más limpia con el sistema de marca */}
-                  <Card className="shadow-card border-border bg-card overflow-hidden">
+                  <Card className="shadow-card border-blue-900 bg-blue-950 overflow-hidden">
                     <CardHeader className="bg-muted/30 border-b border-border">
-                      <CardTitle className="flex items-center text-lg text-foreground">
+                      <CardTitle className="flex items-center text-lg dark:text-white">
                         <Eye className="w-5 h-5 mr-2 text-primary" />
                         Vista Previa
 
                         <div className="ml-auto">
                           {isPending ? (
-                            <div className="flex items-center gap-2 text-xs font-medium text-accent animate-pulse">
-                              <CloudUpload className="w-4 h-4" />
+                            <div className="flex items-center gap-2 text-xs font-medium dark:text-white animate-pulse">
+                              <CloudUpload className="dark:text-white w-4 h-4" />
                               Sincronizando...
                             </div>
                           ) : (
-                            <div className="flex items-center gap-2 text-xs font-medium text-secondary">
-                              <CloudCheck className="w-4 h-4" />
+                            <div className="flex items-center gap-2 text-xs font-medium dark:text-white">
+                              <CloudCheck className="dark:text-white w-4 h-4" />
                               Cambios guardados
                             </div>
                           )}

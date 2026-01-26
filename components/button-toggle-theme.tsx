@@ -5,7 +5,7 @@ import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 
-export function ThemeToggle() {
+export function ThemeToggle({ className }: { className?: string }) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
@@ -23,7 +23,7 @@ export function ThemeToggle() {
       variant="outline" 
       size="icon" 
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="w-10 h-10 rounded-lg border-gray-300 dark:border-gray-700 bg-background hover:bg-accent text-foreground transition-colors"
+      className={`w-10 h-10 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-[#23272f] hover:bg-gray-200 dark:hover:bg-[#2d333b] text-gray-700 dark:text-gray-200 transition-colors ${className}`}
       title="Cambiar tema"
     >
       {/* Icono Sol: Visible en Light, Invisible en Dark */}

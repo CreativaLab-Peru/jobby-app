@@ -89,7 +89,7 @@ export default function AnalysisScore({
 
             <Tabs defaultValue="score" className="space-y-8">
               {/* REFACTOR: Tabs con el sistema de marca Levely */}
-              <TabsList className="grid w-full grid-cols-2 h-auto min-h-[4rem] p-1 bg-card shadow-card rounded-xl border border-border">
+              <TabsList className="grid w-full grid-cols-2 h-auto min-h-[4rem] p-1 bg-card shadow-card rounded-xl border border-gray-300 dark:border-gray-700">
                 <TabsTrigger
                   value="score"
                   className="flex items-center justify-center gap-2 h-full py-3 text-sm sm:text-base font-bold transition-all duration-300
@@ -97,7 +97,7 @@ export default function AnalysisScore({
                     data-[state=active]:ai-gradient data-[state=active]:text-primary data-[state=active]:shadow-glow"
                 >
                   <Target className="w-4 h-4 sm:w-5 sm:h-5" />
-                  <span className="text-center">Score y Sugerencias</span>
+                  <span className="text-center dark:text-gray-400">Score y Sugerencias</span>
                 </TabsTrigger>
 
                 <TabsTrigger
@@ -107,7 +107,7 @@ export default function AnalysisScore({
                     data-[state=active]:ai-gradient data-[state=active]:text-primary data-[state=active]:shadow-glow"
                 >
                   <Award className="w-4 h-4 sm:w-5 sm:h-5" />
-                  <span className="text-center">Oportunidades</span>
+                  <span className="text-center dark:text-gray-400">Oportunidades</span>
                 </TabsTrigger>
               </TabsList>
 

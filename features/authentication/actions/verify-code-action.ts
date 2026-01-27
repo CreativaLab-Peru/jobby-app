@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import {newUserConfiguration} from "@/features/authentication/actions/new-user-configuration";
+import {createBasicCredits} from "@/features/credits/actions/create-basic-credits";
 
 export async function verifyCodeAction(userId: string, code: string) {
   try {
@@ -34,7 +35,11 @@ export async function verifyCodeAction(userId: string, code: string) {
       }),
     ]);
 
-    await newUserConfiguration(userId);
+    // Todo: deprecated
+    // await newUserConfiguration(userId);
+
+    // Create basic credits for the user
+    await createBasicCredits(userId);
 
     revalidatePath("/dashboard");
     return { success: true };

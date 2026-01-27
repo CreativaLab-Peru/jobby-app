@@ -351,8 +351,10 @@ model UserCreditBalance {
   id                String              @id @default(uuid())
   userId            String              @unique
   amount            Int                 @default(0) // Usamos Int para evitar problemas de coma flotante
+  type              String              // Ej: "FREE", "PURCHASED", "BONUS"
   updatedAt         DateTime            @updatedAt
   user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   creditTransaction CreditTransaction[]
 
   @@map("user_credit_balance")
@@ -393,6 +395,12 @@ model LogEntry {
   @@index([action])
   @@index([level])
   @@map("log_entry")
+}
+
+enum CreditBalanceType {
+  AI_ACTIONS // Créditos para acciones con IA
+  UPLOADS // Créditos para subir CVs
+  MANAGE_CVS // Créditos para gestionar CVs
 }
 
 enum TransactionType {

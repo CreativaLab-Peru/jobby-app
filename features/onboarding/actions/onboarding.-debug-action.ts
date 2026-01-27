@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { TalentOnboardingFormData } from "@/features/onboarding/schemas";
+import {createBasicCredits} from "@/features/credits/actions/create-basic-credits";
 
 export async function completeOnboardingDebugAction(email: string, body: TalentOnboardingFormData) {
   const data = body;
@@ -55,6 +56,8 @@ export async function completeOnboardingDebugAction(email: string, body: TalentO
         },
       })
     });
+
+    await createBasicCredits(user.id);
 
     revalidatePath("/dashboard");
     return { success: true };

@@ -1,15 +1,20 @@
 import {prisma} from "@/lib/prisma";
+import {CreditBalanceType} from "@prisma/client";
+
+export type RechargeCreditsBody = {
+  userId: string;
+  amount: number;
+  description: string;
+  metadata?: any;
+  type: CreditBalanceType
+};
 
 /**
  * RECARGA DE CRÉDITOS
- * Se usa tras un pago exitoso (Stripe Webhook) o bono.
+ * Se usa tras un pago exitoso (Mercado pago u otros)
  */
-export const rechargeCredits = async (
-  userId: string,
-  amount: number,
-  description: string,
-  metadata: any = {}
-) => {
+export const rechargeCredits = async (body: RechargeCreditsBody) => {
+  const {userId, amount, description, metadata, type} = body;
   return prisma.$transaction(async (tx) => {
     // 1. Upsert del balance: Si no existe lo crea, si existe lo incrementa
     const balance = await tx.userCreditBalance.upsert({
@@ -17,7 +22,8 @@ export const rechargeCredits = async (
       update: {amount: {increment: amount}},
       create: {
         userId,
-        amount: amount
+        amount: amount,
+        type
       },
     });
 

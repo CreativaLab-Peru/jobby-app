@@ -2,7 +2,7 @@
 
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import { prisma } from "@/lib/prisma";
-import { CvType, Language, OpportunityType, CvSectionType } from "@prisma/client";
+import {CvType, Language, OpportunityType, CvSectionType, CreditBalanceType} from "@prisma/client";
 import { JsonObject } from "@prisma/client/runtime/library";
 
 /**
@@ -19,37 +19,13 @@ export const createCVByTitleAndType = async (
       return { success: false, message: "User not found." };
     }
 
-    const lastsPaymentPlans = await prisma.userPayment.findMany({
-      where: {
-        userId: currentUser.id
-      },
-      include: {
-        plan: true
-      }
-    })
+    // Verify user has credits to create a CV
+    const creditLimits = await prisma.userCreditBalance.findUnique({
+      where: { userId: currentUser.id, type: CreditBalanceType.MANAGE_CVS },
+    });
 
-    if (lastsPaymentPlans === null) {
-      return { success: false, message: "The current user has no attempts" }
-    }
-
-    const lastAvailablePaymentToCreate = lastsPaymentPlans.find(plan => plan.manualCvsUsed < plan.plan.manualCvLimit)
-    if (!lastAvailablePaymentToCreate) {
-      return { success: false, message: "The current user has no attempts" }
-    }
-
-    const oneMoreInManualCvLimit = lastAvailablePaymentToCreate.manualCvsUsed + 1
-
-    const updatePaymentPlanOfUser = await prisma.userPayment.update({
-      where: {
-        id: lastAvailablePaymentToCreate.id,
-      },
-      data: {
-        manualCvsUsed: oneMoreInManualCvLimit
-      }
-    })
-
-    if (!updatePaymentPlanOfUser) {
-      return { success: false, message: "Error trying to update plan of current user" }
+    if (!creditLimits || creditLimits.amount <= 0) {
+      return { success: false, message: "Insufficient credits to create a CV." };
     }
 
     // Validate opportunityType is correct
@@ -133,16 +109,21 @@ export const createCVByTitleAndType = async (
             order: s.order,
           })),
         },
-      },
-      include: {
-        sections: true, // return the created sections
-      },
+      }
     });
-
 
     if (!newCv) {
       return { success: false, message: "Error creating CV." };
     }
+
+    await prisma.userCreditBalance.update({
+      where: { userId: currentUser.id, type: CreditBalanceType.MANAGE_CVS },
+      data: {
+        amount: {
+          decrement: 1,
+        },
+      },
+    });
 
     return {
       success: true,

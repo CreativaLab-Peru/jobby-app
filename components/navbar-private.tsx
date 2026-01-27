@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ProfileButton } from "@/components/profile-button";
 import { ThemeToggle } from "@/components/button-toggle-theme";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import { CreditLimits } from "@/features/credits/actions/get-current-credits-limits";
 import {CreditsIndicator} from "@/features/credits/components/credits-indicator";
+import {ToggleSidebarMobile} from "@/components/sidebar/toggle-sidebar-mobile";
 
 interface NavbarProps {
   user: {
@@ -33,12 +33,11 @@ export function NavbarPrivate({ creditLimits, user }: NavbarProps) {
       animate={{ opacity: 1, y: 0 }}
       className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md"
     >
-      <div className="mx-auto flex h-16 max-w-full items-center justify-between px-4 sm:px-10 lg:px-20">
+      <div className="mx-auto flex h-16 max-w-full items-center justify-between px-4 sm:px-14 lg:px-28">
 
         {/* LADO IZQUIERDO: Mobile Trigger & Logo placeholder */}
         <div className="flex items-center gap-4">
-          <SidebarTrigger className="sm:hidden text-primary" />
-          {/*<div className="hidden font-bold text-xl sm:block text-primary">MiApp</div>*/}
+          <ToggleSidebarMobile />
         </div>
 
         {/* LADO DERECHO: Acciones */}

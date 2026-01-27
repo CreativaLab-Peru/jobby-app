@@ -53,16 +53,16 @@ export function CustomSidebar() {
                 <Image
                   src="/logo_light.png"
                   alt="Levely logo"
-                  width={120} // El ancho real del logo recortado
-                  height={40}  // La altura real proporcional
+                  width={200} // El ancho real del logo recortado
+                  height={80}  // La altura real proporcional
                   priority
                   className="block dark:hidden h-36 w-auto object-contain"
                 />
                 <Image
                   src="/logo_dark.png"
                   alt="Levely logo dark"
-                  width={120}
-                  height={40}
+                  width={200}
+                  height={80}
                   priority
                   className="hidden dark:block h-36 w-auto object-contain"
                 />

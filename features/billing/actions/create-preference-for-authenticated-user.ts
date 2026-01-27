@@ -8,7 +8,6 @@ import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import {PAYMENT_PLAN_ID_BY_DIRECT} from "@/features/billing/consts/payment-plant-ids";
 import {BASE_URL, mercadopago} from "@/features/billing/domain/mercado-preference";
 
-
 export const createPreferenceForAuthenticatedUser = async () => {
   try {
     const currentUser = await getCurrentUser()

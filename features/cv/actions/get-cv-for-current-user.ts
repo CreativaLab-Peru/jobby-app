@@ -30,7 +30,7 @@ export const getCvForCurrentUser = async () => {
       return;
     }
 
-    const [cvs, userPayments] = await Promise.all([
+    const [cvs] = await Promise.all([
       prisma.cv.findMany({
         where: {
           userId: user.id,
@@ -68,17 +68,6 @@ export const getCvForCurrentUser = async () => {
         orderBy: {
           createdAt: "desc",
         }
-      }),
-      prisma.userPayment.findMany({
-        where: {
-          userId: user.id,
-        },
-        include: {
-          plan: true,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
       })
     ]);
 

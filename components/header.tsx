@@ -100,7 +100,7 @@ export default function Header({ authenticated }: HeaderProps) {
               <div className="relative">
                 <div className="group">
                   <Link href="/register">
-                    <Button variant="hero">
+                    <Button>
                       Empezar
                       {/*<ChevronDown className="ml-2 h-4 w-4" />*/}
                     </Button>
@@ -195,7 +195,6 @@ export default function Header({ authenticated }: HeaderProps) {
                 {/* Mobile register accordion */}
                 <div>
                   <Button
-                    variant="hero"
                     onClick={() =>
                       setMobileRegisterOpen((v) => !v)
                     }

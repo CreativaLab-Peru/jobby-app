@@ -86,7 +86,6 @@ export function HotSaleSection() {
                   </div>
 
                   <Button
-                    variant="lime"
                     size="xl"
                     className="w-full text-lg py-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
                   >

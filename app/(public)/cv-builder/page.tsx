@@ -31,7 +31,7 @@ export default function CVBuilder() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button variant="lime">
+            <Button >
           Analizar mi CV
           <ArrowRight className="w-5 h-5" />
             </Button>

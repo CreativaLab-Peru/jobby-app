@@ -77,7 +77,7 @@ export default function Partners() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button variant="hero">
+          <Button >
             Solicitar demo
             <ArrowRight className="w-5 h-5" />
           </Button>

@@ -126,7 +126,6 @@ export default function Resources() {
           Analiza tu CV, recibe recomendaciones personalizadas y accede a oportunidades.
         </p>
         <Button 
-          variant="hero" 
           size="lg" 
           className="w-full sm:w-auto"
         >

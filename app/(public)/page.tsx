@@ -132,7 +132,7 @@ const Index = () => {
               style={{ animationDelay: "0.3s" }}
             >
               <Link href="/register" style={{ animationDelay: "0.3s" }}>
-                <Button className="pointer-events-auto" variant="hero" size="xl">
+                <Button className="pointer-events-auto" size="xl">
                   Empezar
                   <ArrowRight className="w-5 h-5 ml-1" />
                 </Button>

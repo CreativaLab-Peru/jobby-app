@@ -44,7 +44,7 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
   }
 
   return (
-    <div className="p-6 h-full bg-gradient-to-br from-white via-coral-50 to-blue-100 dark:from-[#23272f] dark:via-[#181b1f] dark:to-blue-950">
+    <div className="p-6 h-full">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -54,7 +54,7 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
             <div className="text-center sm:text-left">
-              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-400 via-blue-600 to-blue-900 bg-clip-text text-transparent">
+              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
                 Scores de CVs
               </h1>
               <p className="text-muted-foreground mt-2">
@@ -81,12 +81,12 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
               >
-                <Card className="bg-gradient-to-br from-white via-coral-50 to-blue-100 dark:from-[#23272f] dark:via-[#181b1f] dark:to-blue-950 border-0 shadow-xl overflow-hidden backdrop-blur-md">
+                <Card className="bg-background/90 backdrop-blur-sm border-0 shadow-lg overflow-hidden">
                   <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                         <div className="space-y-1">
-                          <CardTitle className="text-xl sm:text-2xl font-black text-coral-500 dark:text-coral-300 flex items-center gap-3">
+                          <CardTitle className="text-xl sm:text-2xl text-foreground flex items-center gap-3">
                             {score.title || "CV Analizado"}
                             {/* trend logic could be added here if needed, keeping it simple as per original */}
                           </CardTitle>
@@ -113,13 +113,7 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
                         <div className={`text-4xl sm:text-3xl font-bold ${getScoreTextColor(score.evaluations[0]?.overallScore || 0)}`}>
                           {score.evaluations[0]?.overallScore || 0}
                         </div>
-                        <Badge className={`font-bold px-2 py-1 rounded-full text-xs border-2 ${
-                          score.evaluations[0]?.overallScore >= 80
-                            ? "bg-coral-100 text-coral-700 border-coral-400 dark:bg-coral-900 dark:text-coral-200 dark:border-coral-500"
-                            : score.evaluations[0]?.overallScore >= 60
-                            ? "bg-blue-100 text-blue-700 border-blue-400 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-500"
-                            : "bg-gray-100 text-gray-700 border-gray-400 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-500"
-                        }`}>
+                        <Badge className={`${getScoreBadgeColor(score.evaluations[0]?.overallScore || 0)} font-bold`}>
                           {score.evaluations[0]?.overallScore >= 80
                             ? "Excelente"
                             : score.evaluations[0]?.overallScore >= 60
@@ -134,8 +128,8 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                       {/* Categories Scores */}
                       <div>
-                        <h4 className="font-semibold text-gray-500 mb-4 flex items-center gap-2">
-                          <BarChart3 className="w-4 h-4 text-blue-500" />
+                        <h4 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                          <BarChart3 className="w-4 h-4 text-primary" />
                           Puntuación por Categorías
                         </h4>
 
@@ -143,7 +137,7 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
                           {score.evaluations[0]?.scores.map((section) => (
                             <div key={section.id} className="group">
                               <div className="flex justify-between text-sm mb-1.5">
-                                <span className="dark:text-gray-300  font-medium group-hover:text-gray-300 transition-colors">
+                                <span className="text-foreground/80 font-medium group-hover:text-primary transition-colors">
                                   {categoryMap[section.sectionType as keyof typeof categoryMap] || section.sectionType}
                                 </span>
                                 <span className={`font-semibold ${getScoreTextColor(section.score)}`}>
@@ -153,7 +147,7 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
 
                               <Progress
                                 value={section.score}
-                                className="h-2 rounded-full [&>div]:bg-gradient-to-r [&>div]:from-lime-400 [&>div]:via-blue-400 [&>div]:to-cyan-400 [&>div]:rounded-full"
+                                className="h-2 bg-muted rounded-full [&>div]:bg-gradient-to-r [&>div]:from-primary [&>div]:via-secondary [&>div]:to-accent [&>div]:rounded-full"
                               />
                             </div>
                           ))}
@@ -161,16 +155,16 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
                       </div>
 
                       {/* Recommendations */}
-                      <div className="bg-coral-50 dark:bg-coral-900/40 p-4 rounded-xl border border-coral-200 dark:border-coral-800">
-                        <h4 className="font-black text-coral-500 dark:text-coral-300 mb-4 flex items-center gap-2">
-                          <TrendingUp className="w-4 h-4 text-coral-400 dark:text-coral-300" />
+                      <div className="bg-muted/20 p-4 rounded-xl border border-border/50">
+                        <h4 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                          <TrendingUp className="w-4 h-4 text-secondary" />
                           Recomendaciones de Mejora
                         </h4>
                         <ul className="space-y-3">
                           {score.evaluations[0]?.recommendations.slice(0, 3).map((rec, idx) => (
                             <li key={idx} className="flex items-start gap-3 text-sm text-balance">
-                              <div className="w-2 h-2 bg-coral-400 dark:bg-coral-300 rounded-full mt-2 flex-shrink-0" />
-                              <span className="text-coral-700 dark:text-coral-200 leading-relaxed font-medium">{rec.text}</span>
+                              <div className="w-1.5 h-1.5 bg-primary/80 rounded-full mt-2 flex-shrink-0" />
+                              <span className="text-muted-foreground leading-relaxed">{rec.text}</span>
                             </li>
                           ))}
                         </ul>
@@ -185,9 +179,9 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
           {/* Empty State */}
           {scores.length === 0 && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-12">
-              <BarChart3 className="w-16 h-16 text-coral-400 dark:text-coral-300 mx-auto mb-4" />
-              <h3 className="text-xl font-black text-coral-500 dark:text-coral-300 mb-2">No hay scores disponibles</h3>
-              <p className="text-coral-700 dark:text-coral-200/80">Crea y analiza tus CVs para ver los scores aquí</p>
+              <BarChart3 className="w-16 h-16 text-muted mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-muted mb-2">No hay scores disponibles</h3>
+              <p className="text-muted/80">Crea y analiza tus CVs para ver los scores aquí</p>
             </motion.div>
           )}
         </motion.div>

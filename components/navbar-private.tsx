@@ -55,7 +55,7 @@ export function NavbarPrivate({ userLimit, user }: NavbarProps) {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="w-full border-b bg-background/90 dark:bg-gradient-to-br dark:from-[#101624] dark:via-[#181b2a] dark:to-blue-950/95 backdrop-blur-md shadow-sm"
+      className="w-full border-b bg-background/90 backdrop-blur-md shadow-sm"
     >
       <div className="mx-auto max-w-full px-4 sm:px-20 lg:px-44">
         <div className="flex h-16 items-center justify-between">
@@ -72,14 +72,14 @@ export function NavbarPrivate({ userLimit, user }: NavbarProps) {
 
             {/* TOKENS */}
             <motion.div whileHover={{ scale: 1.05 }} className="hidden sm:block">
-              <Card className="bg-card dark:bg-[#23272f] shadow-md rounded-lg border border-gray-200 dark:border-gray-700">
+              <Card className="bg-card shadow-md rounded-lg">
                 <CardContent className="p-3 flex items-center gap-4">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-semibold shadow-sm">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-semibold">
                     T
                   </div>
                   <div className="flex flex-col flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-muted-foreground dark:text-gray-300">
+                      <span className="text-sm font-medium text-muted-foreground">
                         Tokens
                       </span>
                       <Badge
@@ -89,9 +89,9 @@ export function NavbarPrivate({ userLimit, user }: NavbarProps) {
                         {remainingCredits} disponibles
                       </Badge>
                     </div>
-                    <div className="h-1.5 w-full rounded-full bg-muted dark:bg-gray-800 overflow-hidden mt-1">
+                    <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden mt-1">
                       <div
-                        className="h-full bg-primary dark:bg-blue-500 transition-all duration-300"
+                        className="h-full bg-primary transition-all duration-300"
                         style={{ width: getProgressWidth() }}
                       />
                     </div>
@@ -101,17 +101,17 @@ export function NavbarPrivate({ userLimit, user }: NavbarProps) {
             </motion.div>
 
             {/* TOKENS MOBILE */}
-            <div className="flex items-center gap-2 rounded-xl bg-card dark:bg-[#23272f] px-3 py-2 shadow-sm sm:hidden border border-gray-200 dark:border-gray-700">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold shadow-sm">
+            <div className="flex items-center gap-2 rounded-xl bg-card px-3 py-2 shadow-sm sm:hidden">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">
                 T
               </div>
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-muted-foreground dark:text-gray-300">
+                <span className="text-xs font-medium text-muted-foreground">
                   Tokens: {remainingCredits}
                 </span>
-                <div className="mt-1 h-1.5 w-20 rounded-full bg-muted dark:bg-gray-800 overflow-hidden">
+                <div className="mt-1 h-1.5 w-20 rounded-full bg-muted overflow-hidden">
                   <div
-                    className="h-full bg-primary dark:bg-blue-500 transition-all duration-300"
+                    className="h-full bg-primary transition-all duration-300"
                     style={{ width: getProgressWidth() }}
                   />
                 </div>
@@ -132,18 +132,18 @@ export function NavbarPrivate({ userLimit, user }: NavbarProps) {
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
-          className="border-t bg-destructive/20 dark:bg-red-900/30"
+          className="border-t bg-destructive/20"
         >
           <div className="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
 
-              <div className="flex items-center gap-2 text-destructive dark:text-red-300 font-medium">
+              <div className="flex items-center gap-2 text-destructive font-medium">
                 <Zap className="h-5 w-5" />
                 <span>¡Quedan muy pocos créditos disponibles!</span>
                 <Button
                   size="sm"
                   variant="outline"
-                  className="ml-2 border-destructive dark:border-red-400 dark:text-red-300"
+                  className="ml-2"
                 >
                   <Plus className="mr-1 h-3 w-3" />
                   Obtener más
@@ -153,7 +153,6 @@ export function NavbarPrivate({ userLimit, user }: NavbarProps) {
               <Button
                 size="sm"
                 variant="ghost"
-                className="dark:text-red-300"
                 onClick={() => setIsClosed(true)}
               >
                 ✕

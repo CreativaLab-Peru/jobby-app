@@ -51,7 +51,7 @@ export default function AppSidebar() {
   ];
 
   return (
-    <Sidebar variant="inset" side="left" collapsible="icon" className="peer border-r bg-card dark:bg-gradient-to-br dark:from-[#101624] dark:via-[#181b2a] dark:to-blue-950">
+    <Sidebar variant="inset" side="left" collapsible="icon" className="peer border-r border-border bg-card">
       <SidebarHeader className="px-6">
         <Link href="/dashboard" className="flex items-center">
           <div className="relative w-40 h-30">
@@ -134,13 +134,13 @@ export default function AppSidebar() {
           {/* Card de Progresión sutil para universitarios */}
           <div className="mb-4 p-4 rounded-2xl bg-primary/5 border border-primary/10 group-data-[collapsible=icon]:hidden">
             <div className="flex items-center gap-2 mb-2">
-              <GraduationCap className="w-4 h-4 text-secondary dark:text-blue-200" />
-              <span className="text-[10px] font-bold text-primary uppercase dark:text-blue-200">Junior Pro</span>
+              <GraduationCap className="w-4 h-4 text-secondary" />
+              <span className="text-[10px] font-bold text-primary uppercase">Junior Pro</span>
             </div>
-            <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden dark:bg-blue-900/40">
+            <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
               <div className="h-full ai-gradient w-[65%]" />
             </div>
-            <p className="text-[9px] text-muted-foreground mt-2 font-medium dark:text-blue-200">Completa tu perfil al 100%</p>
+            <p className="text-[9px] text-muted-foreground mt-2 font-medium">Completa tu perfil al 100%</p>
           </div>
 
           <SidebarMenuItem>

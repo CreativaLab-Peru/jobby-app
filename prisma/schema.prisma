@@ -45,6 +45,7 @@ model User {
   verificationCode           VerificationCode[]
   userPreference             UserPreference[]
   userCreditBalance          UserCreditBalance[]
+  Invoice                    Invoice[]
 
   @@map("user")
 }
@@ -348,12 +349,12 @@ model MagicLinkToken {
 
 // Balance de créditos del usuario
 model UserCreditBalance {
-  id                String              @id @default(uuid())
-  userId            String              @unique
-  amount            Int                 @default(0) // Usamos Int para evitar problemas de coma flotante
-  type              String              // Ej: "FREE", "PURCHASED", "BONUS"
-  updatedAt         DateTime            @updatedAt
-  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  amount    Int      @default(0) // Usamos Int para evitar problemas de coma flotante
+  type      String // Ej: "FREE", "PURCHASED", "BONUS"
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   creditTransaction CreditTransaction[]
 
@@ -373,6 +374,70 @@ model CreditTransaction {
 
   @@index([balanceId])
   @@map("credit_transaction")
+}
+
+// Créditos disponibles para compra
+model CreditPackage {
+  id         String            @id @default(uuid())
+  name       String // Ej: "Pack Pro IA"
+  credits    Int // Cantidad de créditos que otorga
+  priceCents Int // Siempre en centavos para evitar redondeos: 1000 = $10.00
+  currency   String            @default("USD")
+  active     Boolean           @default(true)
+  type       CreditBalanceType // A qué tipo de saldo se aplica
+  createdAt  DateTime          @default(now())
+
+  invoice           Invoice[]
+  planCreditPackage PlanCreditPackage[]
+
+  @@map("credit_package")
+}
+
+// Planes que incluyen paquetes de créditos
+model PlanCreditPackage {
+  id             String            @id @default(uuid())
+  title          String
+  description    String?
+  creditId       String
+  credits        Int // Cantidad de créditos que otorga el plan
+  price          Int // Precio en centavos para evitar redondeos
+  currency       String            @default("USD")
+  type           CreditBalanceType // A qué tipo de saldo se aplica
+  credictPackage CreditPackage     @relation(fields: [creditId], references: [id])
+  createdAt      DateTime          @default(now())
+
+  @@index([creditId])
+  @@map("plan_credit_package")
+}
+
+//
+model Invoice {
+  id           String        @id @default(uuid())
+  userId       String
+  amountTotal  Int // Total pagado en centavos
+  currency     String
+  status       PaymentStatus @default(PENDING)
+  provider     String // "STRIPE", "PAYPAL"
+  providerTxId String?       @unique // ID externo de la pasarela
+
+  // Relaciones opcionales (un pago puede ser por un plan O por un paquete)
+  planId    String?
+  packageId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User           @relation(fields: [userId], references: [id])
+  package CreditPackage? @relation(fields: [packageId], references: [id])
+
+  @@map("invoice")
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
 }
 
 model LogEntry {
@@ -401,6 +466,7 @@ enum CreditBalanceType {
   AI_ACTIONS // Créditos para acciones con IA
   UPLOADS // Créditos para subir CVs
   MANAGE_CVS // Créditos para gestionar CVs
+  SEARCH_OPPORTUNITIES // Créditos para buscar oportunidades
 }
 
 enum TransactionType {

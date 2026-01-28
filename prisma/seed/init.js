@@ -49,6 +49,36 @@ async function main() {
         uploadCvLimit: 5,
       },
     });
+
+    // 3. CREDIT PACKAGES
+    const packages = [
+      {
+        name: "Pack Básico",
+        credits: 5,
+        priceCents: 500, //S/ 5.00
+        type: "AI_ACTIONS", // Ajusta según tus Enums
+      },
+      {
+        name: "Pack Premium",
+        credits: 20,
+        priceCents: 1500,
+        type: "",
+      }
+    ];
+
+    for (const pkg of packages) {
+      await prisma.creditPackage.create({
+        data: {
+          name: pkg.name,
+          credits: pkg.credits,
+          priceCents: pkg.priceCents,
+          currency: "PEN",
+          type: pkg.type,
+          active: true,
+        },
+      });
+    }
+
   } catch (e) {
     console.error("[ERROR_SEED]", e)
   }

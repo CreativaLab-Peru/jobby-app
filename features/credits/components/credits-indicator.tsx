@@ -4,7 +4,7 @@ import {
   PopoverTrigger
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { Zap, Sparkles, FileText, Plus, Loader2 } from "lucide-react"; // Añadido Loader2
+import { Zap, Sparkles, FileText, Plus, Loader2 } from "lucide-react";
 import { CreditLimits } from "@/features/credits/actions/get-current-credits-limits";
 import { useTransition } from "react";
 import {
@@ -67,6 +67,14 @@ export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
               </div>
               <span className="font-mono font-bold">{limits.aiActionsLimit}</span>
             </div>
+
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Zap className="h-4 w-4" />
+                <span>Match de oportunidades</span>
+              </div>
+              <span className="font-mono font-bold">{limits.opportunitiesActionsLimit}</span>
+            </div>
           </div>
 
           <hr />
@@ -78,7 +86,7 @@ export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
               </p>
               <Button
                 size="sm"
-                className="w-full ai-gradient"
+                className="w-full ai-gradient cursor-pointer"
                 onClick={handleRechargeCredits}
                 disabled={isPending}
               >
@@ -94,7 +102,7 @@ export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
             <Button
               variant="outline"
               size="sm"
-              className="w-full"
+              className="w-full cursor-pointer"
               onClick={handleRechargeCredits}
               disabled={isPending}
             >

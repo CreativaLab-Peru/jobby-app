@@ -2,11 +2,7 @@ import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { getSession } from "@/features/authentication/actions/get-session";
 
-export default async function PublicLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
   return (
     <div className="min-h-screen flex flex-col">
@@ -16,4 +12,3 @@ export default async function PublicLayout({
     </div>
   );
 }
-

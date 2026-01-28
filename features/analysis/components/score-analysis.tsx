@@ -77,7 +77,7 @@ export default function AnalysisScore({
     <>
       {/* REFACTOR: Fondo usando la variable background y decoración sutil */}
       <div className="min-h-screen relative">
-        <div className="absolute inset-0 bg-grid-slate-200/[0.05] pointer-events-none" />
+        <div className="absolute inset-0 bg-transparent pointer-events-none" />
 
         <div className="container relative z-10 py-8">
           <motion.div
@@ -89,15 +89,15 @@ export default function AnalysisScore({
 
             <Tabs defaultValue="score" className="space-y-8">
               {/* REFACTOR: Tabs con el sistema de marca Levely */}
-              <TabsList className="grid w-full grid-cols-2 h-auto min-h-[4rem] p-1 bg-card shadow-card rounded-xl border border-border">
+              <TabsList className="grid w-full grid-cols-2 h-auto min-h-[4rem] p-1 bg-levely-blue/10 dark:bg-levely-green/10 shadow-card rounded-xl border border-border">
                 <TabsTrigger
                   value="score"
                   className="flex items-center justify-center gap-2 h-full py-3 text-sm sm:text-base font-bold transition-all duration-300
                     text-muted-foreground
                     data-[state=active]:ai-gradient data-[state=active]:text-primary data-[state=active]:shadow-glow"
                 >
-                  <Target className="w-4 h-4 sm:w-5 sm:h-5" />
-                  <span className="text-center">Score y Sugerencias</span>
+                  <Target className="text-levely-blue dark:text-levely-green w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="text-levely-blue dark:text-levely-green text-center">Score y Sugerencias</span>
                 </TabsTrigger>
 
                 <TabsTrigger
@@ -106,8 +106,8 @@ export default function AnalysisScore({
                     text-muted-foreground
                     data-[state=active]:ai-gradient data-[state=active]:text-primary data-[state=active]:shadow-glow"
                 >
-                  <Award className="w-4 h-4 sm:w-5 sm:h-5" />
-                  <span className="text-center">Oportunidades</span>
+                  <Award className="text-levely-blue dark:text-levely-green w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="text-levely-blue dark:text-levely-green text-center">Oportunidades</span>
                 </TabsTrigger>
               </TabsList>
 

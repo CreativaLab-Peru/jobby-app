@@ -7,8 +7,8 @@ const partnerLogos = [
 
 export function LogosSection() {
   return (
-    <section className="py-30 bg-background">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-16 bg-background">
+            <div className="container-levely">
               <p className="text-2xl text-center font-medium text-muted-foreground mb-10">
                 Instituciones que ya confían en Levely
               </p>

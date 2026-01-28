@@ -13,7 +13,7 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
-import TestimoniosCarousel from "@/components/testimonios";
+import { TestimoniosCarousel } from "@/components/testimonios";
 import FaqsSection from "@/components/faqs-section";
 import AutoPlayVideo from "@/components/auto-play-video";
 import {EmailModal} from "@/components/email-modal";

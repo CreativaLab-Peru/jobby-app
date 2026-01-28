@@ -17,14 +17,14 @@ export function HeroCards() {
   return (
     <div className="relative w-full max-w-lg mx-auto">
       {/* Background glow effects */}
-      <div className="absolute -top-10 -right-10 w-40 h-40 bg-lime-300/30 rounded-full blur-3xl" />
+      <div className="absolute -top-10 -right-10 w-40 h-40 bg-levely-green/30 rounded-full blur-3xl" />
       <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-purple-400/20 rounded-full blur-3xl" />
 
       {/* Main cards container with staggered layout */}
       <div className="relative space-y-4">
         {/* Employability Score Card - Main featured card */}
-        <Card className="relative bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-0 shadow-xl shadow-green-200/50 dark:shadow-green-900/50 overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-lime-300/30 to-transparent" />
+        <Card className="relative bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-0 shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-levely-green/20 to-transparent" />
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-3">
@@ -44,8 +44,8 @@ export function HeroCards() {
                 <Progress value={92} className="h-2 bg-slate-100 dark:bg-slate-800" />
               </div>
               <div className="relative">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-lime-300 to-lime-300/60 flex items-center justify-center shadow-lg shadow-lime-300/30">
-                  <Sparkles className="w-8 h-8 text-lime-foreground" />
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-levely-green to-levely-green/60 flex items-center justify-center shadow-lg shadow-levely-green/30">
+                  <Sparkles className="w-8 h-8 text-levely-dark" />
                 </div>
               </div>
             </div>
@@ -88,17 +88,17 @@ export function HeroCards() {
               <div className="grid grid-cols-3 gap-2">
                 <div className="text-center">
                   <Briefcase className="w-4 h-4 mx-auto text-orange-500 mb-1" />
-                  <div className="text-lg font-bold text-dark dark:text-white">12</div>
+                  <div className="text-lg font-bold text-foreground">12</div>
                   <div className="text-[10px] text-muted-foreground">Empleos</div>
                 </div>
                 <div className="text-center">
                   <GraduationCap className="w-4 h-4 mx-auto text-purple-500 mb-1" />
-                  <div className="text-lg font-bold text-dark dark:text-white">3</div>
+                  <div className="text-lg font-bold text-foreground">3</div>
                   <div className="text-[10px] text-muted-foreground">Becas</div>
                 </div>
                 <div className="text-center">
                   <Building2 className="w-4 h-4 mx-auto text-blue-500 mb-1" />
-                  <div className="text-lg font-bold text-dark dark:text-white">8</div>
+                  <div className="text-lg font-bold text-foreground">8</div>
                   <div className="text-[10px] text-muted-foreground">Pasantías</div>
                 </div>
               </div>
@@ -116,7 +116,7 @@ export function HeroCards() {
             <div className="flex items-center justify-between">
               {/* Step 1 */}
               <div className="flex flex-col items-center">
-                <div className="w-10 h-10 rounded-full bg-lime/20 flex items-center justify-center mb-2">
+                <div className="w-10 h-10 rounded-full bg-levely-green/20 flex items-center justify-center mb-2">
                   <CheckCircle2 className="w-5 h-5 text-lime-600" />
                 </div>
                 <span className="text-[10px] text-muted-foreground text-center">
@@ -172,7 +172,7 @@ export function HeroCards() {
       </div>
 
       {/* Floating badge */}
-      <div className="absolute -bottom-2 -right-2 px-4 py-2 rounded-full bg-lime text-lime-foreground text-sm font-semibold shadow-lg shadow-lime/30 flex items-center gap-2">
+      <div className="absolute -bottom-2 -right-2 px-4 py-2 rounded-full bg-levely-green text-levely-dark text-sm font-semibold shadow-lg shadow-levely-green/30 flex items-center gap-2">
         <Sparkles className="w-4 h-4" />
         IA Activa
       </div>

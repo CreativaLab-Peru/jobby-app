@@ -40,13 +40,13 @@ const testimonios = [
   },
 ];
 
-export default function TestimoniosCarousel() {
+export function TestimoniosCarousel() {
   return (
     <section className="bg-transparent py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-5xl font-bold mb-4">
-            Lo que dicen <span className="text-gradient">nuestros usuarios</span>
+            Lo que dicen nuestros usuarios
           </h2>
         </div>
 
@@ -71,7 +71,10 @@ export default function TestimoniosCarousel() {
           className="flex items-center"
         >
           {testimonios.map((t, i) => (
-            <SwiperSlide key={i} className="w-full sm:w-[420px] md:w-[440px] lg:w-[480px] flex-shrink-0">
+            <SwiperSlide
+              key={i}
+              className="w-full sm:w-[420px] md:w-[440px] lg:w-[480px] flex-shrink-0"
+            >
               <Card className="p-6 bg-card shadow-card flex flex-col justify-between min-h-[260px] hover:shadow-glow transition-all">
                 <div>
                   <div className="flex gap-1 mb-4">
@@ -84,13 +87,7 @@ export default function TestimoniosCarousel() {
 
                 <div className="flex items-center gap-3 mt-auto">
                   <div className="relative h-10 w-10 rounded-full overflow-hidden">
-                    <Image
-                      src={t.img}
-                      alt={t.name}
-                      fill
-                      className="object-cover"
-                      sizes="40px"
-                    />
+                    <Image src={t.img} alt={t.name} fill className="object-cover" sizes="40px" />
                   </div>
                   <div>
                     <p className="font-semibold text-sm">{t.name}</p>

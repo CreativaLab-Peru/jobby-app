@@ -10,12 +10,12 @@ export function AnalysisHeader() {
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-        className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-6 border border-gray-400/50 dark:border-gray-500"
+        className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-6 border border-levely-blue/50 dark:border-levely-green/50 transition-colors"
       >
-        <TrendingUp className="w-8 h-8 text-gray-400" />
+        <TrendingUp className="w-8 h-8 text-levely-blue dark:text-levely-green" />
       </motion.div>
 
-      <h1 className="text-3xl sm:text-4xl font-bold dark:text-white mb-4 px-2">
+      <h1 className="text-3xl sm:text-4xl font-bold text-levely-blue dark:text-levely-green mb-4 px-2">
         Análisis Completo de tu CV
       </h1>
 

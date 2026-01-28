@@ -167,9 +167,9 @@ export default function Partners() {
       {/* CTA */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 section-padding bg-background">
         <div className="max-w-7xl mx-auto">
-          <div className="relative overflow-hidden rounded-3xl bg-primary dark:bg-gradient-to-br dark:from-blue-400 dark:to-blue-500/80 text-primary-foreground p-6 sm:p-8 lg:p-12 text-center">
+          <div className="relative overflow-hidden rounded-3xl bg-levely-blue dark:bg-gradient-to-br dark:from-levely-blue dark:to-levely-blue/80 text-primary-foreground p-6 sm:p-8 lg:p-12 text-center">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-20 -right-20 w-40 h-40 sm:w-64 sm:h-64 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute green-top-20 -right-20 w-40 h-40 sm:w-64 sm:h-64 bg-white/10 rounded-full blur-3xl" />
           <div className="absolute -bottom-20 -left-20 w-40 h-40 sm:w-64 sm:h-64 bg-white/5 rounded-full blur-3xl" />
         </div>
 

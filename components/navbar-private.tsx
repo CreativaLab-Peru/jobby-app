@@ -1,15 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Zap, Plus } from "lucide-react";
-import { ProfileButton } from "@/components/profile-button";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ThemeToggle } from "@/components/button-toggle-theme";
-import {SidebarTrigger} from "@/components/ui/sidebar";
-import {CreditsOfPlan} from "@/features/billing/actions/get-available-tokens";
+import { ProfileButton } from "@/components/profile-button";
+import { Coins, FileText, Zap, Briefcase, Sun, Moon, User, LogOut } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { CreditsOfPlan } from "@/features/billing/actions/get-available-tokens";
 
 interface NavbarProps {
   user: {
@@ -22,146 +29,111 @@ interface NavbarProps {
 }
 
 export function NavbarPrivate({ userLimit, user }: NavbarProps) {
-  const [mounted, setMounted] = useState(false);
-  const [isClosed, setIsClosed] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    const closed = localStorage.getItem("cv-score-banner-closed");
-    if (closed) setIsClosed(true);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("cv-score-banner-closed", String(isClosed));
-  }, [isClosed]);
-
-  if (!mounted) return null;
-
-  const remainingCredits = userLimit.totalCredits - userLimit.usedCredits;
-  const totalCredits = userLimit.totalCredits;
-
-  const getCreditVariant = (remaining: number, total: number) => {
-    const percentage = remaining / total;
-    if (percentage > 0.6) return "default";
-    if (percentage > 0.3) return "secondary";
-    return "destructive";
-  };
-
-  const getProgressWidth = () =>
-    `${(remainingCredits / totalCredits) * 100}%`;
+  const router = useRouter();
+  const displayName = user?.name || "Explorador";
+  const credits = userLimit.totalCredits - userLimit.usedCredits;
 
   return (
-    <motion.nav
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="w-full border-b bg-background/90 backdrop-blur-md shadow-sm"
-    >
-      <div className="mx-auto max-w-full px-4 sm:px-20 lg:px-44">
-        <div className="flex h-16 items-center justify-between">
-
-          {/* SIDEBAR BUTTON just mobile */}
-          <div className="flex items-center sm:hidden">
-            <SidebarTrigger className="-ml-1 text-primary" />
-          </div>
-          <div></div>
-
-          <div className="flex items-center gap-4">
-            {/* TOGGLE THEME */}
-            <ThemeToggle />
-
-            {/* TOKENS */}
-            <motion.div whileHover={{ scale: 1.05 }} className="hidden sm:block">
-              <Card className="bg-card shadow-md rounded-lg">
-                <CardContent className="p-3 flex items-center gap-4">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-semibold">
-                    T
-                  </div>
-                  <div className="flex flex-col flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-muted-foreground">
-                        Tokens
-                      </span>
-                      <Badge
-                        variant={getCreditVariant(remainingCredits, totalCredits)}
-                        className="uppercase"
-                      >
-                        {remainingCredits} disponibles
-                      </Badge>
-                    </div>
-                    <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden mt-1">
-                      <div
-                        className="h-full bg-primary transition-all duration-300"
-                        style={{ width: getProgressWidth() }}
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* TOKENS MOBILE */}
-            <div className="flex items-center gap-2 rounded-xl bg-card px-3 py-2 shadow-sm sm:hidden">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">
-                T
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xs font-medium text-muted-foreground">
-                  Tokens: {remainingCredits}
-                </span>
-                <div className="mt-1 h-1.5 w-20 rounded-full bg-muted overflow-hidden">
-                  <div
-                    className="h-full bg-primary transition-all duration-300"
-                    style={{ width: getProgressWidth() }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* PERFIL */}
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <ProfileButton user={user} />
-            </motion.div>
-
+    <header className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border md:pl-64">
+      <div className="flex items-center justify-between h-16 px-6">
+        {/* Left: Sidebar trigger + Welcome */}
+        <div className="flex items-center gap-4">
+          <SidebarTrigger className="lg:hidden" />
+          <div>
+            <h1 className="text-2xl font-bold">
+              Hola, <span className="text-levely-blue dark:text-levely-green">{displayName}</span>
+            </h1>
+            <p className="text-sm text-muted-foreground hidden md:block">
+              Esto es lo que la IA de Levely tiene para ti.
+            </p>
           </div>
         </div>
-      </div>
 
-      {/* ALERTA DE CRÉDITOS */}
-      {!isClosed && remainingCredits <= 1 && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          className="border-t bg-destructive/20"
-        >
-          <div className="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+        {/* Center: Quick Actions */}
+        <div className="hidden md:flex items-center gap-3">
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/cv">
+              <FileText className="h-4 w-4 mr-2" />
+              Crear CV
+            </Link>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-levely-blue/50 text-levely-blue dark:border-levely-green/50 dark:text-levely-green hover:bg-levely-green/10"
+            asChild
+          >
+            <Link href="/evaluations">
+              <Zap className="h-4 w-4 mr-2" />
+              Evaluar Perfil
+            </Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/opportunities">
+              <Briefcase className="h-4 w-4 mr-2" />
+              Ver Oportunidades
+            </Link>
+          </Button>
+        </div>
 
-              <div className="flex items-center gap-2 text-destructive font-medium">
-                <Zap className="h-5 w-5" />
-                <span>¡Quedan muy pocos créditos disponibles!</span>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="ml-2"
-                >
-                  <Plus className="mr-1 h-3 w-3" />
-                  Obtener más
-                </Button>
+        {/* Right: Credits + Theme + Profile */}
+        <div className="flex items-center gap-3">
+          {/* Theme Toggle */}
+          <ThemeToggle />
+
+          {/* Credits Badge */}
+          <Link
+            href="/settings" // O a la ruta de créditos si existe
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary border border-border hover:border-levely-green/50 transition-colors"
+          >
+            <Coins className="h-4 w-4 text-levely-blue dark:text-levely-green" />
+            <span className="text-sm font-medium">{credits}</span>
+            <span className="text-xs text-muted-foreground">Créditos</span>
+          </Link>
+
+          {/* User Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary hover:bg-secondary/80 transition-colors">
+                <User className="h-5 w-5" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <div className="px-3 py-2">
+                <p className="font-medium">{displayName}</p>
+                <p className="text-xs text-muted-foreground">{user?.email}</p>
+                {/* TODO: implement user plan display */}
               </div>
-
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => setIsClosed(true)}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/settings" className="cursor-pointer">
+                  Configuración
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/creditos" className="cursor-pointer">
+                  Mejorar Plan
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={async () => {
+                  // Cerrar sesión
+                  if (typeof window !== "undefined") {
+                    const { authClient } = await import("@/lib/auth-client");
+                    await authClient.signOut();
+                    router.push("/login");
+                  }
+                }}
+                className="text-levely-blue dark:text-levely-green cursor-pointer"
               >
-                ✕
-              </Button>
-
-            </div>
-          </div>
-        </motion.div>
-      )}
-    </motion.nav>
+                <LogOut className="text-levely-blue dark:text-levely-green h-4 w-4 mr-2" />
+                Cerrar sesión
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+    </header>
   );
 }

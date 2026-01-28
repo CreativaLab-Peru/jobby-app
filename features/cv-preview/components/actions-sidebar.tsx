@@ -99,7 +99,7 @@ export function ActionsSidebar({
 
         <Button
           disabled={isDisabled || downloading}
-          className="w-full bg-primary hover:bg-primary/90"
+          className="w-full bg-levely-blue hover:bg-levely-blue dark:bg-levely-green dark:hover:bg-levely-green/60"
           onClick={handleDownloadPdf}
         >
           {downloading ? (
@@ -113,7 +113,7 @@ export function ActionsSidebar({
         {showAnalyzeButton && (
           <Button
             disabled={isDisabled || analyzing || !canAnalyze}
-            className="w-full bg-secondary hover:bg-secondary/90"
+            className="w-full bg-levely-blue hover:bg-levely-blue/90 dark:bg-levely-green dark:hover:bg-levely-green/60"
             onClick={handleAnalyzeCv}
           >
             {analyzing ? (

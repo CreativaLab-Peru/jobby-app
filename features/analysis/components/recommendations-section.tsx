@@ -35,8 +35,8 @@ export function RecommendationsSection({ recommendations }: RecommendationsSecti
   return (
     <Card className="shadow-card border-0 bg-card/90 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle className="flex items-center text-2xl text-foreground">
-          <Lightbulb className="w-8 h-8 mr-3 text-accent" />
+        <CardTitle className="flex items-center text-2xl text-levely-blue dark:text-levely-green font-bold">
+          <Lightbulb className="w-8 h-8 mr-3 text-levely-blue dark:text-levely-green" />
           Recomendaciones Personalizadas
         </CardTitle>
       </CardHeader>
@@ -50,15 +50,15 @@ export function RecommendationsSection({ recommendations }: RecommendationsSecti
             className={`p-4 rounded-lg border-l-4 ${typeStyles[rec.type]}`}
           >
             <div className="flex items-start gap-3">
-              {iconMap[rec.icon] || <Lightbulb className="w-6 h-6 text-muted-foreground" />}
+              {iconMap[rec.icon] || <Lightbulb className="w-6 h-6 text-levely-blue dark:text-levely-green" />}
               <div className="flex-1">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-                  <h3 className="font-semibold text-foreground">
+                  <h3 className="font-semibold text-levely-blue dark:text-levely-green">
                     {categoryMap[rec.title as keyof typeof categoryMap] || rec.title}
                   </h3>
                   <Badge
                     variant={rec.type === "critical" ? "destructive" : "secondary"}
-                    className="w-fit"
+                    className="w-fit text-levely-blue dark:text-levely-green bg-levely-blue/10 dark:bg-levely-green/10"
                   >
                     Impacto {impactMap[rec.type]}
                   </Badge>

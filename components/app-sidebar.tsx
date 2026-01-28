@@ -1,167 +1,196 @@
 "use client";
 
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import {
   Sidebar,
-  SidebarHeader,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
-  SidebarSeparator,
   SidebarMenu,
-  SidebarMenuItem,
   SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarFooter,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import {
   LayoutDashboard,
+  FileText,
+  MessageSquare,
+  Briefcase,
+  CreditCard,
   Settings,
   Users,
-  Rocket,
   Sparkles,
-  GraduationCap, SparkleIcon
 } from "lucide-react";
-import Image from "next/image";
+import { Progress } from "./ui/progress";
+// import { Progress } from "@/components/ui/progress";
+
+const mainNavItems = [
+  { title: "Mi Panel", href: "/dashboard", icon: LayoutDashboard },
+  { title: "Mis CVs", href: "/cv", icon: FileText },
+  { title: "Mis Evaluaciones", href: "/evaluations", icon: MessageSquare },
+  { title: "Oportunidades", href: "/opportunities", icon: Briefcase },
+];
+
+const communityItems = [{ title: "Networking", href: "/networking", icon: Users }];
+
+const bottomItems = [
+  { title: "Créditos", href: "/settings", icon: CreditCard },
+  { title: "Configuración", href: "/settings", icon: Settings },
+];
 
 export default function AppSidebar() {
   const pathname = usePathname();
+  const { state } = useSidebar();
+  const collapsed = state === "collapsed";
 
-  const menuItems = [
-    {
-      title: "Mi Panel",
-      href: "/dashboard",
-      icon: LayoutDashboard,
-    },
-    {
-      title: "Mis CVs",
-      href: "/cv",
-      icon: SparkleIcon,
-    },
-    {
-      title: "Mis Evaluaciones",
-      href: "/evaluations",
-      icon: Sparkles,
-    },
-    {
-      title: "Oportunidades",
-      href: "/opportunities",
-      icon: Rocket,
-    },
-  ];
+  const isActive = (path: string) => {
+    if (path === "/dashboard") {
+      return pathname === "/dashboard";
+    }
+    return pathname.startsWith(path);
+  };
+
+  // Placeholder para plan y progreso de perfil
+  const planName = "Starter";
+  const profileProgress = 65;
 
   return (
-    <Sidebar variant="inset" side="left" collapsible="icon" className="peer border-r border-border bg-card">
-      <SidebarHeader className="px-6">
-        <Link href="/dashboard" className="flex items-center">
-          <div className="relative w-40 h-30">
-            {/* Light mode */}
+    <Sidebar className={cn("border-r border-border z-30", collapsed ? "w-16" : "w-64")}>
+      <SidebarContent className="flex flex-col h-full">
+        {/* Logo */}
+        <div className="flex items-center justify-between h-16 lg:h-20">
+          <Link href="/dashboard" className="relative h-30 w-40 lg:h-40 lg:w-52">
             <Image
               src="/logo_light.png"
-              alt="Levely logo"
+              alt="Levely"
               fill
               priority
-              className="block dark:hidden object-contain object-left"
+              className="object-contain dark:hidden"
             />
-
-            {/* Dark mode */}
             <Image
               src="/logo_dark.png"
-              alt="Levely logo dark"
+              alt="Levely dark"
               fill
               priority
-              className="hidden dark:block object-contain object-left"
+              className="hidden object-contain dark:block"
             />
-          </div>
-        </Link>
-      </SidebarHeader>
+          </Link>
+        </div>
 
-      <SidebarContent className="px-3">
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-[10px] font-black uppercase tracking-[2px] text-muted-foreground/50 mb-4 px-2">
+        {/* Main Navigation */}
+        <SidebarGroup className="flex-1 mt-2 border-0">
+          <SidebarGroupLabel
+            className={cn(
+              "px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider",
+              collapsed && "sr-only",
+            )}
+          >
             Carrera Profesional
           </SidebarGroupLabel>
           <SidebarMenu>
-            {menuItems.map((item) => {
-              const active = pathname === item.href;
-              return (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton
-                    asChild
-                    tooltip={item.title}
-                    className={`h-11 rounded-xl transition-all duration-300 mb-1 group ${
-                      active
-                        ? "ai-gradient text-primary-foreground shadow-glow"
-                        : "hover:bg-primary/5 text-muted-foreground hover:text-primary"
-                    }`}
+            {mainNavItems.map((item) => (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton asChild>
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200",
+                      isActive(item.href)
+                        ? "bg-levely-blue dark:bg-levely-green text-white dark:text-levely-dark font-semibold"
+                        : "text-muted-foreground hover:text-levely-blue hover:bg-levely-blue dark:hover:bg-secondary",
+                    )}
                   >
-                    <Link href={item.href} className="flex items-center gap-3">
-                      <item.icon className={`w-5 h-5 ${active ? "text-white" : "group-hover:text-primary"}`} />
-                      <span className="font-bold text-sm tracking-tight">{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              );
-            })}
+                    <item.icon className="h-5 w-5 shrink-0" />
+                    {!collapsed && <span>{item.title}</span>}
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
           </SidebarMenu>
         </SidebarGroup>
 
-        {/* Sección de Comunidad/Admin (si aplica) */}
-        <SidebarGroup className="mt-4">
-          <SidebarGroupLabel className="text-[10px] font-black uppercase tracking-[2px] text-muted-foreground/50 mb-4 px-2">
+        {/* Comunidad (placeholder, descomentar si hay lógica de plan) */}
+        <SidebarGroup>
+          <SidebarGroupLabel
+            className={cn(
+              "px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider",
+              collapsed && "sr-only",
+            )}
+          >
             Comunidad
           </SidebarGroupLabel>
           <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                className="h-11 rounded-xl text-muted-foreground hover:text-primary transition-all"
-              >
-                <Link href="#" className="flex items-center gap-3">
-                  <Users className="w-5 h-5" />
-                  <span className="font-bold text-sm">Networking</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+            {communityItems.map((item) => (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton asChild>
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200",
+                      isActive(item.href)
+                        ? "bg-levely-blue dark:bg-levely-green text-white dark:text-levely-dark font-semibold"
+                        : "text-muted-foreground hover:text-levely-blue hover:bg-levely-blue dark:hover:bg-secondary",
+                    )}
+                  >
+                    <item.icon className="h-5 w-5 shrink-0" />
+                    {!collapsed && <span>{item.title}</span>}
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
           </SidebarMenu>
         </SidebarGroup>
-      </SidebarContent>
 
-      <SidebarSeparator className="mx-4 opacity-50" />
-
-      <SidebarFooter className="p-4">
-        <SidebarMenu>
-          {/* Card de Progresión sutil para universitarios */}
-          <div className="mb-4 p-4 rounded-2xl bg-primary/5 border border-primary/10 group-data-[collapsible=icon]:hidden">
+        {/* Plan Badge y progreso (placeholder) */}
+        {!collapsed && (
+          <div className="mx-4 mb-4 p-4 rounded-xl bg-secondary/50 border border-border">
             <div className="flex items-center gap-2 mb-2">
-              <GraduationCap className="w-4 h-4 text-secondary" />
-              <span className="text-[10px] font-bold text-primary uppercase">Junior Pro</span>
+              <div className="p-1.5 rounded-lg bg-levely-blue/10 dark:bg-levely-green/20">
+                <Sparkles className="h-4 w-4 text-levely-blue dark:text-levely-green" />
+              </div>
+              <span className="text-sm font-semibold uppercase tracking-wide">{planName}</span>
             </div>
-            <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-              <div className="h-full ai-gradient w-[65%]" />
+            <p className="text-xs text-muted-foreground mb-2">Completa tu perfil al 100%</p>
+            <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all duration-700"
+                style={{
+                  width: `${profileProgress}%`,
+                  background: "linear-gradient(90deg, #3b82f6 0%, #22c55e 100%)"
+                }}
+              />
             </div>
-            <p className="text-[9px] text-muted-foreground mt-2 font-medium">Completa tu perfil al 100%</p>
           </div>
+        )}
 
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="h-11 rounded-xl text-muted-foreground hover:text-primary transition-all"
-            >
-              <Link href="/settings" className="flex items-center gap-3">
-                <Settings className="w-5 h-5" />
-                <span className="font-bold text-sm">Configuración</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-
-          <div className="mt-4 px-2 group-data-[collapsible=icon]:hidden">
-            <p className="text-[10px] font-bold text-muted-foreground/30 uppercase tracking-widest">
-              © 2026 Levely AI
-            </p>
-          </div>
-        </SidebarMenu>
-      </SidebarFooter>
+        {/* Bottom Navigation */}
+        <SidebarFooter className="border-t border-border">
+          <SidebarMenu>
+            {bottomItems.map((item) => (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton asChild>
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200",
+                      isActive(item.href)
+                        ? "bg-levely-green text-levely-dark font-semibold"
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary",
+                    )}
+                  >
+                    <item.icon className="h-5 w-5 shrink-0" />
+                    {!collapsed && <span>{item.title}</span>}
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarFooter>
+      </SidebarContent>
     </Sidebar>
   );
 }

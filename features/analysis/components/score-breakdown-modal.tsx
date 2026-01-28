@@ -33,18 +33,18 @@ export function ScoreBreakdownModal({ show, onClose, scoreBreakdown, totalScore 
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header: REFACTOR a ai-gradient */}
-            <div className="p-6 ai-gradient text-primary-foreground relative overflow-hidden">
+            <div className="bg-levely-blue/10 dark:bg-levely-green/10 p-6 ai-gradient text-levely-blue dark:text-levely-green relative overflow-hidden">
               {/* Decoración sutil */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full translate-x-32 -translate-y-32 blur-3xl pointer-events-none" />
 
               <div className="flex items-center justify-between relative z-10">
                 <div className="flex items-center gap-4">
-                  <div className="p-2 bg-white/20 rounded-lg">
-                    <Calculator className="w-8 h-8" />
+                  <div className="p-2 bg-levely-blue/20 dark:bg-levely-green/20 rounded-lg">
+                    <Calculator className="w-8 h-8 text-levely-blue dark:text-levely-green" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold">Desglose del Score</h2>
-                    <p className="text-white/80 font-medium">Análisis detallado: {totalScore}/100 puntos</p>
+                    <h2 className="text-2xl font-bold text-levely-blue dark:text-levely-green">Desglose del Score</h2>
+                    <p className="text-levely-blue/80 dark:text-levely-green/80 font-medium">Análisis detallado: {totalScore}/100 puntos</p>
                   </div>
                 </div>
                 <Button variant="ghost" size="icon" onClick={onClose} className="text-white hover:bg-white/20 rounded-full">
@@ -57,7 +57,6 @@ export function ScoreBreakdownModal({ show, onClose, scoreBreakdown, totalScore 
               <div className="space-y-6">
                 {scoreBreakdown.map((category, index) => {
                   const IconComponent = category.Icon || Award;
-                  // REFACTOR: Usar primary para el color de categoría por defecto
                   const categoryColor = category.color || 'var(--primary)';
 
                   return (
@@ -71,7 +70,7 @@ export function ScoreBreakdownModal({ show, onClose, scoreBreakdown, totalScore 
                       <div className="flex items-start justify-between mb-6">
                         <div className="flex items-center gap-4">
                           <div className="p-3 rounded-xl bg-muted">
-                            <IconComponent className="w-7 h-7 text-primary" />
+                            <IconComponent className="w-7 h-7 text-levely-blue dark:text-levely-green" />
                           </div>
                           <div>
                             <h3 className="text-lg font-bold text-foreground">
@@ -83,13 +82,18 @@ export function ScoreBreakdownModal({ show, onClose, scoreBreakdown, totalScore 
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-black text-primary">
+                          <div className="text-2xl font-black text-levely-blue dark:text-levely-green">
                             {Math.round((category.score / category.maxScore) * 100)}%
                           </div>
-                          <Progress
-                            value={(category.score / category.maxScore) * 100}
-                            className="bg-muted w-28 h-2 mt-2 [&>div]:ai-gradient"
-                          />
+                          <div className="w-28 h-2 mt-2 rounded-full bg-muted overflow-hidden">
+                            <div
+                              className="h-full rounded-full transition-all duration-700"
+                              style={{
+                                width: `${(category.score / category.maxScore) * 100}%`,
+                                background: "linear-gradient(90deg, #3b82f6 0%, #22c55e 100%)"
+                              }}
+                            />
+                          </div>
                         </div>
                       </div>
 
@@ -100,16 +104,20 @@ export function ScoreBreakdownModal({ show, onClose, scoreBreakdown, totalScore 
                             className="flex items-center justify-between py-3 px-4 bg-muted/30 hover:bg-muted/60 rounded-lg transition-colors border border-transparent hover:border-border"
                           >
                             <div className="flex items-center gap-3 flex-1">
-                              {item.status === "complete" && <CheckCircle className="w-4 h-4 text-secondary" />}
-                              {item.status === "partial" && <AlertTriangle className="w-4 h-4 text-orange-400" />}
+                              {item.status === "complete" && <CheckCircle className="w-4 h-4 text-levely-green" />}
+                              {item.status === "partial" && <AlertTriangle className="w-4 h-4 text-levely-blue" />}
                               {item.status === "missing" && <X className="w-4 h-4 text-destructive" />}
 
-                              <span className="text-sm text-foreground font-medium">
+                              <span className="text-sm font-medium text-levely-blue dark:text-levely-green">
                                 {item.name}
                               </span>
                             </div>
                             <div className="flex items-center gap-3">
-                              <span className="text-xs font-bold text-muted-foreground bg-muted px-2 py-1 rounded">
+                              <span className="text-xs font-bold px-2 py-1 rounded"
+                                style={{
+                                  background: "linear-gradient(90deg, #3b82f6 0%, #22c55e 100%)",
+                                  color: "white"
+                                }}>
                                 {item.points} pts
                               </span>
                             </div>
@@ -122,16 +130,16 @@ export function ScoreBreakdownModal({ show, onClose, scoreBreakdown, totalScore 
               </div>
 
               {/* Tips Section REFACTOR */}
-              <div className="mt-8 p-6 bg-primary/5 rounded-xl border border-primary/20 relative overflow-hidden group">
+              <div className="mt-8 p-6 bg-levely-blue/5 dark:bg-levely-green/5 rounded-xl border border-levely-blue/20 dark:border-levely-green/20 relative overflow-hidden group">
                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                  <Sparkles className="w-12 h-12 text-primary" />
+                  <Sparkles className="w-12 h-12 text-levely-blue dark:text-levely-green" />
                 </div>
                 <div className="flex items-start gap-4 relative z-10">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <Info className="w-6 h-6 text-primary" />
+                  <div className="p-2 bg-levely-blue/10 rounded-lg">
+                    <Info className="w-6 h-6 text-levely-blue dark:text-levely-green" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-foreground mb-2">¿Cómo mejorar tu score con Levely?</h4>
+                    <h4 className="font-bold text-levely-blue dark:text-levely-green mb-2">¿Cómo mejorar tu score con Levely?</h4>
                     <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-sm text-muted-foreground">
                       <li className="flex items-center gap-2">• Completa campos obligatorios</li>
                       <li className="flex items-center gap-2">• Agrega resultados medibles</li>

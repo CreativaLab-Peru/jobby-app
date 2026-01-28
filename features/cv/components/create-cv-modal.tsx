@@ -75,8 +75,8 @@ export function CreateCVModal({
 
       <DialogContent className="bg-background sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">
-            <span className="text-gradient">✨ Crear nuevo CV</span>
+          <DialogTitle className="text-2xl font-bold text-levely-blue dark:text-levely-green flex items-center gap-2">
+            ✨ Crear nuevo CV
           </DialogTitle>
 
           <DialogDescription className="text-muted-foreground">
@@ -98,7 +98,7 @@ export function CreateCVModal({
           <Button
             onClick={handleCreateCV}
             disabled={!isFormValid || isCreating || isPending}
-            className="shadow-glow"
+            className="shadow-glow bg-levely-blue dark:shadow-glow-dark dark:bg-levely-green dark:text-levely-dark text-white"
           >
             {isCreating ? (
               <>

@@ -18,36 +18,29 @@ export function CVListHeader({ disabledButton }: CVListHeaderProps) {
   }
 
   return (
-    <div className="flex items-center justify-between mb-10">
-      {/* Title */}
+    <div className="max-w-5xl mx-auto">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
       <div>
-        <h1 className="text-4xl font-bold">
-          <span className="text-gradient">Mis CVs</span> ✨
+        <h1 className="text-levely-blue dark:text-levely-green text-3xl font-bold mb-1">
+        Mis CVs ✨
         </h1>
-        <p className="text-muted-foreground mt-2">
-          Gestiona y visualiza todos tus currículums
+        <p className="text-muted-foreground">
+        Gestiona y visualiza todos tus currículums
         </p>
       </div>
-
-      {/* Action */}
       <CreateCVModal isOpen={isModalOpen} onOpenChange={openModal}>
         <Button
-          type="button"
-          disabled={disabledButton}
-          onClick={() => setIsModalOpen(true)}
-          className="
-            relative
-            shadow-glow
-            transition-all duration-300
-            hover:-translate-y-0.5
-            hover:shadow-xl
-            disabled:opacity-50 disabled:cursor-not-allowed
-          "
+        variant="accent"
+        disabled={disabledButton}
+        onClick={() => setIsModalOpen(true)}
+        className="dark:bg-levely-green dark:hover:bg-levely-green/90 flex items-center bg-levely-blue hover:bg-levely-blue/90 transition-colors"
         >
-          <Plus className="w-4 h-4 md:mr-2" />
-          <span className="hidden md:inline">Crear nuevo CV</span>
+        <Plus className="w-4 h-4 md:mr-2" />
+        <span className="hidden md:inline">Crear nuevo CV</span>
         </Button>
       </CreateCVModal>
+      </div>
     </div>
   )
 }

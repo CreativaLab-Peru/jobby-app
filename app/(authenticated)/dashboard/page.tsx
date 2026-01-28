@@ -1,19 +1,31 @@
-import {getStatisticsForUser} from "@/features/dashboard/actions/get-statistics-for-user";
+import AppSidebar from "@/components/app-sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { getStatisticsForUser } from "@/features/dashboard/actions/get-statistics-for-user";
 import DashboardScreen from "@/features/dashboard/screens/dashboard-screen";
+import { ReactNode } from "react";
 
-export default async function DashboardPage() {
+interface DashboardLayoutProps {
+  children: ReactNode;
+}
+
+export default async function DashboardPage( {children} : DashboardLayoutProps) {
   const stats = await getStatisticsForUser();
-
-  // Valores por defecto en caso de que no haya data aún
   const score = stats?.latestEvaluation?.overallScore || 0;
   const recommendations = stats?.latestEvaluation?.recommendations || [];
   const subscription = stats?.subscription;
   return (
-    <DashboardScreen
-      score={score}
-      stats={stats} // Pasamos el objeto completo para tener acceso a topOpportunities y totalCvs
-      recommendations={recommendations as any} // Casting temporal si los enums de Prisma dan guerra
-      subscription={subscription as any}
-    />
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background">
+        <AppSidebar />
+        <div className="flex-1 p-6 overflow-auto">
+          <DashboardScreen
+            score={score}
+            stats={stats}
+            recommendations={recommendations as any}
+            subscription={subscription as any}
+          />
+        </div>
+      </div>
+    </SidebarProvider>
   );
 }

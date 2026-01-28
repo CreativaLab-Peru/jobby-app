@@ -55,21 +55,21 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="es" className={poppins.variable} suppressHydrationWarning>
-      <body className="font-poppins">
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <Suspense fallback={null}>
-          <AnimatedBackgroundWrapper />
-        </Suspense>
-        <TooltipProvider>
-          <div className="relative z-10">{children}</div>
-        </TooltipProvider>
-        <Toaster />
-      </ThemeProvider>
+      <body className="font-poppins" suppressHydrationWarning>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
+          <Suspense fallback={null}>
+            <AnimatedBackgroundWrapper />
+          </Suspense>
+          <TooltipProvider>
+            <div >{children}</div>
+          </TooltipProvider>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   )

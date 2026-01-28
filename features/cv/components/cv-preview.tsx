@@ -215,8 +215,8 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
       {/* Empty state - Refactorizado con tus variables */}
       {!data.personal?.fullName && (
         <div className="flex flex-col items-center justify-center py-32 text-muted-foreground">
-          <div className="p-4 rounded-full bg-muted mb-4">
-            <Eye className="w-10 h-10 opacity-20" />
+          <div className="p-4 rounded-full bg-levely-blue/50 dark:bg-levely-green/50 mb-4">
+            <Eye className="w-10 h-10 opacity-20 text-levely-dark" />
           </div>
           <p className="text-sm font-medium">Completa tu información personal</p>
           <p className="text-xs opacity-60 italic">La vista previa aparecerá aquí</p>

@@ -7,7 +7,7 @@
     "dev": "next dev --turbopack",
     "dev-debug": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
-    "postinstall": "prisma generate",
+    "postinstall": "prisma migrate deploy",
     "start": "next start",
     "lint": "next lint"
   },

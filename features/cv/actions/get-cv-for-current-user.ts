@@ -30,7 +30,7 @@ export const getCvForCurrentUser = async () => {
       return;
     }
 
-    const [cvs, userPayments] = await Promise.all([
+    const [cvs] = await Promise.all([
       prisma.cv.findMany({
         where: {
           userId: user.id,
@@ -68,52 +68,22 @@ export const getCvForCurrentUser = async () => {
         orderBy: {
           createdAt: "desc",
         }
-      }),
-      prisma.userPayment.findMany({
-        where: {
-          userId: user.id,
-        },
-        include: {
-          plan: true,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
       })
     ]);
 
     const manuals = cvs.filter(cv => cv.createdByJobId === null);
     const uploads = cvs.filter(cv => cv.createdByJobId !== null);
 
-    const totalManualCvsUsed = userPayments.reduce(
-      (acc, item) => acc + (item.manualCvsUsed || 0),
-      0
-    );
-    const totalUploadCvUsed = userPayments.reduce(
-      (acc, item) => acc + (item.uploadCvsUsed || 0),
-      0
-    );
-
-    const totalAvailableManualCv = userPayments.reduce(
-      (acc, item) => acc + (item.plan.manualCvLimit || 0),
-      0
-    )
-    const totalAvailableUploadCv = userPayments.reduce(
-      (acc, item) => acc + (item.plan.uploadCvLimit || 0),
-      0
-    )
-
     const response: CvForCurrentUserResponse = {
       manuals: {
         cvs: [...manuals, ...uploads],
-        activeSubscription: totalManualCvsUsed === totalAvailableManualCv ? false : true,
+        activeSubscription: false,
       },
       uploads: {
         cvs: uploads,
-        activeSubscription: totalUploadCvUsed === totalAvailableUploadCv ? false : true,
+        activeSubscription: false,
       },
     };
-
 
     return response;
 

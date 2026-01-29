@@ -15,23 +15,25 @@ model TemporalUser {
   @@map("temporal_user")
 }
 
+// Usuarios registrados
 model User {
-  id                         String           @id @default(uuid())
+  id                         String              @id @default(uuid())
   name                       String
-  email                      String           @unique
+  email                      String              @unique
   emailVerified              Boolean
   image                      String?
-  updatedPassword            Boolean          @default(false)
-  isBlocked                  Boolean          @default(false)
+  updatedPassword            Boolean             @default(false)
+  isBlocked                  Boolean             @default(false)
   lastLoginAt                DateTime?
-  happensAfterPayment        Boolean          @default(false)
-  acceptedTermsAndConditions Boolean          @default(false)
+  happensAfterPayment        Boolean             @default(false)
+  acceptedTermsAndConditions Boolean             @default(false)
   acceptedTermsAt            DateTime?
-  acceptedPrivacyPolicy      Boolean          @default(false)
+  acceptedPrivacyPolicy      Boolean             @default(false)
   acceptedPrivacyPolicyAt    DateTime?
-  acceptedCookiePolicy       Boolean          @default(false)
-  acceptedSecurityPolicy     Boolean          @default(false)
+  acceptedCookiePolicy       Boolean             @default(false)
+  acceptedSecurityPolicy     Boolean             @default(false)
   acceptedSecurityPolicyAt   DateTime?
+  birthday                   DateTime?
   createdAt                  DateTime
   updatedAt                  DateTime
   accounts                   Account[]
@@ -40,13 +42,15 @@ model User {
   magicLinks                 MagicLinkToken[]
   sessions                   Session[]
   payments                   UserPayment[]
-  verificationCode VerificationCode[]
-  userPreference UserPreference[]
+  verificationCode           VerificationCode[]
+  userPreference             UserPreference[]
+  userCreditBalance          UserCreditBalance[]
+  Invoice                    Invoice[]
 
   @@map("user")
-
 }
 
+// Códigos de verificación para acciones como registro o recuperación de contraseña
 model VerificationCode {
   id        String   @id @default(uuid())
   code      String
@@ -58,10 +62,11 @@ model VerificationCode {
   @@map("verification_code")
 }
 
+// Preferencias del usuario para búsqueda de empleo
 model UserPreference {
-  id        String   @id @default(uuid())
-  userId           String   @unique
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   country String?
 
@@ -70,13 +75,13 @@ model UserPreference {
   preferredRoles   String[] // Ej: ["Senior Backend", "Tech Lead"] roles preferidos
 
   // Nivel y Modalidad
-  expLevel  String? // Ej: "JUNIOR", "MID_LEVEL", "SENIOR", "LEAD", "DIRECTOR", "EXECUTIVE"
-  workModality         String[] // Ej: ["REMOTE_ONLY", "HYBRID", "ONSITE_ONLY", "NO_PREFERENCE"]
+  expLevel     String? // Ej: "JUNIOR", "MID_LEVEL", "SENIOR", "LEAD", "DIRECTOR", "EXECUTIVE"
+  workModality String[] // Ej: ["REMOTE_ONLY", "HYBRID", "ONSITE_ONLY", "NO_PREFERENCE"]
   relocation   Boolean  @default(false)
   availability String[] // Ej: ["IMMEDIATE", "ONE_MONTH", "TWO_MONTHS", "LISTENING_OFFERS"]
 
   // Skills y Tecnologías
-  skills       Json[]
+  skills Json[]
 
   // Portfolio
   portfolioUrl String?
@@ -342,6 +347,82 @@ model MagicLinkToken {
   @@map("magic_link_token")
 }
 
+// Balance de créditos del usuario
+model UserCreditBalance {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  amount    Int      @default(0) // Usamos Int para evitar problemas de coma flotante
+  type      String // Ej: "FREE", "PURCHASED", "BONUS"
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  creditTransaction CreditTransaction[]
+
+  @@map("user_credit_balance")
+}
+
+// Registro de transacciones de créditos (recargas y consumos)
+model CreditTransaction {
+  id          String            @id @default(uuid())
+  balanceId   String
+  amount      Int // Positivo para recargas, negativo para consumos
+  type        TransactionType
+  description String?
+  metadata    Json? // Para guardar ID de pago de Stripe o ID de CV generado
+  createdAt   DateTime          @default(now())
+  balance     UserCreditBalance @relation(fields: [balanceId], references: [id])
+
+  @@index([balanceId])
+  @@map("credit_transaction")
+}
+
+// Créditos disponibles por plan o paquete
+model CreditPackage {
+  id                    String            @id @default(uuid())
+  code                  String
+  name                  String // Ej: "Pack Pro IA"
+  credits               Int // Cantidad de créditos que otorga
+  priceCents            Int // Siempre en centavos para evitar redondeos: 1000 = $10.00
+  currency              String            @default("USD")
+  active                Boolean           @default(true)
+  type                  CreditBalanceType // A qué tipo de saldo se aplica
+  createdAt             DateTime          @default(now())
+
+  invoice Invoice[]
+
+  @@map("credit_package")
+}
+
+// Facturas de pagos realizados por usuarios
+model Invoice {
+  id           String        @id @default(uuid())
+  userId       String
+  amountTotal  Int // Total pagado en centavos
+  currency     String
+  status       PaymentStatus @default(PENDING)
+  provider     String // "STRIPE", "PAYPAL"
+  providerTxId String?       @unique // ID externo de la pasarela
+
+  // Relaciones opcionales (un pago puede ser por un plan O por un paquete)
+  planId    String?
+  packageId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User           @relation(fields: [userId], references: [id])
+  package CreditPackage? @relation(fields: [packageId], references: [id])
+
+  @@map("invoice")
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
 model LogEntry {
   id        String    @id @default(uuid())
   userId    String?
@@ -362,6 +443,20 @@ model LogEntry {
   @@index([action])
   @@index([level])
   @@map("log_entry")
+}
+
+enum CreditBalanceType {
+  AI_ACTIONS // Créditos para acciones con IA
+  UPLOADS // Créditos para subir CVs
+  MANAGE_CVS // Créditos para gestionar CVs
+  SEARCH_OPPORTUNITIES // Créditos para buscar oportunidades
+}
+
+enum TransactionType {
+  RECHARGE // Compra de créditos
+  CONSUMPTION // Gasto por usar la IA
+  REFUND // Devolución por error en proceso
+  BONUS // Regalo por registro o promoción
 }
 
 /// ---------- Enums ----------

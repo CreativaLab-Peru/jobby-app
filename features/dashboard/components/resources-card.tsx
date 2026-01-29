@@ -40,7 +40,7 @@ export function ResourcesCard({ resources }: { resources: Resource[] }) {
       })}
       <div className="mt-6 pt-4 border-t border-border">
         <Link
-          href="/dashboard/creditos"
+          href="/credits"
           className="flex items-center justify-between text-sm text-levely-blue dark:text-levely-green hover:underline"
         >
           <span>Mejorar Plan</span>

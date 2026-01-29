@@ -1,22 +1,15 @@
 "use client";
 
-"use client";
-
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { ThemeToggle } from "@/components/button-toggle-theme";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { ProfileButton } from "@/components/profile-button";
-import { Coins, FileText, Zap, Briefcase, Sun, Moon, User, LogOut } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { CreditsOfPlan } from "@/features/billing/actions/get-available-tokens";
+import { ThemeToggle } from "@/components/button-toggle-theme";
+import { CreditLimits } from "@/features/credits/actions/get-current-credits-limits";
+import {CreditsIndicator} from "@/features/credits/components/credits-indicator";
+import {SidebarTrigger} from "@/components/ui/sidebar";
+import {Button} from "@/components/ui/button";
+import Link from "next/link";
+import {Briefcase, FileText, Zap} from "lucide-react";
 
 interface NavbarProps {
   user: {
@@ -25,13 +18,17 @@ interface NavbarProps {
     email: string;
     image?: string;
   } | null;
-  userLimit: CreditsOfPlan;
+  creditLimits: CreditLimits;
 }
 
-export function NavbarPrivate({ userLimit, user }: NavbarProps) {
-  const router = useRouter();
-  const displayName = user?.name || "Explorador";
-  const credits = userLimit.totalCredits - userLimit.usedCredits;
+export function NavbarPrivate({ creditLimits, user }: NavbarProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <header className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border md:pl-64">
@@ -40,8 +37,8 @@ export function NavbarPrivate({ userLimit, user }: NavbarProps) {
         <div className="flex items-center gap-4">
           <SidebarTrigger className="lg:hidden" />
           <div>
-            <h1 className="text-2xl font-bold">
-              Hola, <span className="text-levely-blue dark:text-levely-green">{displayName}</span>
+            <h1 className="text-xl font-bold">
+              Hola, <span className="text-levely-blue dark:text-levely-green">{user.name}</span>
             </h1>
             <p className="text-sm text-muted-foreground hidden md:block">
               Esto es lo que la IA de Levely tiene para ti.
@@ -76,62 +73,19 @@ export function NavbarPrivate({ userLimit, user }: NavbarProps) {
           </Button>
         </div>
 
-        {/* Right: Credits + Theme + Profile */}
+        {/* LADO DERECHO: Acciones */}
         <div className="flex items-center gap-3">
-          {/* Theme Toggle */}
+
+          {/* CRÉDITOS (KISS) */}
+          <CreditsIndicator limits={creditLimits} />
+
+          <div className="h-6 w-[1px] bg-border mx-1 hidden sm:block" />
+
           <ThemeToggle />
 
-          {/* Credits Badge */}
-          <Link
-            href="/settings" // O a la ruta de créditos si existe
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary border border-border hover:border-levely-green/50 transition-colors"
-          >
-            <Coins className="h-4 w-4 text-levely-blue dark:text-levely-green" />
-            <span className="text-sm font-medium">{credits}</span>
-            <span className="text-xs text-muted-foreground">Créditos</span>
-          </Link>
-
-          {/* User Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary hover:bg-secondary/80 transition-colors">
-                <User className="h-5 w-5" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <div className="px-3 py-2">
-                <p className="font-medium">{displayName}</p>
-                <p className="text-xs text-muted-foreground">{user?.email}</p>
-                {/* TODO: implement user plan display */}
-              </div>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/settings" className="cursor-pointer">
-                  Configuración
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/dashboard/creditos" className="cursor-pointer">
-                  Mejorar Plan
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={async () => {
-                  // Cerrar sesión
-                  if (typeof window !== "undefined") {
-                    const { authClient } = await import("@/lib/auth-client");
-                    await authClient.signOut();
-                    router.push("/login");
-                  }
-                }}
-                className="text-levely-blue dark:text-levely-green cursor-pointer"
-              >
-                <LogOut className="text-levely-blue dark:text-levely-green h-4 w-4 mr-2" />
-                Cerrar sesión
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <ProfileButton user={user} />
+          </motion.div>
         </div>
       </div>
     </header>

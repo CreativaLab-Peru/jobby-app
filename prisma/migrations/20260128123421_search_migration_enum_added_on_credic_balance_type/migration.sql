@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "CreditBalanceType" ADD VALUE 'SEARCH_OPPORTUNITIES';

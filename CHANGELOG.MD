@@ -1,8 +1,11 @@
 # WIP
-# 1.1.2 - 2026-01-28
 
-## Complete Visual Overhaul and Redesign
+## Features
+- Added credits package for users to purchase additional CV generations.
+- Introduced new subscription plans with varying levels of access and features.
 
+## Enhancements
+- Updated colors and logo for email sending
 - Implemented a new color palette based on tokens:
     - --color-levely-blue: rgb(86 135 255)
     - --color-levely-offwhite: rgb(245 245 240)
@@ -19,9 +22,6 @@
 - Removed generic colors and styles, centralizing visual management with the new color tokens.
 - Changed the browser window .ico to a more rounded version.
 - Some components may still need updating; please use the new color palette for any further changes.
-
-## Enhancements
-- Updated colors and logo for email sending
 
 # 1.1.1 - 2025-01-22
 

@@ -3,6 +3,7 @@
 ## Features
 - Added credits package for users to purchase additional CV generations.
 - Introduced new subscription plans with varying levels of access and features.
+- Payment with Mercado Pago integrated.
 
 ## Enhancements
 - Updated colors and logo for email sending

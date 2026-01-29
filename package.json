@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "dev-debug": "NODE_OPTIONS='--inspect' next dev",
-    "build": "prisma generate && prisma deploy && next build",
+    "build": "prisma generate && prisma migrate deploy && next build",
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "next lint"

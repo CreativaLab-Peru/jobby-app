@@ -1,3 +1,8 @@
+# WIP
+
+# BEFORE DEPLOYMENT
+- Add credits package (script)
+- Add and edit subscription plans (script)
 
 # 1.1.2
 

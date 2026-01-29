@@ -38,7 +38,7 @@ const mainNavItems = [
 const communityItems = [{ title: "Networking", href: "/networking", icon: Users }];
 
 const bottomItems = [
-  { title: "Créditos", href: "/settings", icon: CreditCard },
+  { title: "Créditos", href: "/credits", icon: CreditCard },
   { title: "Configuración", href: "/settings", icon: Settings },
 ];
 

@@ -3,37 +3,23 @@ import {
   PopoverContent,
   PopoverTrigger
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Zap, Sparkles, FileText, Plus, Loader2 } from "lucide-react";
-import { CreditLimits } from "@/features/credits/actions/get-current-credits-limits";
-import { useTransition } from "react";
-import {
-  createPreferenceForAuthenticatedUser
-} from "@/features/billing/actions/create-preference-for-authenticated-user";
+import {Button} from "@/components/ui/button";
+import {Zap, Sparkles, FileText, Plus, Loader2} from "lucide-react";
+import {CreditLimits} from "@/features/credits/actions/get-current-credits-limits";
+import {useRouter} from "next/navigation";
 
 interface CreditsIndicatorProps {
   limits: CreditLimits;
 }
 
-export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
+export function CreditsIndicator({limits}: CreditsIndicatorProps) {
   const totalAvailable = limits.manageCvsLimit + limits.aiActionsLimit;
   const isEmpty = totalAvailable === 0;
 
-  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const handleRechargeCredits = () => {
-    // No es necesario el check manual de isPending aquí si el botón ya se desactiva
-    startTransition(async () => {
-      try {
-        const response = await createPreferenceForAuthenticatedUser();
-        const url = response.redirect;
-        if (url) {
-          window.location.href = url;
-        }
-      } catch (error) {
-        console.error("Error creating preference:", error);
-      }
-    });
+    router.push("/credits");
   }
 
   return (
@@ -42,7 +28,7 @@ export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
         <div
           className="flex cursor-pointer items-center gap-2 rounded-full border bg-background px-3 py-1.5 transition-colors hover:bg-accent">
           <Zap
-            className={`h-4 w-4 ${isEmpty ? "text-muted-foreground" : "text-yellow-500 fill-yellow-500"}`} />
+            className={`h-4 w-4 ${isEmpty ? "text-muted-foreground" : "text-yellow-500 fill-yellow-500"}`}/>
           <span className="text-sm font-bold">{totalAvailable}</span>
         </div>
       </PopoverTrigger>
@@ -54,7 +40,7 @@ export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
           <div className="grid gap-3">
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2 text-muted-foreground">
-                <FileText className="h-4 w-4" />
+                <FileText className="h-4 w-4"/>
                 <span>Creación de CVs</span>
               </div>
               <span className="font-mono font-bold">{limits.manageCvsLimit}</span>
@@ -62,7 +48,7 @@ export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
 
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2 text-muted-foreground">
-                <Sparkles className="h-4 w-4" />
+                <Sparkles className="h-4 w-4"/>
                 <span>Acciones IA</span>
               </div>
               <span className="font-mono font-bold">{limits.aiActionsLimit}</span>
@@ -70,14 +56,14 @@ export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
 
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2 text-muted-foreground">
-                <Zap className="h-4 w-4" />
+                <Zap className="h-4 w-4"/>
                 <span>Match de oportunidades</span>
               </div>
               <span className="font-mono font-bold">{limits.opportunitiesActionsLimit}</span>
             </div>
           </div>
 
-          <hr />
+          <hr/>
 
           {isEmpty ? (
             <div className="space-y-3">
@@ -86,16 +72,12 @@ export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
               </p>
               <Button
                 size="sm"
-                className="w-full ai-gradient cursor-pointer"
+                className="w-full cursor-pointer"
+                variant={'accent'}
                 onClick={handleRechargeCredits}
-                disabled={isPending}
               >
-                {isPending ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Plus className="mr-2 h-4 w-4" />
-                )}
-                {isPending ? "Procesando..." : "Comprar Créditos"}
+                <Plus className="mr-2 h-4 w-4"/>
+                Comprar Créditos
               </Button>
             </div>
           ) : (
@@ -104,10 +86,8 @@ export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
               size="sm"
               className="w-full cursor-pointer"
               onClick={handleRechargeCredits}
-              disabled={isPending}
             >
-              {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isPending ? "Cargando..." : "Recargar créditos"}
+              Recargar créditos
             </Button>
           )}
         </div>

@@ -376,41 +376,24 @@ model CreditTransaction {
   @@map("credit_transaction")
 }
 
-// Créditos disponibles para compra
+// Créditos disponibles por plan o paquete
 model CreditPackage {
-  id         String            @id @default(uuid())
-  name       String // Ej: "Pack Pro IA"
-  credits    Int // Cantidad de créditos que otorga
-  priceCents Int // Siempre en centavos para evitar redondeos: 1000 = $10.00
-  currency   String            @default("USD")
-  active     Boolean           @default(true)
-  type       CreditBalanceType // A qué tipo de saldo se aplica
-  createdAt  DateTime          @default(now())
+  id                    String            @id @default(uuid())
+  code                  String
+  name                  String // Ej: "Pack Pro IA"
+  credits               Int // Cantidad de créditos que otorga
+  priceCents            Int // Siempre en centavos para evitar redondeos: 1000 = $10.00
+  currency              String            @default("USD")
+  active                Boolean           @default(true)
+  type                  CreditBalanceType // A qué tipo de saldo se aplica
+  createdAt             DateTime          @default(now())
 
-  invoice           Invoice[]
-  planCreditPackage PlanCreditPackage[]
+  invoice Invoice[]
 
   @@map("credit_package")
 }
 
-// Planes que incluyen paquetes de créditos
-model PlanCreditPackage {
-  id             String            @id @default(uuid())
-  title          String
-  description    String?
-  creditId       String
-  credits        Int // Cantidad de créditos que otorga el plan
-  price          Int // Precio en centavos para evitar redondeos
-  currency       String            @default("USD")
-  type           CreditBalanceType // A qué tipo de saldo se aplica
-  credictPackage CreditPackage     @relation(fields: [creditId], references: [id])
-  createdAt      DateTime          @default(now())
-
-  @@index([creditId])
-  @@map("plan_credit_package")
-}
-
-//
+// Facturas de pagos realizados por usuarios
 model Invoice {
   id           String        @id @default(uuid())
   userId       String

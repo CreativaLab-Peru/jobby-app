@@ -2,8 +2,8 @@ import {NavbarWrapper} from "@/components/navbar-wrapper";
 import {redirect} from "next/navigation";
 import {getUser} from "@/features/authentication/actions/get-user";
 import {getCurrentCreditLimits} from "@/features/credits/actions/get-current-credits-limits";
-import {CustomSidebar} from "@/components/sidebar/custom-sidebar";
-import {MainContentWrapper} from "@/components/sidebar/main-content-wrapper";
+import {SidebarProvider} from "@/components/ui/sidebar";
+import AppSidebar from "@/components/app-sidebar";
 
 export const dynamic = "force-dynamic";
 
@@ -18,17 +18,21 @@ export default async function RootLayout({
   const creditsLimits = await getCurrentCreditLimits();
 
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar Fijo */}
-      <CustomSidebar />
+  <SidebarProvider>
+    {/* Sidebar lateral */}
+    <AppSidebar/>
 
-      {/* Contenido que se desplaza */}
-      <MainContentWrapper>
-        <NavbarWrapper creditLimits={creditsLimits} user={user} />
-        <main className="flex-1 p-4 md:p-6">
+    {/* Contenido Principal */}
+    <main className="flex flex-1 flex-col">
+      {/* Header/Navbar */}
+      <NavbarWrapper creditLimits={creditsLimits} user={user}/>
+      <div className="md:pl-64">
+        <div className="mx-auto w-full max-w-8xl pl-0">
           {children}
-        </main>
-      </MainContentWrapper>
-    </div>
+        </div>
+      </div>
+    </main>
+    {/*<TermsModal isOpen={!isTermsAccepted} userId={user?.id}/>*/}
+  </SidebarProvider>
   );
 }

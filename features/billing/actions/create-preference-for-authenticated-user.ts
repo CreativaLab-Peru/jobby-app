@@ -7,8 +7,15 @@ import { PreferenceCreateData } from "mercadopago/dist/clients/preference/create
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import {BASE_URL, mercadopago} from "@/features/billing/domain/mercado-preference";
 
+
+
 export const createPreferenceForAuthenticatedUser = async (slug: string) => {
   try {
+    console.log("BASE_URL:", BASE_URL);
+    if (!BASE_URL) {
+      throw new Error("Critical: BASE_URL is not defined in environment variables");
+    }
+
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return {
@@ -54,11 +61,25 @@ export const createPreferenceForAuthenticatedUser = async (slug: string) => {
           type: paymentPlan.paymentType,
         },
         external_reference: paymentPlan.id,
-        redirect_urls: {
+        // redirect_urls: {
+        //   success: `${BASE_URL}/cv?payment=success`,
+        //   failure: `${BASE_URL}/cv?payment=failure`,
+        //   pending: `${BASE_URL}/cv?payment=pending`,
+        // },
+        back_urls: {
           success: `${BASE_URL}/cv?payment=success`,
           failure: `${BASE_URL}/cv?payment=failure`,
           pending: `${BASE_URL}/cv?payment=pending`,
         },
+        auto_return: "approved", // Redirección automática
+
+        // Evita que el usuario pueda pagar con métodos que no quieres (opcional)
+        payment_methods: {
+          excluded_payment_types: [
+            { id: "ticket" } // Excluye pagos en efectivo si quieres inmediatez
+          ],
+          installments: 1 // Limita a 1 cuota si no quieres manejar intereses
+        }
         // back_urls: {
         //   success: `${BASE_URL}/cv?payment=back-success`,
         //   failure: `${BASE_URL}/cv?payment=back-failure`,

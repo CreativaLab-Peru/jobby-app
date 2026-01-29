@@ -4,7 +4,7 @@ import {
   PopoverTrigger
 } from "@/components/ui/popover";
 import {Button} from "@/components/ui/button";
-import {Zap, Sparkles, FileText, Plus, Loader2} from "lucide-react";
+import {Zap, Sparkles, FileText, Plus} from "lucide-react";
 import {CreditLimits} from "@/features/credits/actions/get-current-credits-limits";
 import {useRouter} from "next/navigation";
 

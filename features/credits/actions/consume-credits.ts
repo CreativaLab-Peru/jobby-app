@@ -1,6 +1,15 @@
 import {prisma} from "@/lib/prisma";
+import {CreditBalanceType} from "@prisma/client";
 
-export const consumeCredits = async (userId: string, amount: number, description: string) => {
+export type ConsumeCreditsParams = {
+  userId: string;
+  type: CreditBalanceType
+  amount: number;
+  description: string;
+};
+
+export const consumeCredits = async (body: ConsumeCreditsParams) => {
+  const {userId, amount, description, type} = body;
   return prisma.$transaction(async (tx) => {
     // 1. Buscar y bloquear el balance para evitar condiciones de carrera (Race Conditions)
     const balance = await tx.userCreditBalance.findUnique({
@@ -13,7 +22,7 @@ export const consumeCredits = async (userId: string, amount: number, description
 
     // 2. Restar créditos
     const updatedBalance = await tx.userCreditBalance.update({
-      where: {userId},
+      where: {userId, type},
       data: {amount: {decrement: amount}},
     });
 

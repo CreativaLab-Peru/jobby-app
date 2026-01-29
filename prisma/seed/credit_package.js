@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 const credit_package = [
   {
     "id": "c3fe5b00-0b6b-45fb-9b50-8f2defed9d25",
-    "name": "STARTED OPPORTUNITY",
+    "name": "STARTER OPPORTUNITY",
     "code": "STARTER",
     "credits": 1,
     "priceCents": 0,
@@ -38,7 +38,7 @@ const credit_package = [
   },
   {
     "id": "dbacad71-de6e-4500-bba2-424bcda5c444",
-    "name": "STARTED MANAGE CVS",
+    "name": "STARTER MANAGE CVS",
     "code": "STARTER",
     "credits": 3,
     "priceCents": 0,
@@ -60,7 +60,7 @@ const credit_package = [
   },
   {
     "id": "64d40213-d0e0-44c6-8bd9-951b3a507048",
-    "name": "STARTED AI ACTIONS",
+    "name": "STARTER AI ACTIONS",
     "code": "STARTER",
     "credits": 1,
     "priceCents": 0,

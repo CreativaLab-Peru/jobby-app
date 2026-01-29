@@ -25,7 +25,7 @@ import {authClient} from "@/lib/auth-client";
 import {useDebug} from "@/hooks/use-debug";
 import {
   completeOnboardingDebugAction
-} from "@/features/onboarding/actions/onboarding.-debug-action";
+} from "@/features/onboarding/actions/onboarding-debug-action";
 
 const TOTAL_STEPS = 9;
 

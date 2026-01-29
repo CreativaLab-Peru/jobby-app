@@ -185,7 +185,7 @@ async function processPaymentJob(jobId: string, paymentId: string) {
       })
     }
 
-    await rechargeCreditsByPlan(paymentId, userId);
+    await rechargeCreditsByPlan(paymentPlanId, userId);
 
     // 7. Marcar job como completado
     await prisma.queueJob.update({

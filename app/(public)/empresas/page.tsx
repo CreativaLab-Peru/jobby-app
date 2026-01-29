@@ -1,247 +1,211 @@
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import {Users, Target, TrendingUp, Award, CheckCircle2, Zap, Sparkles} from "lucide-react";
+import { 
+  Building, 
+  ArrowRight,
+  CheckCircle2,
+  Clock,
+  Shield,
+  TrendingUp,
+  Users,
+  Zap,
+  Target
+} from "lucide-react";
 
-export const dynamic = 'force-dynamic'
+const benefits = [
+  {
+    icon: Clock,
+    title: "Reduce tiempo de contratación",
+    description: "Accede a candidatos pre-validados con perfiles optimizados que se ajustan a tus necesidades.",
+  },
+  {
+    icon: Shield,
+    title: "Candidatos verificados",
+    description: "Cada perfil ha sido analizado por IA para garantizar la calidad de la información.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Mejores matches",
+    description: "Nuestro algoritmo conecta tu oferta con los candidatos más relevantes.",
+  },
+  {
+    icon: Zap,
+    title: "Proceso ágil",
+    description: "Simplifica tu pipeline de reclutamiento con herramientas inteligentes.",
+  },
+];
 
-const Empresas = () => {
+const features = [
+  "Acceso a base de talento verificado",
+  "Filtros avanzados por habilidades",
+  "Perfiles optimizados y completos",
+  "Métricas de compatibilidad",
+  "Comunicación directa con candidatos",
+  "Dashboard de seguimiento",
+];
+
+export default function Empresas() {
   return (
-    <div className="min-h-screen">
+    <>
+      {/* Hero */}
+      <section className="py-16 px-6 md:py-20 md:px-12 section-padding dark:bg-gray-800/95">
+        <div className="container mx-auto">
+          <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-lime-800/10 dark:bg-lime-800/20 text-red-500 text-sm font-medium mb-6">
+                <Building className="w-4 h-4" />
+                Para empresas
+              </div>
+              
+              <h1 className="dark:text-white text-4xl md:text-5xl lg:text-7xl font-bold mb-6">
+                Encuentra el{" "}
+                <span className="text-gradient">talento ideal</span>{" "}
+                más rápido
+              </h1>
+              
+              <p className="text-base md:text-lg text-muted-foreground mb-8">
+                Accede a una base de candidatos con perfiles optimizados y validados por IA. 
+                Reduce costos y tiempo en tu proceso de contratación.
+              </p>
 
-      {/* Hero Section */}
-      <section 
-        className="
-          min-h-screen 
-          flex items-center 
-          pt-32 pb-20 px-4 
-          sm:px-6 lg:px-8
-          bg-cover bg-center bg-no-repeat
-          bg-[url('/hero/hero_white.png')]
-          dark:bg-[url('/hero/hero_black.png')]
-        ">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center space-y-8">
-            <div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
-              <Sparkles className="h-4 w-4 text-primary"/>
-              <span className="text-sm font-medium text-primary">
-                Para Empresas
-              </span>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button >
+                  Publicar vacante
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+                <Button className="dark:text-white text-black bg-transparent border dark:border-gray-500 hover:bg-gray-500/50" size="lg">
+                  Hablar con ventas
+                </Button>
+              </div>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight">
-              Encuentra el{" "}
-              <span className="text-gradient">talento creativo</span>
-              {" "}que necesitas
-            </h1>
-
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-              Accede a una base de datos de jóvenes profesionales creativos con
-              CVs optimizados por IA. Conecta con el talento del futuro.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="https://calendly.com/mariluzdara/asesoria" target="_blank" rel="noopener noreferrer">
-                <Button size="xl" className="shadow-glow">
-                  Solicitar demo
-                </Button>
-              </a>
-              <a href="#planes">
-                <Button variant="outline" size="xl">
-                  Conocer planes
-                </Button>
-              </a>
+            {/* Stats */}
+            <div className="grid grid-cols-2 gap-4 sm:gap-6">
+              <div className="bg-card border border-lime-900/10 hover:shadow-lg hover:shadow-lime-800/50 rounded-2xl p-4 sm:p-6 text-center transition-shadow duration-300">
+                <p className="text-2xl sm:text-4xl font-extrabold text-accent mb-2">-40%</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Tiempo de contratación</p>
+                </div>
+              <div className="bg-card border border-lime-900/10 hover:shadow-lg hover:shadow-lime-800/50 rounded-2xl p-4 sm:p-6 text-center transition-shadow duration-300">
+                <p className="text-2xl sm:text-4xl font-extrabold text-accent mb-2">+2K</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Candidatos activos</p>
+              </div>
+              <div className="bg-card border border-lime-900/10 hover:shadow-lg hover:shadow-lime-800/50 rounded-2xl p-4 sm:p-6 text-center transition-shadow duration-300">
+                <p className="text-2xl sm:text-4xl font-extrabold text-accent mb-2">95%</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Satisfacción</p>
+              </div>
+              <div className="bg-card border border-lime-900/10 hover:shadow-lg hover:shadow-lime-800/50 rounded-2xl p-4 sm:p-6 text-center transition-shadow duration-300">
+                <p className="text-2xl sm:text-4xl font-extrabold text-accent mb-2">24h</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Primeros matches</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Beneficios */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-card/30">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-5xl font-bold mb-4">
-              Beneficios para tu <span className="text-gradient">empresa</span>
-            </h2>
+      {/* Benefits */}
+      <section className="py-20 section-padding">
+        <div className="container mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-12 md:mb-16">
+            <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold">¿Por qué Levely para empresas?</h2>
+            <p className="mt-4 text-sm md:text-lg text-muted-foreground">
+              Optimiza tu proceso de reclutamiento con tecnología
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="p-8 bg-card shadow-card hover:shadow-glow transition-all">
-              <Users className="h-12 w-12 text-primary mb-6" />
-              <h3 className="text-xl font-bold mb-3">Base de talentos</h3>
-              <p className="text-muted-foreground">
-                Accede a miles de perfiles de jóvenes profesionales en diseño,
-                marketing, desarrollo y más áreas creativas.
-              </p>
-            </Card>
-
-            <Card className="p-8 bg-card shadow-card hover:shadow-glow transition-all">
-              <Target className="h-12 w-12 text-secondary mb-6" />
-              <h3 className="text-xl font-bold mb-3">CVs optimizados con IA</h3>
-              <p className="text-muted-foreground">
-                Todos los CVs están optimizados y compatibles con ATS, facilitando
-                tu proceso de selección.
-              </p>
-            </Card>
-
-            <Card className="p-8 bg-card shadow-card hover:shadow-glow transition-all">
-              <TrendingUp className="h-12 w-12 text-accent mb-6" />
-              <h3 className="text-xl font-bold mb-3">Patrocinio de CVs</h3>
-              <p className="text-muted-foreground">
-                Patrocina CVs de candidatos que coincidan con tu perfil ideal y
-                destaca tus oportunidades.
-              </p>
-            </Card>
+          <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {benefits.map((benefit) => (
+              <div
+                key={benefit.title}
+                className="flex gap-4 p-4 sm:p-6 rounded-2xl border dark:border-gray-600 bg-card hover:border-lime-900/30 dark:hover:border-lime-600/80 transition-all duration-300"
+              >
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
+                  <benefit.icon className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-semibold mb-1">{benefit.title}</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">{benefit.description}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Paquetes */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 id="planes" className="text-3xl sm:text-5xl font-bold mb-4 scroll-mt-32">
-              Nuestros <span className="text-gradient">planes</span>
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Soluciones diseñadas para empresas de todos los tamaños
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start max-w-4xl mx-auto">
-            {/* Starter
-            <Card className="p-8 bg-card shadow-card">
-              <div className="mb-6">
-                <h3 className="text-2xl font-bold mb-2">Starter</h3>
-                <div className="text-4xl font-bold text-primary mb-2">$99</div>
-                <p className="text-muted-foreground">por mes</p>
+      {/* Features */}
+      <section className="py-20 px-80 section-padding bg-secondary/30">
+        <div className="container mx-auto">
+          <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
+            <div>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6">
+                Todo lo que necesitas para reclutar mejor
+              </h2>
+              <p className="text-sm md:text-lg text-muted-foreground mb-8">
+                Herramientas diseñadas para simplificar cada etapa del proceso de contratación.
+              </p>
+              
+              <div className="grid sm:grid-cols-2 gap-4">
+                {features.map((feature) => (
+                  <div key={feature} className="flex items-start gap-3">
+                    <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-accent mt-0.5 flex-shrink-0" />
+                    <span className="text-sm">{feature}</span>
+                  </div>
+                ))}
               </div>
+            </div>
 
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  <span className="text-sm">Hasta 10 búsquedas/mes</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  <span className="text-sm">Acceso básico a base de datos</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  <span className="text-sm">Soporte por email</span>
-                </li>
-              </ul>
-
-              <Button variant="outline" className="w-full">
-                Comenzar
-              </Button>
-            </Card> */}
-
-            {/* Enterprise */}
-            <Card className="p-10 bg-card shadow-card relative max-w-md mx-auto">
-              <div className="mb-6">
-                <h3 className="text-2xl font-bold mb-2">Enterprise</h3>
-                {/* <div className="text-4xl font-bold text-primary mb-2">Custom</div> */}
-                <p className="text-muted-foreground">contactar ventas</p>
+            <div className="bg-card rounded-2xl p-6 sm:p-8">
+              <div className="flex items-center gap-4 pb-4 border-b border-lime-900/30 dark:border-lime-600/80 mb-6">
+                <div className="border-lime-900/30 dark:border-lime-600/80 w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-accent/20 flex items-center justify-center">
+                  <Target className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
+                </div>
+                <div>
+                  <p className="font-semibold">Match Score</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Compatibilidad candidato-puesto</p>
+                </div>
               </div>
-
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  <span className="text-sm">Todo del plan Professional</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  <span className="text-sm">Patrocinio ilimitado</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  <span className="text-sm">API personalizada</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  <span className="text-sm">Account manager dedicado</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  <span className="text-sm">Integración con tu ATS</span>
-                </li>
-              </ul>
-
-              <a href="https://calendly.com/mariluzdara/asesoria" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" className="w-full">
-                  Contactar
-                </Button>
-              </a>
-            </Card>
-
-            {/* Professional */}
-            <Card className="p-8 bg-linear-to-br from-secondary/20 to-primary/20 shadow-glow border-2 border-primary/50 relative max-w-md mx-auto">
-              <div className="absolute top-4 right-4">
-                <span className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-xs font-bold">
-                  POPULAR
-                </span>
+              
+              <div className="space-y-4">
+                {["Desarrollo Frontend", "Marketing Digital", "Data Science"].map((role, i) => (
+                  <div key={role} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50">
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-accent/20 flex items-center justify-center">
+                        <Users className="w-3 h-3 sm:w-4 sm:h-4 text-accent" />
+                      </div>
+                      <span className="text-sm sm:text-base font-medium">{role}</span>
+                    </div>
+                    <span className="text-xs sm:text-sm font-bold text-accent">
+                      {[12, 8, 15][i]} matches
+                    </span>
+                  </div>
+                ))}
               </div>
-
-              <div className="mb-6">
-                <h3 className="text-2xl font-bold mb-2">Professional</h3>
-                {/* <div className="text-4xl font-bold text-primary mb-2">$299</div> */}
-                <p className="text-muted-foreground">por mes</p>
-              </div>
-
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  <span className="text-sm">Búsquedas ilimitadas</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  <span className="text-sm">Acceso completo a base de datos</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  <span className="text-sm">Patrocinio de 5 CVs/mes</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  <span className="text-sm">Analíticas avanzadas</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  <span className="text-sm">Soporte prioritario</span>
-                </li>
-              </ul>
-
-              <a href="https://calendly.com/mariluzdara/asesoria" target="_blank" rel="noopener noreferrer">
-                <Button className="w-full shadow-glow">
-                  Comenzar
-                  <Zap className="ml-2 h-4 w-4" />
-                </Button>
-              </a>
-            </Card>
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-card/30">
-        <div className="container mx-auto max-w-4xl text-center">
-          <Award className="h-16 w-16 text-primary mx-auto mb-6" />
-          <h2 className="text-3xl sm:text-5xl font-bold mb-6">
-            ¿Listo para <span className="text-gradient">empezar</span>?
-          </h2>
-          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Únete a las empresas que ya están descubriendo talento creativo con Levely
-          </p>
-          <a href="https://calendly.com/mariluzdara/asesoria" target="_blank" rel="noopener noreferrer">
-            <Button size="xl" className="shadow-glow">
-              Solicitar demo ahora
-            </Button>
-          </a>
+      <section className="py-20 section-padding">
+        <div className="container mx-auto">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6">
+              Comienza a reclutar de forma inteligente
+            </h2>
+            <p className="text-sm md:text-lg text-muted-foreground mb-8">
+              Agenda una demo con nuestro equipo y descubre cómo Levely 
+              puede transformar tu proceso de contratación.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button>
+                Agendar demo
+                <ArrowRight className="w-5 h-5" />
+              </Button>
+                <Button className="bg-transparent text-black dark:text-white border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700" size="lg">
+                Ver planes empresariales
+                </Button>
+            </div>
+          </div>
         </div>
       </section>
-    </div>
+    </>
   );
-};
-
-export default Empresas;
+}

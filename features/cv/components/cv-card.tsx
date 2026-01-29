@@ -94,12 +94,12 @@ export function CVCard({ cv }: CVCardProps) {
     <Card className="group bg-card border shadow-sm hover:shadow-md transition-all duration-300">
       <CardHeader className="relative space-y-3">
         <div className="flex items-start justify-between">
-          <FileText className="w-8 h-8 text-primary transition-transform group-hover:scale-110" />
+          <FileText className="w-8 h-8 text-levely-blue dark:text-levely-green transition-transform group-hover:scale-110" />
 
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 dark:hover:bg-gray-500/50 transition-colors"
             onClick={() => setShowDeleteDialog(true)}
           >
             <Trash2 className="w-4 h-4" />
@@ -116,7 +116,7 @@ export function CVCard({ cv }: CVCardProps) {
 
         <CardDescription className="text-sm text-muted-foreground space-y-1">
           <div>
-            <span className="font-medium text-foreground">
+            <span className="font-medium text-levely-blue dark:text-levely-green">
               Tipo de oportunidad:
             </span>{" "}
             {cv?.cvType === "TECHNOLOGY_ENGINEERING" &&
@@ -136,7 +136,7 @@ export function CVCard({ cv }: CVCardProps) {
           </div>
 
           <div>
-            <span className="font-medium text-foreground">Estado:</span>{" "}
+            <span className="font-medium text-levely-blue dark:text-levely-green">Estado:</span>{" "}
             {cv?.opportunityType === "INTERNSHIP" && "Prácticas"}
             {cv?.opportunityType === "SCHOLARSHIP" && "Beca"}
             {cv?.opportunityType === "EXCHANGE_PROGRAM" &&
@@ -159,9 +159,9 @@ export function CVCard({ cv }: CVCardProps) {
 
         <div className="flex gap-2">
           <Button
-            variant="outline"
+            variant="accent"
             size="sm"
-            className="flex-1"
+            className="flex-1 !bg-levely-blue/80 !hover:bg-levely-blue/90 dark:!bg-levely-green/80 dark:!hover:bg-levely-green/90 flex items-center justify-center"
             onClick={handleSeeDetail}
           >
             <Eye className="w-4 h-4 mr-1" />
@@ -169,9 +169,9 @@ export function CVCard({ cv }: CVCardProps) {
           </Button>
 
           <Button
-            variant="outline"
+            variant="accent"
             size="sm"
-            className="flex-1"
+            className="text-levely-dark flex-1 !bg-levely-blue/20 !hover:bg-levely-blue/90 dark:!bg-levely-green/50 dark:!hover:bg-levely-green/90 flex items-center justify-center"
             onClick={handleEdit}
           >
             <Edit className="w-4 h-4 mr-1" />

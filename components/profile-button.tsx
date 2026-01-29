@@ -60,12 +60,12 @@ export function ProfileButton({ user }: ProfileButtonProps) {
 
       <PopoverContent
         align="end"
-        className="w-48 rounded-lg border bg-popover p-2 text-popover-foreground shadow-md"
+        className="w-48 rounded-lg border bg-popover p-2 text-popover-foreground shadow-md dark:bg-[#23272f] dark:border-gray-700 dark:text-gray-100"
       >
         <div className="flex flex-col gap-1">
 
           {/* USER INFO */}
-          <div className="flex items-center gap-2 px-2 py-2 border-b">
+          <div className="flex items-center gap-2 px-2 py-2 border-b dark:border-gray-700">
             <Avatar className="h-8 w-8">
               <AvatarImage
                 src={user?.image || "/images/user-avatar.png"}
@@ -81,14 +81,14 @@ export function ProfileButton({ user }: ProfileButtonProps) {
           </div>
 
           {/* ACTIONS */}
-          <MenuButton onClick={() => router.push("/cv")}>
-            <Home className="h-4 w-4 text-muted-foreground" />
-            Inicio
+          <MenuButton onClick={() => router.push("/")}> 
+            <Home className="h-4 w-4 dark:text-gray-400" />
+            <span className="text-black dark:text-gray-400">Inicio</span>
           </MenuButton>
 
-          <MenuButton onClick={() => router.push("/settings")}>
-            <Settings className="h-4 w-4 text-muted-foreground" />
-            Configuración
+          <MenuButton onClick={() => router.push("/settings")}> 
+            <Settings className="h-4 w-4 dark:text-gray-400" />
+            <span className="text-black dark:text-gray-400">Configuración</span>
           </MenuButton>
 
           <MenuButton
@@ -111,9 +111,9 @@ export function ProfileButton({ user }: ProfileButtonProps) {
 
           <Separator className="my-2" />
 
-          <MenuButton onClick={() => router.push("/complaints")}>
-            <BookA className="h-4 w-4 text-muted-foreground" />
-            Reclamaciones
+          <MenuButton onClick={() => router.push("/complaints")}> 
+            <BookA className="h-4 w-4 dark:text-gray-400" />
+            <span className="text-black dark:text-gray-400">Reclamaciones</span>
           </MenuButton>
 
           <Separator className="my-2" />
@@ -133,16 +133,17 @@ export function ProfileButton({ user }: ProfileButtonProps) {
 /* -------------------------------------------------------------------------- */
 
 function MenuButton({
-                      children,
-                      className,
-                      ...props
-                    }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  children,
+  className = "",
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       {...props}
       className={cn(
         "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors",
         "text-foreground hover:bg-accent hover:text-accent-foreground",
+        "dark:hover:bg-blue-900/60 dark:hover:text-blue-200 dark:text-gray-100",
         "disabled:opacity-50 disabled:pointer-events-none",
         className
       )}

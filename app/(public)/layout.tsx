@@ -1,17 +1,13 @@
 import Footer from "@/components/footer";
-import NavbarPublic from "@/components/navbar-public";
-import { getSession } from "@/features/authentication/actions/get-session";;
+import Header from "@/components/header";
+import { getSession } from "@/features/authentication/actions/get-session";
 
-export default async function PublicLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
   return (
-    <div className="flex min-h-screen flex-col">
-      <NavbarPublic authenticated={session?.success} />
-      <main className="flex-1">{children}</main>
+    <div className="min-h-screen flex flex-col">
+      <Header authenticated={session?.success} />
+      <main className="flex-1 pt-16 lg:pt-20">{children}</main>
       <Footer />
     </div>
   );

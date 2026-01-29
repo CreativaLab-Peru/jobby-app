@@ -124,7 +124,7 @@ export function CVSectionForm({ section, data, onChange }: CVSectionFormProps) {
           variant="outline"
           onClick={addItem}
           // REFACTOR: Estilo tipo "Empty state" usando tus variables de marca
-          className="w-full py-8 border-2 border-dashed border-border hover:border-primary hover:bg-primary/5 text-muted-foreground hover:text-primary transition-all rounded-xl group"
+          className="w-full py-8 border-2 border-dashed border-border hover:border-levely-blue hover:bg-levely-blue/5 text-muted-foreground hover:text-levely-blue dark:hover:border-levely-green dark:hover:bg-levely-green/20 transition-all rounded-xl group"
         >
           <div className="flex flex-col items-center gap-2">
             <Plus className="w-6 h-6 transition-transform group-hover:scale-110" />

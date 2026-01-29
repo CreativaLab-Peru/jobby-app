@@ -38,7 +38,7 @@ export function TermsModal({ isOpen, userId }: TermsModalProps) {
     <Dialog open={isOpen}>
       <DialogContent className="max-w-xl bg-background/95 backdrop-blur-sm border-border shadow-xl">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-foreground">
+          <DialogTitle className="text-black dark:text-white text-xl font-semibold">
             Aceptar Términos
           </DialogTitle>
         </DialogHeader>

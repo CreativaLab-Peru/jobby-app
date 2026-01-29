@@ -35,8 +35,8 @@ export function TagsInput({ value, onChange, placeholder }: TagsInputProps) {
           placeholder={placeholder}
           onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
         />
-        <Button type="button" onClick={addTag} size="sm">
-          <Plus className="w-4 h-4" />
+        <Button type="button" onClick={addTag} size="sm" className="bg-levely-blue hover:bg-levely-blue/90 dark:bg-levely-green dark:hover:bg-levely-green/60">
+          <Plus className="w-4 h-4 text-white dark:text-levely-dark" />
         </Button>
       </div>
       <div className="flex flex-wrap gap-2">

@@ -1,12 +1,23 @@
 "use client";
 
+
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+
+// Define el array de blobs fuera del componente para evitar regeneración
+const blobs = Array.from({ length: 4 });
 
 export function AnimatedBackground() {
-  const blobs = Array.from({ length: 4 });
-  
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  if (!mounted) return null;
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div
+      className="fixed inset-0 pointer-events-none overflow-hidden z-0"
+      aria-hidden="true"
+    >
       {blobs.map((_, i) => (
         <motion.div
           key={i}
@@ -20,7 +31,6 @@ export function AnimatedBackground() {
             )`,
             top: `${15 + i * 20}%`,
             left: `${i % 2 === 0 ? "10%" : "65%"}`,
-            // Alterna entre primary, secondary y accent
             filter: i % 3 === 1 ? 'hue-rotate(180deg)' : i % 3 === 2 ? 'hue-rotate(280deg)' : 'none',
           }}
           animate={{

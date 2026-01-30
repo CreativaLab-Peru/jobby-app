@@ -1,15 +1,15 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import {CreditsOfPlan} from "@/features/billing/actions/get-available-tokens";
 import {NavbarPrivate} from "@/components/navbar-private";
+import {CreditLimits} from "@/features/credits/actions/get-current-credits-limits";
 
 interface NavbarWrapperProps {
-  creditsOfPlan: CreditsOfPlan;
+  creditLimits: CreditLimits;
   user: any;
 }
 
-export function NavbarWrapper({ creditsOfPlan, user }: NavbarWrapperProps) {
+export function NavbarWrapper({ creditLimits, user }: NavbarWrapperProps) {
   const pathname = usePathname();
 
   // 👇 List of paths where you want to hide the navbar
@@ -20,5 +20,5 @@ export function NavbarWrapper({ creditsOfPlan, user }: NavbarWrapperProps) {
 
   if (shouldHide) return null;
 
-  return <NavbarPrivate userLimit={creditsOfPlan} user={user} />;
+  return <NavbarPrivate creditLimits={creditLimits} user={user} />;
 }

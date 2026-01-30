@@ -5,12 +5,17 @@ import { prisma } from "@/lib/prisma";
 import { Preference } from "mercadopago";
 import { PreferenceCreateData } from "mercadopago/dist/clients/preference/create/types";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
-import {PAYMENT_PLAN_ID_BY_DIRECT} from "@/features/billing/consts/payment-plant-ids";
 import {BASE_URL, mercadopago} from "@/features/billing/domain/mercado-preference";
 
 
-export const createPreferenceForAuthenticatedUser = async () => {
+
+export const createPreferenceForAuthenticatedUser = async (slug: string) => {
   try {
+    console.log("BASE_URL:", BASE_URL);
+    if (!BASE_URL) {
+      throw new Error("Critical: BASE_URL is not defined in environment variables");
+    }
+
     const currentUser = await getCurrentUser()
     if (!currentUser) {
       return {
@@ -19,15 +24,23 @@ export const createPreferenceForAuthenticatedUser = async () => {
       }
     }
 
-    const directPayment = await prisma.paymentPlan.findFirst({
+    const paymentPlan = await prisma.paymentPlan.findFirst({
       where: {
-        id: PAYMENT_PLAN_ID_BY_DIRECT,
+        slug: slug.toLowerCase(),
       },
     })
-    if (!directPayment) {
+    if (!paymentPlan) {
       return {
         success: false,
         error: 'No se ha encontrado el plan de pago',
+      }
+    }
+
+    const price = Number(paymentPlan.priceCents) || 0;
+    if (price <= 0) {
+      return {
+        success: false,
+        error: 'El precio del plan de pago no es válido',
       }
     }
 
@@ -35,23 +48,44 @@ export const createPreferenceForAuthenticatedUser = async () => {
       body: {
         items: [
           {
-            id: directPayment.id,
-            unit_price: 9.90,
+            id: paymentPlan.id,
+            unit_price: price,
             quantity: 1,
-            title: directPayment.name || 'sin-titulo',
-            currency_id: 'PEN',
+            title: paymentPlan.name || 'sin-titulo',
+            currency_id: paymentPlan.currency,
           },
         ],
         metadata: {
-          id: directPayment.id,
+          id: paymentPlan.id,
           userId: currentUser.id,
-          type: directPayment.paymentType,
+          type: paymentPlan.paymentType,
         },
-        external_reference: directPayment.id,
-        redirect_urls: {
+        external_reference: paymentPlan.id,
+        // redirect_urls: {
+        //   success: `${BASE_URL}/cv?payment=success`,
+        //   failure: `${BASE_URL}/cv?payment=failure`,
+        //   pending: `${BASE_URL}/cv?payment=pending`,
+        // },
+        back_urls: {
           success: `${BASE_URL}/cv?payment=success`,
           failure: `${BASE_URL}/cv?payment=failure`,
+          pending: `${BASE_URL}/cv?payment=pending`,
+        },
+        auto_return: "approved", // Redirección automática
+
+        // Evita que el usuario pueda pagar con métodos que no quieres (opcional)
+        payment_methods: {
+          excluded_payment_types: [
+            { id: "ticket" } // Excluye pagos en efectivo si quieres inmediatez
+          ],
+          installments: 1 // Limita a 1 cuota si no quieres manejar intereses
         }
+        // back_urls: {
+        //   success: `${BASE_URL}/cv?payment=back-success`,
+        //   failure: `${BASE_URL}/cv?payment=back-failure`,
+        //   pending: `${BASE_URL}/cv?payment=back-pending`,
+        // },
+        // auto_return: "approved",
       },
     }
 
@@ -61,7 +95,7 @@ export const createPreferenceForAuthenticatedUser = async () => {
       redirect: preference.init_point!
     }
   } catch (error) {
-    console.error("[MERCADOPAGO][CREATE_PREFERENCE][ERROR]", error)
+    console.error("[ERROR_CREATE_PREFERENCE_MERCADO_PAGO]", error)
     return {
       success: false,
       error: 'Ha ocurrido un error al procesar tu solicitud',

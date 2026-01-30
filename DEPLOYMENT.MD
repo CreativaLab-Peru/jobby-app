@@ -1,3 +1,20 @@
+# WIP
+
+# BEFORE DEPLOYMENT
+- Add credits package (script)
+- Add and edit subscription plans (script)
+
+# 1.1.2
+
+### BEFORE DEPLOYMENT
+- Ensure that the new color tokens are correctly defined in `globals.css` and that there are no references to old or generic colors in the components.
+- Review all visual components (progress bars, badges, cards, dashboard, sidebar, etc.) to confirm they use the new Levely colors and gradients.
+- Test responsiveness and appearance on both mobile and desktop devices, making sure the new design adapts properly.
+- Validate that the dashboard and main page reflect the new design and visual structure.
+- Clear style and asset caches in the production environment to avoid visual conflicts.
+- If there are any environment variables related to branding or visuals, make sure they are updated.
+
+
 # 1.0.2
 
 ### BEFORE DEPLOYMENT

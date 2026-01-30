@@ -18,7 +18,7 @@ export default async function VerifyPage({searchParams}: VerificationPageProps) 
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md  dark:bg-slate-900 shadow-xl border rounded-3xl p-4 sm:p-8">
+      <div className="w-full max-w-md  dark:bg-gray-900 shadow-xl border rounded-3xl p-4 sm:p-8">
         <VerificationCodeForm userId={userPendingVerification.id} />
       </div>
     </main>

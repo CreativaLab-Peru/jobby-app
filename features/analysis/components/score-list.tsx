@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { BarChart3, TrendingUp, TrendingDown, Plus } from "lucide-react"
+import { BarChart3, TrendingUp, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { formatDate } from "@/utils/format-date"
@@ -39,8 +39,8 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
   const router = useRouter()
 
   const handleUploadCV = () => {
-    if (disabledButton) return
-    router.push("/cv/upload")
+    if (disabledButton) return;
+    router.push("/cv/upload");
   }
 
   return (
@@ -54,7 +54,7 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
             <div className="text-center sm:text-left">
-              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+              <h1 className="text-levely-blue dark:text-levely-green text-3xl font-bold">
                 Scores de CVs
               </h1>
               <p className="text-muted-foreground mt-2">
@@ -63,7 +63,7 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
             </div>
 
             <Button
-              className="w-full sm:w-auto"
+              className="bg-levely-blue text-white dark:bg-levely-green dark:text-levely-dark w-full sm:w-auto"
               disabled={disabledButton}
               onClick={handleUploadCV}
             >
@@ -101,7 +101,7 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="w-fit cursor-pointer text-primary hover:text-secondary border-2 border-primary/40 hover:border-secondary transition-colors duration-200 font-semibold"
+                            className="w-fit cursor-pointer text-levely-blue dark:text-levely-green hover:text-levely-blue/70 dark:hover:text-levely-green/70 border-2 border-levely-blue/40 dark:border-levely-green/40 hover:border-levely-blue/40 dark:hover:border-levely-green/40 transition-colors duration-200 font-semibold"
                             onClick={() => router.push(`/evaluations/${score.evaluations[0]?.id}`)}
                           >
                             Ver detalles
@@ -128,8 +128,8 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                       {/* Categories Scores */}
                       <div>
-                        <h4 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-                          <BarChart3 className="w-4 h-4 text-primary" />
+                        <h4 className="font-semibold text-levely-blue dark:text-levely-green mb-4 flex items-center gap-2">
+                          <BarChart3 className="w-4 h-4 text-levely-blue dark:text-levely-green" />
                           Puntuación por Categorías
                         </h4>
 
@@ -145,10 +145,15 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
                                 </span>
                               </div>
 
-                              <Progress
-                                value={section.score}
-                                className="h-2 bg-muted rounded-full [&>div]:bg-gradient-to-r [&>div]:from-primary [&>div]:via-secondary [&>div]:to-accent [&>div]:rounded-full"
-                              />
+                              <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
+                                <div
+                                  className="h-full rounded-full transition-all duration-700"
+                                  style={{
+                                    width: `${section.score}%`,
+                                    background: "linear-gradient(90deg, #3b82f6 0%, #22c55e 100%)"
+                                  }}
+                                />
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -156,8 +161,8 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
 
                       {/* Recommendations */}
                       <div className="bg-muted/20 p-4 rounded-xl border border-border/50">
-                        <h4 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-                          <TrendingUp className="w-4 h-4 text-secondary" />
+                        <h4 className="font-semibold text-levely-blue dark:text-levely-green mb-4 flex items-center gap-2">
+                          <TrendingUp className="w-4 h-4 text-levely-blue dark:text-levely-green" />
                           Recomendaciones de Mejora
                         </h4>
                         <ul className="space-y-3">

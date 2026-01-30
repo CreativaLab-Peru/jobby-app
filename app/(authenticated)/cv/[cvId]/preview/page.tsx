@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getCvById } from "@/features/cv/actions/get-cv-by-id";
 import { PreviewCVComponent } from "@/features/cv-preview/components/cv-review-page";
 import { getSections } from "@/features/cv/helpers";
-import { canAnalyzeCv, getRemainingAnalysisTokens } from "@/features/analysis/actions/can-analyze-cv";
+import {getCurrentCreditLimits} from "@/features/credits/actions/get-current-credits-limits";
 
 interface PreviewCVPageProps {
   params: Promise<{
@@ -27,9 +27,9 @@ export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
   // Extraer solo los IDs de las secciones (sin los iconos/funciones)
   const sectionIds = sections.map(s => s.id);
 
-  // Get analysis eligibility
-  const canAnalyzeResult = await canAnalyzeCv(cvId);
-  const analysisTokens = await getRemainingAnalysisTokens();
+  // Get credit limits
+  const creditLimits = await getCurrentCreditLimits();
+  const hasCredits = creditLimits.aiActionsLimit > 0;
 
   return (
     <PreviewCVComponent
@@ -38,8 +38,8 @@ export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
       cvId={cv.id}
       cvType={cv.cvType}
       sectionIds={sectionIds}
-      canAnalyze={canAnalyzeResult.canAnalyze}
-      analysisTokens={analysisTokens}
+      canAnalyze={hasCredits}
+      analysisTokens={creditLimits.aiActionsLimit}
     />
   )
 }

@@ -54,7 +54,7 @@ export function CVForm({ formData, onFormDataChange }: CVFormProps) {
   return (
     <div className="space-y-6 py-4">
       <div className="space-y-2">
-        <Label htmlFor="title" className="text-sm font-medium text-gray-700">
+        <Label htmlFor="title" className="text-sm font-medium text-gray-700 dark:text-gray-400">
           Título del documento
         </Label>
         <Input
@@ -62,30 +62,30 @@ export function CVForm({ formData, onFormDataChange }: CVFormProps) {
           placeholder="Ejemplo: CV Ingeniero de Software"
           value={formData.title}
           onChange={(e) => updateFormData({ title: e.target.value })}
-          className="w-full border border-gray-300 focus:border-gray-400 focus:ring-1 focus:ring-gray-400"
+          className="w-full border border-gray-300 focus:border-gray-400 focus:ring-1 focus:ring-gray-400 dark:border-gray-600 dark:focus:border-gray-500 dark:focus:ring-gray-500 bg-white dark:bg-[#2d333b] text-black dark:text-white"
         />
         <p>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-gray-500 dark:text-gray-400">
             El título ayudará a identificar este currículum en tu lista de CVs.
           </span>
         </p>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="opportunity" className="text-sm font-medium text-gray-700">
+        <Label htmlFor="opportunity" className="text-sm font-medium text-gray-700 dark:text-gray-400">
           Tipo de Oportunidad
         </Label>
         <Select
           value={formData.opportunityType}
           onValueChange={(value) => updateFormData({ opportunityType: value as OpportunityType })}
         >
-          <SelectTrigger className="bg-white text-black w-full border-gray-200 focus:border-gray-400 focus:ring-1 focus:ring-gray-400">
+          <SelectTrigger className="bg-white text-black w-full border-gray-200 focus:border-gray-400 focus:ring-1 focus:ring-gray-400 dark:bg-[#2d333b] dark:text-white dark:border-gray-600 dark:focus:border-gray-500 dark:focus:ring-gray-500">
             <SelectValue placeholder="Selecciona el tipo de oportunidad" />
           </SelectTrigger>
-          <SelectContent className="bg-white text-black border-gray-200">
+          <SelectContent className="bg-white text-black border-gray-200 dark:bg-[#2d333b] dark:text-white dark:border-gray-600">
             {opportunityTypes.map((item) => (
               <SelectItem
-                className="focus:bg-gray-100 focus:text-black"
+                className="focus:bg-gray-100 focus:text-black dark:focus:bg-gray-700 dark:focus:text-white"
                 key={item.key}
                 value={item.key}
               >
@@ -106,20 +106,20 @@ export function CVForm({ formData, onFormDataChange }: CVFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="type" className="text-sm font-medium text-gray-700">
+        <Label htmlFor="type" className="text-sm font-medium text-gray-700 dark:text-gray-400">
           Selecciona tu perfil profesional
         </Label>
         <Select
           value={formData.cvType}
           onValueChange={(value) => updateFormData({ cvType: value as CvType })}
         >
-          <SelectTrigger className="bg-white text-black w-full border-gray-200 focus:border-gray-400 focus:ring-1 focus:ring-gray-400">
+          <SelectTrigger className="bg-white text-black w-full border-gray-200 focus:border-gray-400 focus:ring-1 focus:ring-gray-400 dark:bg-[#2d333b] dark:text-white dark:border-gray-600 dark:focus:border-gray-500 dark:focus:ring-gray-500">
             <SelectValue placeholder="Selecciona el tipo de CV" />
           </SelectTrigger>
-          <SelectContent className="bg-white text-black border-gray-200">
+          <SelectContent className="bg-white text-black border-gray-200 dark:bg-[#2d333b] dark:text-white dark:border-gray-600">
             {cvTypes.map((item) => (
               <SelectItem
-                className="focus:bg-gray-100 focus:text-black"
+                className="focus:bg-gray-100 focus:text-black dark:focus:bg-gray-700 dark:focus:text-white"
                 key={item.key}
                 value={item.key}
               >
@@ -129,7 +129,7 @@ export function CVForm({ formData, onFormDataChange }: CVFormProps) {
           </SelectContent>
         </Select>
         <p>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-gray-500 dark:text-gray-400">
             {formData.cvType === CvType.TECHNOLOGY_ENGINEERING && "Ideal para perfiles en sistemas, software, innovación o data."}
             {formData.cvType === CvType.DESIGN_CREATIVITY && "Para creativos visuales, diseñadores gráficos, UX/UI o artistas digitales."}
             {formData.cvType === CvType.MARKETING_STRATEGY && "Para marketers, comunicadores o estrategas de contenido."}

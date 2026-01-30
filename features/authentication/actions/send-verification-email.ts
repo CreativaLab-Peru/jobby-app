@@ -1,7 +1,7 @@
 "use server"
 
 import { resend } from "@/lib/resend";
-import {WelcomeEmail} from "@/features/authentication/templates/welcome-email";
+import {VerificationEmail} from "@/features/authentication/templates/verification-email";
 
 export async function sendVerificationEmail(email: string, name: string, code: string) {
   try {
@@ -9,7 +9,7 @@ export async function sendVerificationEmail(email: string, name: string, code: s
       from: 'Levely <contact@joinlevely.com>', // Cambia por tu dominio verificado
       to: [email],
       subject: '🚀 Bienvenido a Levely - Verifica tu cuenta',
-      react: WelcomeEmail({ name, otpCode: code }),
+      react: VerificationEmail({ name, otpCode: code }),
     });
 
     if (error) {

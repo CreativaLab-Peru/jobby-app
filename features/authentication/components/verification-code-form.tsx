@@ -48,7 +48,6 @@ export function VerificationCodeForm({ userId }: Props) {
 
   return (
     <div className="flex flex-col items-center w-full max-w-sm mx-auto space-y-10">
-      {/* ... (resto de tu UI igual) ... */}
       <div className="relative">
         <div className="bg-primary/10 w-20 h-20 rounded-3xl flex items-center justify-center rotate-3 transition-transform hover:rotate-0">
           <Mail className="w-10 h-10 text-primary" />
@@ -59,7 +58,7 @@ export function VerificationCodeForm({ userId }: Props) {
       </div>
 
       <div className="text-center space-y-3">
-        <h1 className="text-3xl font-black tracking-tight text-foreground">
+        <h1 className="text-3xl font-black tracking-tight text-gray-400">
           Verifica tu email
         </h1>
         <p className="text-muted-foreground text-sm px-4">

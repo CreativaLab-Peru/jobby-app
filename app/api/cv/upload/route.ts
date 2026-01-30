@@ -1,13 +1,13 @@
-import { inngest } from "@/inngest/functions/client";
-import { prisma } from "@/lib/prisma";
-import { v4 as uuidv4 } from "uuid";
-import { CvType, Language, OpportunityType } from "@prisma/client";
-import { savePdf } from "@/features/upload-cv/actions/save-pdf";
-import { NextResponse } from "next/server";
-import { getCurrentUser } from "@/features/share/actions/get-current-user";
+import {inngest} from "@/inngest/functions/client";
+import {prisma} from "@/lib/prisma";
+import {v4 as uuidv4} from "uuid";
+import {CvType, Language, OpportunityType} from "@prisma/client";
+import {savePdf} from "@/features/upload-cv/actions/save-pdf";
+import {NextResponse} from "next/server";
+import {getCurrentUser} from "@/features/share/actions/get-current-user";
 import {getTextFromPdfApi} from "@/utils/get-text-from-pdf-api";
-import {getLimitPlanOfCurrentUser} from "@/features/billing/actions/get-count-availables-attempts";
 import {detectCv} from "@/features/cv/actions/verify-cv";
+import {getCurrentCreditLimits} from "@/features/credits/actions/get-current-credits-limits";
 
 export async function POST(req: Request) {
   try {
@@ -15,42 +15,46 @@ export async function POST(req: Request) {
     const file = formData.get("pdf") as File;
 
     if (!file) {
-      return NextResponse.json({ success: false, message: "Archivo necesario" }, { status: 400 });
+      return NextResponse.json({success: false, message: "Archivo necesario"}, {status: 400});
     }
 
     const currentUser = await getCurrentUser();
     if (!currentUser) {
-      return NextResponse.json({ success: false, message: "User not found" }, { status: 404 });
+      return NextResponse.json({success: false, message: "User not found"}, {status: 404});
     }
 
-    const limitOfPlan = await getLimitPlanOfCurrentUser()
-    const uploadCvsUsed = limitOfPlan.scoreAnalysis.used;
-    const uploadCvLimit = limitOfPlan.scoreAnalysis.total;
-    if (uploadCvsUsed >= uploadCvLimit) {
+    // Verify credit limits
+    const creditLimits = await getCurrentCreditLimits();
+    if (creditLimits.aiActionsLimit <= 0) {
       return NextResponse.json(
-        { success: false, message: "Upload CV limit reached" },
-        { status: 403 }
+        {
+          success: false,
+          message: "No tienes intentos disponibles para subir CVs. Por favor, actualiza tu plan."
+        },
+        {status: 403}
       );
     }
 
     const userId = currentUser.id;
 
+    // Save PDF file
     const buffer = Buffer.from(await file.arrayBuffer());
     const fileName = `CV-${uuidv4()}-${file.name}`;
-    const { error, url } = await savePdf(file, { buffer, fileName });
+    const {error, url} = await savePdf(file, {buffer, fileName});
     if (error) {
       return NextResponse.json(
-        { success: false, message: error },
-        { status: 400 }
+        {success: false, message: error},
+        {status: 400}
       );
     }
 
+    // Extract text from PDF and verify if it's a CV
     const textFromPdf = await getTextFromPdfApi(url);
     const result = detectCv(textFromPdf);
     if (!result.isCv) {
       return NextResponse.json(
-        { success: false, message: "El archivo subido no parece ser un CV válido." },
-        { status: 400 }
+        {success: false, message: "El archivo subido no parece ser un CV válido."},
+        {status: 400}
       );
     }
 
@@ -76,43 +80,20 @@ export async function POST(req: Request) {
 
     if (!cv) {
       return NextResponse.json(
-        { success: false, message: "Error al crear nuevo cv" },
-        { status: 400 }
+        {success: false, message: "Error al crear nuevo cv"},
+        {status: 400}
       );
     }
 
-    const lastsPaymentPlans = await prisma.userPayment.findMany({
-      where: {
-        userId: currentUser.id
-      },
-      include: {
-        plan: true
-      }
-    })
-
-    if (lastsPaymentPlans === null) {
-      return NextResponse.json({ success: false, message: "The current user has no attempts" }, { status: 400 })
-    }
-
-    const lastAvailablePaymentToUpload = lastsPaymentPlans.find(plan => plan.uploadCvsUsed < plan.plan.uploadCvLimit)
-    if (!lastAvailablePaymentToUpload) {
-      return NextResponse.json({ success: false, message: "The current user has no attempts" }, { status: 400 })
-    }
-
-    const oneMoreInUploadCvLimit = lastAvailablePaymentToUpload.uploadCvsUsed + 1
-
-    const updatePaymentPlanOfUser = await prisma.userPayment.update({
-      where: {
-        id: lastAvailablePaymentToUpload.id,
-      },
+    await prisma.userCreditBalance.update({
+      where: {userId: currentUser.id},
       data: {
-        uploadCvsUsed: oneMoreInUploadCvLimit
-      }
+        type: "AI_ACTIONS",
+        amount: {
+          decrement: 1,
+        }
+      },
     })
-
-    if (!updatePaymentPlanOfUser) {
-      return NextResponse.json({ success: false, message: "Error trying to update plan of current user" }, { status: 400 })
-    }
 
     await inngest.send({
       name: "cv/uploaded",
@@ -122,12 +103,12 @@ export async function POST(req: Request) {
       },
     });
 
-    return Response.json({ success: true, cvId: cv.id });
+    return Response.json({success: true, cvId: cv.id});
   } catch (error) {
     console.error("Error uploading CV:", error);
     return NextResponse.json(
-      { success: false, message: "Internal server error" },
-      { status: 500 }
+      {success: false, message: "Internal server error"},
+      {status: 500}
     );
   }
 }

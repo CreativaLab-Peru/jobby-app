@@ -3,6 +3,7 @@ import NavbarPublic from "@/components/navbar-public";
 import { getSession } from "@/features/authentication/actions/get-session";
 import {redirect} from "next/navigation";
 import {routes} from "@/lib/routes";
+import Header from "@/components/header";
 
 export default async function PublicLayout({
   children,
@@ -15,7 +16,7 @@ export default async function PublicLayout({
   }
   return (
     <div className="flex min-h-screen flex-col">
-      <NavbarPublic authenticated={session?.success} />
+      <Header authenticated={session?.success} />
       <main className="flex-1">{children}</main>
       <Footer />
     </div>

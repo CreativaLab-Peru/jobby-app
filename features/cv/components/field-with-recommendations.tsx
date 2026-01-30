@@ -60,18 +60,18 @@ export function FieldWithRecommendations({
               <PopoverTrigger asChild>
                 <button
                   type="button"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-primary hover:text-primary-foreground bg-primary/20 hover:bg-primary/30 rounded-lg transition-all duration-300 border border-primary/50 hover:border-primary text-xs font-medium shadow-sm hover:shadow-md animate-pulse hover:animate-none"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-levely-blue dark:text-levely-green hover:text-levely-blue bg-levely-blue/20 dark:bg-levely-green/20 hover:bg-levely-blue/30 dark:hover:bg-levely-green/30 rounded-lg transition-all duration-300 border border-levely-blue/50 dark:border-levely-green/50 hover:border-levely-blue text-xs font-medium shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-levely-blue"
                 >
-                  <Lightbulb className="w-3.5 h-3.5" />
+                  <Lightbulb className="text-levely-blue dark:text-levely-green w-3.5 h-3.5" />
                   <span>Consejo</span>
                 </button>
               </PopoverTrigger>
               <PopoverContent className="bg-card w-80 text-card-foreground" side="top">
                 <div className="space-y-3">
                   <div className="flex items-start gap-2">
-                    <Lightbulb className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                    <Lightbulb className="w-5 h-5 text-levely-blue dark:text-levely-green mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
-                      <p className="text-xs font-medium mb-1 text-primary-foreground/80">💡 Consejo:</p>
+                      <p className="text-xs font-medium mb-1 text-levely-blue dark:text-levely-green">💡 Consejo:</p>
                       <p className="text-sm leading-relaxed">{field.tip}</p>
                     </div>
                   </div>
@@ -97,7 +97,8 @@ export function FieldWithRecommendations({
               <PopoverTrigger asChild>
                 <button
                   type="button"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-secondary hover:text-secondary-foreground bg-secondary/20 hover:bg-secondary/30 rounded-lg transition-all duration-300 border border-secondary/50 hover:border-secondary text-xs font-medium shadow-sm hover:shadow-md animate-pulse hover:animate-none"
+                  aria-label="Ver ejemplo"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-levely-blue dark:text-levely-green hover:text-levely-blue bg-levely-blue/20 dark:bg-levely-green/20 hover:bg-levely-blue/30 dark:hover:bg-levely-green/30 rounded-lg transition-all duration-300 border border-levely-blue/50 dark:border-levely-green/50 hover:border-levely-blue text-xs font-medium shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-levely-blue"
                 >
                   <Info className="w-3.5 h-3.5" />
                   <span>Ejemplo</span>
@@ -106,7 +107,7 @@ export function FieldWithRecommendations({
               <PopoverContent className="border-border bg-card w-80 text-card-foreground" side="top">
                 <div className="space-y-3">
                   <div className="flex items-start gap-2">
-                    <Info className="w-5 h-5 text-secondary mt-0.5 flex-shrink-0" />
+                    <Info className="w-5 h-5 text-levely-blue mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
                       <p className="text-xs font-medium mb-1 text-secondary-foreground/80">📝 Ejemplo:</p>
                       <p className="text-sm italic leading-relaxed">{field.example}</p>
@@ -117,7 +118,7 @@ export function FieldWithRecommendations({
                       type="button"
                       size="sm"
                       onClick={useExample}
-                      className="flex-1 text-secondary border-secondary/50 hover:bg-secondary/20 text-xs bg-transparent"
+                      className="flex-1 text-levely-blue border-levely-blue/50 hover:bg-levely-blue/20 text-xs bg-transparent"
                       variant="outline"
                     >
                       <CheckCircle className="w-3 h-3 mr-1" />
@@ -127,7 +128,7 @@ export function FieldWithRecommendations({
                       type="button"
                       size="sm"
                       onClick={() => setExamplePopoverOpen(false)}
-                      className="text-muted-foreground border-border hover:bg-muted text-xs bg-transparent"
+                      className="text-levely-blue dark:text-levely-green border-border hover:bg-muted text-xs bg-transparent"
                       variant="outline"
                     >
                       Cerrar

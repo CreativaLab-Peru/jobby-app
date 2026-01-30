@@ -21,12 +21,12 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
   return (
     <Card className="shadow-card border-border bg-card/50 backdrop-blur-md overflow-hidden relative">
       {/* Decoración de fondo usando colores de marca sutiles */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full -translate-y-16 translate-x-16 blur-2xl"></div>
-      <div className="absolute bottom-0 left-0 w-24 h-24 bg-secondary/10 rounded-full translate-y-12 -translate-x-12 blur-2xl"></div>
+      <div className="absolute top-0 right-0 w-32 h-32 bg-levely-blue/10 rounded-full -translate-y-16 translate-x-16 blur-2xl"></div>
+      <div className="absolute bottom-0 left-0 w-24 h-24 bg-levely-green/10 rounded-full translate-y-12 -translate-x-12 blur-2xl"></div>
 
       <CardHeader className="relative p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <CardTitle className="flex items-center text-2xl sm:text-3xl text-foreground">
+          <CardTitle className="flex items-center text-2xl sm:text-3xl text-levely-blue dark:text-levely-green font-bold">
             <motion.div
               animate={{
                 rotate: [0, 10, -10, 0],
@@ -38,7 +38,7 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
                 repeatDelay: 5,
               }}
             >
-              <Star className="w-8 h-8 sm:w-10 sm:h-10 mr-3 sm:mr-4 text-secondary fill-secondary/20" />
+              <Star className="w-8 h-8 sm:w-10 sm:h-10 mr-3 sm:mr-4 text-levely-blue dark:text-levely-green fill-levely-blue/20" />
             </motion.div>
             Tu CV Score
           </CardTitle>
@@ -46,9 +46,9 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
             <Button
               onClick={onShowBreakdown}
               variant="outline"
-              className="w-full sm:w-auto bg-background/50 border-border hover:border-primary hover:bg-primary/5 text-foreground font-semibold"
+              className="w-full sm:w-auto bg-background/50 border-border hover:border-primary hover:bg-primary/5 text-levely-blue dark:text-levely-green font-semibold"
             >
-              <Calculator className="w-4 h-4 mr-2 text-primary" />
+              <Calculator className="w-4 h-4 mr-2 text-levely-blue dark:text-levely-green" />
               Ver Desglose
             </Button>
           </motion.div>
@@ -62,7 +62,8 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
-              className="text-5xl sm:text-7xl font-bold ai-gradient-text mb-3"
+              className="text-5xl sm:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-levely-blue via-levely-blue to-levely-green mb-3"
+            
             >
               {score}/100
             </motion.div>
@@ -70,7 +71,7 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7 }}
-              className="text-lg sm:text-xl font-semibold text-muted-foreground"
+              className="text-lg sm:text-xl font-semibold text-levely-blue dark:text-levely-green"
             >
               {getScoreLabel(score)}
             </motion.p>
@@ -107,10 +108,24 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
                   strokeLinecap="round"
                 />
                 <defs>
-                  <linearGradient id="ai-score-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="hsl(var(--primary))" />
-                    <stop offset="100%" stopColor="hsl(var(--secondary))" />
-                  </linearGradient>
+                    <linearGradient id="ai-score-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#3b82f6">
+                        <animate
+                          attributeName="stop-color"
+                          values="#3b82f6;#22c55e;#3b82f6"
+                          dur="6s"
+                          repeatCount="indefinite"
+                        />
+                      </stop>
+                      <stop offset="100%" stopColor="#22c55e">
+                        <animate
+                          attributeName="stop-color"
+                          values="#22c55e;#3b82f6;#22c55e"
+                          dur="6s"
+                          repeatCount="indefinite"
+                        />
+                      </stop>
+                    </linearGradient>
                 </defs>
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
@@ -118,7 +133,7 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 1.2, type: "spring", stiffness: 200 }}
-                  className="text-xl sm:text-2xl font-bold text-primary"
+                  className="text-xl sm:text-2xl font-bold text-levely-blue dark:text-levely-green"
                 >
                   {score}%
                 </motion.div>
@@ -133,10 +148,15 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
           transition={{ delay: 1, duration: 1.5, ease: "easeOut" }}
           className="origin-left"
         >
-          <Progress
-            value={score}
-            className="h-4 bg-muted [&>div]:ai-gradient"
-          />
+          <div className="w-full h-4 rounded-full bg-muted overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-700"
+              style={{
+                width: `${score}%`,
+                background: "linear-gradient(90deg, #3b82f6 0%, #22c55e 100%)"
+              }}
+            />
+          </div>
         </motion.div>
       </CardContent>
     </Card>

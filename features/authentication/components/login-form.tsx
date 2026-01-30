@@ -66,7 +66,7 @@ export function LoginForm() {
       <div className="mx-auto max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-2">
-            Bienvenido de <span className="text-gradient">vuelta</span>
+            Bienvenido de vuelta
           </h1>
           <p className="text-muted-foreground">
             Inicia sesión para continuar

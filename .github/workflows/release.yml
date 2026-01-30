@@ -27,8 +27,17 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
           npm i -g vercel
-          vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+
+          vercel pull \
+            --yes \
+            --environment=production \
+            --token=$VERCEL_TOKEN
+
           vercel build \
             --prod \
-            --env APP_VERSION=${{ steps.version.outputs.version }}
-          vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+            --build-env APP_VERSION=${{ steps.version.outputs.version }}
+
+          vercel deploy \
+            --prebuilt \
+            --prod \
+            --token=$VERCEL_TOKEN

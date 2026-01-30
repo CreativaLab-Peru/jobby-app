@@ -1,4 +1,4 @@
-# WIP
+# 1.1.2 - 2025-01-30
 
 # BEFORE DEPLOYMENT
 - Add credits package (script)

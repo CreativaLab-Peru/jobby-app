@@ -1,12 +1,7 @@
-# v1.1.4 - 2025-01-30
+# v1.1.3, v1.1.4 and v1.1.5 - 2025-01-30
 
 ## QA
 - Test CI and CD pipelines
-
-# 1.1.3 - 2025-01-30
-
-## Features
-- Version with ci and cd
 
 # 1.1.2 - 2025-01-30
 

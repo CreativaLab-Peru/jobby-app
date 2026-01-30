@@ -1,6 +1,11 @@
 # 1.1.2 - 2025-01-30
 
 ## Features
+- Version with ci and cd
+
+# 1.1.2 - 2025-01-30
+
+## Features
 - Added credits package for users to purchase additional CV generations.
 - Introduced new subscription plans with varying levels of access and features.
 - Payment with Mercado Pago integrated.

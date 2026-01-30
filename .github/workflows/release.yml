@@ -1,0 +1,34 @@
+name: Release & Deploy
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version from tag
+        id: version
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          VERSION=${TAG#v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          npm i -g vercel
+          vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+          vercel build \
+            --prod \
+            --env APP_VERSION=${{ steps.version.outputs.version }}
+          vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN

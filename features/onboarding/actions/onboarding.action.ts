@@ -66,7 +66,7 @@ export async function completeOnboardingAction(email: string, body: TalentOnboar
         where: { id: user.id },
         data: {
           name: data.name,
-          birthday: data.birthDate,
+          birthday: new Date(data.birthDate)
         },
       });
     });

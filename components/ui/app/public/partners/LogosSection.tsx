@@ -15,7 +15,7 @@ export function LogosSection() {
                 <div className="flex flex-wrap justify-center items-center gap-8 lg:gap-14">
                 {partnerLogos.map((partner) => (
                   <div key={partner.name} className="group flex items-center justify-center">
-                    <div className="w-36 h-20 sm:w-65 sm:h-30 rounded-xl bg-transparent borde flex items-center justify-center group-hover:border-blue/30 group-hover:shadow-md transition-all duration-300 p-2">
+                    <div className="w-36 h-20 sm:w-65 sm:h-30 rounded-xl bg-transparent borde flex items-center justify-center group-hover:border-levely-blue/30 group-hover:shadow-md transition-all duration-300 p-2">
                       {/* Logo para modo claro */}
                       <img
                         src={partner.light}

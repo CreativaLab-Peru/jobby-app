@@ -55,7 +55,7 @@ export function HowItWorksSection() {
             </div>
 
             <div className="lg:w-1/2 text-center lg:text-right order-2 lg:order-1">
-              <span className="inline-block text-sm font-bold text-levely-green mb-3 uppercase tracking-wider">
+              <span className="inline-block text-sm font-bold dark:text-levely-green mb-3 uppercase tracking-wider">
                 Paso 01
               </span>
               <h3 className="text-2xl lg:text-3xl font-bold mb-4">Crea tu perfil y sube tu CV</h3>
@@ -181,7 +181,7 @@ export function HowItWorksSection() {
             </div>
 
             <div className="lg:w-1/2 text-center lg:text-left">
-              <span className="inline-block text-sm font-bold text-blue mb-3 uppercase tracking-wider">
+              <span className="inline-block text-sm font-bold dark:text-levely-blue mb-3 uppercase tracking-wider">
                 Paso 02
               </span>
               <h3 className="text-2xl lg:text-3xl font-bold mb-4">
@@ -202,7 +202,7 @@ export function HowItWorksSection() {
             </div>
 
             <div className="lg:w-1/2 text-center lg:text-right order-2 lg:order-1">
-              <span className="inline-block text-sm font-bold text-levely-orange mb-3 uppercase tracking-wider">
+              <span className="inline-block text-sm font-bold dark:text-levely-orange mb-3 uppercase tracking-wider">
                 Paso 03
               </span>
               <h3 className="text-2xl lg:text-3xl font-bold mb-4">

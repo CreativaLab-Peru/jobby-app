@@ -95,7 +95,7 @@ export function SkillsStep() {
                     "w-6 h-6 shrink-0 rounded-full border-2 flex items-center justify-center transition-all",
                     isSelected ? "bg-primary border-primary" : "border-muted group-hover:border-primary/50"
                   )}>
-                    {isSelected && <Check className="w-4 h-4 text-white" strokeWidth={3} />}
+                    {isSelected && <Check className="w-4 h-4 text-white dark:text-levely-dark" strokeWidth={3} />}
                   </div>
                   <span className={cn(
                     "font-bold transition-colors text-sm sm:text-base",
@@ -107,7 +107,7 @@ export function SkillsStep() {
 
                 {isSelected && (
                   <div
-                    className="flex items-center bg-background border rounded-full p-1 shadow-sm shrink-0"
+                    className="border-gray-400 flex items-center bg-background border rounded-full p-1 shadow-sm shrink-0"
                     onClick={(e) => { e.stopPropagation(); toggleLevel(skill.id); }}
                   >
                     <button

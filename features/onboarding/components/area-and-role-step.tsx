@@ -85,7 +85,7 @@ export function AreaAndRoleStep() {
                   "w-5 h-5 shrink-0 rounded-md border flex items-center justify-center transition-all",
                   isSelected ? "bg-primary border-primary" : "border-muted-foreground/30"
                 )}>
-                  {isSelected && <Check className="w-3 h-3 text-white" strokeWidth={4} />}
+                  {isSelected && <Check className="w-3 h-3 text-white dark:text-levely-dark" strokeWidth={4} />}
                 </div>
               </button>
             );
@@ -114,7 +114,7 @@ export function AreaAndRoleStep() {
                   className={cn(
                     "inline-flex items-center px-4 py-2 rounded-full border text-sm font-medium transition-all",
                     isSelected
-                      ? "bg-primary text-white border-primary shadow-md scale-105"
+                      ? "bg-primary text-white"
                       : "bg-background border-input hover:border-primary/40 text-muted-foreground"
                   )}
                 >

@@ -110,7 +110,7 @@ export function LoginForm() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-14 font-bold"
+              className="cursor-pointer w-full h-14 font-bold"
             >
               {isSubmitting ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

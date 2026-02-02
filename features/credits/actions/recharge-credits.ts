@@ -25,8 +25,10 @@ export const rechargeCredits = async (
     // 1. Upsert del balance con filtro por tipo (Importante si un usuario tiene varios tipos)
     const balance = await client.userCreditBalance.upsert({
       where: {
-        userId,
-        type,
+        userId_type: { // Prisma busca este campo autogenerado para llaves compuestas
+          userId,
+          type,
+        },
       },
       update: { amount: { increment: amount } },
       create: {

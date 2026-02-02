@@ -1,3 +1,8 @@
+# WIP
+
+# Hotfixes
+- It's impossible to save credits after payment
+
 # v1.1.3, v1.1.4 and v1.1.5 - 2025-01-30
 
 ## QA

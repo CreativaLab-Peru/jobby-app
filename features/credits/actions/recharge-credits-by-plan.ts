@@ -1,5 +1,7 @@
 import {prisma} from "@/lib/prisma";
 import {rechargeCredits} from "@/features/credits/actions/recharge-credits";
+import {logsService} from "@/features/share/services/logs-service";
+import {LogAction, LogLevel} from "@prisma/client";
 
 /**
  * RECARGA DE CRÉDITOS POR PLAN DE PAGO
@@ -55,6 +57,14 @@ export const rechargeCreditsByPlan = async (paymentPlanId: string, userId: strin
       }
     });
   } catch (error) {
+    await logsService.createLog({
+      action: LogAction.PAYMENT,
+      level: LogLevel.ERROR,
+      entity: "MERCADO_PAGO_INTEGRATION",
+      entityId: paymentPlanId,
+      message: `Failed to recharge credits by plan for paymentPlanId=${paymentPlanId}: ${String(error)}`,
+      metadata: {paymentId: paymentPlanId, userId},
+    });
     console.error("[ERROR_RECHARGE_CREDITS_BY_PLAN]", error);
     throw error;
   }

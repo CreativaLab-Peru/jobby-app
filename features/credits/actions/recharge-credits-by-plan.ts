@@ -62,7 +62,7 @@ export const rechargeCreditsByPlan = async (paymentPlanId: string, userId: strin
       level: LogLevel.ERROR,
       entity: "MERCADO_PAGO_INTEGRATION",
       entityId: paymentPlanId,
-      message: `Started rechargeCreditsByPlan info of payment: ${paymentPlanId}`,
+      message: `Failed to recharge credits by plan for paymentPlanId=${paymentPlanId}: ${String(error)}`,
       metadata: {paymentId: paymentPlanId, userId},
     });
     console.error("[ERROR_RECHARGE_CREDITS_BY_PLAN]", error);

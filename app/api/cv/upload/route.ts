@@ -1,7 +1,7 @@
 import {inngest} from "@/inngest/functions/client";
 import {prisma} from "@/lib/prisma";
 import {v4 as uuidv4} from "uuid";
-import {CvType, Language, OpportunityType} from "@prisma/client";
+import {CreditBalanceType, CvType, Language, OpportunityType} from "@prisma/client";
 import {savePdf} from "@/features/upload-cv/actions/save-pdf";
 import {NextResponse} from "next/server";
 import {getCurrentUser} from "@/features/share/actions/get-current-user";
@@ -86,7 +86,12 @@ export async function POST(req: Request) {
     }
 
     await prisma.userCreditBalance.update({
-      where: {userId: currentUser.id},
+      where: {
+        userId_type: {
+          userId: currentUser.id,
+          type: CreditBalanceType.MANAGE_CVS
+        }
+      },
       data: {
         type: "AI_ACTIONS",
         amount: {

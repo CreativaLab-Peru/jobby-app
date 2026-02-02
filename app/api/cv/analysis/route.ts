@@ -53,7 +53,12 @@ export async function POST(request: Request) {
 
     // Update user credit balance
     await prisma.userCreditBalance.update({
-      where: {userId: currentUser.id},
+      where: {
+        userId_type: { // Prisma busca este campo autogenerado para llaves compuestas
+          userId: currentUser.id,
+          type: "AI_ACTIONS"
+        },
+      },
       data: {
         type: "AI_ACTIONS",
         amount: {

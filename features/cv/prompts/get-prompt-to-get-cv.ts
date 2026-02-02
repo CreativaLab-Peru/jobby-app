@@ -1,6 +1,6 @@
 export const getPromptToGetCv = (cvText: string) => {
   return `
-You are an **AI academic advisor and CV evaluator**.  
+You are an **AI academic advisor and CV evaluator**.
 Your task is to extract and structure all relevant information from the CV text provided below.
 
 **CRITICAL INSTRUCTIONS:**
@@ -23,6 +23,8 @@ ${cvText}
 You must return **only one valid JSON object** following this structure:
 
 {
+  "opportunityType": "INTERNSHIP | SCHOLARSHIP | EXCHANGE_PROGRAM | EMPLOYMENT | RESEARCH_FELLOWSHIP | GRADUATE_PROGRAM | FREELANCE | FULL_TIME | PART_TIME",
+  "cvType": "TECHNOLOGY_ENGINEERING | DESIGN_CREATIVITY | MARKETING_STRATEGY | MANAGEMENT_BUSINESS | FINANCE_PROJECTS | SOCIAL_MEDIA | EDUCATION | SCIENCE",
   "sections": [
     {
       "sectionType": "SUMMARY" | "EXPERIENCE" | "EDUCATION" | "SKILLS" | "PROJECTS" | "CERTIFICATIONS" | "LANGUAGES" | "CONTACT",
@@ -40,7 +42,7 @@ You must return **only one valid JSON object** following this structure:
 
 ### Detailed extraction rules
 
-1. **sectionType** must match exactly one of the following values:  
+1. **sectionType** must match exactly one of the following values:
    SUMMARY, EXPERIENCE, EDUCATION, SKILLS, PROJECTS, CERTIFICATIONS, LANGUAGES, CONTACT.
 
 2. **title** should be the section's title as written in the CV (e.g., "Professional Experience", "Academic Background", "Skills").

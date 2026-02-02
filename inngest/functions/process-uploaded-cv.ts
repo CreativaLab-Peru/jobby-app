@@ -1,6 +1,6 @@
 import { inngest } from "./client";
 import { prisma } from "@/lib/prisma";
-import { JobStatus, LogAction, LogLevel } from "@prisma/client";
+import {CvType, JobStatus, LogAction, LogLevel, OpportunityType} from "@prisma/client";
 import { getTextFromPdfApi } from "@/utils/get-text-from-pdf-api";
 import { logsService } from "@/features/share/services/logs-service";
 import {getPromptToGetCv} from "@/features/cv/prompts/get-prompt-to-get-cv";
@@ -104,10 +104,25 @@ export const processUploadedCv = inngest.createFunction(
         },
       });
 
+      const opportunityType = jsonData.opportunityType || "EMPLOYMENT";
+      const cvType = jsonData.cvType || "TECHNOLOGY_ENGINEERING";
+
+      // Validate the extracted opportunityType and cvType
+      if (opportunityType && !Object.values(OpportunityType).includes(opportunityType as OpportunityType)) {
+        throw new Error(`Invalid opportunityType extracted: ${opportunityType}`);
+      }
+
+      // (Assuming CvType is similarly defined in your Prisma schema)
+      if (cvType && !Object.values(CvType).includes(cvType as CvType)) {
+        throw new Error(`Invalid cvType extracted: ${cvType}`);
+      }
+
       // ✅ Update CV with extracted JSON
       await prisma.cv.update({
         where: { id: cvId },
         data: {
+          opportunityType: jsonData.opportunityType || "EMPLOYMENT",
+          cvType: jsonData.cvType || "TECHNOLOGY_ENGINEERING",
           extractedJson: jsonData,
           fullTextSearch: textCv,
         }

@@ -13,7 +13,12 @@ export const consumeCredits = async (body: ConsumeCreditsParams) => {
   return prisma.$transaction(async (tx) => {
     // 1. Buscar y bloquear el balance para evitar condiciones de carrera (Race Conditions)
     const balance = await tx.userCreditBalance.findUnique({
-      where: {userId},
+      where: {
+        userId_type: {
+          userId,
+          type
+        }
+      },
     });
 
     if (!balance || balance.amount < amount) {
@@ -22,7 +27,12 @@ export const consumeCredits = async (body: ConsumeCreditsParams) => {
 
     // 2. Restar créditos
     const updatedBalance = await tx.userCreditBalance.update({
-      where: {userId, type},
+      where: {
+        userId_type: {
+          userId,
+          type
+        }
+      },
       data: {amount: {decrement: amount}},
     });
 

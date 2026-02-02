@@ -350,7 +350,7 @@ model MagicLinkToken {
 // Balance de créditos del usuario
 model UserCreditBalance {
   id        String   @id @default(uuid())
-  userId    String   @unique
+  userId    String
   amount    Int      @default(0) // Usamos Int para evitar problemas de coma flotante
   type      String // Ej: "FREE", "PURCHASED", "BONUS"
   updatedAt DateTime @updatedAt
@@ -358,6 +358,7 @@ model UserCreditBalance {
 
   creditTransaction CreditTransaction[]
 
+  @@unique([userId, type])
   @@map("user_credit_balance")
 }
 

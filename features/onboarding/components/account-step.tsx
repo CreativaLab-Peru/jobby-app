@@ -5,7 +5,7 @@ import { FormField } from "@/components/form-field";
 import { Mail, Lock } from "lucide-react";
 
 export function AccountStep() {
-  const { formData, updateFormData } = useOnboardingStore();
+  const { formData, updateFormData, errors } = useOnboardingStore();
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
@@ -23,6 +23,7 @@ export function AccountStep() {
           icon={Mail}
           value={formData.email}
           onChange={(e) => updateFormData({ email: e.target.value })}
+          error={errors.email}
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -33,6 +34,7 @@ export function AccountStep() {
             type="password"
             value={formData.password}
             onChange={(e) => updateFormData({ password: e.target.value })}
+            error={errors.password}
           />
 
           <FormField
@@ -42,6 +44,7 @@ export function AccountStep() {
             type="password"
             value={formData.confirmPassword}
             onChange={(e) => updateFormData({ confirmPassword: e.target.value })}
+            error={errors.confirmPassword}
           />
         </div>
 
@@ -65,6 +68,9 @@ export function AccountStep() {
               </a>
             </span>
           </label>
+          {errors.acceptedTerms && (
+            <p className="text-sm text-red-600 mt-1">{errors.acceptedTerms}</p>
+          )}
         </div>
       </div>
     </div>

@@ -26,7 +26,7 @@ const LEVELS = [
 ];
 
 export function ExperienceLevelStep() {
-  const { formData, updateFormData } = useOnboardingStore();
+  const { formData, updateFormData, errors } = useOnboardingStore();
 
   return (
     <div className="max-w-xl mx-auto space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
@@ -38,6 +38,10 @@ export function ExperienceLevelStep() {
           Esto nos ayuda a filtrar las vacantes que mejor se adapten a ti.
         </p>
       </div>
+
+      {errors.expLevel && (
+        <p className="text-sm text-red-600 mt-1">{errors.expLevel}</p>
+      )}
 
       <div className="grid gap-4">
         {LEVELS.map(({ id, label, desc, icon: Icon }) => {

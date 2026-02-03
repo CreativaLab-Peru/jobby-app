@@ -25,7 +25,7 @@ const AVAILABILITY_OPTIONS = [
 ];
 
 export function AvailabilityStep() {
-  const { formData, updateFormData } = useOnboardingStore();
+  const { formData, updateFormData, errors } = useOnboardingStore();
 
   // Aseguramos que availability siempre sea un array para evitar errores de .includes
   const selectedAvailabilities = formData.availability || [];
@@ -48,6 +48,10 @@ export function AvailabilityStep() {
           ¿Cómo te gustaría comprometerte? Puedes elegir varias opciones.
         </p>
       </div>
+
+      {errors.availability && (
+        <p className="text-sm text-red-600 mt-1">{errors.availability}</p>
+      )}
 
       <div className="grid gap-4">
         {AVAILABILITY_OPTIONS.map(({ id, label, desc, icon: Icon }) => {

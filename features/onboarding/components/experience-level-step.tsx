@@ -14,13 +14,13 @@ const LEVELS = [
   {
     id: "JUNIOR",
     label: "Nivel Junior",
-    desc: "Tengo menos de 1 año de experiencia real.",
+    desc: "Tengo menos de 2 años de experiencia real.",
     icon: Briefcase
   },
   {
     id: "MID",
     label: "Nivel Mid/Senior",
-    desc: "Cuento con más de 2 años de trayectoria sólida.",
+    desc: "Cuento con más de 3 años de trayectoria sólida.",
     icon: Award
   },
 ];

@@ -38,6 +38,7 @@ export function NavbarPrivate({ creditLimits, user }: NavbarProps) {
           <SidebarTrigger className="lg:hidden" />
           <div>
             <h1 className="text-xl font-bold">
+              Hola, <span className="text-levely-blue dark:text-levely-green truncate">{user.name}</span>
               Hola,{" "}
               <span className="text-levely-blue dark:text-levely-green">
                 {(() => {

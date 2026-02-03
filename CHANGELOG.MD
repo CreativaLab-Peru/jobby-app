@@ -1,6 +1,23 @@
+# v1.1.9 - 2025-02-03
+
+## Features
+- Added comprehensive dark mode support to the CV upload flow (`/get-started` page), ensuring visual consistency across light and dark themes
+- Improved CV upload user flow to redirect unauthenticated users to login immediately when attempting to upload
+
+## Enhancements
+- Refreshed Career Accelerator landing page with updated `levely-orange` color palette, improved typography and responsive layout
+- Updated CV Builder landing page with improved layout, button styling, and enhanced video demo accessibility
+- Added `VideoAnchorButton` component for better video navigation on CV Builder page
+- Modified Dashboard page to fetch and display current credit limits for usage-based features
+- Enhanced dark mode styling across public pages with proper background, text, border, and icon color adjustments
+
+## Fixes
+- Fixed name truncation on navbar to adapt dynamically based on available screen space using CSS instead of JavaScript character limits
+- Fixed mobile navbar layout issues by adjusting responsive spacing, flex properties, and max-widths
+
 # v1.1.8 - 2025-02-03
 
-# Fixes
+## Fixes
 - Test CI and CD pipelines to generate versions properly
 - Fix style of name on header of user
 

@@ -15,6 +15,8 @@ interface OnboardingStore {
   reset: () => void;
   // Agregamos una función de validación interna
   validateCurrentStep: () => { success: boolean; error?: string };
+  errors: Record<string, string>; // Guardaremos los errores aquí
+  setErrors: (errors: Record<string, string>) => void;
 }
 
 const initialFormData: TalentOnboardingFormData = {
@@ -77,14 +79,19 @@ export const useOnboardingStore = create<OnboardingStore>()(
         const result = currentSchema.safeParse(formData);
 
         if (!result.success) {
-          return {
-            success: false,
-            error: result.error.message || "Error de validación en el formulario",
-          };
+          const formattedErrors = result.error.flatten().fieldErrors;
+          const errorMessages = Object.fromEntries(
+            Object.entries(formattedErrors).map(([key, val]) => [key, val?.[0]])
+          );
+
+          set({ errors: errorMessages }); // Guardamos en el store
+          return { success: false };
         }
 
         return { success: true };
       },
+      errors: {},
+      setErrors: (errors) => set({ errors }),
     }),
     {
       name: 'onboarding-storage',

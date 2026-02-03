@@ -8,7 +8,6 @@ import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import {BASE_URL, mercadopago} from "@/features/billing/domain/mercado-preference";
 
 
-
 export const createPreferenceForAuthenticatedUser = async (slug: string) => {
   try {
     console.log("BASE_URL:", BASE_URL);

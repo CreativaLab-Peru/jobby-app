@@ -1,3 +1,8 @@
+# WIP
+
+# Fixes
+- Improve onboarding validations
+
 # v1.1.8 - 2025-02-03
 
 # Fixes

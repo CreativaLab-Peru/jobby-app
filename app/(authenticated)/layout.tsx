@@ -17,7 +17,7 @@ export default async function RootLayout({
   }
   const user = await getUser();
   if (!user) {
-    return redirect("/login");
+    return redirect("/logout");
   }
 
   const creditsLimits = await getCurrentCreditLimits();

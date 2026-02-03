@@ -38,7 +38,7 @@ export function NavbarPrivate({ creditLimits, user }: NavbarProps) {
           <SidebarTrigger className="lg:hidden" />
           <div>
             <h1 className="text-xl font-bold">
-              Hola, <span className="text-levely-blue dark:text-levely-green truncate block">{user.name}</span>
+              Hola, <span className="text-levely-blue dark:text-levely-green truncate">{user.name}</span>
             </h1>
             <p className="text-sm text-muted-foreground hidden md:block">
               Esto es lo que la IA de Levely tiene para ti.

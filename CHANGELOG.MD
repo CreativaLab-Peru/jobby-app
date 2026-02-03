@@ -1,4 +1,11 @@
-# v1.1.7
+# v1.1.8 - 2025-02-03
+
+# Fixes
+- Test CI and CD pipelines to generate versions properly
+- Fix style of name on header of user
+
+
+# v1.1.7 - 2025-02-03
 
 # Fixes
 - Impossible to save credits after payment and get current credits updated

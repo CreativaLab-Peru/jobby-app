@@ -131,10 +131,10 @@ export function OnboardingForm() {
         {step === 1 && <WelcomeStep/>}
         {step === 2 && <BasicDataStep/>}
         {step === 3 && <AreaAndRoleStep/>}
-        {step === 4 && <ExperienceLevelStep/>}
+        {step === 4 && <SkillsStep/>}
         {step === 5 && <ModalityStep/>}
         {step === 6 && <AvailabilityStep/>}
-        {step === 7 && <SkillsStep/>}
+        {step === 7 && <ExperienceLevelStep/>}
         {step === 8 && <PortfolioStep/>}
         {step === 9 && <AccountStep/>}
         {step === 10 && (<>

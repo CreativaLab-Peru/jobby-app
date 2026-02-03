@@ -1,3 +1,8 @@
+# v1.1.7
+
+# Fixes
+- Impossible to save credits after payment and get current credits updated
+
 # v1.1.6
 
 # Fixes

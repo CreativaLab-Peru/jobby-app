@@ -1,6 +1,6 @@
 export const AREAS_AND_ROLES = {
   data_analytics: {
-    label: "Data & Analytics",
+    label: "Datos y Analítica",
     roles: {
       data_analyst: "Analista de Datos",
       business_analyst: "Business Analyst",
@@ -9,7 +9,7 @@ export const AREAS_AND_ROLES = {
   },
 
   engineering_operations: {
-    label: "Engineering / Operations / Mining",
+    label: "Ingeniería / Operaciones / Mineria",
     roles: {
       digital_operations_engineer: "Ingeniero/a de Operaciones Digitales",
       process_analyst: "Analista de Procesos / Operaciones Digitales",
@@ -18,7 +18,7 @@ export const AREAS_AND_ROLES = {
   },
 
   tech_systems: {
-    label: "Tech & Systems",
+    label: "Tecnología y Sistemas",
     roles: {
       systems_analyst: "Analista de Sistemas",
       it_support: "IT Support / Soporte Técnico",
@@ -27,7 +27,7 @@ export const AREAS_AND_ROLES = {
   },
 
   project_pmo: {
-    label: "Project & PMO",
+    label: "Gestión de Proyectos",
     roles: {
       project_coordinator: "Project Coordinator",
       pmo_analyst: "PMO Analyst",
@@ -36,7 +36,7 @@ export const AREAS_AND_ROLES = {
   },
 
   finance_costs: {
-    label: "Finance & Costos",
+    label: "Finanzas y Costos",
     roles: {
       cost_analyst: "Analista de Costos",
       junior_financial_analyst: "Analista Financiero Junior",
@@ -45,7 +45,7 @@ export const AREAS_AND_ROLES = {
   },
 
   marketing_growth: {
-    label: "Marketing & Data-Driven Growth",
+    label: "Marketing y crecimiento digital",
     roles: {
       digital_marketing_analyst: "Analista de Marketing Digital (Data-Driven)",
       growth_analyst: "Growth Analyst",
@@ -54,20 +54,19 @@ export const AREAS_AND_ROLES = {
   },
 
   sales_revenue_ops: {
-    label: "Sales & Revenue Operations",
+    label: "Ventas",
     roles: {
       sales_operations_analyst: "Analista de Ventas / Sales Operations",
       revenue_operations_analyst: "Revenue Operations Analyst",
       sales_analyst: "Sales Analyst",
     },
   },
-
-  customer_support_tech: {
-    label: "Customer Support & Tech Operations",
+  public_policy_development: {
+    label: "Política Pública y Desarrollo",
     roles: {
-      technical_support: "Soporte Técnico Digital",
-      customer_support_tech: "Customer Support Tech",
-      service_operations_analyst: "Service Operations Analyst",
+      policy_analyst: "Analista de Políticas",
+      research_assistant: "Asistente de Investigación",
+      program_coordinator: "Coordinador de Programas",
     },
   },
 };

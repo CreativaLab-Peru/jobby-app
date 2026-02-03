@@ -1,12 +1,21 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import {ArrowLeft, ArrowRight, Sparkles} from "lucide-react";
 import { useOnboardingStore } from "@/features/onboarding/store/talent-onboarding-store";
+import Link from "next/link";
 
 export function WelcomeStep() {
   const { setStep } = useOnboardingStore();
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] max-w-2xl mx-auto text-center px-6 animate-in fade-in slide-in-from-bottom-3 duration-1000">
+
+      {/* Regreso visual limpio */}
+      <div className="flex flex-col items-center justify-center mx-auto mb-10">
+        <Link href={"/"} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="inline-block mr-2 w-4 h-4" />
+          Volver al inicio
+        </Link>
+      </div>
 
       {/* Icono sutil de bienvenida */}
       <div className="mb-8 p-4 bg-primary/5 rounded-full">

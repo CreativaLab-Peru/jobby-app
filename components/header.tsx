@@ -93,7 +93,7 @@ export default function Header({ authenticated }: HeaderProps) {
                 {/* Register dropdown (desktop) */}
                 <div className="relative">
                   <div className="group">
-                    <Link href="/register">
+                    <Link href="/onboarding/talents">
                       <Button variant="accent" size="default">
                         Empezar
                         {/*<ChevronDown className="ml-2 h-4 w-4" />*/}
@@ -200,7 +200,7 @@ export default function Header({ authenticated }: HeaderProps) {
                       }`}
                     />*/}
                   </Button>
-                  {/*      
+                  {/*
                   {mobileRegisterOpen && (
                     <div className="mt-2 space-y-2 pl-4">
                       <Link href="/register?role=talento">

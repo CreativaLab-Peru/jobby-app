@@ -59,6 +59,7 @@ export async function POST(req: Request) {
     }
 
     const createdByJobId = uuidv4();
+    // Current cv just for the moment (it will be updated in the job)
     const cv = await prisma.cv.create({
       data: {
         userId,

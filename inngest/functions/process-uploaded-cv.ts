@@ -1,6 +1,6 @@
 import { inngest } from "./client";
 import { prisma } from "@/lib/prisma";
-import { JobStatus, LogAction, LogLevel } from "@prisma/client";
+import {CvType, JobStatus, LogAction, LogLevel, OpportunityType} from "@prisma/client";
 import { getTextFromPdfApi } from "@/utils/get-text-from-pdf-api";
 import { logsService } from "@/features/share/services/logs-service";
 import {getPromptToGetCv} from "@/features/cv/prompts/get-prompt-to-get-cv";
@@ -104,10 +104,24 @@ export const processUploadedCv = inngest.createFunction(
         },
       });
 
+      let opportunityType = jsonData.opportunityType || "EMPLOYMENT";
+      let cvType = jsonData.cvType || "TECHNOLOGY_ENGINEERING";
+
+      // Validate the extracted opportunityType and cvType
+      if (opportunityType && !Object.values(OpportunityType).includes(opportunityType as OpportunityType)) {
+        opportunityType = "EMPLOYMENT";
+      }
+
+      if (cvType && !Object.values(CvType).includes(cvType as CvType)) {
+        cvType = "TECHNOLOGY_ENGINEERING";
+      }
+
       // ✅ Update CV with extracted JSON
       await prisma.cv.update({
         where: { id: cvId },
         data: {
+          opportunityType,
+          cvType,
           extractedJson: jsonData,
           fullTextSearch: textCv,
         }

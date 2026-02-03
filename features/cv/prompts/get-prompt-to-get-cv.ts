@@ -23,11 +23,11 @@ ${cvText}
 You must return **only one valid JSON object** following this structure:
 
 {
-  "opportunityType": "INTERNSHIP | SCHOLARSHIP | EXCHANGE_PROGRAM | EMPLOYMENT | RESEARCH_FELLOWSHIP | GRADUATE_PROGRAM | FREELANCE | FULL_TIME | PART_TIME",
-  "cvType": "TECHNOLOGY_ENGINEERING | DESIGN_CREATIVITY | MARKETING_STRATEGY | MANAGEMENT_BUSINESS | FINANCE_PROJECTS | SOCIAL_MEDIA | EDUCATION | SCIENCE",
+  "opportunityType": "one of: INTERNSHIP | SCHOLARSHIP | EXCHANGE_PROGRAM | EMPLOYMENT | RESEARCH_FELLOWSHIP | GRADUATE_PROGRAM | FREELANCE | FULL_TIME | PART_TIME",
+  "cvType": "one of: TECHNOLOGY_ENGINEERING | DESIGN_CREATIVITY | MARKETING_STRATEGY | MANAGEMENT_BUSINESS | FINANCE_PROJECTS | SOCIAL_MEDIA | EDUCATION | SCIENCE",
   "sections": [
     {
-      "sectionType": "SUMMARY" | "EXPERIENCE" | "EDUCATION" | "SKILLS" | "PROJECTS" | "CERTIFICATIONS" | "LANGUAGES" | "CONTACT",
+      "sectionType": "SUMMARY" | "EXPERIENCE" | "EDUCATION" | "SKILLS" | "PROJECTS" | "VOLUNTEERING" | "CERTIFICATIONS" | "LANGUAGES" | "CONTACT" | "COMPLEMENTS" | "ACHIEVEMENTS" | "INTERESTS",
       "title": "string | null",
       "contentJson": [
         {
@@ -43,7 +43,7 @@ You must return **only one valid JSON object** following this structure:
 ### Detailed extraction rules
 
 1. **sectionType** must match exactly one of the following values:
-   SUMMARY, EXPERIENCE, EDUCATION, SKILLS, PROJECTS, CERTIFICATIONS, LANGUAGES, CONTACT.
+   one of: SUMMARY, EXPERIENCE, EDUCATION, SKILLS, PROJECTS, CERTIFICATIONS, LANGUAGES, CONTACT.
 
 2. **title** should be the section's title as written in the CV (e.g., "Professional Experience", "Academic Background", "Skills").
 

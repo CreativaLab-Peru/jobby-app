@@ -104,25 +104,24 @@ export const processUploadedCv = inngest.createFunction(
         },
       });
 
-      const opportunityType = jsonData.opportunityType || "EMPLOYMENT";
-      const cvType = jsonData.cvType || "TECHNOLOGY_ENGINEERING";
+      let opportunityType = jsonData.opportunityType || "EMPLOYMENT";
+      let cvType = jsonData.cvType || "TECHNOLOGY_ENGINEERING";
 
       // Validate the extracted opportunityType and cvType
       if (opportunityType && !Object.values(OpportunityType).includes(opportunityType as OpportunityType)) {
-        throw new Error(`Invalid opportunityType extracted: ${opportunityType}`);
+        opportunityType = "EMPLOYMENT";
       }
 
-      // (Assuming CvType is similarly defined in your Prisma schema)
       if (cvType && !Object.values(CvType).includes(cvType as CvType)) {
-        throw new Error(`Invalid cvType extracted: ${cvType}`);
+        cvType = "TECHNOLOGY_ENGINEERING";
       }
 
       // ✅ Update CV with extracted JSON
       await prisma.cv.update({
         where: { id: cvId },
         data: {
-          opportunityType: jsonData.opportunityType || "EMPLOYMENT",
-          cvType: jsonData.cvType || "TECHNOLOGY_ENGINEERING",
+          opportunityType,
+          cvType,
           extractedJson: jsonData,
           fullTextSearch: textCv,
         }

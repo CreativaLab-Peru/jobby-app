@@ -12,7 +12,7 @@ export const isValidUser = async () => {
       return {
         error: "No authenticated user found.",
         success: false,
-        redirectTo: "/login",
+        redirectTo: "/logout",
       }
     }
     const user = await prisma.user.findUnique({
@@ -36,7 +36,7 @@ export const isValidUser = async () => {
       return {
         error: "User not found.",
         success: false,
-        redirectTo: "/login",
+        redirectTo: "/logout",
       }
     }
 
@@ -75,7 +75,7 @@ export const isValidUser = async () => {
     return {
       error: "Internal server error.",
       success: false,
-      redirectTo: "/login",
+      redirectTo: "/logout",
     }
   }
 }

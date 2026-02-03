@@ -83,8 +83,7 @@ export default function CareerAccelerator() {
                 size="xl"
                 className="cursor-pointer bg-levely-orange text-white hover:bg-levely-orange/90"
               >
-                Reservar plaza
-                <ArrowRight className="w-5 h-5"/>
+                Proximanente
               </Button>
               <div
                 className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white/90">

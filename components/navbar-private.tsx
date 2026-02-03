@@ -5,11 +5,11 @@ import { motion } from "framer-motion";
 import { ProfileButton } from "@/components/profile-button";
 import { ThemeToggle } from "@/components/button-toggle-theme";
 import { CreditLimits } from "@/features/credits/actions/get-current-credits-limits";
-import {CreditsIndicator} from "@/features/credits/components/credits-indicator";
-import {SidebarTrigger} from "@/components/ui/sidebar";
-import {Button} from "@/components/ui/button";
+import { CreditsIndicator } from "@/features/credits/components/credits-indicator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {Briefcase, FileText, Zap} from "lucide-react";
+import { Briefcase, FileText, Zap } from "lucide-react";
 
 interface NavbarProps {
   user: {
@@ -38,7 +38,16 @@ export function NavbarPrivate({ creditLimits, user }: NavbarProps) {
           <SidebarTrigger className="lg:hidden" />
           <div>
             <h1 className="text-xl font-bold">
-              Hola, <span className="text-levely-blue dark:text-levely-green">{user.name}</span>
+              Hola,{" "}
+              <span className="text-levely-blue dark:text-levely-green">
+                {(() => {
+                  if (!user?.name) return "";
+                  const firstName = user.name.split(" ")[0];
+                  return firstName.length > 15
+                    ? firstName.slice(0, 15) + "..."
+                    : firstName;
+                })()}
+              </span>
             </h1>
             <p className="text-sm text-muted-foreground hidden md:block">
               Esto es lo que la IA de Levely tiene para ti.
@@ -75,7 +84,6 @@ export function NavbarPrivate({ creditLimits, user }: NavbarProps) {
 
         {/* LADO DERECHO: Acciones */}
         <div className="flex items-center gap-3">
-
           {/* CRÉDITOS (KISS) */}
           <CreditsIndicator limits={creditLimits} />
 

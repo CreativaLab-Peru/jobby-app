@@ -41,7 +41,7 @@ export function CreditsIndicator({limits}: CreditsIndicatorProps) {
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <FileText className="h-4 w-4"/>
-                <span>Creación de CVs</span>
+                <span>CVs Manual</span>
               </div>
               <span className="font-mono font-bold">{limits.manageCvsLimit}</span>
             </div>

@@ -1,4 +1,5 @@
 import {Button} from "@/components/ui/button";
+import Link from "next/link";
 import {
   FileText,
   ArrowRight,
@@ -124,10 +125,12 @@ export default function Resources() {
               Desbloquea acceso a todas las herramientas de optimización con Levely. Analiza tu CV,
               recibe recomendaciones personalizadas y accede a oportunidades.
             </p>
-            <Button variant="accent" size="lg" className="cursor-pointer w-full sm:w-auto">
+            <Link href="/register">
+              <Button variant="accent" size="lg" className="cursor-pointer w-full sm:w-auto">
               Empezar con Levely
               <ArrowRight className="w-5 h-5"/>
             </Button>
+            </Link>
           </div>
         </div>
       </section>

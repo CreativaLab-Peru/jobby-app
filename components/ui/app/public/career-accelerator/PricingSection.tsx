@@ -158,7 +158,7 @@ export function PricingSection() {
                   size="xl"
                   className="cursor-pointer w-full bg-levely-orange text-white hover:bg-levely-orange/90 mb-4"
                 >
-                  Postular al programa
+                  Proximamente
                   <ArrowRight className="w-5 h-5"/>
                 </Button>
 

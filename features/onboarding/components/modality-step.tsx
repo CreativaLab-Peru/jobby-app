@@ -52,11 +52,11 @@ export function ModalityStep() {
                 <div className="flex items-center gap-4">
                   <div className={cn(
                     "p-2 rounded-lg",
-                    isSelected ? "bg-primary text-levely-dark" : "bg-secondary text-gray-500"
+                    isSelected ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
                   )}>
-                    <Icon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                    <Icon className="w-5 h-5" />
                   </div>
-                  <span className={cn("font-bold", isSelected ? "text-primary" : "text-gray-500 dark:text-white")}>
+                  <span className={cn("font-bold", isSelected ? "text-primary" : "text-gray-500 dark:text-white/60")}>
                     {label}
                   </span>
                 </div>

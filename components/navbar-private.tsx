@@ -31,23 +31,16 @@ export function NavbarPrivate({ creditLimits, user }: NavbarProps) {
   if (!mounted) return null;
 
   return (
-    <header className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border md:pl-64">
+    <header className="py-1 sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border md:pl-64">
       <div className="flex items-center justify-between h-16 px-6">
         {/* Left: Sidebar trigger + Welcome */}
-        <div className="flex items-center gap-4">
-          <SidebarTrigger className="lg:hidden" />
-          <div>
-            <h1 className="text-xl font-bold">
-              Hola, <span className="text-levely-blue dark:text-levely-green truncate">{user.name}</span>
+        <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+          <SidebarTrigger className="lg:hidden flex-shrink-0" />
+          <div className="min-w-0 max-w-[120px] sm:max-w-[200px] md:max-w-xs">
+            <h1 className="text-lg sm:text-xl font-bold flex items-center gap-1">
               Hola,{" "}
-              <span className="text-levely-blue dark:text-levely-green">
-                {(() => {
-                  if (!user?.name) return "";
-                  const firstName = user.name.split(" ")[0];
-                  return firstName.length > 15
-                    ? firstName.slice(0, 15) + "..."
-                    : firstName;
-                })()}
+              <span className="text-levely-blue dark:text-levely-green truncate">
+                {user?.name?.split(" ")[0] || ""}
               </span>
             </h1>
             <p className="text-sm text-muted-foreground hidden md:block">

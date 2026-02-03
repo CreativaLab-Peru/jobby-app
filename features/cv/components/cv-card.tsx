@@ -1,14 +1,8 @@
-"use client"
+"use client";
 
-import { useState, useTransition } from "react"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { useState, useTransition } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,35 +12,35 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { FileText, Eye, Edit, Trash2, Loader2 } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { formatDate } from "@/utils/format-date"
-import { CvWithRelations } from "../actions/get-cv-for-current-user"
-import { softDeleteCv } from "../actions/soft-delete-cv"
+} from "@/components/ui/alert-dialog";
+import { FileText, Eye, Edit, Trash2, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { formatDate } from "@/utils/format-date";
+import { CvWithRelations } from "../actions/get-cv-for-current-user";
+import { softDeleteCv } from "../actions/soft-delete-cv";
 // TODO: Replace with another library or custom toast
 // import { useToast } from "@/hooks/use-toast"
-import { TitleAndForm } from "@/components/title-and-form"
-import { updateCvTitle } from "@/features/cv/actions/update-title"
+import { TitleAndForm } from "@/components/title-and-form";
+import { updateCvTitle } from "@/features/cv/actions/update-title";
 
 interface CVCardProps {
-  cv: CvWithRelations
+  cv: CvWithRelations;
 }
 
 export function CVCard({ cv }: CVCardProps) {
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [isPending, startTransition] = useTransition()
-  const router = useRouter()
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   // const { toast } = useToast()
 
-  const handleEdit = () => router.push(`/cv/${cv.id}/edit`)
-  const handleSeeDetail = () => router.push(`/cv/${cv.id}/preview`)
+  const handleEdit = () => router.push(`/cv/${cv.id}/edit`);
+  const handleSeeDetail = () => router.push(`/cv/${cv.id}/preview`);
 
   const handleDelete = async () => {
-    setIsDeleting(true)
+    setIsDeleting(true);
 
-    const result = await softDeleteCv(cv.id)
+    const result = await softDeleteCv(cv.id);
 
     if (result.success) {
       // toast({
@@ -54,7 +48,7 @@ export function CVCard({ cv }: CVCardProps) {
       //   description:
       //     "El CV ha sido ocultado exitosamente. Ya no aparecerá en tu lista.",
       // })
-      setShowDeleteDialog(false)
+      setShowDeleteDialog(false);
     } else {
       // toast({
       //   title: "Error",
@@ -63,11 +57,11 @@ export function CVCard({ cv }: CVCardProps) {
       // })
     }
 
-    setIsDeleting(false)
-  }
+    setIsDeleting(false);
+  };
 
   const handleChangeTitle = (newTitle: string) => {
-    if (isPending) return
+    if (isPending) return;
 
     startTransition(() => {
       updateCvTitle(cv.id, newTitle).then((result) => {
@@ -77,7 +71,7 @@ export function CVCard({ cv }: CVCardProps) {
           //   description:
           //     "El título del CV ha sido actualizado exitosamente.",
           // })
-          router.refresh()
+          router.refresh();
         } else {
           // toast({
           //   title: "Error",
@@ -86,9 +80,9 @@ export function CVCard({ cv }: CVCardProps) {
           //   variant: "destructive",
           // })
         }
-      })
-    })
-  }
+      });
+    });
+  };
 
   return (
     <Card className="group bg-card border shadow-sm hover:shadow-md transition-all duration-300">
@@ -117,10 +111,9 @@ export function CVCard({ cv }: CVCardProps) {
         <CardDescription className="text-sm text-muted-foreground space-y-1">
           <div>
             <span className="font-medium text-levely-blue dark:text-levely-green">
-              Tipo de oportunidad:
+              Perfil Profesional:
             </span>{" "}
-            {cv?.cvType === "TECHNOLOGY_ENGINEERING" &&
-              "Tecnología e Ingeniería"}
+            {cv?.cvType === "TECHNOLOGY_ENGINEERING" && "Tecnología e Ingeniería"}
             {cv?.cvType === "DESIGN_CREATIVITY" && "Diseño y Creatividad"}
             {cv?.cvType === "MARKETING_STRATEGY" && "Marketing y Estrategia"}
             {cv?.cvType === "MANAGEMENT_BUSINESS" && "Gestión y Negocios"}
@@ -128,24 +121,19 @@ export function CVCard({ cv }: CVCardProps) {
             {cv?.cvType === "SOCIAL_MEDIA" && "Redes Sociales"}
             {cv?.cvType === "EDUCATION" && "Educación"}
             {cv?.cvType === "SCIENCE" && "Ciencia"}
-            {!cv?.cvType && (
-              <span className="italic text-muted-foreground">
-                No especificado
-              </span>
-            )}
+            {!cv?.cvType && <span className="italic text-muted-foreground">No especificado</span>}
           </div>
 
           <div>
-            <span className="font-medium text-levely-blue dark:text-levely-green">Estado:</span>{" "}
+            <span className="font-medium text-levely-blue dark:text-levely-green">
+              Tipo de Oportunidad:
+            </span>{" "}
             {cv?.opportunityType === "INTERNSHIP" && "Prácticas"}
             {cv?.opportunityType === "SCHOLARSHIP" && "Beca"}
-            {cv?.opportunityType === "EXCHANGE_PROGRAM" &&
-              "Programa de intercambio"}
+            {cv?.opportunityType === "EXCHANGE_PROGRAM" && "Programa de intercambio"}
             {cv?.opportunityType === "EMPLOYMENT" && "Empleo"}
             {!cv?.opportunityType && (
-              <span className="italic text-muted-foreground">
-                No especificado
-              </span>
+              <span className="italic text-muted-foreground">No especificado</span>
             )}
           </div>
         </CardDescription>
@@ -181,29 +169,19 @@ export function CVCard({ cv }: CVCardProps) {
       </CardContent>
 
       {/* Confirmación eliminar */}
-      <AlertDialog
-        open={showDeleteDialog}
-        onOpenChange={setShowDeleteDialog}
-      >
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción eliminará el CV{" "}
-              <strong>
-                &quot;{cv?.title || "Sin título"}&quot;
-              </strong>{" "}
+              Esta acción eliminará el CV <strong>&quot;{cv?.title || "Sin título"}&quot;</strong>{" "}
               de tu lista.
-              <p className="mt-2 font-medium">
-                ¿Deseas continuar?
-              </p>
+              <p className="mt-2 font-medium">¿Deseas continuar?</p>
             </AlertDialogDescription>
           </AlertDialogHeader>
 
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>
-              Cancelar
-            </AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
 
             <AlertDialogAction
               onClick={handleDelete}
@@ -223,5 +201,5 @@ export function CVCard({ cv }: CVCardProps) {
         </AlertDialogContent>
       </AlertDialog>
     </Card>
-  )
+  );
 }

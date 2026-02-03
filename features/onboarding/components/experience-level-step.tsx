@@ -55,12 +55,12 @@ export function ExperienceLevelStep() {
               )}
             >
               {/* Icono de estado profesional */}
-              <div className={cn(
+                <div className={cn(
                 "p-3 rounded-xl transition-colors",
-                isSelected ? "bg-primary text-white" : "bg-secondary text-muted-foreground"
-              )}>
+                isSelected ? "bg-primary dark:text-levely-dark text-white" : "bg-secondary text-muted-foreground"
+                )}>
                 <Icon className="w-6 h-6" />
-              </div>
+                </div>
 
               <div className="flex-1 space-y-1">
                 <p className={cn(

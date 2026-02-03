@@ -114,7 +114,7 @@ export function AreaAndRoleStep() {
                   className={cn(
                     "inline-flex items-center px-4 py-2 rounded-full border text-sm font-medium transition-all",
                     isSelected
-                      ? "bg-primary text-white"
+                      ? "bg-primary text-white dark:text-levely-dark"
                       : "bg-background border-input hover:border-primary/40 text-muted-foreground"
                   )}
                 >

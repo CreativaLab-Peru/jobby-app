@@ -17,6 +17,7 @@ import { CVForm } from "./cv-form";
 import { createCVByTitleAndType } from "@/features/cv/actions/create-cv-by-title-and-type";
 import { useRouter } from "next/navigation";
 import { CvType, OpportunityType } from "@prisma/client";
+import { useCreditsStore } from "@/store/use-credits-store";
 
 interface CreateCVModalProps {
   children: React.ReactNode;
@@ -42,6 +43,7 @@ export function CreateCVModal({
   const [isCreating, setIsCreating] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const { refreshCredits } = useCreditsStore();
 
   const handleCreateCV = () => {
     if (!formData.title.trim() || isCreating || isPending) return;
@@ -53,9 +55,11 @@ export function CreateCVModal({
         formData.title,
         formData.cvType,
         formData.opportunityType
-      ).then((result) => {
+      ).then(async (result) => {
         if (result?.success) {
           onOpenChange(false);
+          await refreshCredits();
+          router.refresh();
           router.push(`/cv/${result.data.id}/edit`);
         }
         setIsCreating(false);

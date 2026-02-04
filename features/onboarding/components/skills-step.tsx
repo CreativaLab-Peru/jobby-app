@@ -127,10 +127,10 @@ export function SkillsStep() {
                       type="button"
                       className={cn(
                         "px-3 py-1 rounded-full text-[10px] font-black transition-all flex items-center gap-1",
-                        selection.level === 'Avanzado' ? "bg-primary text-white shadow-sm" : "text-muted-foreground/30"
+                        selection.level === 'Avanzado' ? "bg-primary text-white dark:text-levely-dark shadow-sm" : "text-muted-foreground/30"
                       )}
                     >
-                      {selection.level === 'Avanzado' && <Sparkles className="w-3 h-3" />}
+                      {selection.level === 'Avanzado' && <Sparkles className="dark:text-levely-dark w-3 h-3" />}
                       Avanzado
                     </button>
                   </div>

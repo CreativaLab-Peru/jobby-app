@@ -3,9 +3,14 @@
 # Fixes
 - Improve onboarding validations
 
+# v1.1.9 - 2025-02-04
+
+# Fixes
+- Hide AIESEC logo
+
 # v1.1.8 - 2025-02-03
 
-## Fixes
+# Fixes
 - Test CI and CD pipelines to generate versions properly
 - Fix style of name on header of user
 

@@ -29,6 +29,7 @@ import {
 import {timeout} from "d3-timer";
 import {checkExistingUser} from "@/features/authentication/actions/existing-user";
 import {getUserByEmail} from "@/features/authentication/actions/get-user-by-email";
+import { verifyOAuthUser } from "@/features/authentication/actions/verify-oauth-user";
 
 const TOTAL_STEPS = 9;
 
@@ -53,37 +54,54 @@ export function OnboardingForm() {
 
     startTransition(async () => {
       try {
-        // A. Registro en el sistema de autenticación
-        const body = {
-          email: formData.email,
-          password: formData.password,
-          name: formData.name,
-        };
-        const existingUser = await checkExistingUser(body.email);
-        if (existingUser.error) {
-          toast.error("Hubo un problema al verificar el correo. Intenta nuevamente.");
-          return;
+        // Verificar si el usuario ya está autenticado (OAuth)
+        const session = await authClient.getSession();
+        let userId: string;
+        let isOAuthUser = false;
+        
+        if (session?.data?.user) {
+          // Usuario ya autenticado con OAuth
+          userId = session.data.user.id;
+          isOAuthUser = true;
+          console.log("[INFO] Usuario OAuth detectado:", userId);
+        } else {
+          // A. Registro normal con email/password
+          const body = {
+            email: formData.email,
+            password: formData.password,
+            name: formData.name,
+          };
+          
+          const existingUser = await checkExistingUser(body.email);
+          if (existingUser.error) {
+            toast.error("Hubo un problema al verificar el correo. Intenta nuevamente.");
+            return;
+          }
+
+          if (existingUser.exists) {
+            toast.error("El correo ya está registrado. Por favor, usa otro correo.");
+            return;
+          }
+          
+          const newUser = await authClient.signUp.email(body);
+          if (newUser?.error) {
+            console.error("[ERROR_SIGNUP]", newUser.error);
+            toast.error("Hubo un problema al crear tu cuenta. Intenta con otro correo.");
+            return;
+          }
+
+          const currentUser = await getUserByEmail(newUser.data.user.email);
+          if (!currentUser) {
+            toast.error("No se pudo obtener la información del usuario recién creado.");
+            return;
+          }
+          
+          userId = currentUser.id;
         }
 
-        if (existingUser.exists) {
-          toast.error("El correo ya está registrado. Por favor, usa otro correo.");
-          return;
-        }
-        const newUser = await authClient.signUp.email(body);
-        if (newUser?.error) {
-          console.error("[ERROR_SIGNUP]", newUser.error);
-          toast.error("Hubo un problema al crear tu cuenta. Intenta con otro correo.");
-          return;
-        }
-
-        const currentUser = await getUserByEmail(newUser.data.user.email);
-        if (!currentUser) {
-          toast.error("No se pudo obtener la información del usuario recién creado.");
-          return;
-        }
-
+        // B. Guardar preferencias de onboarding
         if (debug)  {
-          const result = await completeOnboardingDebugAction(currentUser.id, formData);
+          const result = await completeOnboardingDebugAction(userId, formData);
           if (result.error) {
             toast.error(result.error);
             return;
@@ -93,16 +111,33 @@ export function OnboardingForm() {
           return;
         }
 
-        const result = await completeOnboardingAction(currentUser.id, formData);
+        const result = await completeOnboardingAction(userId, formData);
 
         if (result.error) {
           toast.error(result.error);
           return;
         }
 
-        // C. Éxito y limpieza
+        // C. Si es usuario OAuth, verificar email y otorgar créditos automáticamente
+        if (isOAuthUser) {
+          const verifyResult = await verifyOAuthUser(userId);
+          if (verifyResult.error) {
+            console.error("[ERROR_VERIFY_OAUTH]", verifyResult.error);
+            // No bloqueamos el flujo, solo logueamos el error
+          }
+        }
+
+        // D. Éxito y limpieza
         toast.success("¡Bienvenido/a! Tu perfil profesional está listo.");
-        router.push("/account/verify?email=" + encodeURIComponent(formData.email));
+        
+        // Si viene de OAuth, ir directo al dashboard (ya verificado)
+        // Si es registro nuevo, pedir verificación de email
+        if (isOAuthUser) {
+          router.push("/dashboard");
+        } else {
+          router.push("/account/verify?email=" + encodeURIComponent(formData.email));
+        }
+        
         timeout(() => {
           reset();
         }, 1000);

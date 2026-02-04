@@ -93,7 +93,7 @@ export default function Resources() {
               >
                 <div className="flex items-start justify-between mb-4">
                   <div
-                    className="w-12 h-12 rounded-xl bg-levely-green/40 flex items-center justify-center group-hover:bg-levely-green/60 transition-colors">
+                    className="w-12 h-12 rounded-xl bg-levely-dark/10 flex items-center justify-center group-hover:bg-levely-dark/20 transition-colors">
                     <resource.icon className="w-6 h-6 text-levely-dark"/>
                   </div>
                   <span className="text-xs font-medium px-3 py-1 rounded-full bg-secondary dark:text-white">

@@ -1,11 +1,3 @@
-# 1.1.9 - 2025-02-03
-
-### BEFORE DEPLOYMENT
-- Verify that all public pages render correctly in both light and dark modes
-- Test CV upload flow redirect for unauthenticated users
-- Ensure credit limits are displaying properly on dashboard
-- Validate responsive design on mobile devices for navbar and public pages
-
 # 1.1.2 - 2025-01-30
 
 # BEFORE DEPLOYMENT

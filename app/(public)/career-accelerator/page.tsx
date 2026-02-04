@@ -7,8 +7,8 @@ import {
   Award,
   CheckCircle2
 } from "lucide-react";
-import {PricingSection} from "@/components/ui/app/public/career-accelerator/PricingSection";
-import {ExpertsSection} from "@/components/ui/app/public/career-accelerator/ExpertsSection";
+import {PricingSection} from "@/components/ui/app/public/career-accelerator/pricing-section";
+import {ExpertsSection} from "@/components/ui/app/public/career-accelerator/experts-section";
 
 const programWeeks = [
   {

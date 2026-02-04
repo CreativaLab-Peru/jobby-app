@@ -1,10 +1,10 @@
 import {Button} from "@/components/ui/button";
-import {TestimonialsSection} from "@/components/ui/app/public/cv-builder/TestimonialsSection";
-import {HowItWorksSection} from "@/components/ui/app/public/cv-builder/HowItWorksSection";
-import {HotSaleSection} from "@/components/ui/app/public/cv-builder/HotSaleSection";
+import {TestimonialsSection} from "@/components/ui/app/public/cv-builder/testimonials-section";
+import {HowItWorksSection} from "@/components/ui/app/public/cv-builder/how-it-works-section";
+import {HotSaleSection} from "@/components/ui/app/public/cv-builder/hot-sale-section";
 import AutoPlayVideo from "@/components/auto-play-video";
-import {FAQSection} from "@/components/ui/app/public/cv-builder/FAQSection";
-import {HeroCards} from "@/components/ui/app/public/cv-builder/HeroCards";
+import {FAQSection} from "@/components/ui/app/public/cv-builder/faq-section";
+import {HeroCards} from "@/components/ui/app/public/cv-builder/hero-cards";
 import {FileText, ArrowRight} from "lucide-react";
 import Link from "next/link";
 import VideoAnchorButton from "@/components/video-anchor-button";

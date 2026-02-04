@@ -1,4 +1,4 @@
-# v1.1.9 - 2025-02-03
+# WIP
 
 ## Features
 - Added comprehensive dark mode support to the CV upload flow (`/get-started` page), ensuring visual consistency across light and dark themes

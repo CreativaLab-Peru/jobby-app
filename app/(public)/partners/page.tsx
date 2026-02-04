@@ -1,5 +1,5 @@
 import {Button} from "@/components/ui/button";
-import {LogosSection} from "@/components/ui/app/public/partners/LogosSection";
+import {LogosSection} from "@/components/ui/app/public/partners/logos-section";
 import {
   GraduationCap,
   ArrowRight,

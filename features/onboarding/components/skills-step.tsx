@@ -6,7 +6,7 @@ import { Check, Info, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function SkillsStep() {
-  const { formData, updateFormData } = useOnboardingStore();
+  const { formData, updateFormData, errors } = useOnboardingStore();
 
   const selectedIndustries = formData.targetIndustries || [];
   const selectedSkills = formData.skills || [];
@@ -70,6 +70,10 @@ export function SkillsStep() {
           </div>
         </div>
       </div>
+
+      {errors.skills && (
+        <p className="text-sm text-red-500 mt-1">{errors.skills}</p>
+      )}
 
       <div className="grid grid-cols-1 gap-3 max-h-[440px] overflow-y-auto pr-2 custom-scrollbar">
         {availableSkills.length > 0 ? (

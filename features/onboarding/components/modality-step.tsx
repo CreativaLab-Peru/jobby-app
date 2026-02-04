@@ -12,7 +12,7 @@ const MODALITIES = [
 ];
 
 export function ModalityStep() {
-  const { formData, updateFormData } = useOnboardingStore();
+  const { formData, updateFormData, errors } = useOnboardingStore();
 
   const toggleModality = (id: string) => {
     const current = formData.workModality || [];
@@ -33,6 +33,10 @@ export function ModalityStep() {
           <h2 className="text-2xl font-bold tracking-tight">Modalidad preferida</h2>
           <p className="text-muted-foreground italic text-sm">Puedes seleccionar múltiples opciones.</p>
         </div>
+
+        {errors.workModality && (
+          <p className="text-sm text-red-600 mt-1">{errors.workModality}</p>
+        )}
 
         <div className="grid gap-4">
           {MODALITIES.map(({ id, label, icon: Icon }) => {

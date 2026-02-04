@@ -18,10 +18,15 @@ export const talentOnboardingBaseSchema = z.object({
   minSalary: z.coerce.number().min(0).optional(),
   currency: z.enum(['PEN', 'USD']).default('USD'),
   work: z.enum(['Remoto', 'Presencial', 'Híbrido']).optional(),
-  email: z.string().email("Correo inválido"),
-  password: z.string().min(8, "Mínimo 8 caracteres"),
+  email: z.string().regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Correo electrónico inválido"),
+  password: z.string()
+    .min(6, "La contraseña debe tener al menos 6 caracteres")
+    .regex(/[A-Z]/, "Debe contener al menos una letra mayúscula")
+    .regex(/[0-9]/, "Debe contener al menos un número"),
   confirmPassword: z.string(),
-  acceptedTerms: z.boolean().default(false),
+  acceptedTerms: z.boolean().refine((val) => val === true, {
+    message: "Debes aceptar los términos y condiciones",
+  }),
 });
 
 // 2. Esquema Final (Con refinamientos para el registro final)
@@ -30,7 +35,8 @@ export const talentOnboardingSchema = talentOnboardingBaseSchema.refine(
   {
     message: "Las contraseñas no coinciden",
     path: ["confirmPassword"],
-  }
+  },
+
 );
 
 export type TalentOnboardingFormData = z.infer<typeof talentOnboardingSchema>;

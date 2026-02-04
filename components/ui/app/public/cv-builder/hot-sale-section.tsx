@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Check, Zap, ArrowRight, Sparkles } from "lucide-react";
+import Link from "next/link";
 
 const features = [
   "Análisis personalizado de tu perfil profesional",
@@ -33,8 +34,8 @@ export function HotSaleSection() {
             </div>
             <h2 className="headline-lg mb-4">¿Qué es CV Builder?</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Levely CV Builder es una herramienta que analiza tu perfil profesional, 
-              optimiza tu CV y te recomienda oportunidades alineadas a tu experiencia, 
+              Levely CV Builder es una herramienta que analiza tu perfil profesional,
+              optimiza tu CV y te recomienda oportunidades alineadas a tu experiencia,
               habilidades y metas de carrera.
             </p>
           </div>
@@ -43,11 +44,11 @@ export function HotSaleSection() {
           <div className="relative">
             {/* Glow effect */}
             <div className="absolute -inset-1 bg-gradient-to-r from-levely-green via-levely-green/50 to-levely-green rounded-3xl blur-lg opacity-50 animate-pulse" />
-            
+
             <div className="relative bg-card border-2 border-levely-green rounded-3xl p-8 md:p-12 shadow-2xl">
               {/* Badge */}
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 rounded-full bg-levely-green text-lime-foreground text-sm font-bold flex items-center gap-2 shadow-lg">
-                <Sparkles className="w-4 h-4" />
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 rounded-full bg-levely-green text-lime-foreground text-levely-dark font-bold flex items-center gap-2 shadow-lg">
+                <Sparkles className="w-4 h-4 text-levely-dark" />
                 Test incluye
                 <Sparkles className="w-4 h-4" />
               </div>
@@ -80,10 +81,12 @@ export function HotSaleSection() {
                     </p>
                   </div>
 
-                  <Button variant="lime" size="xl" className="w-full text-lg py-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
-                    Analizar mi CV
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
+                  <Link href="/get-started">
+                    <Button variant="lime" size="xl" className="cursor-pointer w-full text-lg py-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+                      Analizar mi CV
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Button>
+                  </Link>
 
                   <p className="text-xs text-muted-foreground text-center">
                     ⚡ Resultados en menos de 60 segundos

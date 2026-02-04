@@ -27,9 +27,9 @@ export function HeroSection() {
       <div className="container-levely relative z-10">
         <div className="flex flex-col items-center text-center py-20 sm:py-28 lg:py-36">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue/10 border border-blue/20 mb-8 animate-fade-up backdrop-blur-sm">
-            <Sparkles className="w-4 h-4 text-blue" />
-            <span className="text-sm font-medium text-gray-900 dark:text-white">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-levely-green/10 border dark:border-levely-green/20 border-levely-dark/20 mb-8 animate-fade-up backdrop-blur-sm">
+            <Sparkles className="w-4 h-4 text-levely-dark dark:text-levely-green " />
+            <span className="text-sm font-medium text-levely-dark dark:text-levely-green">
               Potenciado por IA
             </span>
           </div>
@@ -56,10 +56,12 @@ export function HeroSection() {
             className="mt-10 animate-fade-up"
             style={{ animationDelay: "0.3s" }}
           >
-            <Button variant="hero" size="xl">
-              Empezar
-              <ArrowRight className="w-5 h-5 ml-1" />
-            </Button>
+            <Link href="/register">
+              <Button variant="hero" size="xl" className="cursor-pointer">
+                Empezar
+                <ArrowRight className="w-5 h-5 ml-1" />
+              </Button>
+            </Link>
           </div>
 
           {/* Social proof */}

@@ -1,5 +1,6 @@
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export function CTASection() {
     return (
@@ -18,22 +19,24 @@ export function CTASection() {
                 <Sparkles className="w-4 h-4 text-lime-300" />
                 <span className="text-sm font-medium text-white/90">Tu futuro empieza hoy</span>
               </div>
-              
+
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6">
                 El talento que buscas,<br />
                 <span className="text-lime-300">a un click de distancia</span>
               </h2>
-              
+
               <p className="text-lg sm:text-xl text-white/70 max-w-xl mx-auto mb-10">
                 Únete a la comunidad de profesionales que están transformando su carrera con inteligencia artificial.
               </p>
-              
-              <Button 
-                className="bg-lime-300 text-gray-900 hover:bg-lime-400 font-semibold"
-                size="xl">
-                Empezar gratis
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
+
+              <Link href="/register">
+                <Button
+                  className="cursor-pointer bg-lime-300 text-gray-900 hover:bg-lime-400 font-semibold"
+                  size="xl">
+                  Empezar gratis
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

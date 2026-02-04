@@ -62,6 +62,18 @@ model VerificationCode {
   @@map("verification_code")
 }
 
+// Modelo requerido por Better Auth para OAuth y email verification
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verification")
+}
+
 // Preferencias del usuario para búsqueda de empleo
 model UserPreference {
   id     String @id @default(uuid())

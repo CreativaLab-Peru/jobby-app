@@ -31,7 +31,7 @@ export default function TermsPage() {
               <h2 className="text-lg font-semibold text-gray-900 mb-2">2. Privacidad</h2>
               <p>
                 La protección de tus datos es una prioridad para nosotros. Consulta nuestra{" "}
-                <a href="/privacy-policy" className="text-orange-600 hover:underline">
+                <a href="/politica-de-privacidad" className="text-levely-blue font-bold dark:text-levely-dark hover:underline">
                   Política de Privacidad
                 </a>{" "}
                 para más información sobre cómo tratamos tus datos personales.

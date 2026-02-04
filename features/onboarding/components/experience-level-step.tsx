@@ -59,12 +59,12 @@ export function ExperienceLevelStep() {
               )}
             >
               {/* Icono de estado profesional */}
-              <div className={cn(
+                <div className={cn(
                 "p-3 rounded-xl transition-colors",
-                isSelected ? "bg-primary text-white" : "bg-secondary text-muted-foreground"
-              )}>
-                <Icon className="text-gray-400 w-6 h-6" />
-              </div>
+                isSelected ? "bg-primary dark:text-levely-dark text-white" : "bg-secondary text-muted-foreground"
+                )}>
+                <Icon className="w-6 h-6" />
+                </div>
 
               <div className="flex-1 space-y-1">
                 <p className={cn(
@@ -81,7 +81,7 @@ export function ExperienceLevelStep() {
               {/* Check de confirmación */}
               {isSelected && (
                 <div className="flex-shrink-0 bg-primary rounded-full p-1 animate-in zoom-in">
-                  <Check className="w-4 h-4 text-gray-500" strokeWidth={3} />
+                  <Check className="w-4 h-4 text-white dark:text-levely-dark" strokeWidth={3} />
                 </div>
               )}
             </button>

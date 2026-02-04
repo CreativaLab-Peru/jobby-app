@@ -56,11 +56,11 @@ export function ModalityStep() {
                 <div className="flex items-center gap-4">
                   <div className={cn(
                     "p-2 rounded-lg",
-                    isSelected ? "bg-primary text-white" : "bg-secondary text-gray-500"
+                    isSelected ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
                   )}>
-                    <Icon className="w-5 h-5 text-gray-500" />
+                    <Icon className="w-5 h-5" />
                   </div>
-                  <span className={cn("font-bold", isSelected ? "text-primary" : "text-gray-400")}>
+                  <span className={cn("font-bold", isSelected ? "text-primary" : "text-gray-500 dark:text-white/60")}>
                     {label}
                   </span>
                 </div>
@@ -69,7 +69,7 @@ export function ModalityStep() {
                   "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all",
                   isSelected ? "bg-primary border-primary" : "border-muted"
                 )}>
-                  {isSelected && <Check className="w-4 h-4 text-gray-500" strokeWidth={3} />}
+                  {isSelected && <Check className="w-4 h-4 text-white dark:text-levely-dark" strokeWidth={3} />}
                 </div>
               </button>
             );

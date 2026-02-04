@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { ArrowLeft, Home, Download, Loader2, Sparkles } from "lucide-react"
 import { CVData, CVSection } from "@/types/cv"
 import { toast } from "sonner"
+import { useCreditsStore } from "@/store/use-credits-store"
 
 interface ActionsSidebarProps {
   cvData: CVData
@@ -29,9 +30,10 @@ export function ActionsSidebar({
   canAnalyze,
   analysisTokens 
 }: ActionsSidebarProps) {
-  const router = useRouter()
   const [downloading, setDownloading] = useState(false)
   const [analyzing, setAnalyzing] = useState(false)
+  const router = useRouter()
+  const { refreshCredits } = useCreditsStore()
 
   const handleDownloadPdf = async () => {
     setDownloading(true)
@@ -76,6 +78,9 @@ export function ActionsSidebar({
       }
 
       toast.success("¡Análisis iniciado! Redirigiendo...")
+      
+      // Refresh credits after analysis
+      await refreshCredits()
       
       // Redirect to the progress/status page for this CV
       router.push(`/cv/${cvId}/analysis`)

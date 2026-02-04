@@ -5,7 +5,7 @@
 
 # v1.1.8 - 2025-02-03
 
-# Fixes
+## Fixes
 - Test CI and CD pipelines to generate versions properly
 - Fix style of name on header of user
 

@@ -41,11 +41,11 @@ export function TestimonialsSection() {
               key={testimonial.name}
               className="relative p-6 rounded-2xl border border-border bg-card hover:border-levely-green/40 transition-all duration-300"
             >
-              <Quote className="w-8 h-8 text-levely-green/40 mb-4" />
-              
+              <Quote className="w-8 h-8 text-levely-dark fill-levely-dark dark:text-levely-green/40 mb-4" />
+
               <div className="flex gap-1 mb-4">
                 {Array.from({ length: testimonial.rating }).map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-levely-green text-levely-green" />
+                  <Star key={i} className="w-4 h-4 fill-levely-green dark:text-levely-green" />
                 ))}
               </div>
 

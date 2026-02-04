@@ -48,7 +48,7 @@ export function CVBuilderPreview() {
               <Link href="/cv-builder">
                 <Button
                   size="lg"
-                  className="bg-levely-green text-black hover:bg-levely-green/90 font-semibold"
+                  className="bg-levely-green text-black hover:bg-levely-green/90 font-semibold cursor-pointer"
                 >
                   Probar CV Builder
                   <ArrowRight className="w-4 h-4" />

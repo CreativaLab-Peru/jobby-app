@@ -40,7 +40,8 @@ export default function CVBuilder() {
                     <ArrowRight className="w-5 h-5"/>
                   </Button>
                 </Link>
-                <VideoAnchorButton/>
+                {/* Todo: Uncomment when video is ready */}
+                {/*<VideoAnchorButton/>*/}
               </div>
             </div>
 

@@ -25,7 +25,7 @@ const AVAILABILITY_OPTIONS = [
 ];
 
 export function AvailabilityStep() {
-  const { formData, updateFormData } = useOnboardingStore();
+  const { formData, updateFormData, errors } = useOnboardingStore();
 
   // Aseguramos que availability siempre sea un array para evitar errores de .includes
   const selectedAvailabilities = formData.availability || [];
@@ -48,6 +48,10 @@ export function AvailabilityStep() {
           ¿Cómo te gustaría comprometerte? Puedes elegir varias opciones.
         </p>
       </div>
+
+      {errors.availability && (
+        <p className="text-sm text-red-600 mt-1">{errors.availability}</p>
+      )}
 
       <div className="grid gap-4">
         {AVAILABILITY_OPTIONS.map(({ id, label, desc, icon: Icon }) => {
@@ -73,7 +77,7 @@ export function AvailabilityStep() {
                   <Icon className="w-5 h-5" />
                 </div>
                 <div className="flex flex-col">
-                  <span className={cn("font-bold", isSelected ? "text-white" : "text-gray-400")}>
+                  <span className={cn("font-bold", isSelected ? "dark:text-white" : "text-gray-500")}>
                     {label}
                   </span>
                   <span className="text-xs text-muted-foreground font-medium">
@@ -87,7 +91,7 @@ export function AvailabilityStep() {
                 "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all",
                 isSelected ? "bg-primary border-primary scale-110" : "border-muted"
               )}>
-                {isSelected && <Check className="w-3.5 h-3.5 text-gray-600" strokeWidth={3} />}
+                {isSelected && <Check className="w-3.5 h-3.5 text-white dark:text-levely-dark" strokeWidth={3} />}
               </div>
             </button>
           );

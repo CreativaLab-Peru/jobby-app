@@ -1,11 +1,12 @@
 "use client";
+
 import { useOnboardingStore } from "@/features/onboarding/store/talent-onboarding-store";
 import { AREAS_AND_ROLES } from "@/features/onboarding/consts/talent-onboarding-data";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
 export function AreaAndRoleStep() {
-  const { formData, updateFormData } = useOnboardingStore();
+  const { formData, updateFormData, errors } = useOnboardingStore();
 
   const selectedIndustries = formData.targetIndustries || [];
   const selectedRoles = formData.preferredRoles || [];
@@ -63,6 +64,11 @@ export function AreaAndRoleStep() {
           </p>
         </div>
 
+        {/* Errores de validación */}
+        { errors .targetIndustries && (
+          <p className="text-sm text-red-600 mt-1 text-center">{errors.targetIndustries}</p>
+        )}
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {Object.entries(AREAS_AND_ROLES).map(([key, value]) => {
             const isSelected = selectedIndustries.includes(key);
@@ -85,7 +91,7 @@ export function AreaAndRoleStep() {
                   "w-5 h-5 shrink-0 rounded-md border flex items-center justify-center transition-all",
                   isSelected ? "bg-primary border-primary" : "border-muted-foreground/30"
                 )}>
-                  {isSelected && <Check className="w-3 h-3 text-white" strokeWidth={4} />}
+                  {isSelected && <Check className="w-3 h-3 text-white dark:text-levely-dark" strokeWidth={4} />}
                 </div>
               </button>
             );
@@ -103,6 +109,11 @@ export function AreaAndRoleStep() {
             </p>
           </div>
 
+          {/* Errores de validación */}
+          { errors.preferredRoles && (
+            <p className="text-sm text-red-600 mt-1 text-center">{errors.preferredRoles}</p>
+          )}
+
           <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
             {combinedRoles.map((role) => {
               const isSelected = selectedRoles.includes(role.key);
@@ -114,7 +125,7 @@ export function AreaAndRoleStep() {
                   className={cn(
                     "inline-flex items-center px-4 py-2 rounded-full border text-sm font-medium transition-all",
                     isSelected
-                      ? "bg-primary text-white border-primary shadow-md scale-105"
+                      ? "bg-primary text-white dark:text-levely-dark"
                       : "bg-background border-input hover:border-primary/40 text-muted-foreground"
                   )}
                 >

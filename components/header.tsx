@@ -76,7 +76,7 @@ export default function Header({ authenticated }: HeaderProps) {
               <Link href="/dashboard">
                 <Button
                   variant="ghost"
-                  className="border border-gray-300 dark:border-gray-700 text-primary dark:text-primary-dark"
+                  className="cursor-pointer border border-gray-300 dark:border-gray-700 text-primary dark:text-primary-dark"
                 >
                   <User className="mr-2 h-4 w-4" />
                   Ver mis CVs
@@ -85,7 +85,7 @@ export default function Header({ authenticated }: HeaderProps) {
             ) : (
               <>
                 <Link href="/login">
-                  <Button variant="ghost" size="sm">
+                  <Button className="cursor-pointer" variant="ghost" size="sm">
                     Iniciar sesión
                   </Button>
                 </Link>

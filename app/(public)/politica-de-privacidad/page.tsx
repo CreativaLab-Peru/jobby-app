@@ -77,7 +77,7 @@ export default function PrivacyPolicyPage() {
             
             <p className="mt-6 text-gray-600">
               Si tienes dudas sobre esta política, por favor contáctanos en{" "}
-              <a href="mailto:soporte@tuapp.com" className="text-orange-600 hover:underline">
+              <a href="mailto:soporte@tuapp.com" className="text-levely-blue font-bold dark:text-levely-dark hover:underline">
                 soporte@tuapp.com
               </a>.
             </p>

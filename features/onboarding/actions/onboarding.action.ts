@@ -6,14 +6,14 @@ import { TalentOnboardingFormData } from "@/features/onboarding/schemas";
 import { inngest } from "@/inngest/functions/client";
 import { generateNumericCode } from "@/utils/digicts";
 
-export async function completeOnboardingAction(email: string, body: TalentOnboardingFormData) {
+export async function completeOnboardingAction(id: string, body: TalentOnboardingFormData) {
   const data = body;
 
   try {
     const codeSixDigits = generateNumericCode();
 
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { id },
     });
 
     if (!user) {
@@ -61,13 +61,21 @@ export async function completeOnboardingAction(email: string, body: TalentOnboar
         },
       });
 
-      // 3. Update user birthday
+      // 3. Update user birthday (solo si existe y es válida)
+      const updateData: any = {
+        name: data.name,
+      };
+      
+      if (data.birthDate && data.birthDate.trim() !== '') {
+        const birthDate = new Date(data.birthDate);
+        if (!isNaN(birthDate.getTime())) {
+          updateData.birthday = birthDate;
+        }
+      }
+
       await tx.user.update({
         where: { id: user.id },
-        data: {
-          name: data.name,
-          birthday: new Date(data.birthDate)
-        },
+        data: updateData,
       });
     });
 

@@ -13,6 +13,7 @@ import { loginAction } from "../actions/login.action";
 import { useState } from "react";
 import {authClient} from "@/lib/auth-client";
 import {routes} from "@/lib/routes";
+import { GoogleOAuthButton } from "./google-oauth-button";
 
 const errorMapper: Record<string, string> = {
   "Invalid password": "Contraseña incorrecta",
@@ -74,7 +75,8 @@ export function LoginForm() {
         </div>
 
         <Card className="p-8 bg-card shadow-glow">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">            
+
             <FormField
               label="Correo electrónico"
               placeholder="tu@email.com"
@@ -110,7 +112,7 @@ export function LoginForm() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-14 font-bold"
+              className="cursor-pointer w-full h-14 font-bold"
             >
               {isSubmitting ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -118,6 +120,8 @@ export function LoginForm() {
                 "Iniciar sesión"
               )}
             </Button>
+            {/* Botón de Google OAuth */}
+            <GoogleOAuthButton callbackURL={routes.app.dashboard} />
           </form>
 
           <p className="text-center text-sm text-muted-foreground mt-6">

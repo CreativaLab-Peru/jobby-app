@@ -5,11 +5,14 @@ import { ResourcesCard } from "@/features/dashboard/components/resources-card";
 import { RecommendationsList } from "@/features/dashboard/components/recommendations-list";
 import { TopMatchesList } from "@/features/dashboard/components/top-matches-list";
 import { DashboardStats } from "../actions/get-statistics-for-user";
+import { CreditLimits } from "@/features/credits/actions/get-current-credits-limits";
+
 interface DashboardScreenProps {
   score: number;
   stats: DashboardStats | null;
   recommendations: any[];
-  subscription: any;
+  subscription: DashboardStats["subscription"];
+  limits?: CreditLimits;
 }
 
 export default function DashboardScreen({
@@ -17,22 +20,23 @@ export default function DashboardScreen({
   stats,
   recommendations,
   subscription,
+  limits,
 }: DashboardScreenProps) {
+
   const resources = [
     {
       label: "Evaluaciones",
-      used: subscription?.manualCvsUsed || 0,
-      limit: subscription?.plan?.manualCvLimit || 5,
+      count: subscription?.manualCvsUsed || 0,
       colorClass: "text-primary",
     },
     {
       label: "CVs Creados",
-      used: stats?.totalCvs || 0,
-      limit: subscription?.plan?.uploadCvLimit || 3,
-      colorClass: "text-secondary",
+      count: stats?.totalCvs || 0,
+      colorClass: "text-levely-orange",
     },
-    // TODO: Add more resources as needed
   ];
+
+  const opportunitiesCount = stats?.topOpportunities ? stats.topOpportunities.length : 0;
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -42,7 +46,7 @@ export default function DashboardScreen({
           <EmployabilityCard score={score} sector={stats?.userSector || "General"} />
         </div>
         <div>
-          <ResourcesCard resources={resources} />
+          <ResourcesCard resources={resources} opportunitiesCount={opportunitiesCount} />
         </div>
       </div>
 

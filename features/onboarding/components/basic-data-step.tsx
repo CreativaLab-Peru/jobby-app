@@ -3,9 +3,11 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useOnboardingStore } from "@/features/onboarding/store/talent-onboarding-store";
 import { DateInput } from "@/components/form/date-input";
+import {FormField} from "@/components/form-field";
+import {Mail} from "lucide-react";
 
 export function BasicDataStep() {
-  const { formData, updateFormData } = useOnboardingStore();
+  const { formData, updateFormData, errors } = useOnboardingStore();
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
@@ -30,6 +32,9 @@ export function BasicDataStep() {
             value={formData.name || ""}
             onChange={(e) => updateFormData({ name: e.target.value })}
           />
+          {errors.name && (
+            <p className="text-sm text-red-600 mt-1">{errors.name}</p>
+          )}
         </div>
 
         {/* Grid para agrupar Fecha y País en Desktop, apilados en Mobile */}
@@ -41,6 +46,9 @@ export function BasicDataStep() {
               onChange={(val) => updateFormData({ birthDate: val })}
               // Asegúrate que DateInput use internamente un estilo similar al Input h-12
             />
+            {errors.birthDate && (
+              <p className="text-sm text-red-600 mt-1">{errors.birthDate}</p>
+            )}
           </div>
 
           <div className="grid gap-2">

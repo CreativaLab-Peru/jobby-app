@@ -33,7 +33,7 @@ export function FormField({
     <div className="space-y-2 w-full">
       <Label
         htmlFor={generatedId}
-        className={cn(error && "text-destructive")}
+        className={cn(error && "text-levely-orange")}
       >
         {label}
       </Label>
@@ -64,7 +64,7 @@ export function FormField({
       </div>
 
       {error && (
-        <p className="text-xs font-medium text-destructive animate-in fade-in slide-in-from-top-1">
+        <p className="dark:text-gray-400 text-xs font-medium text-destructive animate-in fade-in slide-in-from-top-1">
           {error}
         </p>
       )}

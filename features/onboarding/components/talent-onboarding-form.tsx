@@ -26,11 +26,15 @@ import {useDebug} from "@/hooks/use-debug";
 import {
   completeOnboardingDebugAction
 } from "@/features/onboarding/actions/onboarding-debug-action";
+import {timeout} from "d3-timer";
+import {checkExistingUser} from "@/features/authentication/actions/existing-user";
+import {getUserByEmail} from "@/features/authentication/actions/get-user-by-email";
+import { verifyOAuthUser } from "@/features/authentication/actions/verify-oauth-user";
 
 const TOTAL_STEPS = 9;
 
 export function OnboardingForm() {
-  const {step, setStep, formData, reset, validateCurrentStep} = useOnboardingStore();
+  const {step, setStep, formData, reset, validateCurrentStep, setErrors} = useOnboardingStore();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -38,6 +42,7 @@ export function OnboardingForm() {
   const debug = useDebug();
 
   const handleFinalize = async () => {
+    setErrors({}); // Limpiar errores previos
     // 1. Validación final completa de Zod antes de disparar auth
     const validation = validateCurrentStep();
     if (!validation.success) {
@@ -49,23 +54,54 @@ export function OnboardingForm() {
 
     startTransition(async () => {
       try {
-        // A. Registro en el sistema de autenticación
-        const body = {
-          email: formData.email,
-          password: formData.password,
-          name: formData.name,
-        };
-        console.log("[DEBUG] Registro de usuario con datos:", body);
-        const newUser = await authClient.signUp.email(body);
+        // Verificar si el usuario ya está autenticado (OAuth)
+        const session = await authClient.getSession();
+        let userId: string;
+        let isOAuthUser = false;
+        
+        if (session?.data?.user) {
+          // Usuario ya autenticado con OAuth
+          userId = session.data.user.id;
+          isOAuthUser = true;
+          console.log("[INFO] Usuario OAuth detectado:", userId);
+        } else {
+          // A. Registro normal con email/password
+          const body = {
+            email: formData.email,
+            password: formData.password,
+            name: formData.name,
+          };
+          
+          const existingUser = await checkExistingUser(body.email);
+          if (existingUser.error) {
+            toast.error("Hubo un problema al verificar el correo. Intenta nuevamente.");
+            return;
+          }
 
-        if (newUser?.error) {
-          console.error("[ERROR_SIGNUP]", newUser.error);
-          toast.error("Hubo un problema al crear tu cuenta. Intenta con otro correo.");
-          return;
+          if (existingUser.exists) {
+            toast.error("El correo ya está registrado. Por favor, usa otro correo.");
+            return;
+          }
+          
+          const newUser = await authClient.signUp.email(body);
+          if (newUser?.error) {
+            console.error("[ERROR_SIGNUP]", newUser.error);
+            toast.error("Hubo un problema al crear tu cuenta. Intenta con otro correo.");
+            return;
+          }
+
+          const currentUser = await getUserByEmail(newUser.data.user.email);
+          if (!currentUser) {
+            toast.error("No se pudo obtener la información del usuario recién creado.");
+            return;
+          }
+          
+          userId = currentUser.id;
         }
 
+        // B. Guardar preferencias de onboarding
         if (debug)  {
-          const result = await completeOnboardingDebugAction(formData.email, formData);
+          const result = await completeOnboardingDebugAction(userId, formData);
           if (result.error) {
             toast.error(result.error);
             return;
@@ -75,19 +111,39 @@ export function OnboardingForm() {
           return;
         }
 
-        const result = await completeOnboardingAction(formData.email, formData);
+        const result = await completeOnboardingAction(userId, formData);
 
         if (result.error) {
           toast.error(result.error);
           return;
         }
 
-        // C. Éxito y limpieza
+        // C. Si es usuario OAuth, verificar email y otorgar créditos automáticamente
+        if (isOAuthUser) {
+          const verifyResult = await verifyOAuthUser(userId);
+          if (verifyResult.error) {
+            console.error("[ERROR_VERIFY_OAUTH]", verifyResult.error);
+            // No bloqueamos el flujo, solo logueamos el error
+          }
+        }
+
+        // D. Éxito y limpieza
         toast.success("¡Bienvenido/a! Tu perfil profesional está listo.");
-        reset();
-        router.push("/account/verify?email=" + encodeURIComponent(formData.email));
+        
+        // Si viene de OAuth, ir directo al dashboard (ya verificado)
+        // Si es registro nuevo, pedir verificación de email
+        if (isOAuthUser) {
+          router.push("/dashboard");
+        } else {
+          router.push("/account/verify?email=" + encodeURIComponent(formData.email));
+        }
+        
+        timeout(() => {
+          reset();
+        }, 1000);
 
       } catch (error) {
+        console.error("[ERROR_ONBOARDING_FINALIZE]", error);
         toast.error("Error inesperado en el servidor");
       }
     });
@@ -97,7 +153,6 @@ export function OnboardingForm() {
     const validation = validateCurrentStep();
     if (!validation.success) {
       toast.error("Revisa los campos antes de continuar");
-      // toast.error(validation.error || "Revisa los campos antes de continuar");
       return;
     }
     if (step === TOTAL_STEPS) {

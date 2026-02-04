@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect } from "react";
 import {
   Popover,
   PopoverContent,
@@ -7,16 +10,32 @@ import {Button} from "@/components/ui/button";
 import {Zap, Sparkles, FileText, Plus} from "lucide-react";
 import {CreditLimits} from "@/features/credits/actions/get-current-credits-limits";
 import {useRouter} from "next/navigation";
+import {useCreditsStore} from "@/store/use-credits-store";
 
 interface CreditsIndicatorProps {
   limits: CreditLimits;
 }
 
 export function CreditsIndicator({limits}: CreditsIndicatorProps) {
-  const totalAvailable = limits.manageCvsLimit + limits.aiActionsLimit;
-  const isEmpty = totalAvailable === 0;
-
+  const { credits, setCredits, refreshCredits } = useCreditsStore();
   const router = useRouter();
+
+  // Initialize store with server data
+  useEffect(() => {
+    setCredits(limits);
+  }, [limits, setCredits]);
+
+  // Auto-refresh credits every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refreshCredits();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [refreshCredits]);
+
+  const totalAvailable = credits.manageCvsLimit + credits.aiActionsLimit;
+  const isEmpty = totalAvailable === 0;
 
   const handleRechargeCredits = () => {
     router.push("/credits");
@@ -41,9 +60,9 @@ export function CreditsIndicator({limits}: CreditsIndicatorProps) {
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <FileText className="h-4 w-4"/>
-                <span>Creación de CVs</span>
+                <span>CVs Manual</span>
               </div>
-              <span className="font-mono font-bold">{limits.manageCvsLimit}</span>
+              <span className="font-mono font-bold">{credits.manageCvsLimit}</span>
             </div>
 
             <div className="flex items-center justify-between text-sm">
@@ -51,7 +70,7 @@ export function CreditsIndicator({limits}: CreditsIndicatorProps) {
                 <Sparkles className="h-4 w-4"/>
                 <span>Acciones IA</span>
               </div>
-              <span className="font-mono font-bold">{limits.aiActionsLimit}</span>
+              <span className="font-mono font-bold">{credits.aiActionsLimit}</span>
             </div>
 
             <div className="flex items-center justify-between text-sm">
@@ -59,7 +78,7 @@ export function CreditsIndicator({limits}: CreditsIndicatorProps) {
                 <Zap className="h-4 w-4"/>
                 <span>Match de oportunidades</span>
               </div>
-              <span className="font-mono font-bold">{limits.opportunitiesActionsLimit}</span>
+              <span className="font-mono font-bold">{credits.opportunitiesActionsLimit}</span>
             </div>
           </div>
 

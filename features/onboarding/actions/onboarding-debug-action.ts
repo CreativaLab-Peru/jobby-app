@@ -5,12 +5,12 @@ import { revalidatePath } from "next/cache";
 import { TalentOnboardingFormData } from "@/features/onboarding/schemas";
 import {createBasicCredits} from "@/features/credits/actions/create-basic-credits";
 
-export async function completeOnboardingDebugAction(email: string, body: TalentOnboardingFormData) {
+export async function completeOnboardingDebugAction(id: string, body: TalentOnboardingFormData) {
   const data = body;
 
   try {
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { id },
     });
 
     if (!user) {

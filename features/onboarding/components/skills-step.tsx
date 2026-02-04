@@ -6,7 +6,7 @@ import { Check, Info, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function SkillsStep() {
-  const { formData, updateFormData } = useOnboardingStore();
+  const { formData, updateFormData, errors } = useOnboardingStore();
 
   const selectedIndustries = formData.targetIndustries || [];
   const selectedSkills = formData.skills || [];
@@ -71,6 +71,10 @@ export function SkillsStep() {
         </div>
       </div>
 
+      {errors.skills && (
+        <p className="text-sm text-red-500 mt-1">{errors.skills}</p>
+      )}
+
       <div className="grid grid-cols-1 gap-3 max-h-[440px] overflow-y-auto pr-2 custom-scrollbar">
         {availableSkills.length > 0 ? (
           availableSkills.map(skill => {
@@ -95,7 +99,7 @@ export function SkillsStep() {
                     "w-6 h-6 shrink-0 rounded-full border-2 flex items-center justify-center transition-all",
                     isSelected ? "bg-primary border-primary" : "border-muted group-hover:border-primary/50"
                   )}>
-                    {isSelected && <Check className="w-4 h-4 text-white" strokeWidth={3} />}
+                    {isSelected && <Check className="w-4 h-4 text-white dark:text-levely-dark" strokeWidth={3} />}
                   </div>
                   <span className={cn(
                     "font-bold transition-colors text-sm sm:text-base",
@@ -107,7 +111,7 @@ export function SkillsStep() {
 
                 {isSelected && (
                   <div
-                    className="flex items-center bg-background border rounded-full p-1 shadow-sm shrink-0"
+                    className="border-gray-400 flex items-center bg-background border rounded-full p-1 shadow-sm shrink-0"
                     onClick={(e) => { e.stopPropagation(); toggleLevel(skill.id); }}
                   >
                     <button
@@ -123,10 +127,10 @@ export function SkillsStep() {
                       type="button"
                       className={cn(
                         "px-3 py-1 rounded-full text-[10px] font-black transition-all flex items-center gap-1",
-                        selection.level === 'Avanzado' ? "bg-primary text-white shadow-sm" : "text-muted-foreground/30"
+                        selection.level === 'Avanzado' ? "bg-primary text-white dark:text-levely-dark shadow-sm" : "text-muted-foreground/30"
                       )}
                     >
-                      {selection.level === 'Avanzado' && <Sparkles className="w-3 h-3" />}
+                      {selection.level === 'Avanzado' && <Sparkles className="dark:text-levely-dark w-3 h-3" />}
                       Avanzado
                     </button>
                   </div>

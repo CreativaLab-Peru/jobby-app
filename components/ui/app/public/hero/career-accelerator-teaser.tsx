@@ -35,7 +35,7 @@ export function CareerAcceleratorTeaser() {
             </h2>
 
             <p className="text-lg text-white/80 max-w-xl mb-8">
-              Un programa intensivo de 4 semanas diseñado para acelerar tu crecimiento profesional 
+              Un programa intensivo de 4 semanas diseñado para acelerar tu crecimiento profesional
               con mentores expertos y herramientas de IA.
             </p>
 
@@ -54,7 +54,7 @@ export function CareerAcceleratorTeaser() {
             <Link href="/career-accelerator">
               <Button
                 size="lg"
-                className="bg-levely-orange text-white hover:bg-levely-orange/90"
+                className="bg-levely-orange text-white hover:bg-levely-orange/90 cursor-pointer"
               >
                 Conocer más
                 <ArrowRight className="w-4 h-4" />

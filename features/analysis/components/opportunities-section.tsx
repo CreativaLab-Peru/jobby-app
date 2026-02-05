@@ -14,7 +14,7 @@ export function OpportunitiesSection({ opportunities }: OpportunitiesSectionProp
     <Card className="shadow-card border-0 bg-card/90 backdrop-blur-sm">
       <CardHeader>
         <CardTitle className="flex items-center text-2xl text-foreground">
-          <Award className="w-8 h-8 mr-3 text-accent" />
+          <Award className="w-8 h-8 mr-3 dark:text-levely-green text-levely-blue" />
           Top 5 Oportunidades para ti
         </CardTitle>
       </CardHeader>

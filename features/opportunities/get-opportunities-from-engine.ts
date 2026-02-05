@@ -40,8 +40,6 @@ export type OpportunityResponse = {
 
 export type MatchAnalysis = {
   opportunity_id: string;
-  title: string;
-  organization?: string;
   match_score: number;
   breakdown?: {
     semantic?: number;
@@ -49,20 +47,33 @@ export type MatchAnalysis = {
     eligibility?: number;
   };
   details?: {
+    type?: string;
+    title?: string;
+    organization?: {
+      organization_name?: string;
+      organization_logo?: string;
+    };
+    url?: string;
+    description?: string;
+    benefits?: string;
+    language?: string;
+    ubication?: string;
+    fieldOfStudy?: string;
     modality?: string;
-    deadline?: string | Date;
+    status?: string;
+    eligibleLevels?: string[];
+    eligibleCountries?: string[];
+    requiredSkills?: string[];
+    optionalSkills?: string[];
     salary?: {
       min?: number;
       max?: number;
+      annual?: number | null;
+      currency?: string;
     };
-    currency?: string;
-    url?: string;
-    organization_name?: string;
-    organization_logo?: string;
-    requirements?: string; // Adding this locally just in case, though not in example
+    popularity?: number;
+    deadline?: string | Date;
   };
-  // Keeping these for backward compatibility if needed, or mapping
-  type?: string; 
 };
 
 export const getOpportunitiesFromEngine = async (

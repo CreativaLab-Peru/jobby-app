@@ -176,7 +176,7 @@ export function CVCard({ cv }: CVCardProps) {
             <AlertDialogDescription>
               Esta acción eliminará el CV <strong>&quot;{cv?.title || "Sin título"}&quot;</strong>{" "}
               de tu lista.
-              <p className="mt-2 font-medium">¿Deseas continuar?</p>
+              <span className="mt-2 font-medium block">¿Deseas continuar?</span>
             </AlertDialogDescription>
           </AlertDialogHeader>
 

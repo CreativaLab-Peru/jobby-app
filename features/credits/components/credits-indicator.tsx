@@ -45,10 +45,10 @@ export function CreditsIndicator({limits}: CreditsIndicatorProps) {
     <Popover>
       <PopoverTrigger asChild>
         <div
-          className="flex cursor-pointer items-center gap-2 rounded-full border bg-background px-3 py-1.5 transition-colors hover:bg-accent">
+          className="flex cursor-pointer items-center gap-2 rounded-full border bg-background px-3 py-1.5 transition-colors hover:bg-secondary/90">
           <Zap
             className={`h-4 w-4 ${isEmpty ? "text-muted-foreground" : "text-yellow-500 fill-yellow-500"}`}/>
-          <span className="text-sm font-bold">{totalAvailable}</span>
+          <span className="dark:text-white text-levely-dark text-sm font-bold">{totalAvailable}</span>
         </div>
       </PopoverTrigger>
 

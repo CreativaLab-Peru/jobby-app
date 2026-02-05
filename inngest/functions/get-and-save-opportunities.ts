@@ -1,12 +1,25 @@
 import {inngest} from "./client";
 import {prisma} from "@/lib/prisma";
-import {CvSectionType, LogAction, LogLevel} from "@prisma/client";
+import {CreditBalanceType, CvSectionType, LogAction, LogLevel, OpportunityType} from "@prisma/client";
 import {logsService} from "@/features/share/services/logs-service";
 import {
   getOpportunitiesFromEngine,
   MatchRequest
 } from "@/features/opportunities/get-opportunities-from-engine";
 import {saveOpportunities} from "@/features/opportunities/save-opportunities";
+
+// Map internal OpportunityType to external API types
+function mapOpportunityType(type: OpportunityType): string {
+  const mapping: Record<string, string> = {
+    'FULL_TIME': 'EMPLOYMENT',
+    'PART_TIME': 'EMPLOYMENT',
+    'FREELANCE': 'EMPLOYMENT',
+    'RESEARCH_FELLOWSHIP': 'SCHOLARSHIP',
+    'GRADUATE_PROGRAM': 'SCHOLARSHIP',
+  };
+  
+  return mapping[type] || type;
+}
 
 export const getAndSaveOpportunities = inngest.createFunction(
   {
@@ -94,7 +107,7 @@ export const getAndSaveOpportunities = inngest.createFunction(
         summary,
         experience_text,
         languages,
-        type: cv.opportunityType, // Using the strict type from DB
+        type: mapOpportunityType(cv.opportunityType), // Map internal types to API types
         location: "PE", // Defaulting to PE as per examples if not found, or maybe we should leave it empty? User examples show explicit location.
         // We could verify if we have a location in contact info, but for now let's respect the user saying "si o si tiene que ser el tipo de CV"
         // The type is critical.
@@ -109,12 +122,62 @@ export const getAndSaveOpportunities = inngest.createFunction(
         }
       };
 
+      console.log("[INFO] Requesting opportunities for userId:", userId, "cvId:", cvId);
       const opportunities = await getOpportunitiesFromEngine(userId, cvId, matchRequest);
       if (!opportunities) {
+        await logsService.createLog({
+          userId,
+          action: LogAction.OPPORTUNITY,
+          level: LogLevel.WARNING,
+          entity: "CV_OPPORTUNITY",
+          entityId: cvId,
+          message: "No opportunities response from engine",
+          metadata: {cvId, userId},
+        });
         return;
       }
 
+      const matchCount = opportunities.matches?.length || 0;
+      
       await saveOpportunities(cv.id, opportunities.matches)
+
+      // Only consume credit if there were actual matches
+      if (matchCount > 0) {
+        await prisma.userCreditBalance.update({
+          where: {
+            userId_type: {
+              userId: userId,
+              type: CreditBalanceType.SEARCH_OPPORTUNITIES
+            }
+          },
+          data: {
+            amount: {
+              decrement: 1,
+            }
+          },
+        });
+
+        await logsService.createLog({
+          userId,
+          action: LogAction.OPPORTUNITY,
+          level: LogLevel.INFO,
+          entity: "CV_OPPORTUNITY",
+          entityId: cvId,
+          message: `${matchCount} opportunities matched and credit consumed`,
+          metadata: {cvId, userId, opportunitiesCount: matchCount},
+        });
+      } else {
+        await logsService.createLog({
+          userId,
+          action: LogAction.OPPORTUNITY,
+          level: LogLevel.INFO,
+          entity: "CV_OPPORTUNITY",
+          entityId: cvId,
+          message: "No quality matches found - credit not consumed",
+          metadata: {cvId, userId, opportunitiesCount: 0},
+        });
+      }
+
       return;
     } catch (error) {
       console.log("[ERROR_GET_AND_SAVE_OPPORTUNITIES]", error)

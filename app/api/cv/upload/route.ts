@@ -8,6 +8,8 @@ import {getCurrentUser} from "@/features/share/actions/get-current-user";
 import {getTextFromPdfApi} from "@/utils/get-text-from-pdf-api";
 import {detectCv} from "@/features/cv/actions/verify-cv";
 import {getCurrentCreditLimits} from "@/features/credits/actions/get-current-credits-limits";
+import {getPromptToGetCv} from "@/features/cv/prompts/get-prompt-to-get-cv";
+import {queryGemini} from "@/features/cv/queries/query-gemini";
 
 export async function POST(req: Request) {
   try {
@@ -58,16 +60,44 @@ export async function POST(req: Request) {
       );
     }
 
+    // Extract and structure CV data using AI (SYNCHRONOUSLY like create-from-pdf)
+    const prompt = getPromptToGetCv(textFromPdf);
+    const aiResult = await queryGemini({ prompt, type: "JSON" });
+
+    if (!aiResult.success) {
+      return NextResponse.json(
+        {success: false, message: "Error al procesar el contenido del CV"},
+        {status: 500}
+      );
+    }
+
+    const jsonData = aiResult.data;
+    const textCv = JSON.stringify(jsonData, null, 2);
+
+    // Validate extracted opportunityType and cvType
+    let opportunityType = jsonData.opportunityType || OpportunityType.EMPLOYMENT;
+    let cvType = jsonData.cvType || CvType.TECHNOLOGY_ENGINEERING;
+
+    if (!Object.values(OpportunityType).includes(opportunityType as OpportunityType)) {
+      opportunityType = OpportunityType.EMPLOYMENT;
+    }
+
+    if (!Object.values(CvType).includes(cvType as CvType)) {
+      cvType = CvType.TECHNOLOGY_ENGINEERING;
+    }
+
     const createdByJobId = uuidv4();
-    // Current cv just for the moment (it will be updated in the job)
+    // Create CV with extracted content and sections
     const cv = await prisma.cv.create({
       data: {
         userId,
         language: Language.EN,
-        opportunityType: OpportunityType.EMPLOYMENT,
-        cvType: CvType.TECHNOLOGY_ENGINEERING,
+        opportunityType,
+        cvType,
         title: file.name,
         createdByJobId,
+        extractedJson: jsonData,
+        fullTextSearch: textCv,
         attachments: {
           create: {
             filename: file.name,
@@ -75,6 +105,16 @@ export async function POST(req: Request) {
             url,
             size: file.size,
           },
+        },
+        sections: {
+          create: Array.isArray(jsonData.sections) 
+            ? jsonData.sections.map((section: any, index: number) => ({
+                sectionType: section.sectionType,
+                title: section.title ?? null,
+                contentJson: section.contentJson ?? {},
+                order: index,
+              }))
+            : [],
         },
       },
     });
@@ -90,23 +130,25 @@ export async function POST(req: Request) {
       where: {
         userId_type: {
           userId: currentUser.id,
-          type: CreditBalanceType.MANAGE_CVS
+          type: CreditBalanceType.AI_ACTIONS
         }
       },
       data: {
-        type: "AI_ACTIONS",
         amount: {
           decrement: 1,
         }
       },
     })
 
+    // Trigger evaluation and opportunity matching
     await inngest.send({
-      name: "cv/uploaded",
-      data: {
-        cvId: cv.id,
-        attachmentUrl: url,
-      },
+      name: "cv/ready-for-evaluation",
+      data: { cvId: cv.id, userId: currentUser.id },
+    });
+
+    await inngest.send({
+      name: "get.and.save.opportunities",
+      data: { cvId: cv.id, userId: currentUser.id },
     });
 
     return Response.json({success: true, cvId: cv.id});

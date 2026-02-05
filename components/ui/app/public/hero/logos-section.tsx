@@ -2,7 +2,7 @@ import Image from "next/image";
 
 const partnerLogos = [
   {
-    name: "Data Science Perú",
+    name: "AIESEC",
     light: "/partners/AIESEC-light.png",
     dark: "/partners/AIESEC-dark.png",
   },
@@ -16,11 +16,11 @@ const partnerLogos = [
     light: "/partners/MujeresDigitales-light.png",
     dark: "/partners/MujeresDigitales-dark.png",
   },
-  {
-    name: "AIESEC",
-    light: "/partners/data_science-light.png",
-    dark: "/partners/data_science-dark.png",
-  },
+  // {
+  //   name: "Data Science Perú",
+  //   light: "/partners/data_science-light.png",
+  //   dark: "/partners/data_science-dark.png",
+  // },
 ];
 
 export function LogosSection() {

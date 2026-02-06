@@ -8,14 +8,17 @@ import { Plus, Trash2 } from "lucide-react"
 
 interface TagsInputProps {
   value: string[] | any[]
-  onChange: (tags: string[]) => void
+  onChange: (tags: string[] | any[]) => void
   placeholder: string
 }
 
 export function TagsInput({ value, onChange, placeholder }: TagsInputProps) {
   const [inputValue, setInputValue] = useState("")
 
-  // Normalizar el valor para manejar tanto strings como objetos
+  // Detectar si el valor original contiene objetos
+  const isObjectArray = value.length > 0 && value.some(item => typeof item === "object" && item !== null);
+
+  // Normalizar el valor para mostrar (convertir objetos a strings)
   const normalizedValue = value.map((item) => {
     if (typeof item === "string") {
       return item;
@@ -34,15 +37,40 @@ export function TagsInput({ value, onChange, placeholder }: TagsInputProps) {
     return String(item);
   });
 
+  // Parsear un string a objeto si es necesario
+  const parseTagToOriginalFormat = (tag: string): any => {
+    if (!isObjectArray) {
+      return tag;
+    }
+    
+    // Intentar parsear formato "Idioma (Nivel)"
+    const match = tag.match(/^(.+?)\s*\((.+?)\)$/);
+    if (match) {
+      return {
+        language: match[1].trim(),
+        proficiency: match[2].trim()
+      };
+    }
+    
+    // Si no tiene ese formato, crear objeto solo con language
+    return { language: tag, proficiency: "" };
+  };
+
   const addTag = () => {
     if (inputValue.trim() && !normalizedValue.includes(inputValue.trim())) {
-      onChange([...normalizedValue, inputValue.trim()])
-      setInputValue("")
+      const newTag = parseTagToOriginalFormat(inputValue.trim());
+      onChange([...value, newTag]);
+      setInputValue("");
     }
   }
 
   const removeTag = (tagToRemove: string) => {
-    onChange(normalizedValue.filter((tag: string) => tag !== tagToRemove))
+    const indexToRemove = normalizedValue.indexOf(tagToRemove);
+    if (indexToRemove !== -1) {
+      const newValue = [...value];
+      newValue.splice(indexToRemove, 1);
+      onChange(newValue);
+    }
   }
 
   return (

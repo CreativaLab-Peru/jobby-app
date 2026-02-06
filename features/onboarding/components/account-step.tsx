@@ -95,7 +95,11 @@ export function AccountStep() {
             <span className="bg-background px-2 relative z-10">O continuar con</span>
             <div className="absolute inset-0 flex items-center"><span className="w-full border-t"/></div>
           </div>
-          <GoogleOAuthButton text="Registrarse con Google" callbackURL="/onboarding/talents"/>
+          <GoogleOAuthButton
+            text="Registrarse con Google"
+            callbackURL="/onboarding/talents"
+            mode={'signUp'}
+          />
         </div>
       )}
 

@@ -1,4 +1,4 @@
-// Extrae habilidades requeridas y opcionales de un texto de requisitos
+// Extrae las habilidades requeridas y opcionales de un texto de requisitos
 export function parseRequirements(text: string): { required: string | null; optional: string | null } {
   const lines = text.split('\n');
   let required: string | null = null;

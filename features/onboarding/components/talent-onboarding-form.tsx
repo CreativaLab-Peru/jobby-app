@@ -55,7 +55,7 @@ export function OnboardingForm() {
           });
         }
       } catch (e) {
-        console.error("Error al inicializar sesión", e);
+        console.error("[ERROR_SIGN_IN_WITH_GOOGLE]", e);
       } finally {
         setIsInitializing(false);
       }
@@ -64,10 +64,10 @@ export function OnboardingForm() {
   }, [updateFormData]);
 
   const handleFinalize = async () => {
-    // ... (Tu lógica de handleFinalize se mantiene igual)
     setErrors({});
     const validation = validateCurrentStep();
-    if (!validation.success) {
+    const isOAuthUser = !!(await authClient.getSession())?.data?.user && step === TOTAL_STEPS;
+    if (!validation.success && !isOAuthUser) {
       toast.error(validation.error || "Revisa los campos antes de finalizar");
       return;
     }
@@ -129,8 +129,13 @@ export function OnboardingForm() {
   const handleNext = async () => {
     const validation = validateCurrentStep();
     if (!validation.success) {
-      toast.error("Revisa los campos antes de continuar");
-      return;
+      const session = await authClient.getSession();
+      const isOAuthUser = !!session?.data?.user && step === TOTAL_STEPS;
+
+      if (!isOAuthUser) {
+        toast.error(validation.error || "Revisa los campos antes de finalizar");
+        return;
+      }
     }
     if (step === TOTAL_STEPS) {
       await handleFinalize();

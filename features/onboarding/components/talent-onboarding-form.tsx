@@ -93,10 +93,18 @@ export function OnboardingForm() {
             return;
           }
           const newUser = await authClient.signUp.email(body);
-          if (newUser?.error) throw new Error("Signup failed");
+          if (newUser?.error) {
+            console.error("[SIGNUP_ERROR]", newUser.error);
+            toast.error(newUser.error.message || "No se pudo crear la cuenta. Por favor, intenta de nuevo.");
+            return;
+          }
 
           const currentUser = await getUserByEmail(newUser.data.user.email);
-          if (!currentUser) throw new Error("User not found");
+          if (!currentUser) {
+            console.error("[USER_LOOKUP_ERROR] User not found after signup:", newUser.data.user.email);
+            toast.error("Error al crear tu cuenta. Por favor, contacta con soporte.");
+            return;
+          }
           userId = currentUser.id;
         }
 

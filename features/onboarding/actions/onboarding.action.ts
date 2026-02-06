@@ -65,7 +65,7 @@ export async function completeOnboardingAction(id: string, body: TalentOnboardin
       const updateData: any = {
         name: data.name,
       };
-      
+
       if (data.birthDate && data.birthDate.trim() !== '') {
         const birthDate = new Date(data.birthDate);
         if (!isNaN(birthDate.getTime())) {
@@ -80,14 +80,16 @@ export async function completeOnboardingAction(id: string, body: TalentOnboardin
     });
 
     // 3. Enviar evento a Inngest (fuera de la tx para evitar bloqueos)
-    await inngest.send({
-      name: "send.verification.code",
-      data: {
-        email: data.email, // Asegúrate que 'data.email' venga en el body
-        name: data.name,
-        codeSixDigits,
-      }
-    });
+    if (!user.emailVerified) {
+      await inngest.send({
+        name: "send.verification.code",
+        data: {
+          email: data.email, // Asegúrate que 'data.email' venga en el body
+          name: data.name,
+          codeSixDigits,
+        }
+      });
+    }
 
     revalidatePath("/dashboard");
     return { success: true };

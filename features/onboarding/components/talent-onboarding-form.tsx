@@ -1,149 +1,134 @@
 "use client";
 
-import {useTransition} from "react";
-import {useRouter} from "next/navigation";
-import {toast} from "sonner";
+import { useEffect, useState, useTransition } from "react"; // Añadimos useState
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
-import {useOnboardingStore} from "@/features/onboarding/store/talent-onboarding-store";
-import {completeOnboardingAction} from "@/features/onboarding/actions/onboarding.action";
+import { useOnboardingStore } from "@/features/onboarding/store/talent-onboarding-store";
+import { completeOnboardingAction } from "@/features/onboarding/actions/onboarding.action";
 
-import {Progress} from "@/components/ui/progress";
-import {Button} from "@/components/ui/button";
-import {Loader2, ArrowRight, ArrowLeft} from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { Loader2, ArrowRight, ArrowLeft } from "lucide-react";
 
 // Componentes de los pasos
-import {WelcomeStep} from "@/features/onboarding/components/welcome-step";
-import {BasicDataStep} from "@/features/onboarding/components/basic-data-step";
-import {AreaAndRoleStep} from "@/features/onboarding/components/area-and-role-step";
-import {ExperienceLevelStep} from "@/features/onboarding/components/experience-level-step";
-import {ModalityStep} from "@/features/onboarding/components/modality-step";
-import {AvailabilityStep} from "@/features/onboarding/components/availability-step";
-import {SkillsStep} from "@/features/onboarding/components/skills-step";
-import {PortfolioStep} from "@/features/onboarding/components/portfolio-step";
-import {AccountStep} from "@/features/onboarding/components/account-step";
-import {authClient} from "@/lib/auth-client";
-import {useDebug} from "@/hooks/use-debug";
-import {
-  completeOnboardingDebugAction
-} from "@/features/onboarding/actions/onboarding-debug-action";
-import {timeout} from "d3-timer";
-import {checkExistingUser} from "@/features/authentication/actions/existing-user";
-import {getUserByEmail} from "@/features/authentication/actions/get-user-by-email";
+import { WelcomeStep } from "@/features/onboarding/components/welcome-step";
+import { BasicDataStep } from "@/features/onboarding/components/basic-data-step";
+import { AreaAndRoleStep } from "@/features/onboarding/components/area-and-role-step";
+import { ExperienceLevelStep } from "@/features/onboarding/components/experience-level-step";
+import { ModalityStep } from "@/features/onboarding/components/modality-step";
+import { AvailabilityStep } from "@/features/onboarding/components/availability-step";
+import { SkillsStep } from "@/features/onboarding/components/skills-step";
+import { PortfolioStep } from "@/features/onboarding/components/portfolio-step";
+import { AccountStep } from "@/features/onboarding/components/account-step";
+import { authClient } from "@/lib/auth-client";
+import { useDebug } from "@/hooks/use-debug";
+import { completeOnboardingDebugAction } from "@/features/onboarding/actions/onboarding-debug-action";
+import { timeout } from "d3-timer";
+import { checkExistingUser } from "@/features/authentication/actions/existing-user";
+import { getUserByEmail } from "@/features/authentication/actions/get-user-by-email";
 import { verifyOAuthUser } from "@/features/authentication/actions/verify-oauth-user";
 
 const TOTAL_STEPS = 9;
 
 export function OnboardingForm() {
-  const {step, setStep, formData, reset, validateCurrentStep, setErrors} = useOnboardingStore();
+  const { step, setStep, formData, reset, validateCurrentStep, setErrors, updateFormData } = useOnboardingStore();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+
+  // ESTADO DE CARGA INICIAL (KISS)
+  const [isInitializing, setIsInitializing] = useState(true);
 
   // Debug
   const debug = useDebug();
 
+  // 1. Verificación inicial de sesión para evitar parpadeos en AccountStep
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const session = await authClient.getSession();
+        if (session?.data?.user) {
+          const user = session.data.user;
+          updateFormData({
+            email: user.email,
+            name: user.name,
+          });
+        }
+      } catch (e) {
+        console.error("[ERROR_SIGN_IN_WITH_GOOGLE]", e);
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+    checkSession();
+  }, []);
+
   const handleFinalize = async () => {
-    setErrors({}); // Limpiar errores previos
-    // 1. Validación final completa de Zod antes de disparar auth
+    setErrors({});
     const validation = validateCurrentStep();
-    if (!validation.success) {
+    const isOAuthUser = !!(await authClient.getSession())?.data?.user && step === TOTAL_STEPS;
+    if (!validation.success && !isOAuthUser) {
       toast.error(validation.error || "Revisa los campos antes de finalizar");
-      // toast.error("Revisa los campos antes de finalizar");
       return;
     }
-    console.log("[DEBUG] QUERY PARAMS", debug);
 
     startTransition(async () => {
       try {
-        // Verificar si el usuario ya está autenticado (OAuth)
         const session = await authClient.getSession();
         let userId: string;
         let isOAuthUser = false;
-        
+
         if (session?.data?.user) {
-          // Usuario ya autenticado con OAuth
           userId = session.data.user.id;
           isOAuthUser = true;
-          console.log("[INFO] Usuario OAuth detectado:", userId);
         } else {
-          // A. Registro normal con email/password
           const body = {
             email: formData.email,
             password: formData.password,
             name: formData.name,
           };
-          
           const existingUser = await checkExistingUser(body.email);
-          if (existingUser.error) {
-            toast.error("Hubo un problema al verificar el correo. Intenta nuevamente.");
-            return;
-          }
-
           if (existingUser.exists) {
-            toast.error("El correo ya está registrado. Por favor, usa otro correo.");
+            toast.error("El correo ya está registrado.");
             return;
           }
-          
           const newUser = await authClient.signUp.email(body);
           if (newUser?.error) {
-            console.error("[ERROR_SIGNUP]", newUser.error);
-            toast.error("Hubo un problema al crear tu cuenta. Intenta con otro correo.");
+            toast.error(newUser.error.message || "Error al crear la cuenta.");
+            console.error(newUser.error);
             return;
           }
 
           const currentUser = await getUserByEmail(newUser.data.user.email);
           if (!currentUser) {
-            toast.error("No se pudo obtener la información del usuario recién creado.");
+            toast.error("Error al obtener los datos del usuario.");
+            console.error(newUser.error);
             return;
           }
-          
           userId = currentUser.id;
         }
 
-        // B. Guardar preferencias de onboarding
-        if (debug)  {
-          const result = await completeOnboardingDebugAction(userId, formData);
-          if (result.error) {
-            toast.error(result.error);
-            return;
-          }
-          router.push("/dashboard");
-          reset();
-          return;
-        }
-
-        const result = await completeOnboardingAction(userId, formData);
+        const result = debug
+          ? await completeOnboardingDebugAction(userId, formData)
+          : await completeOnboardingAction(userId, formData);
 
         if (result.error) {
           toast.error(result.error);
           return;
         }
 
-        // C. Si es usuario OAuth, verificar email y otorgar créditos automáticamente
-        if (isOAuthUser) {
-          const verifyResult = await verifyOAuthUser(userId);
-          if (verifyResult.error) {
-            console.error("[ERROR_VERIFY_OAUTH]", verifyResult.error);
-            // No bloqueamos el flujo, solo logueamos el error
-          }
-        }
+        if (isOAuthUser) await verifyOAuthUser(userId);
 
-        // D. Éxito y limpieza
-        toast.success("¡Bienvenido/a! Tu perfil profesional está listo.");
-        
-        // Si viene de OAuth, ir directo al dashboard (ya verificado)
-        // Si es registro nuevo, pedir verificación de email
+        toast.success("¡Bienvenido/a! Tu perfil está listo.");
+
         if (isOAuthUser) {
           router.push("/dashboard");
         } else {
           router.push("/account/verify?email=" + encodeURIComponent(formData.email));
         }
-        
-        timeout(() => {
-          reset();
-        }, 1000);
 
+        timeout(() => reset(), 1000);
       } catch (error) {
-        console.error("[ERROR_ONBOARDING_FINALIZE]", error);
         toast.error("Error inesperado en el servidor");
       }
     });
@@ -152,8 +137,13 @@ export function OnboardingForm() {
   const handleNext = async () => {
     const validation = validateCurrentStep();
     if (!validation.success) {
-      toast.error("Revisa los campos antes de continuar");
-      return;
+      const session = await authClient.getSession();
+      const isOAuthUser = !!session?.data?.user && step === TOTAL_STEPS;
+
+      if (!isOAuthUser) {
+        toast.error(validation.error || "Revisa los campos antes de finalizar");
+        return;
+      }
     }
     if (step === TOTAL_STEPS) {
       await handleFinalize();
@@ -162,26 +152,32 @@ export function OnboardingForm() {
     }
   };
 
+  // 2. RENDER DE CARGA INICIAL
+  if (isInitializing) {
+    return (
+      <div className="max-w-2xl mx-auto min-h-[60vh] flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="h-10 w-10 animate-spin text-primary/60" />
+        <p className="text-muted-foreground animate-pulse text-sm">Cargando tu progreso...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-2xl mx-auto py-10 px-4 md:px-0">
-      {/* Barra de Progreso Minimalista */}
+      {/* Barra de Progreso */}
       <div className="mb-10 space-y-2">
-
         {step !== 1 && (
           <>
-            <div
-              className="flex justify-between text-xs font-bold uppercase tracking-wider text-muted-foreground/60">
+            <div className="flex justify-between text-xs font-bold uppercase tracking-wider text-muted-foreground/60">
               <span>{step === 0 ? "Comenzando" : `Paso ${step - 1}`}</span>
               <span>{Math.round(((step - 1) / TOTAL_STEPS) * 100)}%</span>
             </div>
             <Progress value={((step - 1) / TOTAL_STEPS) * 100} className="h-2"/>
           </>
         )}
-
-
       </div>
 
-      {/* Contenedor dinámico de Pasos */}
+      {/* Contenedor dinámico */}
       <div className="min-h-[450px] flex flex-col justify-center">
         {step === 1 && <WelcomeStep/>}
         {step === 2 && <BasicDataStep/>}
@@ -192,17 +188,9 @@ export function OnboardingForm() {
         {step === 7 && <ExperienceLevelStep/>}
         {step === 8 && <PortfolioStep/>}
         {step === 9 && <AccountStep/>}
-        {step === 10 && (<>
-          {/*  Loading */}
-          <div className="text-center">
-            <Loader2 className="mx-auto mb-4 h-10 w-10 animate-spin text-primary"/>
-            <h2 className="text-2xl font-bold mb-2">Creando tu cuenta...</h2>
-            <p className="text-muted-foreground">Esto puede tomar unos segundos. ¡Gracias por tu paciencia!</p>
-          </div>
-        </>)}
       </div>
 
-      {/* Controles de Navegación */}
+      {/* Controles */}
       {step > 1 && (
         <div className="flex items-center justify-between mt-12 pt-6 border-t">
           <Button
@@ -229,11 +217,9 @@ export function OnboardingForm() {
             ) : step === TOTAL_STEPS ? (
               "Crear cuenta y Finalizar"
             ) : (
-              <>
-                Continuar
-                <ArrowRight className="ml-2 h-4 w-4"/>
-              </>
+              "Continuar"
             )}
+            {!isPending && step !== TOTAL_STEPS && <ArrowRight className="ml-2 h-4 w-4"/>}
           </Button>
         </div>
       )}

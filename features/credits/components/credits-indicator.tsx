@@ -19,7 +19,7 @@ export function CreditsIndicator({limits}: CreditsIndicatorProps) {
   const { credits } = useCredits(limits);
   const router = useRouter();
 
-  const totalAvailable = credits.manageCvsLimit + credits.aiActionsLimit;
+  const totalAvailable = credits.manageCvsLimit + credits.aiActionsLimit + credits.opportunitiesActionsLimit;
   const isEmpty = totalAvailable === 0;
 
   const handleRechargeCredits = () => {

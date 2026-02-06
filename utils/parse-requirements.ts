@@ -14,12 +14,14 @@ export function parseRequirements(text: string): { required: string | null; opti
     const line = rawLine.trim();
     const lowerLine = line.toLowerCase();
 
-    const requiredPrefix = REQUIRED_PREFIXES.find((prefix) => lowerLine.startsWith(prefix));
+    // Only treat as section header if it's at the start of the line (after trimming)
+    // This prevents matching prefixes that appear mid-sentence
+    const requiredPrefix = REQUIRED_PREFIXES.find((prefix) => lowerLine === prefix || lowerLine.startsWith(prefix + ' '));
     if (requiredPrefix) {
       currentSection = 'required';
       const content = line.slice(requiredPrefix.length).trim();
       if (content) {
-        required = required ? `${required} ${content}` : content;
+      required = required ? `${required} ${content}` : content;
       }
       continue;
     }

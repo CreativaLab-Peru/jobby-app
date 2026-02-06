@@ -111,16 +111,31 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
             Ver detalles
           </Button>
         </Link>
-        <Button
-          size="sm"
-          className="flex-1 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold shadow-sm"
-          asChild
-        >
-          <a href={opportunity.linkUrl} target="_blank" rel="noopener noreferrer">
+        {opportunity.linkUrl && (opportunity.linkUrl.startsWith('http://') || opportunity.linkUrl.startsWith('https://')) ? (
+          <Button
+            size="sm"
+            className="flex-1 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold shadow-sm"
+            asChild
+          >
+            <a 
+              href={opportunity.linkUrl.startsWith('http://') || opportunity.linkUrl.startsWith('https://') ? opportunity.linkUrl : '#'} 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              Postular
+              <ExternalLink className="w-4 h-4 ml-2" />
+            </a>
+          </Button>
+        ) : (
+          <Button
+            size="sm"
+            className="flex-1 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold shadow-sm"
+            disabled
+          >
             Postular
             <ExternalLink className="w-4 h-4 ml-2" />
-          </a>
-        </Button>
+          </Button>
+        )}
       </div>
     </motion.div>
   )

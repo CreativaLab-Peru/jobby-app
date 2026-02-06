@@ -38,7 +38,7 @@ export function TagsInput({ value, onChange, placeholder }: TagsInputProps) {
   });
 
   // Parsear un string a objeto si es necesario
-  const parseTagToOriginalFormat = (tag: string): any => {
+  const parseTagToOriginalFormat = (tag: string): string | { language: string; proficiency: string } => {
     if (!isObjectArray) {
       return tag;
     }

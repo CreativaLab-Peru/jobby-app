@@ -11,9 +11,9 @@ import { consumeCredits } from "@/features/credits/actions/consume-credits";
 
 // Map internal OpportunityType to external API types
 /**
- * Convierte OpportunityType interno a los valores esperados por la API externa.
- * Los tipos explícitamente mapeados se convierten, el resto se pasa sin cambios.
- * Tipos que pasan sin cambios: INTERNSHIP, SCHOLARSHIP, EXCHANGE_PROGRAM, etc.
+ * Converts internal OpportunityType to values expected by the external API.
+ * Explicitly mapped types are converted, others pass through unchanged.
+ * Types that pass unchanged: INTERNSHIP, SCHOLARSHIP, EXCHANGE_PROGRAM, etc.
  */
 function mapOpportunityType(type: OpportunityType): string {
   const mapping: Partial<Record<OpportunityType, string>> = {
@@ -25,11 +25,11 @@ function mapOpportunityType(type: OpportunityType): string {
   };
 
   if (type in mapping) {
-    // Tipos mapeados explícitamente
+    // Explicitly mapped types
     return mapping[type] as string;
   }
 
-  // Tipos que pasan sin cambios: INTERNSHIP, SCHOLARSHIP, EXCHANGE_PROGRAM, etc.
+  // Types that pass unchanged: INTERNSHIP, SCHOLARSHIP, EXCHANGE_PROGRAM, etc.
   return type;
 }
 

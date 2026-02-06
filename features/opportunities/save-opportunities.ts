@@ -88,7 +88,6 @@ export const saveOpportunities = async (cvId: string, opportunities: MatchAnalys
           salary: salary,
           description: description,
           benefits: benefits,
-          cv: { connect: { id: cvId } },
         }
       });
     }

@@ -10,7 +10,8 @@ interface Props {
 }
 
 export default function OpportunityCard({ opportunity }: Props) {
-  const matchValue = Math.round(opportunity.match * 100);
+  const rawMatch = opportunity.match ?? 0;
+  const matchValue = Math.round(rawMatch > 1 ? rawMatch : rawMatch * 100);
 
   return (
     <Card className="border-2 hover:border-primary/40 transition-all duration-300 group overflow-hidden flex flex-col">

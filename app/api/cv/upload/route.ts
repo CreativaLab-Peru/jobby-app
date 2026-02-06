@@ -75,15 +75,44 @@ export async function POST(req: Request) {
     const textCv = JSON.stringify(jsonData, null, 2);
 
     // Validate extracted opportunityType and cvType
-    let opportunityType = jsonData.opportunityType || OpportunityType.EMPLOYMENT;
-    let cvType = jsonData.cvType || CvType.TECHNOLOGY_ENGINEERING;
+    const rawOpportunityType = (jsonData.opportunityType ?? "").toString();
+    const rawCvType = (jsonData.cvType ?? "").toString();
 
-    if (!Object.values(OpportunityType).includes(opportunityType as OpportunityType)) {
+    const normalizedOpportunityType = rawOpportunityType.trim().toUpperCase();
+    const normalizedCvType = rawCvType.trim().toUpperCase();
+
+    const matchedOpportunityType = (Object.values(OpportunityType) as string[]).find(
+      (value) => value.toUpperCase() === normalizedOpportunityType
+    ) as OpportunityType | undefined;
+
+    const matchedCvType = (Object.values(CvType) as string[]).find(
+      (value) => value.toUpperCase() === normalizedCvType
+    ) as CvType | undefined;
+
+    let opportunityType: OpportunityType;
+    if (matchedOpportunityType) {
+      opportunityType = matchedOpportunityType;
+    } else {
       opportunityType = OpportunityType.EMPLOYMENT;
+      if (rawOpportunityType) {
+        console.warn(
+          "[CV Upload] Unknown opportunityType from AI, falling back to default:",
+          rawOpportunityType
+        );
+      }
     }
 
-    if (!Object.values(CvType).includes(cvType as CvType)) {
+    let cvType: CvType;
+    if (matchedCvType) {
+      cvType = matchedCvType;
+    } else {
       cvType = CvType.TECHNOLOGY_ENGINEERING;
+      if (rawCvType) {
+        console.warn(
+          "[CV Upload] Unknown cvType from AI, falling back to default:",
+          rawCvType
+        );
+      }
     }
 
     const createdByJobId = uuidv4();

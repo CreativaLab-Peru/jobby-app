@@ -6,21 +6,28 @@ export function parseRequirements(text: string): { required: string | null; opti
 
   let currentSection: 'required' | 'optional' | null = null;
 
+  // Allow both Spanish and English headers, case-insensitively
+  const REQUIRED_PREFIXES = ['habilidades requeridas:', 'required skills:'];
+  const OPTIONAL_PREFIXES = ['habilidades opcionales:', 'optional skills:'];
+
   for (const rawLine of lines) {
     const line = rawLine.trim();
+    const lowerLine = line.toLowerCase();
 
-    if (line.startsWith('Habilidades requeridas:')) {
+    const requiredPrefix = REQUIRED_PREFIXES.find((prefix) => lowerLine.startsWith(prefix));
+    if (requiredPrefix) {
       currentSection = 'required';
-      const content = line.replace('Habilidades requeridas:', '').trim();
+      const content = line.slice(requiredPrefix.length).trim();
       if (content) {
         required = required ? `${required} ${content}` : content;
       }
       continue;
     }
 
-    if (line.startsWith('Habilidades opcionales:')) {
+    const optionalPrefix = OPTIONAL_PREFIXES.find((prefix) => lowerLine.startsWith(prefix));
+    if (optionalPrefix) {
       currentSection = 'optional';
-      const content = line.replace('Habilidades opcionales:', '').trim();
+      const content = line.slice(optionalPrefix.length).trim();
       if (content) {
         optional = optional ? `${optional} ${content}` : content;
       }

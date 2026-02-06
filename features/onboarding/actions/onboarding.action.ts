@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { TalentOnboardingFormData } from "@/features/onboarding/schemas";
 import { inngest } from "@/inngest/functions/client";
 import { generateNumericCode } from "@/utils/digicts";
+import {createBasicCredits} from "@/features/credits/actions/create-basic-credits";
 
 export async function completeOnboardingAction(id: string, body: TalentOnboardingFormData) {
   const data = body;
@@ -53,13 +54,13 @@ export async function completeOnboardingAction(id: string, body: TalentOnboardin
       });
 
       // 2. Crear el código de verificación
-      await tx.verificationCode.create({
-        data: {
-          userId: user.id,
-          code: codeSixDigits,
-          expiresAt: new Date(Date.now() + 3600000), // Expira en 1 hora
-        },
-      });
+      // await tx.verificationCode.create({
+      //   data: {
+      //     userId: user.id,
+      //     code: codeSixDigits,
+      //     expiresAt: new Date(Date.now() + 3600000), // Expira en 1 hora
+      //   },
+      // });
 
       // 3. Update user birthday (solo si existe y es válida)
       const updateData: any = {
@@ -80,16 +81,19 @@ export async function completeOnboardingAction(id: string, body: TalentOnboardin
     });
 
     // 3. Enviar evento a Inngest (fuera de la tx para evitar bloqueos)
-    if (!user.emailVerified) {
-      await inngest.send({
-        name: "send.verification.code",
-        data: {
-          email: data.email, // Asegúrate que 'data.email' venga en el body
-          name: data.name,
-          codeSixDigits,
-        }
-      });
-    }
+    // if (!user.emailVerified) {
+    //   await inngest.send({
+    //     name: "send.verification.code",
+    //     data: {
+    //       email: data.email, // Asegúrate que 'data.email' venga en el body
+    //       name: data.name,
+    //       codeSixDigits,
+    //     }
+    //   });
+    // }
+
+    // Create basic credits for the user
+    await createBasicCredits(user.id);
 
     revalidatePath("/dashboard");
     return { success: true };

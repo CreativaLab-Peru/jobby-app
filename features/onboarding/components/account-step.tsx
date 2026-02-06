@@ -1,16 +1,16 @@
 "use client";
 
-import { useOnboardingStore } from "@/features/onboarding/store/talent-onboarding-store";
-import { FormField } from "@/components/form-field";
-import { Mail, Lock, CheckCircle2, LogOut } from "lucide-react";
-import { useEffect, useState } from "react";
-import { authClient } from "@/lib/auth-client";
-import { GoogleOAuthButton } from "@/features/authentication/components/google-oauth-button";
-import { Button } from "@/components/ui/button";
-import { UserAvatar } from "@/components/avatar-user";
+import {useOnboardingStore} from "@/features/onboarding/store/talent-onboarding-store";
+import {FormField} from "@/components/form-field";
+import {Mail, Lock, CheckCircle2, LogOut} from "lucide-react";
+import {useEffect, useState} from "react";
+import {authClient} from "@/lib/auth-client";
+import {GoogleOAuthButton} from "@/features/authentication/components/google-oauth-button";
+import {Button} from "@/components/ui/button";
+import {UserAvatar} from "@/components/avatar-user";
 
 export function AccountStep() {
-  const { formData, updateFormData, errors } = useOnboardingStore();
+  const {formData, updateFormData, errors} = useOnboardingStore();
   const [user, setUser] = useState<{
     name: string;
     email: string;
@@ -29,8 +29,10 @@ export function AccountStep() {
         });
         // Actualizamos store si no estaba actualizado
         if (!formData.email) {
-          updateFormData({ email: session.data.user.email, name: session.data.user.name });
+          updateFormData({email: session.data.user.email, name: session.data.user.name});
+          updateFormData({acceptedTerms: true});
         }
+
       }
     };
     checkSession();
@@ -39,7 +41,7 @@ export function AccountStep() {
   const handleLogout = async () => {
     await authClient.signOut();
     setUser(null);
-    updateFormData({ email: "", password: "", confirmPassword: "" });
+    updateFormData({email: "", password: "", confirmPassword: ""});
   };
 
   return (
@@ -57,7 +59,8 @@ export function AccountStep() {
 
       {user ? (
         <div className="space-y-4">
-          <div className="bg-secondary/50 border rounded-xl p-6 flex flex-col items-center text-center gap-4">
+          <div
+            className="bg-secondary/50 border rounded-xl p-6 flex flex-col items-center text-center gap-4">
             <UserAvatar
               image={user?.image}
               name={user?.name}
@@ -67,14 +70,15 @@ export function AccountStep() {
               <p className="font-semibold text-lg leading-tight">{user?.name}</p>
               <p className="text-sm text-muted-foreground">{user?.email}</p>
             </div>
-            <div className="flex items-center gap-2 bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-full">
-              <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <div
+              className="flex items-center gap-2 bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-full">
+              <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400"/>
               <span className="text-xs font-medium text-green-700 dark:text-green-300">
                 Cuenta vinculada
               </span>
             </div>
             <Button variant="outline" size="sm" onClick={handleLogout} className="mt-2 gap-2">
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-4 w-4"/>
               Cambiar cuenta
             </Button>
           </div>
@@ -101,7 +105,8 @@ export function AccountStep() {
           />
           <div className="relative my-6 text-center text-xs uppercase text-muted-foreground">
             <span className="bg-background px-2 relative z-10">O continuar con</span>
-            <div className="absolute inset-0 flex items-center"><span className="w-full border-t"/></div>
+            <div className="absolute inset-0 flex items-center"><span className="w-full border-t"/>
+            </div>
           </div>
           <GoogleOAuthButton
             text="Registrarse con Google"
@@ -121,6 +126,9 @@ export function AccountStep() {
             onChange={(e) => updateFormData({acceptedTerms: e.target.checked})}
           />
           <span>Acepto los términos y condiciones</span>
+          {errors.acceptedTerms && (
+            <span className="text-red-600 text-xs mt-1">{errors.acceptedTerms}</span>
+          )}
         </label>
       </div>
     </div>

@@ -2,42 +2,9 @@ import { Button } from "@/components/ui/button";
 import {ArrowLeft, ArrowRight, Sparkles} from "lucide-react";
 import { useOnboardingStore } from "@/features/onboarding/store/talent-onboarding-store";
 import Link from "next/link";
-import { GoogleOAuthButton } from "@/features/authentication/components/google-oauth-button";
-import { useEffect, useState } from "react";
-import { authClient } from "@/lib/auth-client";
 
 export function WelcomeStep() {
   const { setStep } = useOnboardingStore();
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-
-  useEffect(() => {
-    // Verificar si ya está autenticado con OAuth
-    const checkAuth = async () => {
-      try {
-        const session = await authClient.getSession();
-        if (session?.data?.user) {
-          // Si está autenticado, saltar al paso 2
-          console.log("[INFO] Usuario OAuth detectado, saltando a paso 2");
-          setStep(2);
-        }
-      } catch (error) {
-        console.error("Error checking auth:", error);
-      } finally {
-        setIsCheckingAuth(false);
-      }
-    };
-
-    checkAuth();
-  }, [setStep]);
-
-  if (isCheckingAuth) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-        <p className="mt-4 text-muted-foreground">Verificando sesión...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] max-w-2xl mx-auto text-center px-6 animate-in fade-in slide-in-from-bottom-3 duration-1000">
@@ -77,10 +44,6 @@ export function WelcomeStep() {
           Empezar ahora
           <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
         </Button>
-        <GoogleOAuthButton 
-          text="Registrarse con Google" 
-          callbackURL="/onboarding/talents"
-        />
 
         <p className="text-xs text-muted-foreground/60 uppercase tracking-widest font-medium">
           Paso 1

@@ -3,8 +3,6 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useOnboardingStore } from "@/features/onboarding/store/talent-onboarding-store";
 import { DateInput } from "@/components/form/date-input";
-import {FormField} from "@/components/form-field";
-import {Mail} from "lucide-react";
 
 export function BasicDataStep() {
   const { formData, updateFormData, errors } = useOnboardingStore();

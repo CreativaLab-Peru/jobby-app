@@ -61,7 +61,7 @@ export function OnboardingForm() {
       }
     };
     checkSession();
-  }, [updateFormData]);
+  }, []);
 
   const handleFinalize = async () => {
     setErrors({});

@@ -11,14 +11,22 @@ import { UserAvatar } from "@/components/avatar-user";
 
 export function AccountStep() {
   const { formData, updateFormData, errors } = useOnboardingStore();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{
+    name: string;
+    email: string;
+    image?: string | null;
+  }>(null);
 
   // Escuchamos la sesión solo para actualizar la vista local
   useEffect(() => {
     const checkSession = async () => {
       const session = await authClient.getSession();
       if (session?.data?.user) {
-        setUser(session.data.user);
+        setUser({
+          name: session.data.user.name,
+          email: session.data.user.email,
+          image: session.data.user.image,
+        });
         // Actualizamos store si no estaba actualizado
         if (!formData.email) {
           updateFormData({ email: session.data.user.email, name: session.data.user.name });
@@ -89,8 +97,8 @@ export function AccountStep() {
             value={formData.password}
             onChange={(e) => updateFormData({password: e.target.value})}
             error={errors.password}
+            type={'password'}
           />
-          {/* ... campos de contraseña ... */}
           <div className="relative my-6 text-center text-xs uppercase text-muted-foreground">
             <span className="bg-background px-2 relative z-10">O continuar con</span>
             <div className="absolute inset-0 flex items-center"><span className="w-full border-t"/></div>

@@ -105,11 +105,21 @@ export default async function OpportunityDetailsPage({
                 <div>
                   <p className="font-semibold text-sm">Fecha límite</p>
                   <p className="text-muted-foreground">
-                    {new Date(opportunity.deadline).toLocaleDateString('es-ES', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
+                    {(() => {
+                      const rawDeadline = opportunity.deadline;
+                      const date =
+                        rawDeadline instanceof Date
+                          ? rawDeadline
+                          : new Date(rawDeadline as any);
+                      if (Number.isNaN(date.getTime())) {
+                        return null;
+                      }
+                      return date.toLocaleDateString("es-ES", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      });
+                    })()}
                   </p>
                 </div>
               </div>

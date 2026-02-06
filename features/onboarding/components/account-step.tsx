@@ -46,7 +46,7 @@ export function AccountStep() {
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="space-y-2 text-center">
         <h2 className="text-2xl font-bold">
-          {user ? `¡Hola de nuevo, ${user.name.split(" ")[0]}!` : "Crea tu cuenta"}
+          {user ? `¡Hola de nuevo, ${user?.name?.split(" ")?.[0]}!` : "Crea tu cuenta"}
         </h2>
         <p className="text-muted-foreground">
           {user

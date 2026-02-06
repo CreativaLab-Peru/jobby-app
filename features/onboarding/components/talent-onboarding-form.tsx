@@ -93,10 +93,18 @@ export function OnboardingForm() {
             return;
           }
           const newUser = await authClient.signUp.email(body);
-          if (newUser?.error) throw new Error("Signup failed");
+          if (newUser?.error) {
+            toast.error(newUser.error.message || "Error al crear la cuenta.");
+            console.error(newUser.error);
+            return;
+          }
 
           const currentUser = await getUserByEmail(newUser.data.user.email);
-          if (!currentUser) throw new Error("User not found");
+          if (!currentUser) {
+            toast.error("Error al obtener los datos del usuario.");
+            console.error(newUser.error);
+            return;
+          }
           userId = currentUser.id;
         }
 

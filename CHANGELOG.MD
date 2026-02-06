@@ -1,8 +1,9 @@
-# v1.1.11 - 2025-02-06
+# v1.1.11, v1.1.12 - 2025-02-06
 
 # Fixes
 - Google OAuth sign in and sign up
 - Better auth for sending emails
+- Auth client variable wrong
 
 # v1.1.10 - 2025-02-04
 

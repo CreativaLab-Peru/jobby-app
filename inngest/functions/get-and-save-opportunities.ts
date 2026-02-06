@@ -7,18 +7,30 @@ import {
   MatchRequest
 } from "@/features/opportunities/get-opportunities-from-engine";
 import {saveOpportunities} from "@/features/opportunities/save-opportunities";
+import { consumeCredits } from "@/features/credits/actions/consume-credits";
 
 // Map internal OpportunityType to external API types
+/**
+ * Convierte OpportunityType interno a los valores esperados por la API externa.
+ * Los tipos explícitamente mapeados se convierten, el resto se pasa sin cambios.
+ * Tipos que pasan sin cambios: INTERNSHIP, SCHOLARSHIP, EXCHANGE_PROGRAM, etc.
+ */
 function mapOpportunityType(type: OpportunityType): string {
-  const mapping: Record<string, string> = {
-    'FULL_TIME': 'EMPLOYMENT',
-    'PART_TIME': 'EMPLOYMENT',
-    'FREELANCE': 'EMPLOYMENT',
-    'RESEARCH_FELLOWSHIP': 'SCHOLARSHIP',
-    'GRADUATE_PROGRAM': 'SCHOLARSHIP',
+  const mapping: Partial<Record<OpportunityType, string>> = {
+    FULL_TIME: 'EMPLOYMENT',
+    PART_TIME: 'EMPLOYMENT',
+    FREELANCE: 'EMPLOYMENT',
+    RESEARCH_FELLOWSHIP: 'SCHOLARSHIP',
+    GRADUATE_PROGRAM: 'SCHOLARSHIP',
   };
-  
-  return mapping[type] || type;
+
+  if (type in mapping) {
+    // Tipos mapeados explícitamente
+    return mapping[type] as string;
+  }
+
+  // Tipos que pasan sin cambios: INTERNSHIP, SCHOLARSHIP, EXCHANGE_PROGRAM, etc.
+  return type;
 }
 
 export const getAndSaveOpportunities = inngest.createFunction(
@@ -122,7 +134,15 @@ export const getAndSaveOpportunities = inngest.createFunction(
         }
       };
 
-      console.log("[INFO] Requesting opportunities for userId:", userId, "cvId:", cvId);
+      await logsService.createLog({
+        userId,
+        action: LogAction.OPPORTUNITY,
+        level: LogLevel.INFO,
+        entity: "CV_OPPORTUNITY",
+        entityId: cvId,
+        message: "Requesting opportunities from engine",
+        metadata: { cvId, userId },
+      });
       const opportunities = await getOpportunitiesFromEngine(userId, cvId, matchRequest);
       if (!opportunities) {
         await logsService.createLog({
@@ -139,22 +159,15 @@ export const getAndSaveOpportunities = inngest.createFunction(
 
       const matchCount = opportunities.matches?.length || 0;
       
-      await saveOpportunities(cv.id, opportunities.matches)
+      await saveOpportunities(cv.id, opportunities.matches);
 
       // Only consume credit if there were actual matches
       if (matchCount > 0) {
-        await prisma.userCreditBalance.update({
-          where: {
-            userId_type: {
-              userId: userId,
-              type: CreditBalanceType.SEARCH_OPPORTUNITIES
-            }
-          },
-          data: {
-            amount: {
-              decrement: 1,
-            }
-          },
+        await consumeCredits({
+          userId,
+          type: CreditBalanceType.SEARCH_OPPORTUNITIES,
+          amount: 1,
+          description: `Oportunidades buscadas para CV ${cvId}`,
         });
 
         await logsService.createLog({

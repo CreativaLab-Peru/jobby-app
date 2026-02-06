@@ -6,6 +6,7 @@ import { Eye, CalendarDays, Building2, MapPin, ExternalLink } from "lucide-react
 import { motion } from "framer-motion";
 import { formatDate } from "@/utils/format-date";
 import Link from "next/link";
+import { parseRequirements } from "@/utils/parse-requirements";
 
 interface OpportunityCardProps {
   opportunity: Opportunity
@@ -15,22 +16,6 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
   const numberFormatted = Number(opportunity.match) * 100 || 0;
   const deadlineFormatted = formatDate(opportunity.deadline);
 
-  // Parse requirements to separate required and optional skills
-  const parseRequirements = (text: string) => {
-    const lines = text.split('\n');
-    let required: string | null = null;
-    let optional: string | null = null;
-
-    lines.forEach(line => {
-      if (line.startsWith('Habilidades requeridas:')) {
-        required = line.replace('Habilidades requeridas:', '').trim();
-      } else if (line.startsWith('Habilidades opcionales:')) {
-        optional = line.replace('Habilidades opcionales:', '').trim();
-      }
-    });
-
-    return { required, optional };
-  };
 
   const { required, optional } = opportunity.requirements 
     ? parseRequirements(opportunity.requirements) 
@@ -110,7 +95,7 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
       <div className="mb-4">
         <Progress 
           value={numberFormatted} 
-          className="h-1.5 [&>div]:bg-levely [&>div]:dark:bg-levely-green [&>div]:bg-levely-blue"
+          className="h-1.5 [&>div]:dark:bg-levely-green [&>div]:bg-levely-blue"
         />
       </div>
 

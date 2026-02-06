@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import {
   Popover,
   PopoverContent,
@@ -10,29 +9,15 @@ import {Button} from "@/components/ui/button";
 import {Zap, Sparkles, FileText, Plus} from "lucide-react";
 import {CreditLimits} from "@/features/credits/actions/get-current-credits-limits";
 import {useRouter} from "next/navigation";
-import {useCreditsStore} from "@/store/use-credits-store";
+import {useCredits} from "@/features/credits/hooks/use-credits";
 
 interface CreditsIndicatorProps {
   limits: CreditLimits;
 }
 
 export function CreditsIndicator({limits}: CreditsIndicatorProps) {
-  const { credits, setCredits, refreshCredits } = useCreditsStore();
+  const { credits } = useCredits(limits);
   const router = useRouter();
-
-  // Initialize store with server data
-  useEffect(() => {
-    setCredits(limits);
-  }, [limits, setCredits]);
-
-  // Auto-refresh credits every 30 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      refreshCredits();
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [refreshCredits]);
 
   const totalAvailable = credits.manageCvsLimit + credits.aiActionsLimit;
   const isEmpty = totalAvailable === 0;

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Plus, Trash2 } from "lucide-react"
 
 interface TagsInputProps {
-  value: string[]
+  value: string[] | any[]
   onChange: (tags: string[]) => void
   placeholder: string
 }
@@ -15,15 +15,34 @@ interface TagsInputProps {
 export function TagsInput({ value, onChange, placeholder }: TagsInputProps) {
   const [inputValue, setInputValue] = useState("")
 
+  // Normalizar el valor para manejar tanto strings como objetos
+  const normalizedValue = value.map((item) => {
+    if (typeof item === "string") {
+      return item;
+    }
+    // Si es un objeto (como {language, proficiency}), convertirlo a string
+    if (item && typeof item === "object") {
+      if (item.language && item.proficiency) {
+        return `${item.language} (${item.proficiency})`;
+      }
+      if (item.language) {
+        return item.language;
+      }
+      // Fallback: convertir el objeto a string
+      return JSON.stringify(item);
+    }
+    return String(item);
+  });
+
   const addTag = () => {
-    if (inputValue.trim() && !value.includes(inputValue.trim())) {
-      onChange([...value, inputValue.trim()])
+    if (inputValue.trim() && !normalizedValue.includes(inputValue.trim())) {
+      onChange([...normalizedValue, inputValue.trim()])
       setInputValue("")
     }
   }
 
   const removeTag = (tagToRemove: string) => {
-    onChange(value.filter((tag: string) => tag !== tagToRemove))
+    onChange(normalizedValue.filter((tag: string) => tag !== tagToRemove))
   }
 
   return (
@@ -40,7 +59,7 @@ export function TagsInput({ value, onChange, placeholder }: TagsInputProps) {
         </Button>
       </div>
       <div className="flex flex-wrap gap-2">
-        {value.map((tag: string, index: number) => (
+        {normalizedValue.map((tag: string, index: number) => (
           <Badge key={index} variant="secondary" className="flex items-center gap-1">
             {tag}
             <button onClick={() => removeTag(tag)} className="ml-1 hover:text-red-500">

@@ -126,19 +126,23 @@ export async function POST(req: Request) {
       );
     }
 
-    await prisma.userCreditBalance.update({
-      where: {
-        userId_type: {
-          userId: currentUser.id,
-          type: CreditBalanceType.AI_ACTIONS
-        }
-      },
-      data: {
-        amount: {
-          decrement: 1,
-        }
-      },
-    })
+    // Consume credits safely using transaction and locking
+    try {
+      const { consumeCredits } = await import('@/features/credits/actions/consume-credits');
+      await consumeCredits({
+        userId: currentUser.id,
+        type: CreditBalanceType.AI_ACTIONS,
+        amount: 1,
+        description: `CV upload: ${cv.id}`,
+      });
+    } catch (error) {
+      // Si falla el consumo de créditos, eliminar el CV creado
+      await prisma.cv.delete({ where: { id: cv.id } });
+      return NextResponse.json(
+        { success: false, message: "No tienes créditos disponibles" },
+        { status: 403 }
+      );
+    }
 
     // Trigger evaluation and opportunity matching
     await inngest.send({

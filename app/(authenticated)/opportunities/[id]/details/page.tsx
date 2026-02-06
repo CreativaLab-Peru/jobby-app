@@ -13,6 +13,9 @@ import {
   ArrowLeft
 } from "lucide-react";
 import Link from "next/link";
+import { getSession } from "@/features/authentication/actions/get-session";
+import { parseRequirements } from "@/utils/parse-requirements";
+
 
 export default async function OpportunityDetailsPage({
   params,
@@ -20,32 +23,32 @@ export default async function OpportunityDetailsPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  
+
+  // Obtener sesión del usuario autenticado
+  const session = await getSession();
+  if (!session.success || !session.user?.id) {
+    notFound();
+  }
+
+  // Buscar la oportunidad y el CV asociado
   const opportunity = await prisma.opportunity.findUnique({
     where: { id },
+    include: {
+      cv: true,
+    },
   });
 
-  if (!opportunity) {
+  if (!opportunity || !opportunity.cv) {
+    notFound();
+  }
+
+  // Verificar que el CV pertenece al usuario autenticado
+  if (opportunity.cv.userId !== session.user.id) {
     notFound();
   }
 
   const matchValue = Math.round(Number(opportunity.match) * 100);
 
-  const parseRequirements = (text: string) => {
-    const lines = text.split('\n');
-    let required: string | null = null;
-    let optional: string | null = null;
-
-    lines.forEach(line => {
-      if (line.startsWith('Habilidades requeridas:')) {
-        required = line.replace('Habilidades requeridas:', '').trim();
-      } else if (line.startsWith('Habilidades opcionales:')) {
-        optional = line.replace('Habilidades opcionales:', '').trim();
-      }
-    });
-
-    return { required, optional };
-  };
 
   const { required, optional } = opportunity.requirements 
     ? parseRequirements(opportunity.requirements) 

@@ -124,7 +124,7 @@ export function OnboardingForm() {
         if (isOAuthUser) {
           router.push("/dashboard");
         } else {
-          router.push("/account/verify?email=" + encodeURIComponent(formData.email));
+          router.push("/login?onboarding=completed");
         }
 
         timeout(() => reset(), 1000);

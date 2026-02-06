@@ -1,9 +1,10 @@
-# v1.1.11, v1.1.12, v1.1.13 - 2025-02-06
+# v1.1.11, v1.1.12, v1.1.13, v1.1.14 - 2025-02-06
 
 # Fixes
 - Google OAuth sign in and sign up
 - Better auth for sending emails
 - Auth client variable need to load before rendering the app, to avoid errors on public pages
+- Fix the sending emails for google oauth users and users without password
 
 # v1.1.10 - 2025-02-04
 

@@ -75,7 +75,7 @@ export function LoginForm() {
         </div>
 
         <Card className="p-8 bg-card shadow-glow">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">            
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
             <FormField
               label="Correo electrónico"
@@ -95,7 +95,7 @@ export function LoginForm() {
             />
 
             {formError && (
-              <div className="bg-red-50 border border-red-200 rounded-md p-3 text-sm text-red-500">
+              <div className="bg-red-50 border border-red-200 rounded-md p-3 text-sm text-red-500 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
                 {formError}
               </div>
             )}
@@ -121,7 +121,10 @@ export function LoginForm() {
               )}
             </Button>
             {/* Botón de Google OAuth */}
-            <GoogleOAuthButton callbackURL={routes.app.dashboard} />
+            <GoogleOAuthButton
+              mode={'signIn'}
+              callbackURL={routes.app.dashboard}
+            />
           </form>
 
           <p className="text-center text-sm text-muted-foreground mt-6">

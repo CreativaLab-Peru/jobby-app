@@ -4,17 +4,12 @@ import {getUser} from "@/features/authentication/actions/get-user";
 import {getCurrentCreditLimits} from "@/features/credits/actions/get-current-credits-limits";
 import {SidebarProvider} from "@/components/ui/sidebar";
 import AppSidebar from "@/components/app-sidebar";
-import {isValidUser} from "@/features/authentication/actions/is-valid-user";
 
 export const dynamic = "force-dynamic";
 
 export default async function RootLayout({
                                            children,
                                          }: Readonly<{ children: React.ReactNode }>) {
-  const result = await isValidUser();
-  if (!result.success) {
-    return redirect(result.redirectTo);
-  }
   const user = await getUser();
   if (!user) {
     return redirect("/logout");

@@ -36,7 +36,6 @@ const initialFormData: TalentOnboardingFormData = {
   work: "Remoto",
   email: "",
   password: "",
-  confirmPassword: "",
   acceptedTerms: false,
 };
 
@@ -70,7 +69,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
           6: talentOnboardingBaseSchema.pick({ availability: true }),
           7: talentOnboardingBaseSchema.pick({ expLevel: true }),
           8: talentOnboardingBaseSchema.pick({ portfolioUrl: true }),
-          9: talentOnboardingSchema,
+          9: talentOnboardingBaseSchema.pick({ email: true, password: true, acceptedTerms: true }),
         };
 
         const currentSchema = stepSchemas[step];

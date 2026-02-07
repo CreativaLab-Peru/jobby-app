@@ -8,6 +8,8 @@ import {getCurrentUser} from "@/features/share/actions/get-current-user";
 import {getTextFromPdfApi} from "@/utils/get-text-from-pdf-api";
 import {detectCv} from "@/features/cv/actions/verify-cv";
 import {getCurrentCreditLimits} from "@/features/credits/actions/get-current-credits-limits";
+import {getPromptToGetCv} from "@/features/cv/prompts/get-prompt-to-get-cv";
+import {queryGemini} from "@/features/cv/queries/query-gemini";
 
 export async function POST(req: Request) {
   try {
@@ -58,16 +60,73 @@ export async function POST(req: Request) {
       );
     }
 
+    // Extract and structure CV data using AI (SYNCHRONOUSLY like create-from-pdf)
+    const prompt = getPromptToGetCv(textFromPdf);
+    const aiResult = await queryGemini({ prompt, type: "JSON" });
+
+    if (!aiResult.success) {
+      return NextResponse.json(
+        {success: false, message: "Error al procesar el contenido del CV"},
+        {status: 500}
+      );
+    }
+
+    const jsonData = aiResult.data;
+    const textCv = JSON.stringify(jsonData, null, 2);
+
+    // Validate extracted opportunityType and cvType
+    const rawOpportunityType = (jsonData.opportunityType ?? "").toString();
+    const rawCvType = (jsonData.cvType ?? "").toString();
+
+    const normalizedOpportunityType = rawOpportunityType.trim().toUpperCase();
+    const normalizedCvType = rawCvType.trim().toUpperCase();
+
+    const matchedOpportunityType = (Object.values(OpportunityType) as string[]).find(
+      (value) => value.toUpperCase() === normalizedOpportunityType
+    ) as OpportunityType | undefined;
+
+    const matchedCvType = (Object.values(CvType) as string[]).find(
+      (value) => value.toUpperCase() === normalizedCvType
+    ) as CvType | undefined;
+
+    let opportunityType: OpportunityType;
+    if (matchedOpportunityType) {
+      opportunityType = matchedOpportunityType;
+    } else {
+      opportunityType = OpportunityType.EMPLOYMENT;
+      if (rawOpportunityType) {
+        console.warn(
+          "[CV Upload] Unknown opportunityType from AI, falling back to default:",
+          rawOpportunityType
+        );
+      }
+    }
+
+    let cvType: CvType;
+    if (matchedCvType) {
+      cvType = matchedCvType;
+    } else {
+      cvType = CvType.TECHNOLOGY_ENGINEERING;
+      if (rawCvType) {
+        console.warn(
+          "[CV Upload] Unknown cvType from AI, falling back to default:",
+          rawCvType
+        );
+      }
+    }
+
     const createdByJobId = uuidv4();
-    // Current cv just for the moment (it will be updated in the job)
+    // Create CV with extracted content and sections
     const cv = await prisma.cv.create({
       data: {
         userId,
         language: Language.EN,
-        opportunityType: OpportunityType.EMPLOYMENT,
-        cvType: CvType.TECHNOLOGY_ENGINEERING,
+        opportunityType,
+        cvType,
         title: file.name,
         createdByJobId,
+        extractedJson: jsonData,
+        fullTextSearch: textCv,
         attachments: {
           create: {
             filename: file.name,
@@ -75,6 +134,16 @@ export async function POST(req: Request) {
             url,
             size: file.size,
           },
+        },
+        sections: {
+          create: Array.isArray(jsonData.sections) 
+            ? jsonData.sections.map((section: any, index: number) => ({
+                sectionType: section.sectionType,
+                title: section.title ?? null,
+                contentJson: section.contentJson ?? {},
+                order: index,
+              }))
+            : [],
         },
       },
     });
@@ -86,27 +155,33 @@ export async function POST(req: Request) {
       );
     }
 
-    await prisma.userCreditBalance.update({
-      where: {
-        userId_type: {
-          userId: currentUser.id,
-          type: CreditBalanceType.MANAGE_CVS
-        }
-      },
-      data: {
-        type: "AI_ACTIONS",
-        amount: {
-          decrement: 1,
-        }
-      },
-    })
+    // Consume credits safely using transaction and locking
+    try {
+      const { consumeCredits } = await import('@/features/credits/actions/consume-credits');
+      await consumeCredits({
+        userId: currentUser.id,
+        type: CreditBalanceType.AI_ACTIONS,
+        amount: 1,
+        description: `CV upload: ${cv.id}`,
+      });
+    } catch (error) {
+      // Si falla el consumo de créditos, eliminar el CV creado
+      await prisma.cv.delete({ where: { id: cv.id } });
+      return NextResponse.json(
+        { success: false, message: "No tienes créditos disponibles" },
+        { status: 403 }
+      );
+    }
+
+    // Trigger evaluation and opportunity matching
+    await inngest.send({
+      name: "cv/ready-for-evaluation",
+      data: { cvId: cv.id, userId: currentUser.id },
+    });
 
     await inngest.send({
-      name: "cv/uploaded",
-      data: {
-        cvId: cv.id,
-        attachmentUrl: url,
-      },
+      name: "get.and.save.opportunities",
+      data: { cvId: cv.id, userId: currentUser.id },
     });
 
     return Response.json({success: true, cvId: cv.id});

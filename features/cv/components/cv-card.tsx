@@ -173,10 +173,14 @@ export function CVCard({ cv }: CVCardProps) {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta acción eliminará el CV <strong>&quot;{cv?.title || "Sin título"}&quot;</strong>{" "}
-              de tu lista.
-              <p className="mt-2 font-medium">¿Deseas continuar?</p>
+            <AlertDialogDescription asChild>
+              <div>
+                <p>
+                  Esta acción eliminará el CV <strong>&quot;{cv?.title || "Sin título"}&quot;</strong>{" "}
+                  de tu lista.
+                </p>
+                <p className="mt-2 font-medium">¿Deseas continuar?</p>
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
 

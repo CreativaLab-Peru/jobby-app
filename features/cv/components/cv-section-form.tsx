@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import React, { useState, useCallback, forwardRef, useImperativeHandle } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Plus, Trash2 } from "lucide-react"
 import { FieldWithRecommendations } from "./field-with-recommendations"
 import type { CVSection } from "@/types/cv"
+import { toast } from "sonner"
 
 interface CVSectionFormProps {
   section: CVSection
@@ -13,8 +14,11 @@ interface CVSectionFormProps {
   onChange: (data: any) => void
 }
 
-export function CVSectionForm({ section, data, onChange }: CVSectionFormProps) {
-  // ... (Lógica de estado y handlers se mantiene igual)
+export interface CVSectionFormRef {
+  validate: () => boolean
+}
+
+export const CVSectionForm = forwardRef<CVSectionFormRef, CVSectionFormProps>(({ section, data, onChange }, ref) => {
   const [formData, setFormData] = useState(() => {
     if (section.multiple) {
       return {
@@ -23,6 +27,68 @@ export function CVSectionForm({ section, data, onChange }: CVSectionFormProps) {
     }
     return data || {}
   })
+  const [errors, setErrors] = useState<any>({});
+
+  // Validación de campos obligatorios
+  const validateFields = useCallback((item: any) => {
+    const newErrors: Record<string, string> = {};
+    section.fields.forEach((field) => {
+      if (field.required) {
+        const value = item[field.name];
+        if (
+          value === undefined ||
+          value === null ||
+          (typeof value === "string" && value.trim() === "") ||
+          (Array.isArray(value) && value.length === 0)
+        ) {
+          newErrors[field.name] = "Este campo es obligatorio";
+        }
+      }
+      if (field.pattern && item[field.name]) {
+        const regex = new RegExp(field.pattern);
+        if (!regex.test(item[field.name])) {
+          newErrors[field.name] = field.patternError || "Formato inválido";
+        }
+      }
+    });
+    return newErrors;
+  }, [section.fields]);
+
+  // Validar todos los datos antes de avanzar
+  const validateAll = useCallback(() => {
+    if (section.multiple) {
+      const items = formData.items || [];
+      const allErrors: any[] = [];
+      let hasErrors = false;
+      
+      items.forEach((item: any, index: number) => {
+        const itemErrors = validateFields(item);
+        allErrors[index] = itemErrors;
+        if (Object.keys(itemErrors).length > 0) {
+          hasErrors = true;
+        }
+      });
+      
+      if (hasErrors) {
+        setErrors({ items: allErrors });
+        toast.error("Por favor completa todos los campos obligatorios antes de continuar");
+        return false;
+      }
+    } else {
+      const fieldErrors = validateFields(formData);
+      if (Object.keys(fieldErrors).length > 0) {
+        setErrors(fieldErrors);
+        toast.error("Por favor completa todos los campos obligatorios antes de continuar");
+        return false;
+      }
+    }
+    return true;
+  }, [section.multiple, formData, validateFields]);
+
+  // Exponer la función de validación al componente padre
+  useImperativeHandle(ref, () => ({
+    validate: validateAll
+  }), [validateAll]);
 
   const handleInputChange = useCallback(
     (fieldName: string, value: string, index?: number) => {
@@ -73,7 +139,8 @@ export function CVSectionForm({ section, data, onChange }: CVSectionFormProps) {
   }
 
   if (section.multiple) {
-    const items = formData.items || [{}]
+    const items = formData.items || [{}];
+    const itemsErrors = errors.items || [];
 
     return (
       <div className="space-y-8">
@@ -82,7 +149,6 @@ export function CVSectionForm({ section, data, onChange }: CVSectionFormProps) {
             key={index}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            // REFACTOR: Usamos border-border y bg-muted/30 para un look más limpio
             className="p-6 border border-border rounded-xl bg-muted/20 relative group transition-colors hover:border-primary/30"
           >
             <div className="flex items-center justify-between mb-6">
@@ -96,7 +162,6 @@ export function CVSectionForm({ section, data, onChange }: CVSectionFormProps) {
                   variant="ghost"
                   size="sm"
                   onClick={() => removeItem(index)}
-                  // REFACTOR: Usamos destructive para acciones de borrado
                   className="text-destructive hover:text-destructive-foreground hover:bg-destructive transition-all"
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
@@ -107,13 +172,17 @@ export function CVSectionForm({ section, data, onChange }: CVSectionFormProps) {
 
             <div className="space-y-6">
               {section.fields.map((field) => (
-                <FieldWithRecommendations
-                  key={field.name}
-                  field={field}
-                  value={item[field.name] || ""}
-                  onChange={(value) => handleInputChange(field.name, value, index)}
-                  onSelectChange={(value) => handleInputChange(field.name, value, index)}
-                />
+                <div key={field.name}>
+                  <FieldWithRecommendations
+                    field={field}
+                    value={item[field.name] || ""}
+                    onChange={(value) => handleInputChange(field.name, value, index)}
+                    onSelectChange={(value) => handleInputChange(field.name, value, index)}
+                  />
+                  {itemsErrors[index]?.[field.name] && (
+                    <p className="text-xs text-destructive mt-1">{itemsErrors[index][field.name]}</p>
+                  )}
+                </div>
               ))}
             </div>
           </motion.div>
@@ -123,7 +192,6 @@ export function CVSectionForm({ section, data, onChange }: CVSectionFormProps) {
           type="button"
           variant="outline"
           onClick={addItem}
-          // REFACTOR: Estilo tipo "Empty state" usando tus variables de marca
           className="w-full py-8 border-2 border-dashed border-border hover:border-levely-blue hover:bg-levely-blue/5 text-muted-foreground hover:text-levely-blue dark:hover:border-levely-green dark:hover:bg-levely-green/20 transition-all rounded-xl group"
         >
           <div className="flex flex-col items-center gap-2">
@@ -132,21 +200,27 @@ export function CVSectionForm({ section, data, onChange }: CVSectionFormProps) {
           </div>
         </Button>
       </div>
-    )
+    );
   }
 
   return (
     <div className="space-y-6">
       {section.fields.map((field) => (
-        <FieldWithRecommendations
-          key={field.name}
-          field={field}
-          value={formData[field.name] || []}
-          onChange={(value) => handleInputChange(field.name, value)}
-          onSelectChange={(value) => handleInputChange(field.name, value)}
-          onTagsChange={(tags) => handleTagsChange(field.name, tags)}
-        />
+        <div key={field.name}>
+          <FieldWithRecommendations
+            field={field}
+            value={formData[field.name] || []}
+            onChange={(value) => handleInputChange(field.name, value)}
+            onSelectChange={(value) => handleInputChange(field.name, value)}
+            onTagsChange={(tags) => handleTagsChange(field.name, tags)}
+          />
+          {errors[field.name] && (
+            <p className="text-xs text-destructive mt-1">{errors[field.name]}</p>
+          )}
+        </div>
       ))}
     </div>
-  )
-}
+  );
+});
+
+CVSectionForm.displayName = "CVSectionForm";

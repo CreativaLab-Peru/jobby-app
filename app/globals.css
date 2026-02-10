@@ -1,9 +1,40 @@
+
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "swiper/css";
 @import "swiper/css/navigation";
 @import "swiper/css/pagination";
+
+/* =================== ARIAL FONT EMBED =================== */
+@font-face {
+  font-family: 'Arial';
+  src: url('/fonts/Arial/ARIAL.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Arial';
+  src: url('/fonts/Arial/ARIALI.TTF') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Arial';
+  src: url('/fonts/Arial/ARIALBD.TTF') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Arial';
+  src: url('/fonts/Arial/ARIALBI.TTF') format('truetype');
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+}
 
 @custom-variant dark (&:is(.dark *));
 

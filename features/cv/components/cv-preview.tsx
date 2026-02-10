@@ -157,8 +157,8 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
 
   return (
     // CAMBIO: Mantener fondo blanco absoluto pero con bordes definidos por el sistema
-    <div className="bg-white p-[1in] min-h-[11in] shadow-inner text-black selection:bg-primary/20"
-         style={{ fontFamily: "'Inter', 'Arial', sans-serif" }}>
+        <div className="bg-white p-[1in] min-h-[11in] shadow-inner text-black selection:bg-primary/20"
+          style={{ fontFamily: "Arial, sans-serif" }}>
 
       {/* Header Name */}
       {data.personal?.fullName && (
@@ -180,12 +180,12 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
               <>
                 <span>•</span>
                 <a
-                  href={data.personal.linkedin.startsWith('http') ? data.personal.linkedin : `https://${data.personal.linkedin}`}
+                  href={`https://linkedin.com/in/${data.personal.linkedin}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary hover:underline font-bold"
                 >
-                  LinkedIn
+                  {`linkedin.com/in/${data.personal.linkedin}`}
                 </a>
               </>
             )}

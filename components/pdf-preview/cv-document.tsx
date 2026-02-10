@@ -150,14 +150,20 @@ export function CvDocument({
           <Text style={styles.sectionTitle}>LOGROS Y RECONOCIMIENTOS</Text>
           <View style={styles.sectionDivider} />
           <View>
-            {data.achievements.items.map((ach, idx) => (
-              <View key={ach.id ?? idx} style={{ marginBottom: 4 }}>
-                <Text style={{ fontSize: 10.5 }}>
-                  <Text style={{ fontWeight: "bold" }}>{ach.title ?? ""}:</Text>{" "}
-                  {ach.description ?? ""}
-                </Text>
-              </View>
-            ))}
+            {data.achievements.items.map((ach, idx) => {
+              const title = ach.title?.trim() ?? "";
+              const description = ach.description?.trim() ?? "";
+              if (!title && !description) return null;
+              return (
+                <View key={ach.id ?? idx} style={{ marginBottom: 4 }}>
+                  <Text style={{ fontSize: 10.5 }}>
+                    {title ? <Text style={{ fontWeight: "bold" }}>{title}:</Text> : null}
+                    {title && description ? " " : ""}
+                    {description}
+                  </Text>
+                </View>
+              );
+            })}
           </View>
         </View>
       ) : null,
@@ -168,12 +174,24 @@ export function CvDocument({
           <Text style={styles.sectionTitle}>LICENCIAS Y CERTIFICACIONES</Text>
           <View style={styles.sectionDivider} />
           <View>
-            {data.certifications.items.map((c, index) => (
-              <Text key={c.id ?? index} style={styles.simpleList}>
-                {c.name ?? ""} {c.issuer ? `by ${c.issuer}` : ""}{" "}
-                {c.date ? `(${new Date(c.date).getFullYear()})` : ""}
-              </Text>
-            ))}
+            {data.certifications.items.map((c, index) => {
+              let yearText = "";
+              if (c.date) {
+                try {
+                  const year = new Date(c.date).getFullYear();
+                  if (!isNaN(year)) {
+                    yearText = ` (${year})`;
+                  }
+                } catch (e) {
+                  // Si falla el parseo de la fecha, no mostrar año
+                }
+              }
+              return (
+                <Text key={c.id ?? index} style={styles.simpleList}>
+                  {c.name ?? ""} {c.issuer ? `by ${c.issuer}` : ""}{yearText}
+                </Text>
+              );
+            })}
           </View>
         </View>
       ) : null,
@@ -256,13 +274,14 @@ export function CvDocument({
                   <Text style={styles.dateText}>{vol.duration ?? ""}</Text>
                 </View>
               </View>
-              {vol.responsibilities ? (
+              {vol.responsibilities && typeof vol.responsibilities === 'string' && vol.responsibilities.trim() ? (
                 <View style={{ marginLeft: 6 }}>
                   {vol.responsibilities
                     .split("\n")
                     .filter(Boolean)
                     .map((line, i) => {
-                      const cleaned = line.replace(/^[-–•]\s*/, "");
+                      const cleaned = line.trim().replace(/^[-–•]\s*/, "");
+                      if (!cleaned) return null;
                       return (
                         <Text key={i} style={styles.bulletItem}>
                           {`\u2022 ${cleaned}`}
@@ -299,13 +318,14 @@ export function CvDocument({
                   <Text style={styles.dateText}>{exp.duration ?? ""}</Text>
                 </View>
               </View>
-              {exp.responsibilities ? (
+              {exp.responsibilities && typeof exp.responsibilities === 'string' && exp.responsibilities.trim() ? (
                 <View style={{ marginLeft: 6 }}>
                   {exp.responsibilities
                     .split("\n")
                     .filter(Boolean)
                     .map((line, i) => {
-                      const cleaned = line.replace(/^[-–•]\s*/, "");
+                      const cleaned = line.trim().replace(/^[-–•]\s*/, "");
+                      if (!cleaned) return null;
                       return (
                         <Text key={i} style={styles.bulletItem}>
                           {`\u2022 ${cleaned}`}
@@ -364,10 +384,10 @@ export function CvDocument({
             {(data.personal?.address && (data.personal?.linkedin || data.personal?.phone || data.personal?.email)) ? " • " : ""}
             {data.personal?.linkedin ? (
               <Text>
-                <Text style={styles.contactLink}>
-                  {data.personal.linkedin.startsWith("http")
-                    ? data.personal.linkedin
-                    : data.personal.linkedin}
+                <Text style={styles.contactLink}
+                  src={`https://linkedin.com/in/${data.personal.linkedin}`}
+                >
+                  {`linkedin.com/in/${data.personal.linkedin}`}
                 </Text>
                 {(data.personal?.phone || data.personal?.email) ? " • " : ""}
               </Text>

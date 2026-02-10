@@ -43,6 +43,7 @@ export function UploadCVModal({
   const [cvType, setCvType] = useState<CvType>("TECHNOLOGY_ENGINEERING");
   const [opportunityType, setOpportunityType] = useState<OpportunityType>("EMPLOYMENT");
   const [isUploading, setIsUploading] = useState(false);
+  const [step, setStep] = useState(1); // 1: Selección archivo, 2: Formulario
   const router = useRouter();
   const { refreshCredits } = useCreditsStore();
 
@@ -53,6 +54,20 @@ export function UploadCVModal({
       if (!title) {
         setTitle(selectedFile.name.replace('.pdf', ''));
       }
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.currentTarget.classList.remove("border-levely-blue", "bg-levely-blue/5");
+    const droppedFile = e.dataTransfer.files?.[0];
+    if (droppedFile?.type === "application/pdf") {
+      setFile(droppedFile);
+      if (!title) {
+        setTitle(droppedFile.name.replace(".pdf", ""));
+      }
+    } else {
+      toast.error("Por favor sube un archivo PDF");
     }
   };
 
@@ -83,6 +98,7 @@ export function UploadCVModal({
         setTitle("");
         setCvType("TECHNOLOGY_ENGINEERING");
         setOpportunityType("EMPLOYMENT");
+        setStep(1);
         // Refresh credits
         await refreshCredits();
         // Navigate and refresh
@@ -104,109 +120,179 @@ export function UploadCVModal({
     setTitle("");
     setCvType("TECHNOLOGY_ENGINEERING");
     setOpportunityType("EMPLOYMENT");
+    setStep(1);
     onOpenChange(false);
+  };
+
+  const handleBack = () => {
+    setStep(1);
   };
 
   const isFormValid = file !== null && title.trim().length > 0;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={onOpenChange} modal={true}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
-      <DialogContent className="bg-background sm:max-w-md">
+      <DialogContent className="bg-background sm:max-w-md" onInteractOutside={e => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-levely-blue dark:text-levely-green flex items-center gap-2">
             📄 Subir CV
           </DialogTitle>
-
           <DialogDescription className="text-muted-foreground">
             Sube tu CV en formato PDF para crear un nuevo currículum
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="file">Archivo PDF</Label>
-            <Input
-              id="file"
-              type="file"
-              accept=".pdf"
-              onChange={handleFileChange}
-              disabled={isUploading}
-            />
-            {file && (
-              <p className="text-sm text-muted-foreground">
-                Archivo seleccionado: {file.name}
-              </p>
-            )}
-          </div>
+          {step === 1 && (
+            <div className="space-y-2">
+              <Label htmlFor="file">Archivo PDF</Label>
+              <div
+                className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center cursor-pointer transition-colors hover:border-muted-foreground/50 dark:hover:border-muted-foreground/50"
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.classList.add("border-levely-blue", "bg-levely-blue/5");
+                }}
+                onDragLeave={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.classList.remove("border-levely-blue", "bg-levely-blue/5");
+                }}
+                onDrop={handleDrop}
+              >
+                <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+                <p className="text-sm font-medium">
+                  Arrastra tu PDF aquí o{" "}
+                  <label htmlFor="file" className="text-levely-blue dark:text-levely-green underline cursor-pointer">
+                    selecciona un archivo
+                  </label>
+                </p>
+                <Input
+                  id="file"
+                  type="file"
+                  accept=".pdf"
+                  onChange={handleFileChange}
+                  disabled={isUploading}
+                  className="hidden"
+                />
+              </div>
+              {file && (
+                <p className="text-sm text-muted-foreground">
+                  ✓ Archivo seleccionado: {file.name}
+                </p>
+              )}
+              <DialogFooter className="flex gap-3 pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCancel}
+                  disabled={isUploading}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={() => file && setStep(2)}
+                  disabled={!file || isUploading}
+                  className="bg-levely-blue hover:bg-levely-blue/90 dark:bg-levely-green dark:hover:bg-levely-green/90"
+                >
+                  Siguiente
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
 
-          <div className="space-y-2">
-            <Label htmlFor="title">Título del CV</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Ej: Mi CV Profesional"
-              disabled={isUploading}
-            />
-          </div>
+          {step === 2 && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="title">Título del CV</Label>
+                <Input
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Ej: Mi CV Profesional"
+                  disabled={isUploading}
+                />
+              </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="cvType">Tipo de CV</Label>
-            <Select value={cvType} onValueChange={(value) => setCvType(value as CvType)}>
-              <SelectTrigger id="cvType">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="TECHNOLOGY_ENGINEERING">Tecnología e Ingeniería</SelectItem>
-                <SelectItem value="BUSINESS_FINANCE">Negocios y Finanzas</SelectItem>
-                <SelectItem value="CREATIVE_DESIGN">Creativo y Diseño</SelectItem>
-                <SelectItem value="HEALTHCARE_SCIENCE">Salud y Ciencia</SelectItem>
-                <SelectItem value="EDUCATION_TRAINING">Educación y Formación</SelectItem>
-                <SelectItem value="SALES_MARKETING">Ventas y Marketing</SelectItem>
-                <SelectItem value="OTHER">Otro</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="cvType">Tipo de CV</Label>
+                <Select value={cvType} onValueChange={(value) => setCvType(value as CvType)}>
+                  <SelectTrigger id="cvType">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="TECHNOLOGY_ENGINEERING">Tecnología e Ingeniería</SelectItem>
+                    <SelectItem value="BUSINESS_FINANCE">Negocios y Finanzas</SelectItem>
+                    <SelectItem value="CREATIVE_DESIGN">Creativo y Diseño</SelectItem>
+                    <SelectItem value="HEALTHCARE_SCIENCE">Salud y Ciencia</SelectItem>
+                    <SelectItem value="EDUCATION_TRAINING">Educación y Formación</SelectItem>
+                    <SelectItem value="SALES_MARKETING">Ventas y Marketing</SelectItem>
+                    <SelectItem value="OTHER">Otro</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="opportunityType">Tipo de Oportunidad</Label>
-            <Select 
-              value={opportunityType} 
-              onValueChange={(value) => setOpportunityType(value as OpportunityType)}
-            >
-              <SelectTrigger id="opportunityType">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="EMPLOYMENT">Empleo</SelectItem>
-                <SelectItem value="INTERNSHIP">Práctica</SelectItem>
-                <SelectItem value="VOLUNTEERING">Voluntariado</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="opportunityType">Tipo de Oportunidad</Label>
+                <Select 
+                  value={opportunityType} 
+                  onValueChange={(value) => setOpportunityType(value as OpportunityType)}
+                >
+                  <SelectTrigger id="opportunityType">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="EMPLOYMENT">Empleo</SelectItem>
+                    <SelectItem value="INTERNSHIP">Práctica</SelectItem>
+                    <SelectItem value="VOLUNTEERING">Voluntariado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <DialogFooter className="flex gap-3 pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleBack}
+                  disabled={isUploading}
+                >
+                  Atrás
+                </Button>
+                <Button
+                  onClick={handleUpload}
+                  disabled={!isFormValid || isUploading}
+                  className="bg-levely-blue hover:bg-levely-blue/90 dark:bg-levely-green dark:hover:bg-levely-green/90 flex items-center"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  {isUploading ? (
+                    <>
+                      Subiendo...
+                      <span className="ml-2 animate-spin inline-block align-middle">
+                        <svg className="w-4 h-4 text-white dark:text-black" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                        </svg>
+                      </span>
+                    </>
+                  ) : "Subir CV"}
+                </Button>
+              </DialogFooter>
+            </>
+          )}
         </div>
-
-        <DialogFooter className="flex gap-3 pt-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleCancel}
-            disabled={isUploading}
-          >
-            Cancelar
-          </Button>
-
-          <Button
-            onClick={handleUpload}
-            disabled={!isFormValid || isUploading}
-            className="bg-levely-blue hover:bg-levely-blue/90 dark:bg-levely-green dark:hover:bg-levely-green/90"
-          >
-            <Upload className="w-4 h-4 mr-2" />
-            {isUploading ? "Subiendo..." : "Subir CV"}
-          </Button>
-        </DialogFooter>
+        {isUploading && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="flex flex-col items-center">
+              <span className="animate-spin mb-4">
+                <svg className="w-12 h-12 text-white dark:text-black" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+              </span>
+              <span className="text-white dark:text-black font-semibold text-lg">Subiendo CV...</span>
+            </div>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

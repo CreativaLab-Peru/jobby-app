@@ -1,3 +1,11 @@
+# WIP
+
+# Fixes
+- Issue to upload some CVs
+
+# Enhancements
+- Inform the user to check his email after signing up, to avoid confusion
+
 # v1.1.11, v1.1.12, v1.1.13, v1.1.14 - 2025-02-06
 
 # Fixes

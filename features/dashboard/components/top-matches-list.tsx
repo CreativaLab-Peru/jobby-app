@@ -31,7 +31,7 @@ export function TopMatchesList({ topOpportunities }: { topOpportunities: TopOppo
             >
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 rounded-lg bg-levely-blue/10 dark:bg-levely-green/10 flex items-center justify-center font-extrabold text-levely-blue dark:text-levely-green text-lg shadow-inner group-hover:bg-levely-blue/20 dark:group-hover:bg-levely-green/20 transition-colors">
-                  {Math.round(Number(opt.match))}%
+                  {Math.round(Number(opt.match) * 100)}%
                 </div>
                 <div>
                   <h4 className="font-bold text-base text-primary mb-1">{opt.title}</h4>

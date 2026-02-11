@@ -1,3 +1,11 @@
+# v1.1.15 - 2025-02-11
+
+# Fixes
+- Fixed an issue that prevented some CVs from uploading successfully
+
+# Enhancements
+- Prompt users to check their email after sign-up to reduce confusion
+
 # v1.1.11, v1.1.12, v1.1.13, v1.1.14 - 2025-02-06
 
 # Fixes

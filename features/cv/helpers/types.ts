@@ -15,17 +15,27 @@ export interface FieldTipConfig {
 }
 
 /**
+ * Configuración de campos requeridos por fieldPath
+ */
+export interface FieldRequiredConfig {
+  [fieldPath: string]: boolean // e.g., "education.institution": false para Becas
+}
+
+/**
  * Configuración completa para una combinación de CvType + OpportunityType
  */
 export interface SectionConfig {
   // Qué secciones mostrar y en qué orden
   sections: string[] // ["personal", "projects", "experience", "education", "achievements", "skills"]
-  
+
   // Ejemplos personalizados por campo
   examples: FieldExampleConfig
-  
+
   // Tips personalizados (opcional, si no se especifica usa el default)
   tips?: FieldTipConfig
+
+  // Campos requeridos personalizados (opcional, si no se especifica usa el default)
+  requiredFields?: FieldRequiredConfig
 }
 
 /**

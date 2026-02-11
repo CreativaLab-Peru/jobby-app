@@ -3,6 +3,15 @@ import type { SectionConfig } from "../../types";
 export const socialMediaScholarship: SectionConfig = {
     sections: ["personal", "projects", "achievements", "education"],
 
+    // Educación opcional para becas
+    requiredFields: {
+        "education.level": false,
+        "education.title": false,
+        "education.institution": false,
+        "education.location": false,
+        "education.year": false,
+    },
+
     examples: {
         // Personal - Summary
         "personal.summary":

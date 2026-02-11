@@ -20,10 +20,10 @@ export function TipCard({ opportunityType }: TipCardProps) {
         <p className="text-sm text-muted-foreground leading-relaxed">
           Tu CV está optimizado para{" "}
           <span className="font-bold text-foreground">
-            {opportunityType === "INTERNSHIP" && "Prácticas"}
-            {opportunityType === "SCHOLARSHIP" && "Becas"}
-            {opportunityType === "EXCHANGE_PROGRAM" && "Programas de Intercambio"}
-            {opportunityType === "EMPLOYMENT" && "Empleos"}
+            {opportunityType === "INTERNSHIP" && "Pasantía"}
+            {opportunityType === "SCHOLARSHIP" && "Beca"}
+            {opportunityType === "EXCHANGE_PROGRAM" && "Intercambio"}
+            {opportunityType === "EMPLOYMENT" && "Empleo"}
             {!opportunityType && <span className="text-muted italic">No especificado</span>}
           </span>. El análisis te mostrará cómo mejorarlo aún más.
         </p>

@@ -42,7 +42,7 @@ function getConfig(
 }
 
 /**
- * Aplica ejemplos y tips personalizados a una sección base
+ * Aplica ejemplos, tips y configuración de required personalizados a una sección base
  */
 function applyCustomization(
   baseSection: CVSection,
@@ -54,11 +54,14 @@ function applyCustomization(
     const fieldPath = `${baseSection.id}.${field.name}`;
     const customExample = config.examples[fieldPath];
     const customTip = config.tips?.[fieldPath];
+    const customRequired = config.requiredFields?.[fieldPath];
+
 
     return {
       ...field,
       example: customExample !== undefined ? customExample : field.example,
       tip: customTip !== undefined ? customTip : field.tip,
+      required: customRequired !== undefined ? customRequired : field.required,
     };
   });
 
@@ -96,5 +99,6 @@ export type {
   SectionConfig,
   FieldExampleConfig,
   FieldTipConfig,
+  FieldRequiredConfig,
   ConfigGetter,
 } from "./types";

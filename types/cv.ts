@@ -6,6 +6,8 @@ export interface CVField {
   tip?: string
   example?: string
   options?: string[]
+  pattern?: string
+  patternError?: string
 }
 
 export interface CVSection {

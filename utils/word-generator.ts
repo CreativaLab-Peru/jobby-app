@@ -204,7 +204,7 @@ function generateVolunteeringSection(volunteering) {
 
   return [
     new Paragraph({
-      text: "VOLUNTARIADOS Y ACTIVIDADES COMUNITARIAS",
+      text: "VOLUNTARIADO Y ACTIVIDADES COMUNITARIAS",
       heading: HeadingLevel.HEADING_2,
       spacing: {
         after: 200,

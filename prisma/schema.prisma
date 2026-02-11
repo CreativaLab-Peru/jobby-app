@@ -218,6 +218,12 @@ model Opportunity {
   match        Decimal         @db.Decimal(5, 2)
   requirements String
   linkUrl      String
+  company      String?
+  location     String?
+  modality     String?
+  salary       String?
+  description  String?
+  benefits     String?
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
   cv           Cv              @relation(fields: [cvId], references: [id])

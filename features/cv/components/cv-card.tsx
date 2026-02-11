@@ -118,9 +118,9 @@ export function CVCard({ cv }: CVCardProps) {
             {cv?.cvType === "MARKETING_STRATEGY" && "Marketing y Estrategia"}
             {cv?.cvType === "MANAGEMENT_BUSINESS" && "Gestión y Negocios"}
             {cv?.cvType === "FINANCE_PROJECTS" && "Finanzas y Proyectos"}
-            {cv?.cvType === "SOCIAL_MEDIA" && "Redes Sociales"}
-            {cv?.cvType === "EDUCATION" && "Educación"}
-            {cv?.cvType === "SCIENCE" && "Ciencia"}
+            {cv?.cvType === "SOCIAL_MEDIA" && "Redes Sociales y Contenido Digital"}
+            {cv?.cvType === "EDUCATION" && "Educación y Desarrollo Humano"}
+            {cv?.cvType === "SCIENCE" && "Ciencia e Innovación"}
             {!cv?.cvType && <span className="italic text-muted-foreground">No especificado</span>}
           </div>
 
@@ -128,9 +128,9 @@ export function CVCard({ cv }: CVCardProps) {
             <span className="font-medium text-levely-blue dark:text-levely-green">
               Tipo de Oportunidad:
             </span>{" "}
-            {cv?.opportunityType === "INTERNSHIP" && "Prácticas"}
+            {cv?.opportunityType === "INTERNSHIP" && "Pasantía"}
             {cv?.opportunityType === "SCHOLARSHIP" && "Beca"}
-            {cv?.opportunityType === "EXCHANGE_PROGRAM" && "Programa de intercambio"}
+            {cv?.opportunityType === "EXCHANGE_PROGRAM" && "Intercambio"}
             {cv?.opportunityType === "EMPLOYMENT" && "Empleo"}
             {!cv?.opportunityType && (
               <span className="italic text-muted-foreground">No especificado</span>
@@ -173,10 +173,14 @@ export function CVCard({ cv }: CVCardProps) {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta acción eliminará el CV <strong>&quot;{cv?.title || "Sin título"}&quot;</strong>{" "}
-              de tu lista.
-              <p className="mt-2 font-medium">¿Deseas continuar?</p>
+            <AlertDialogDescription asChild>
+              <div>
+                <p>
+                  Esta acción eliminará el CV <strong>&quot;{cv?.title || "Sin título"}&quot;</strong>{" "}
+                  de tu lista.
+                </p>
+                <p className="mt-2 font-medium">¿Deseas continuar?</p>
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
 

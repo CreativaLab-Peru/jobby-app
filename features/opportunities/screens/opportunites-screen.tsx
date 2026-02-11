@@ -15,7 +15,7 @@ export default function OpportunitiesScreen({ initialData }: Props) {
       <div className="space-y-8 pb-10 px-4 md:px-10 py-6">
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-black tracking-tight uppercase flex items-center gap-3">
-            <Rocket className="w-8 h-8 text-primary" />
+            <Rocket className="w-8 h-8 dark:text-levely-green text-levely-blue" />
             Oportunidades <span className="ai-gradient-text text-2xl">Match</span>
           </h1>
           <p className="text-muted-foreground font-medium">

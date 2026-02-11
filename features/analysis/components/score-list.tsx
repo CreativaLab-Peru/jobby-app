@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { BarChart3, TrendingUp, Plus } from "lucide-react"
+import {BarChart3, TrendingUp, Plus, Rocket} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { formatDate } from "@/utils/format-date"
@@ -58,7 +58,7 @@ export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
                 Scores de CVs
               </h1>
               <p className="text-muted-foreground mt-2">
-                Analiza el rendimiento y mejora tus currículums 🚀
+                Analiza el rendimiento y mejora tus currículums
               </p>
             </div>
 

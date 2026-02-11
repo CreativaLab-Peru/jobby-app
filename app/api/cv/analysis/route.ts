@@ -2,6 +2,7 @@ import { inngest } from "@/inngest/functions/client";
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import { prisma } from "@/lib/prisma";
+import { CreditBalanceType } from "@prisma/client";
 import {getCurrentCreditLimits} from "@/features/credits/actions/get-current-credits-limits";
 
 interface CvBody {
@@ -56,11 +57,10 @@ export async function POST(request: Request) {
       where: {
         userId_type: { // Prisma busca este campo autogenerado para llaves compuestas
           userId: currentUser.id,
-          type: "AI_ACTIONS"
+          type: CreditBalanceType.AI_ACTIONS
         },
       },
       data: {
-        type: "AI_ACTIONS",
         amount: {
           decrement: 1,
         }

@@ -43,7 +43,7 @@ You must return **only one valid JSON object** following this structure:
 ### Detailed extraction rules
 
 1. **sectionType** must match exactly one of the following values:
-   one of: SUMMARY, EXPERIENCE, EDUCATION, SKILLS, PROJECTS, CERTIFICATIONS, LANGUAGES, CONTACT.
+   one of: SUMMARY, EXPERIENCE, EDUCATION, SKILLS, PROJECTS, VOLUNTEERING, CERTIFICATIONS, LANGUAGES, CONTACT, COMPLEMENTS, ACHIEVEMENTS, INTERESTS.
 
 2. **title** should be the section's title as written in the CV (e.g., "Professional Experience", "Academic Background", "Skills").
 
@@ -54,7 +54,7 @@ You must return **only one valid JSON object** following this structure:
    - PROJECTS → [{ title?, duration, description, technologies? }]
    - CERTIFICATIONS → [{ name, issuer?, year?, date? }]
    - LANGUAGES → [{ language, proficiency }]
-   - CONTACT → { fullName?, email?, phone?, linkedin?, address?, summary? }
+   - CONTACT → { fullName?, email?, phone?, linkedin?(just the additional name, not the completed URL), address?, summary? }
    - SUMMARY → { text }
    - VOLUNTEERING → [{ organization?, location?, position?, duration?, responsabilities? }]
    - ACHIEVEMENTS → [{ title?, description?, date? }]

@@ -53,7 +53,7 @@ export const personalSection: CVSection = {
       name: "summary",
       label: "Resumen Profesional",
       type: "textarea",
-      required: true,
+      required: false,
       tip: "Describe en 2-3 líneas tu perfil, objetivos y valor único. Enfócate en lo que buscas lograr",
       example: "Profesional con experiencia en...",
     },

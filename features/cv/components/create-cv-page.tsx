@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useCallback, useTransition } from "react"
+import { useState, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Eye, CloudCheck, CloudUpload } from "lucide-react"
 import {getSections} from "@/features/cv/helpers";
 import { NavigationButtons } from "@/features/cv/components/navigation-buttons"
-import { CVSectionForm } from "@/features/cv/components/cv-section-form"
+import { CVSectionForm, CVSectionFormRef } from "@/features/cv/components/cv-section-form"
 import { CVPreview } from "@/features/cv/components/cv-preview"
 import { CVData } from "@/types/cv";
 import { updateCvAndSections } from "@/features/cv/actions/update-cv-and-sections";
@@ -25,32 +25,50 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
   const [cvData, setCvData] = useState<CVData>(cv)
   const [activeSection, setActiveSection] = useState(0)
   const [showPreview, setShowPreview] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
   const router = useRouter()
-  const [isPending, startTransition] = useTransition()
+  const formRef = useRef<CVSectionFormRef>(null)
 
   const sections = getSections(opportunityType, cvType)
 
-  const submit = () => {
-    if (isPending) return
-    startTransition(() => {
-      updateCvAndSections(id, cvData).then((result) => {
-        if (result?.success) {
-          console.log("CV saved successfully")
-        } else {
-          console.error("Failed to save CV:", result?.message)
-        }
-      })
-    })
+  const submit = async () => {
+    if (isSaving) return false
+
+    setIsSaving(true)
+    try {
+      const result = await updateCvAndSections(id, cvData)
+
+      if (result?.success) {
+        return true
+      } else {
+        console.error("Failed to save CV:", result?.message)
+        return false
+      }
+    } catch (error) {
+      console.error("Error saving CV:", error)
+      return false
+    } finally {
+      setIsSaving(false)
+    }
   }
 
-  const handleNext = () => {
-    console.log("Submitting CV data...", activeSection, sections.length - 1)
+  const handleNext = async () => {
+    // Validar campos obligatorios antes de avanzar
+    if (formRef.current && !formRef.current.validate()) {
+      return;
+    }
 
-    submit()
+    // Esperar a que se guarde antes de avanzar
+    const saved = await submit()
+
+    if (!saved) {
+      console.error("Failed to save, not advancing")
+      return
+    }
+
     if (activeSection < sections.length - 1) {
       setActiveSection(activeSection + 1)
     } else {
-      console.log("All sections completed, redirecting to preview...")
       router.push(routes.app.cv.preview(id))
     }
   }
@@ -112,6 +130,7 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
                     </CardHeader>
                     <CardContent className="p-6 space-y-6">
                       <CVSectionForm
+                        ref={formRef}
                         section={currentSection}
                         data={cvData[currentSection.id] || {}}
                         onChange={(data) => updateCVData(currentSection.id, data)}
@@ -140,7 +159,7 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
                         Vista Previa
 
                         <div className="ml-auto">
-                          {isPending ? (
+                          {isSaving ? (
                             <div className="flex items-center gap-2 text-xs font-medium text-levely-blue dark:text-levely-green animate-pulse">
                               <CloudUpload className="w-4 h-4" />
                               Sincronizando...

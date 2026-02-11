@@ -122,9 +122,12 @@ export const SKILLS_BY_AREA = {
     zoho_crm: "Zoho CRM",
     whatsapp_business: "WhatsApp Business",
   },
-
-  customer_support_tech: {
-    zendesk: "Zendesk",
-    freshdesk: "Freshdesk",
+  
+  public_policy_development: {
+    stata_spss: "Análisis Estadístico (Stata, SPSS o R)",
+    arcgis_qgis: "Sistemas de Información Geográfica (ArcGIS / QGIS)",
+    nvivo: "Análisis Cualitativo (NVivo / ATLAS.ti)",
+    office_advanced: "Microsoft Office Avanzado (Excel y Word)",
+    monitoring_tools: "Herramientas de Monitoreo y Evaluación (M&E)",
   },
 };

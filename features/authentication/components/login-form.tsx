@@ -2,15 +2,15 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Mail, Lock, Loader2 } from "lucide-react";
+import { Mail, Lock, Loader2, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { FormField } from "@/components/form-field";
 import { loginSchema, LoginFormData } from "../schemas/login-schema";
 import { loginAction } from "../actions/login.action";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {authClient} from "@/lib/auth-client";
 import {routes} from "@/lib/routes";
 import { GoogleOAuthButton } from "./google-oauth-button";
@@ -25,7 +25,9 @@ const errorMapper: Record<string, string> = {
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [formError, setFormError] = useState<string | null>(null);
+  const [showOnboardingSuccess, setShowOnboardingSuccess] = useState(false);
 
   const {
     register,
@@ -35,6 +37,18 @@ export function LoginForm() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
+
+  useEffect(() => {
+    const onboarding = searchParams.get("onboarding");
+    if (onboarding === "completed") {
+      setShowOnboardingSuccess(true);
+      // Ocultar el aviso después de 5 segundos
+      const timer = setTimeout(() => {
+        setShowOnboardingSuccess(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams]);
 
   const onSubmit = async (data: LoginFormData) => {
     setFormError(null);
@@ -73,6 +87,20 @@ export function LoginForm() {
             Inicia sesión para continuar
           </p>
         </div>
+
+        {showOnboardingSuccess && (
+          <div className="mb-6 bg-green-100 border border-green-200 rounded-lg p-4 flex items-start gap-3 dark:bg-green-900/20 dark:border-green-800">
+            <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <h3 className="font-semibold text-green-800 dark:text-green-300">
+                ¡Bienvenido!
+              </h3>
+              <p className="text-sm text-green-700 dark:text-green-400 mt-1">
+                Confirma tu cuenta con el enlace que enviamos a tu correo.
+              </p>
+            </div>
+          </div>
+        )}
 
         <Card className="p-8 bg-card shadow-glow">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

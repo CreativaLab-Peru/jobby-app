@@ -25,11 +25,13 @@ export const personalSection: CVSection = {
     },
     {
       name: "linkedin",
-      label: "LinkedIn (opcional, recomendado)",
+      label: "Usuario de LinkedIn (opcional, recomendado)",
       type: "text",
       required: false,
-      tip: "Incluye el enlace completo a tu perfil de LinkedIn",
-      example: "linkedin.com/in/john-doe",
+      tip: "Solo ingresa tu usuario, por ejemplo: si tu perfil es linkedin.com/in/john-doe, solo escribe 'john-doe'. Debe tener entre 5 y 30 caracteres, solo letras, números o guiones.",
+      example: "john-doe",
+      pattern: "^[a-zA-Z0-9-]{5,30}$",
+      patternError: "El usuario de LinkedIn debe tener entre 5 y 30 caracteres y solo puede contener letras, números o guiones.",
     },
     {
       name: "phone",
@@ -273,7 +275,7 @@ export const certificationsSection: CVSection = {
 
 export const volunteeringSection: CVSection = {
   id: "volunteering",
-  title: "Voluntariados y Actividades Comunitarias",
+  title: "Voluntariado y Actividades Comunitarias",
   icon: Heart,
   multiple: true,
   fields: [

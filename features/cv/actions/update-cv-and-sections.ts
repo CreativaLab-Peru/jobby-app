@@ -114,17 +114,10 @@ function buildSections(cvData: CVData) {
   }
 
   if (cvData.skills) {
-    const { soft, technical, languages } = cvData.skills;
-    const allSkills = [
-      ...(soft ?? []).map((s) => ({ name: s, category: "SOFT" })),
-      ...(technical ?? []).map((s) => ({ name: s, category: "TECHNICAL" })),
-      ...(languages ?? []).map((s) => ({ name: s, category: "LANGUAGE" })),
-    ];
-
     sections.push({
       sectionType: CvSectionType.SKILLS,
       title: "Skills",
-      contentJson: allSkills,
+      contentJson: cvData.skills
     });
   }
 
@@ -152,13 +145,6 @@ function buildSections(cvData: CVData) {
     });
   }
 
-  if (cvData.skills) {
-    sections.push({
-      sectionType: CvSectionType.SKILLS,
-      title: "Skills",
-      contentJson: cvData.skills
-    });
-  }
 
   if (cvData.achievements?.items?.length) {
     sections.push({

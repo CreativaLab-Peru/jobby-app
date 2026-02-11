@@ -48,7 +48,7 @@ You must return **only one valid JSON object** following this structure:
 2. **title** should be the section's title as written in the CV (e.g., "Professional Experience", "Academic Background", "Skills").
 
 3. **contentJson** should contain **structured objects** describing the specific details found in each section (Object or List of objects):
-   - EXPERIENCE → [{ position, company, location, duration, responsibilities }]
+   - EXPERIENCE → [{ position, company, location, duration, responsibilities(type string) }]
    - EDUCATION → [{ level, title, institution, location, year, honors? }]
    - SKILLS → { soft:[], languages:[], technical:[] }
    - PROJECTS → [{ title?, duration, description, technologies? }]

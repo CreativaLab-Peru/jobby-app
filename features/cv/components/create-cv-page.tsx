@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useTransition, useRef } from "react"
+import { useState, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -33,12 +33,12 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
 
   const submit = async () => {
     if (isSaving) return false
-    
+
     setIsSaving(true)
     try {
       const result = await updateCvAndSections(id, cvData)
+
       if (result?.success) {
-        console.log("CV saved successfully")
         return true
       } else {
         console.error("Failed to save CV:", result?.message)
@@ -58,11 +58,9 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
       return;
     }
 
-    console.log("Submitting CV data...", activeSection, sections.length - 1)
-
     // Esperar a que se guarde antes de avanzar
     const saved = await submit()
-    
+
     if (!saved) {
       console.error("Failed to save, not advancing")
       return
@@ -71,7 +69,6 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
     if (activeSection < sections.length - 1) {
       setActiveSection(activeSection + 1)
     } else {
-      console.log("All sections completed, redirecting to preview...")
       router.push(routes.app.cv.preview(id))
     }
   }

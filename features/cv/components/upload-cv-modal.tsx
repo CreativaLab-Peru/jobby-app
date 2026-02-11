@@ -1,9 +1,9 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
+import { Upload, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -27,11 +27,30 @@ import {
 import { toast } from "sonner";
 import { useCreditsStore } from "@/store/use-credits-store";
 
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+const ALLOWED_MIME_TYPE = "application/pdf";
+
 interface UploadCVModalProps {
   children: React.ReactNode;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
+
+const CV_TYPE_OPTIONS = [
+  { value: "TECHNOLOGY_ENGINEERING", label: "Tecnología e Ingeniería" },
+  { value: "BUSINESS_FINANCE", label: "Negocios y Finanzas" },
+  { value: "CREATIVE_DESIGN", label: "Creativo y Diseño" },
+  { value: "HEALTHCARE_SCIENCE", label: "Salud y Ciencia" },
+  { value: "EDUCATION_TRAINING", label: "Educación y Formación" },
+  { value: "SALES_MARKETING", label: "Ventas y Marketing" },
+  { value: "OTHER", label: "Otro" },
+] as const;
+
+const OPPORTUNITY_TYPE_OPTIONS = [
+  { value: "EMPLOYMENT", label: "Empleo" },
+  { value: "INTERNSHIP", label: "Pasantía" },
+  { value: "VOLUNTEERING", label: "Voluntariado" },
+] as const;
 
 export function UploadCVModal({
   children,
@@ -43,43 +62,90 @@ export function UploadCVModal({
   const [cvType, setCvType] = useState<CvType>("TECHNOLOGY_ENGINEERING");
   const [opportunityType, setOpportunityType] = useState<OpportunityType>("EMPLOYMENT");
   const [isUploading, setIsUploading] = useState(false);
-  const [step, setStep] = useState(1); // 1: Selección archivo, 2: Formulario
+  const [isDragging, setIsDragging] = useState(false);
+  const [step, setStep] = useState(1);
+  const [fileError, setFileError] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { refreshCredits } = useCreditsStore();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      if (!title) {
-        setTitle(selectedFile.name.replace('.pdf', ''));
-      }
-    }
-  };
+  const validateFile = useCallback((selectedFile: File): boolean => {
+    setFileError("");
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.currentTarget.classList.remove("border-levely-blue", "bg-levely-blue/5");
-    const droppedFile = e.dataTransfer.files?.[0];
-    if (droppedFile?.type === "application/pdf") {
-      setFile(droppedFile);
-      if (!title) {
-        setTitle(droppedFile.name.replace(".pdf", ""));
-      }
-    } else {
-      toast.error("Por favor sube un archivo PDF");
+    if (selectedFile.type !== ALLOWED_MIME_TYPE) {
+      setFileError("El archivo debe ser un PDF válido");
+      return false;
     }
-  };
+
+    if (selectedFile.size > MAX_FILE_SIZE) {
+      setFileError(`El archivo es muy grande. Máximo ${MAX_FILE_SIZE / (1024 * 1024)}MB`);
+      return false;
+    }
+
+    return true;
+  }, []);
+
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+
+    if (!validateFile(selectedFile)) return;
+
+    setFile(selectedFile);
+    if (!title) {
+      setTitle(selectedFile.name.replace(/\.pdf$/i, ""));
+    }
+  }, [title, validateFile]);
+
+  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const droppedFile = e.dataTransfer.files?.[0];
+    if (!droppedFile) return;
+
+    if (!validateFile(droppedFile)) {
+      toast.error(fileError);
+      return;
+    }
+
+    setFile(droppedFile);
+    if (!title) {
+      setTitle(droppedFile.name.replace(/\.pdf$/i, ""));
+    }
+  }, [title, validateFile, fileError]);
+
+  const resetForm = useCallback(() => {
+    setFile(null);
+    setTitle("");
+    setCvType("TECHNOLOGY_ENGINEERING");
+    setOpportunityType("EMPLOYMENT");
+    setStep(1);
+    setFileError("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }, []);
 
   const handleUpload = async () => {
-    if (!file || isUploading) return;
+    if (!file || isUploading || !isFormValid) return;
 
     setIsUploading(true);
 
     try {
       const formData = new FormData();
       formData.append("pdf", file);
-      formData.append("title", title);
+      formData.append("title", title.trim());
       formData.append("cvType", cvType);
       formData.append("opportunityType", opportunityType);
 
@@ -91,17 +157,10 @@ export function UploadCVModal({
       const data = await response.json();
 
       if (data.success) {
-        toast.success("✅ CV creado exitosamente");
+        toast.success("CV creado exitosamente");
+        resetForm();
         onOpenChange(false);
-        // Reset form
-        setFile(null);
-        setTitle("");
-        setCvType("TECHNOLOGY_ENGINEERING");
-        setOpportunityType("EMPLOYMENT");
-        setStep(1);
-        // Refresh credits
         await refreshCredits();
-        // Navigate and refresh
         router.refresh();
         router.push(`/cv/${data.cvId}/edit`);
       } else {
@@ -109,18 +168,14 @@ export function UploadCVModal({
       }
     } catch (error) {
       console.error("Error uploading CV:", error);
-      toast.error("❌ Error al subir el CV");
+      toast.error("❌ Error al subir el CV. Intenta de nuevo.");
     } finally {
       setIsUploading(false);
     }
   };
 
   const handleCancel = () => {
-    setFile(null);
-    setTitle("");
-    setCvType("TECHNOLOGY_ENGINEERING");
-    setOpportunityType("EMPLOYMENT");
-    setStep(1);
+    resetForm();
     onOpenChange(false);
   };
 
@@ -137,7 +192,8 @@ export function UploadCVModal({
       <DialogContent className="bg-background sm:max-w-md" onInteractOutside={e => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-levely-blue dark:text-levely-green flex items-center gap-2">
-            📄 Subir CV
+            <Upload className="w-5 h-5" />
+            Subir CV
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
             Sube tu CV en formato PDF para crear un nuevo currículum
@@ -149,25 +205,32 @@ export function UploadCVModal({
             <div className="space-y-2">
               <Label htmlFor="file">Archivo PDF</Label>
               <div
-                className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center cursor-pointer transition-colors hover:border-muted-foreground/50 dark:hover:border-muted-foreground/50"
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  e.currentTarget.classList.add("border-levely-blue", "bg-levely-blue/5");
-                }}
-                onDragLeave={(e) => {
-                  e.preventDefault();
-                  e.currentTarget.classList.remove("border-levely-blue", "bg-levely-blue/5");
-                }}
+                className={`h-60 border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center ${
+                  isDragging
+                    ? "border-levely-blue bg-levely-blue/5 dark:border-levely-green dark:bg-levely-green/5"
+                    : "border-muted-foreground/25 hover:border-muted-foreground/50"
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
               >
-                <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                <p className="text-sm font-medium">
-                  Arrastra tu PDF aquí o{" "}
-                  <label htmlFor="file" className="text-levely-blue dark:text-levely-green underline cursor-pointer">
-                    selecciona un archivo
-                  </label>
-                </p>
+                <div className="flex flex-col items-center gap-2">
+                  <Upload className="w-8 h-8 text-muted-foreground" />
+                  <p className="text-sm font-medium">
+                    Arrastra tu PDF aquí o{" "}
+                    <label
+                      htmlFor="file"
+                      className="text-levely-blue dark:text-levely-green underline cursor-pointer hover:opacity-80"
+                    >
+                      selecciona un archivo
+                    </label>
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Máximo 50MB • Solo archivos PDF
+                  </p>
+                </div>
                 <Input
+                  ref={fileInputRef}
                   id="file"
                   type="file"
                   accept=".pdf"
@@ -176,11 +239,23 @@ export function UploadCVModal({
                   className="hidden"
                 />
               </div>
-              {file && (
-                <p className="text-sm text-muted-foreground">
-                  ✓ Archivo seleccionado: {file.name}
-                </p>
+
+              {fileError && (
+                <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-md p-3 dark:bg-red-900/20 dark:border-red-800">
+                  <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-600 dark:text-red-400">{fileError}</p>
+                </div>
               )}
+
+              {file && (
+                <div className="flex items-start gap-2 bg-green-50 border border-green-200 rounded-md p-3 dark:bg-green-900/20 dark:border-green-800">
+                  <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-green-600 dark:text-green-400 break-all">
+                    {file.name}
+                  </p>
+                </div>
+              )}
+
               <DialogFooter className="flex gap-3 pt-2">
                 <Button
                   type="button"
@@ -204,7 +279,7 @@ export function UploadCVModal({
           {step === 2 && (
             <>
               <div className="space-y-2">
-                <Label htmlFor="title">Título del CV</Label>
+                <Label htmlFor="title">Título del CV *</Label>
                 <Input
                   id="title"
                   value={title}
@@ -215,41 +290,41 @@ export function UploadCVModal({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="cvType">Tipo de CV</Label>
+                <Label htmlFor="cvType">Tipo de CV *</Label>
                 <Select value={cvType} onValueChange={(value) => setCvType(value as CvType)}>
-                  <SelectTrigger id="cvType">
+                  <SelectTrigger id="cvType" disabled={isUploading}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="TECHNOLOGY_ENGINEERING">Tecnología e Ingeniería</SelectItem>
-                    <SelectItem value="BUSINESS_FINANCE">Negocios y Finanzas</SelectItem>
-                    <SelectItem value="CREATIVE_DESIGN">Creativo y Diseño</SelectItem>
-                    <SelectItem value="HEALTHCARE_SCIENCE">Salud y Ciencia</SelectItem>
-                    <SelectItem value="EDUCATION_TRAINING">Educación y Formación</SelectItem>
-                    <SelectItem value="SALES_MARKETING">Ventas y Marketing</SelectItem>
-                    <SelectItem value="OTHER">Otro</SelectItem>
+                    {CV_TYPE_OPTIONS.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="opportunityType">Tipo de Oportunidad</Label>
-                <Select 
-                  value={opportunityType} 
+                <Label htmlFor="opportunityType">Tipo de Oportunidad *</Label>
+                <Select
+                  value={opportunityType}
                   onValueChange={(value) => setOpportunityType(value as OpportunityType)}
                 >
-                  <SelectTrigger id="opportunityType">
+                  <SelectTrigger id="opportunityType" disabled={isUploading}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="EMPLOYMENT">Empleo</SelectItem>
-                    <SelectItem value="INTERNSHIP">Práctica</SelectItem>
-                    <SelectItem value="VOLUNTEERING">Voluntariado</SelectItem>
+                    {OPPORTUNITY_TYPE_OPTIONS.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
 
-              <DialogFooter className="flex gap-3 pt-2">
+              <DialogFooter className="flex gap-3 pt-4">
                 <Button
                   type="button"
                   variant="outline"
@@ -261,38 +336,24 @@ export function UploadCVModal({
                 <Button
                   onClick={handleUpload}
                   disabled={!isFormValid || isUploading}
-                  className="bg-levely-blue hover:bg-levely-blue/90 dark:bg-levely-green dark:hover:bg-levely-green/90 flex items-center"
+                  className="bg-levely-blue hover:bg-levely-blue/90 dark:bg-levely-green dark:hover:bg-levely-green/90"
                 >
-                  <Upload className="w-4 h-4 mr-2" />
                   {isUploading ? (
                     <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       Subiendo...
-                      <span className="ml-2 animate-spin inline-block align-middle">
-                        <svg className="w-4 h-4 text-white dark:text-black" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                        </svg>
-                      </span>
                     </>
-                  ) : "Subir CV"}
+                  ) : (
+                    <>
+                      <Upload className="w-4 h-4 mr-2" />
+                      Subir CV
+                    </>
+                  )}
                 </Button>
               </DialogFooter>
             </>
           )}
         </div>
-        {isUploading && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-            <div className="flex flex-col items-center">
-              <span className="animate-spin mb-4">
-                <svg className="w-12 h-12 text-white dark:text-black" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                </svg>
-              </span>
-              <span className="text-white dark:text-black font-semibold text-lg">Subiendo CV...</span>
-            </div>
-          </div>
-        )}
       </DialogContent>
     </Dialog>
   );

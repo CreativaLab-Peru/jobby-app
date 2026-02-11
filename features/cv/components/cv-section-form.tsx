@@ -58,9 +58,24 @@ export const CVSectionForm = forwardRef<CVSectionFormRef, CVSectionFormProps>(({
   const validateAll = useCallback(() => {
     if (section.multiple) {
       const items = formData.items || [];
+
+      // Si no hay items, verificar si hay algún campo requerido
+      if (items.length === 0) {
+        const hasRequiredFields = section.fields.some(field => field.required);
+
+        // Si no hay campos requeridos, permitir avanzar sin items
+        if (!hasRequiredFields) {
+          return true;
+        }
+        // Si hay campos requeridos pero no hay items, mostrar error
+        toast.error("Por favor agrega al menos una entrada o completa los campos obligatorios");
+        return false;
+      }
+
+      // Si hay items, validar cada uno
       const allErrors: any[] = [];
       let hasErrors = false;
-      
+
       items.forEach((item: any, index: number) => {
         const itemErrors = validateFields(item);
         allErrors[index] = itemErrors;
@@ -68,7 +83,7 @@ export const CVSectionForm = forwardRef<CVSectionFormRef, CVSectionFormProps>(({
           hasErrors = true;
         }
       });
-      
+
       if (hasErrors) {
         setErrors({ items: allErrors });
         toast.error("Por favor completa todos los campos obligatorios antes de continuar");
@@ -83,7 +98,7 @@ export const CVSectionForm = forwardRef<CVSectionFormRef, CVSectionFormProps>(({
       }
     }
     return true;
-  }, [section.multiple, formData, validateFields]);
+  }, [section.multiple, section.fields, formData, validateFields]);
 
   // Exponer la función de validación al componente padre
   useImperativeHandle(ref, () => ({
@@ -162,7 +177,7 @@ export const CVSectionForm = forwardRef<CVSectionFormRef, CVSectionFormProps>(({
                   variant="ghost"
                   size="sm"
                   onClick={() => removeItem(index)}
-                  className="text-destructive hover:text-destructive-foreground hover:bg-destructive transition-all"
+                  className="dark:text-levely-green text-destructive hover:text-destructive-foreground hover:bg-destructive transition-all"
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
                   Eliminar

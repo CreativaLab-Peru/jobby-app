@@ -1,14 +1,7 @@
 "use client"; // if used in client components (PDFViewer). Not needed if only server-generated.
 
 import React from "react";
-import {
-  Document,
-  Page,
-  View,
-  Text,
-  StyleSheet,
-  Font,
-} from "@react-pdf/renderer";
+import { Document, Page, View, Text, StyleSheet, Font } from "@react-pdf/renderer";
 import path from "path";
 import type { CVData, CVSection } from "@/types/cv";
 
@@ -135,13 +128,7 @@ const styles = StyleSheet.create({
   sectionSpace: { marginBottom: 0 },
 });
 
-export function CvDocument({ 
-  data, 
-  sections 
-}: { 
-  data: CVData;
-  sections: CVSection[];
-}) {
+export function CvDocument({ data, sections }: { data: CVData; sections: CVSection[] }) {
   // Mapeo de renderizadores para cada tipo de sección (para PDF)
   const sectionRenderers: Record<string, () => React.ReactElement | null> = {
     achievements: () =>
@@ -183,12 +170,12 @@ export function CvDocument({
                     yearText = ` (${year})`;
                   }
                 } catch (e) {
-                  // Si falla el parseo de la fecha, no mostrar año
                 }
               }
               return (
                 <Text key={c.id ?? index} style={styles.simpleList}>
-                  {c.name ?? ""} {c.issuer ? `by ${c.issuer}` : ""}{yearText}
+                  {c.name ?? ""} {c.issuer ? `by ${c.issuer}` : ""}
+                  {yearText}
                 </Text>
               );
             })}
@@ -237,7 +224,9 @@ export function CvDocument({
                 </View>
               </View>
               {proj.description ? (
-                <Text style={{ fontSize: 10.5, marginTop: 4, marginBottom: 4, textAlign: "justify" }}>
+                <Text
+                  style={{ fontSize: 10.5, marginTop: 4, marginBottom: 4, textAlign: "justify" }}
+                >
                   {proj.description}
                 </Text>
               ) : null}
@@ -254,7 +243,7 @@ export function CvDocument({
     volunteering: () =>
       data.volunteering?.items?.length ? (
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>VOLUNTARIADOS Y ACTIVIDADES COMUNITARIAS</Text>
+          <Text style={styles.sectionTitle}>VOLUNTARIADO Y ACTIVIDADES COMUNITARIAS</Text>
           <View style={styles.sectionDivider} />
           {data.volunteering.items.map((vol, index) => (
             <View key={vol.id ?? index} style={{ marginBottom: 6 }}>
@@ -274,7 +263,9 @@ export function CvDocument({
                   <Text style={styles.dateText}>{vol.duration ?? ""}</Text>
                 </View>
               </View>
-              {vol.responsibilities && typeof vol.responsibilities === 'string' && vol.responsibilities.trim() ? (
+              {vol.responsibilities &&
+              typeof vol.responsibilities === "string" &&
+              vol.responsibilities.trim() ? (
                 <View style={{ marginLeft: 6 }}>
                   {vol.responsibilities
                     .split("\n")
@@ -318,7 +309,9 @@ export function CvDocument({
                   <Text style={styles.dateText}>{exp.duration ?? ""}</Text>
                 </View>
               </View>
-              {exp.responsibilities && typeof exp.responsibilities === 'string' && exp.responsibilities.trim() ? (
+              {exp.responsibilities &&
+              typeof exp.responsibilities === "string" &&
+              exp.responsibilities.trim() ? (
                 <View style={{ marginLeft: 6 }}>
                   {exp.responsibilities
                     .split("\n")
@@ -340,11 +333,10 @@ export function CvDocument({
       ) : null,
 
     skills: () =>
-      data.skills && (
-        (data.skills.languages?.length ?? 0) > 0 ||
+      data.skills &&
+      ((data.skills.languages?.length ?? 0) > 0 ||
         (data.skills.technical?.length ?? 0) > 0 ||
-        (data.skills.soft?.length ?? 0) > 0
-      ) ? (
+        (data.skills.soft?.length ?? 0) > 0) ? (
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>HABILIDADES PROFESIONALES Y PERSONALES</Text>
           <View style={styles.sectionDivider} />
@@ -381,15 +373,16 @@ export function CvDocument({
 
           <Text style={styles.contactLine}>
             {data.personal?.address ? `${data.personal.address}` : ""}
-            {(data.personal?.address && (data.personal?.linkedin || data.personal?.phone || data.personal?.email)) ? " • " : ""}
+            {data.personal?.address &&
+            (data.personal?.linkedin || data.personal?.phone || data.personal?.email)
+              ? " • "
+              : ""}
             {data.personal?.linkedin ? (
               <Text>
-                <Text style={styles.contactLink}
-                  src={`https://linkedin.com/in/${data.personal.linkedin}`}
-                >
+                <Text style={styles.contactLink}>
                   {`linkedin.com/in/${data.personal.linkedin}`}
                 </Text>
-                {(data.personal?.phone || data.personal?.email) ? " • " : ""}
+                {data.personal?.phone || data.personal?.email ? " • " : ""}
               </Text>
             ) : null}
             {data.personal?.phone ? `${data.personal.phone}` : ""}

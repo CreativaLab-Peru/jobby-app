@@ -91,7 +91,7 @@ export function generatePDFContent(data, type: string) {
     if (data.volunteering?.items && data.volunteering.items.length > 0) {
       content += `
         <div class="section">
-          <div class="section-title">VOLUNTARIADOS Y ACTIVIDADES COMUNITARIAS</div>
+          <div class="section-title">VOLUNTARIADO Y ACTIVIDADES COMUNITARIAS</div>
           ${data.volunteering.items
             .map(
               (vol) => `

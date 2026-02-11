@@ -275,7 +275,7 @@ export const certificationsSection: CVSection = {
 
 export const volunteeringSection: CVSection = {
   id: "volunteering",
-  title: "Voluntariados y Actividades Comunitarias",
+  title: "Voluntariado y Actividades Comunitarias",
   icon: Heart,
   multiple: true,
   fields: [

@@ -22,7 +22,7 @@ export default function OpportunitiesScreen({initialData}: Props) {
   );
 
   return (
-    <main className="min-h-screen p-4 md:p-8">
+    <main className="min-h-[90-vh] p-4 md:p-8">
       <div className="mx-auto max-w-7xl">
         <motion.div
           initial={{opacity: 0, y: 10}}

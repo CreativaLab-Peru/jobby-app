@@ -1,8 +1,11 @@
-import { Calendar, ExternalLink, MapPin, Target, Eye, Building2 } from "lucide-react";
+"use client";
+
+import { Calendar, ExternalLink, MapPin, Target, Eye, Building2, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import {SerializableOpportunity} from "@/features/opportunities/get-opportunities";
+import { SerializableOpportunity } from "@/features/opportunities/get-opportunities";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 interface Props {
@@ -13,70 +16,86 @@ export default function OpportunityCard({ opportunity }: Props) {
   const rawMatch = opportunity.match ?? 0;
   const matchValue = Math.round(rawMatch > 1 ? rawMatch : rawMatch * 100);
 
+  const isHighMatch = matchValue >= 80;
+
   return (
-    <Card className="border-2 hover:border-primary/40 transition-all duration-300 group overflow-hidden flex flex-col">
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start mb-2">
-          <Badge variant="outline" className="font-bold border-2">
+    <Card className="group relative overflow-hidden border-border/40 bg-card rounded-[2rem] hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 flex flex-col">
+      {/* Indicador de High Match */}
+      {isHighMatch && (
+        <div className="absolute top-0 right-0 p-3">
+          <Sparkles className="h-5 w-5 text-primary animate-pulse" />
+        </div>
+      )}
+
+      <CardHeader className="pb-3">
+        <div className="flex justify-between items-start mb-4">
+          <Badge variant="secondary" className="font-bold rounded-lg text-[10px] uppercase tracking-wider">
             {opportunity.type.replace(/_/g, ' ')}
           </Badge>
-          <div className="flex items-center gap-1 text-primary font-black">
-            <Target className="w-4 h-4 text-levely-blue dark:text-levely-green" />
+          <div className={cn(
+            "flex items-center gap-1 font-black text-sm px-2 py-1 rounded-lg",
+            isHighMatch ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground"
+          )}>
+            <Target className="w-3.5 h-3.5" />
             <span>{matchValue}%</span>
           </div>
         </div>
-        <h3 className="font-black text-lg leading-tight group-hover:text-primary transition-colors">
+
+        <h3 className="font-bold text-xl leading-tight group-hover:text-primary transition-colors line-clamp-2">
           {opportunity.title}
         </h3>
+
         {opportunity.company && (
-          <p className="text-sm text-muted-foreground font-medium mt-1 flex items-center gap-1.5">
-            <Building2 className="w-3.5 h-3.5" />
-            {opportunity.company}
-          </p>
+          <div className="flex items-center gap-1.5 text-muted-foreground mt-2">
+            <Building2 className="w-4 h-4" />
+            <span className="text-sm font-medium">{opportunity.company}</span>
+          </div>
         )}
       </CardHeader>
 
-      <CardContent className="flex-1 space-y-4">
-        {/* Requerimientos resumidos */}
+      <CardContent className="flex-1">
         {opportunity.requirements && (
-          <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed">
+          <p className="text-sm text-muted-foreground/80 line-clamp-3 leading-relaxed mb-6">
             {opportunity.requirements}
           </p>
         )}
 
-        <div className="flex flex-wrap gap-y-2 gap-x-4">
+        <div className="flex flex-wrap gap-4 mt-auto">
           {opportunity.location && (
-            <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase">
-              <MapPin className="w-3 h-3" />
+            <div className="flex items-center gap-1.5 text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest">
+              <MapPin className="w-3.5 h-3.5 text-primary/60" />
               <span>{opportunity.location}</span>
             </div>
           )}
           {opportunity.deadline && (
-            <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase">
-              <Calendar className="w-3 h-3" />
-              <span>Cierra: {new Date(opportunity.deadline).toLocaleDateString()}</span>
+            <div className="flex items-center gap-1.5 text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest">
+              <Calendar className="w-3.5 h-3.5" />
+              <span>Cierra: {new Date(opportunity.deadline).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</span>
             </div>
           )}
         </div>
       </CardContent>
 
-      <CardFooter className="pt-0 flex flex-col gap-2">
-        <Link href={`/opportunities/${opportunity.id}/details`} className="w-full">
-          <Button
-            variant="outline"
-            className="w-full font-bold border-2"
-          >
-            Ver más detalles
-            <Eye className="w-4 h-4 ml-2" />
-          </Button>
-        </Link>
+      <CardFooter className="grid grid-cols-2 gap-3 pt-4">
         <Button
-          className="w-full ai-gradient bg-levely-blue dark:bg-levely-green dark:text-levely-dark text-white font-bold border-none shadow-glow hover:opacity-90"
+          variant="secondary"
+          className="rounded-xl font-bold text-xs h-10 border border-border/40"
+          asChild
+        >
+          <Link href={`/opportunities/${opportunity.id}/details`}>
+            Detalles
+            <Eye className="w-3.5 h-3.5 ml-2" />
+          </Link>
+        </Button>
+
+        <Button
+          variant="accent"
+          className="rounded-xl font-bold text-xs h-10 shadow-lg shadow-accent/10"
           asChild
         >
           <a href={opportunity.linkUrl} target="_blank" rel="noopener noreferrer">
-            Postular Ahora
-            <ExternalLink className="w-4 h-4 ml-2" />
+            Postular
+            <ExternalLink className="w-3.5 h-3.5 ml-2" />
           </a>
         </Button>
       </CardFooter>

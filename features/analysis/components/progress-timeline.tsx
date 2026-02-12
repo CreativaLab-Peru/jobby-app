@@ -154,28 +154,29 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
   }, [status, router])
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="text-center mb-12">
-        <h1 className="text-2xl font-bold text-levely-blue dark:text-levely-green mb-2">
-          Analizando tu potencial
-        </h1>
-        <p className="text-levely-blue/70 dark:text-levely-green/70 animate-pulse flex items-center justify-center gap-2">
-          <Sparkles className="w-4 h-4" />
-          La IA de Levely está procesando tu perfil...
-        </p>
-      </div>
+    <div className="w-full h-full flex flex-col items-center justify-center py-12 px-4">
+      <div className="max-w-2xl w-full">
+        <div className="text-center mb-12">
+          <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-cyan-500 to-blue-400 dark:from-emerald-400 dark:to-cyan-400 bg-clip-text text-transparent mb-2">
+            Analizando tu potencial
+          </h1>
+          <p className="text-slate-600 dark:text-slate-300 animate-pulse flex items-center justify-center gap-2">
+            <Sparkles className="w-4 h-4" />
+            La IA de Levely está procesando tu perfil...
+          </p>
+        </div>
 
-      <div className="flex gap-8 justify-center">
-        {/* Left column: vertical line + icons */}
-        <div className="w-12 flex flex-col items-center relative">
+        <div className="flex gap-8 justify-center items-start w-full">
+          {/* Left column: vertical line + icons */}
+          <div className="w-12 flex flex-col items-center relative">
           {/* vertical base line */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 top-6 bottom-6 w-1 bg-levely-blue/20 dark:bg-levely-green/20 rounded-full" />
+          <div className="absolute left-1/2 transform -translate-x-1/2 top-6 bottom-6 w-1 bg-gradient-to-b from-blue-200 via-cyan-200 to-blue-200 dark:from-emerald-500 dark:via-cyan-500 dark:to-emerald-500 rounded-full opacity-30 dark:opacity-40" />
 
-          {/* animated fill line - REFACTOR: Usando ai-gradient */}
+          {/* animated fill line */}
           <motion.div
             className="absolute left-1/2 transform -translate-x-1/2 top-6 w-1 rounded-full origin-top"
             style={{
-              background: "linear-gradient(180deg, var(--levely-blue) 0%, var(--levely-green) 100%)",
+              background: "linear-gradient(180deg, #0891b2 0%, #3b82f6 50%, #0891b2 100%)",
             }}
             initial={{ height: 0 }}
             animate={{
@@ -198,10 +199,10 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
                   <motion.div
                     variants={variants.step}
                     animate={state}
-                    className={`flex items-center justify-center h-12 w-12 rounded-full border-4 transition-colors duration-500
-                      ${state === "completed" ? "bg-transparent border-levely-blue dark:border-levely-green/80" :
-                      state === "active" ? "bg-transparent border-levely-blue dark:border-levely-green shadow-lg shadow-levely-blue/20 dark:shadow-levely-green/20" :
-                        "bg-transparent border-levely-blue/20 dark:border-levely-green/20"}`}
+                    className={`flex items-center justify-center h-12 w-12 rounded-full border-4 transition-all duration-500
+                      ${state === "completed" ? "bg-cyan-100/50 border-cyan-500 shadow-lg shadow-cyan-500/20 dark:bg-emerald-100/30 dark:border-emerald-500 dark:shadow-lg dark:shadow-emerald-500/30" :
+                      state === "active" ? "bg-blue-100/50 border-blue-500 shadow-xl shadow-blue-500/30 dark:bg-transparent dark:border-indigo-500 dark:shadow-xl dark:shadow-indigo-500/40" :
+                        "bg-slate-200/30 border-slate-400 dark:bg-slate-700/30 dark:border-slate-600"}`}
                   >
                     <AnimatePresence mode="wait">
                       {isFailure ? (
@@ -210,14 +211,14 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
                         </motion.div>
                       ) : state === "completed" ? (
                         <motion.div key="check" initial={{ scale: 0 }} animate={{ scale: 1 }}>
-                          <CheckCircle className="w-6 h-6 text-levely-blue dark:text-levely-green" />
+                          <CheckCircle className="w-6 h-6 text-cyan-600 dark:text-emerald-400" />
                         </motion.div>
                       ) : state === "active" ? (
                         <motion.div key="loader" animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }}>
-                          <Loader2 className="w-6 h-6 text-levely-blue dark:text-levely-green" />
+                          <Loader2 className="w-6 h-6 text-blue-600 dark:text-indigo-400" />
                         </motion.div>
                       ) : (
-                        <StepIcon className="w-5 h-5 text-levely-blue/40 dark:text-levely-green/40" />
+                        <StepIcon className="w-5 h-5 text-slate-400 dark:text-slate-500" />
                       )}
                     </AnimatePresence>
                   </motion.div>
@@ -243,20 +244,20 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
                 key={step.key}
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className={`transition-all duration-500 ${isActive ? "scale-105" : "scale-100 opacity-60"}`}
+                className={`transition-all duration-500 ${isActive ? "scale-105" : "scale-100 opacity-70"}`}
               >
                 <div className={`p-4 rounded-xl border transition-all
-                  ${isActive ? "bg-transparent border-levely-blue/30 dark:border-levely-green/30 shadow-lg shadow-levely-blue/10 dark:shadow-levely-green/10" : "bg-transparent border-transparent"}`}
+                  ${isActive ? "bg-blue-100/30 border-blue-300 shadow-lg shadow-blue-500/20 dark:bg-indigo-100/20 dark:border-indigo-600/50 dark:shadow-lg dark:shadow-indigo-500/20" : "bg-transparent border-transparent"}`}
                 >
                   <div className="flex flex-col">
                     <div className="flex items-center gap-2">
-                      <h3 className={`font-bold text-base ${isActive ? "text-levely-blue dark:text-levely-green" : "text-levely-blue/60 dark:text-levely-green/60"}`}>
+                      <h3 className={`font-bold text-base ${isActive ? "text-blue-700 dark:text-indigo-300" : isCompleted ? "text-cyan-600 dark:text-emerald-400" : "text-slate-400 dark:text-slate-500"}`}>
                         {step.title}
                       </h3>
-                      {isCompleted && <span className="text-[10px] font-bold uppercase tracking-widest text-levely-blue dark:text-levely-green">Listo</span>}
-                      {isFailure && <span className="text-[10px] font-bold uppercase tracking-widest text-red-500">Error</span>}
+                      {isCompleted && <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-600 dark:text-emerald-400">Listo</span>}
+                      {isFailure && <span className="text-[10px] font-bold uppercase tracking-widest text-red-500 dark:text-red-400">Error</span>}
                     </div>
-                    <p className={`text-sm mt-1 leading-relaxed ${isActive ? "text-levely-blue/80 dark:text-levely-green/80" : "text-levely-blue/50 dark:text-levely-green/50"}`}>
+                    <p className={`text-sm mt-1 leading-relaxed ${isActive ? "text-blue-700/70 dark:text-indigo-300/70" : isCompleted ? "text-cyan-600/70 dark:text-emerald-400/70" : "text-slate-500 dark:text-slate-400"}`}>
                       {step.desc}
                     </p>
                   </div>
@@ -264,6 +265,7 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
               </motion.div>
             )
           })}
+        </div>
         </div>
       </div>
     </div>

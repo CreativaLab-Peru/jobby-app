@@ -1,27 +1,31 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
+import {
+  FileText, Edit, Trash2,
+  Calendar, Target, MoreVertical, ExternalLink, Briefcase
+} from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { FileText, Eye, Edit, Trash2, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 import { formatDate } from "@/utils/format-date";
+import { TitleAndForm } from "@/components/title-and-form";
+import { EntityListItem } from "@/components/shared/entity-list-item";
+import { StatusBadge } from "@/components/shared/status-badge";
+
 import { CvWithRelations } from "../actions/get-cv-for-current-user";
 import { softDeleteCv } from "../actions/soft-delete-cv";
-// TODO: Replace with another library or custom toast
-// import { useToast } from "@/hooks/use-toast"
-import { TitleAndForm } from "@/components/title-and-form";
 import { updateCvTitle } from "@/features/cv/actions/update-title";
+import { CV_TYPE_CONFIG, OPPORTUNITY_CONFIG } from "@/features/cv/consts";
+import {ConfirmModal} from "@/components/shared/confirm-modal";
+import {cn} from "@/lib/utils";
 
 interface CVCardProps {
   cv: CvWithRelations;
@@ -32,178 +36,126 @@ export function CVCard({ cv }: CVCardProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
-  // const { toast } = useToast()
 
-  const handleEdit = () => router.push(`/cv/${cv.id}/edit`);
-  const handleSeeDetail = () => router.push(`/cv/${cv.id}/preview`);
+  const config = CV_TYPE_CONFIG[cv?.cvType || ""] || CV_TYPE_CONFIG.GENERAL;
+  const Icon = config.icon; // El componente del icono
+
+  const opportunity = OPPORTUNITY_CONFIG[cv?.opportunityType || ""] || "No especificado";
 
   const handleDelete = async () => {
     setIsDeleting(true);
-
     const result = await softDeleteCv(cv.id);
-
     if (result.success) {
-      // toast({
-      //   title: "CV ocultado",
-      //   description:
-      //     "El CV ha sido ocultado exitosamente. Ya no aparecerá en tu lista.",
-      // })
       setShowDeleteDialog(false);
-    } else {
-      // toast({
-      //   title: "Error",
-      //   description: result.error || "No se pudo ocultar el CV",
-      //   variant: "destructive",
-      // })
+      router.refresh();
     }
-
     setIsDeleting(false);
   };
 
   const handleChangeTitle = (newTitle: string) => {
     if (isPending) return;
-
     startTransition(() => {
       updateCvTitle(cv.id, newTitle).then((result) => {
-        if (result.success) {
-          // toast({
-          //   title: "Título actualizado",
-          //   description:
-          //     "El título del CV ha sido actualizado exitosamente.",
-          // })
-          router.refresh();
-        } else {
-          // toast({
-          //   title: "Error",
-          //   description:
-          //     result.error || "No se pudo actualizar el título del CV",
-          //   variant: "destructive",
-          // })
-        }
+        if (result.success) router.refresh();
       });
     });
   };
 
   return (
-    <Card className="group bg-card border shadow-sm hover:shadow-md transition-all duration-300">
-      <CardHeader className="relative space-y-3">
-        <div className="flex items-start justify-between">
-          <FileText className="w-8 h-8 text-levely-blue dark:text-levely-green transition-transform group-hover:scale-110" />
-
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 dark:hover:bg-gray-500/50 transition-colors"
-            onClick={() => setShowDeleteDialog(true)}
-          >
-            <Trash2 className="w-4 h-4" />
-          </Button>
-        </div>
-
-        <CardTitle className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+    <>
+      <EntityListItem
+        icon={
+          <div className={cn("p-2 rounded-lg transition-colors", config.colorClass)}>
+            <Icon className="h-6 w-6" />
+          </div>
+        }
+        subtitle={
+          <StatusBadge variant="outline">
+            {config.label}
+          </StatusBadge>
+        }
+        title={
           <TitleAndForm
             title={cv.title || "Sin título"}
             onSubmit={handleChangeTitle}
             isSubmitting={isPending}
+            className="text-lg font-bold tracking-tight text-foreground"
           />
-        </CardTitle>
-
-        <CardDescription className="text-sm text-muted-foreground space-y-1">
-          <div>
-            <span className="font-medium text-levely-blue dark:text-levely-green">
-              Perfil Profesional:
-            </span>{" "}
-            {cv?.cvType === "TECHNOLOGY_ENGINEERING" && "Tecnología e Ingeniería"}
-            {cv?.cvType === "DESIGN_CREATIVITY" && "Diseño y Creatividad"}
-            {cv?.cvType === "MARKETING_STRATEGY" && "Marketing y Estrategia"}
-            {cv?.cvType === "MANAGEMENT_BUSINESS" && "Gestión y Negocios"}
-            {cv?.cvType === "FINANCE_PROJECTS" && "Finanzas y Proyectos"}
-            {cv?.cvType === "SOCIAL_MEDIA" && "Redes Sociales y Contenido Digital"}
-            {cv?.cvType === "EDUCATION" && "Educación y Desarrollo Humano"}
-            {cv?.cvType === "SCIENCE" && "Ciencia e Innovación"}
-            {!cv?.cvType && <span className="italic text-muted-foreground">No especificado</span>}
-          </div>
-
-          <div>
-            <span className="font-medium text-levely-blue dark:text-levely-green">
-              Tipo de Oportunidad:
-            </span>{" "}
-            {cv?.opportunityType === "INTERNSHIP" && "Pasantía"}
-            {cv?.opportunityType === "SCHOLARSHIP" && "Beca"}
-            {cv?.opportunityType === "EXCHANGE_PROGRAM" && "Intercambio"}
-            {cv?.opportunityType === "EMPLOYMENT" && "Empleo"}
-            {!cv?.opportunityType && (
-              <span className="italic text-muted-foreground">No especificado</span>
-            )}
-          </div>
-        </CardDescription>
-      </CardHeader>
-
-      <CardContent className="space-y-4">
-        <div className="text-sm text-muted-foreground space-y-1">
-          <p>Creado: {formatDate(cv.createdAt, "dd/MM/yyyy")}</p>
-          <p>Modificado: {formatDate(cv.updatedAt, "dd/MM/yyyy")}</p>
-        </div>
-
-        <div className="flex gap-2">
-          <Button
-            variant="accent"
-            size="sm"
-            className="flex-1 !bg-levely-blue/80 !hover:bg-levely-blue/90 dark:!bg-levely-green/80 dark:!hover:bg-levely-green/90 flex items-center justify-center"
-            onClick={handleSeeDetail}
-          >
-            <Eye className="w-4 h-4 mr-1" />
-            Ver
-          </Button>
-
-          <Button
-            variant="accent"
-            size="sm"
-            className="text-levely-dark flex-1 !bg-levely-blue/20 !hover:bg-levely-blue/90 dark:!bg-levely-green/50 dark:!hover:bg-levely-green/90 flex items-center justify-center"
-            onClick={handleEdit}
-          >
-            <Edit className="w-4 h-4 mr-1" />
-            Editar
-          </Button>
-        </div>
-      </CardContent>
-
-      {/* Confirmación eliminar */}
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
-            <AlertDialogDescription asChild>
-              <div>
-                <p>
-                  Esta acción eliminará el CV <strong>&quot;{cv?.title || "Sin título"}&quot;</strong>{" "}
-                  de tu lista.
-                </p>
-                <p className="mt-2 font-medium">¿Deseas continuar?</p>
-              </div>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
-
-            <AlertDialogAction
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+        }
+        metadata={
+          <>
+            <div className="flex items-center gap-1.5">
+              <Briefcase className="h-3.5 w-3.5" />
+              <span>{opportunity}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Calendar className="h-3.5 w-3.5" />
+              <span>Actualizado: {formatDate(cv.updatedAt, "d MMM, yyyy")}</span>
+            </div>
+          </>
+        }
+        actions={
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-muted-foreground">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40 rounded-xl">
+              <DropdownMenuItem onClick={() => router.push(`/cv/${cv.id}/edit`)} className="cursor-pointer font-medium">
+                <Edit className="mr-2 h-4 w-4" /> Editar
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setShowDeleteDialog(true)}
+                className="cursor-pointer text-destructive focus:text-destructive font-medium"
+              >
+                <Trash2 className="mr-2 h-4 w-4" /> Eliminar
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        }
+        footerActions={
+          <div className="flex flex-wrap items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push(`/cv/${cv.id}/history`)}
+              className="text-xs font-bold text-muted-foreground hover:text-primary transition-colors"
             >
-              {isDeleting ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Eliminando...
-                </>
-              ) : (
-                "Eliminar CV"
-              )}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </Card>
+              Ver analisis
+              <FileText className="ml-2 h-3.5 w-3.5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push(`/cv/${cv.id}/preview`)}
+              className="text-xs font-bold text-muted-foreground hover:text-primary transition-colors"
+            >
+              Ver link
+              <ExternalLink className="ml-2 h-3.5 w-3.5" />
+            </Button>
+            <Button
+              variant="accent" // Usa el color primary del sistema
+              onClick={() => router.push(`/cv/${cv.id}/preview`)}
+              className="h-9 rounded-lg px-6 text-xs font-bold shadow-sm"
+            >
+              Ver detalle
+            </Button>
+          </div>
+        }
+      />
+
+      {/* Diálogo de alerta para eliminación */}
+      <ConfirmModal
+        isOpen={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onConfirm={handleDelete}
+        loading={isDeleting}
+        title="¿Eliminar currículum?"
+        description={
+          <>Esta acción ocultará el CV <span className="text-foreground font-bold italic">"{cv.title}"</span>. Podrás restaurarlo después.</>
+        }
+      />
+    </>
   );
 }

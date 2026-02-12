@@ -1,196 +1,74 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import {BarChart3, TrendingUp, Plus, Rocket} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useRouter } from "next/navigation"
-import { formatDate } from "@/utils/format-date"
-import { CvWithRelations } from "@/features/cv/actions/get-cv-for-current-user"
-import { categoryMap } from "@/features/analysis/data/category-map"
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import {BarChart3, Plus} from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/shared/page-header";
+import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
+
+import { CvWithRelations } from "@/features/cv/actions/get-cv-for-current-user";
+
+import {EvaluationCard} from "@/features/analysis/components/evaluation-card";
 
 interface ScoresListPageProps {
-  cvs: CvWithRelations[]
-  disabledButton?: boolean
-}
-
-// Helper para colores según score usando tema
-const getScoreTextColor = (score: number) => {
-  if (score >= 80) return "text-primary"
-  if (score >= 60) return "text-secondary"
-  return "text-accent"
-}
-
-const getScoreBadgeColor = (score: number) => {
-  if (score >= 80) return "bg-primary/20 text-primary"
-  if (score >= 60) return "bg-secondary/20 text-secondary"
-  return "bg-accent/20 text-accent"
-}
-
-const getTrendIconColor = (trend: "up" | "down") => {
-  return trend === "up" ? "text-primary" : "text-accent"
+  cvs: CvWithRelations[];
+  disabledButton?: boolean;
 }
 
 export function ScoresListPage({ cvs, disabledButton }: ScoresListPageProps) {
-  const [scores] = useState(cvs)
-  const router = useRouter()
+  const router = useRouter();
 
-  const handleUploadCV = () => {
-    if (disabledButton) return;
-    router.push("/cv/upload");
-  }
+  const actions = (
+    <Button
+      variant="accent"
+      disabled={disabledButton}
+      size={'sm'}
+      onClick={() => router.push("/cv")}
+      className="rounded-xl font-bold shadow-lg shadow-accent/20"
+    >
+      <Plus className="w-4 h-4 mr-2" />
+      Nueva Evaluación
+    </Button>
+  );
 
   return (
-    <div className="p-6 h-full">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
-            <div className="text-center sm:text-left">
-              <h1 className="text-levely-blue dark:text-levely-green text-3xl font-bold">
-                Scores de CVs
-              </h1>
-              <p className="text-muted-foreground mt-2">
-                Analiza el rendimiento y mejora tus currículums
-              </p>
-            </div>
+    <main className="min-h-screen p-4 md:p-8">
+      <div className="mx-auto max-w-7xl">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+          <PageHeader
+            title="Evaluaciones de IA"
+            description="Analiza el rendimiento y recibe recomendaciones para optimizar tus CVs."
+            actions={actions}
+          />
 
-            <Button
-              className="bg-levely-blue text-white dark:bg-levely-green dark:text-levely-dark w-full sm:w-auto"
-              disabled={disabledButton}
-              onClick={handleUploadCV}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              <span>Subir CV</span>
-            </Button>
-          </div>
-
-          {/* Scores List */}
-          <div className="space-y-6">
-            {scores.map((score, index) => (
+          <div className="grid grid-cols-1 gap-3">
+            {cvs.length > 0 && cvs.map((cv, index) => (
               <motion.div
-                key={score.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
+                key={cv.id}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.03 }}
               >
-                <Card className="bg-background/90 backdrop-blur-sm border-0 shadow-lg overflow-hidden">
-                  <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
-                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                        <div className="space-y-1">
-                          <CardTitle className="text-xl sm:text-2xl text-foreground flex items-center gap-3">
-                            {score.title || "CV Analizado"}
-                            {/* trend logic could be added here if needed, keeping it simple as per original */}
-                          </CardTitle>
-                          <CardDescription className="text-sm">
-                            {score.evaluations[0]?.createdAt
-                              ? `Analizado el ${formatDate(score.evaluations[0].createdAt, "dd/MM/yyyy")}`
-                              : "Sin análisis todavía"}
-                          </CardDescription>
-                        </div>
-
-                        <div className="pt-2 sm:pt-0">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="w-fit cursor-pointer text-levely-blue dark:text-levely-green hover:text-levely-blue/70 dark:hover:text-levely-green/70 border-2 border-levely-blue/40 dark:border-levely-green/40 hover:border-levely-blue/40 dark:hover:border-levely-green/40 transition-colors duration-200 font-semibold"
-                            onClick={() => router.push(`/evaluations/${score.evaluations[0]?.id}`)}
-                          >
-                            Ver detalles
-                          </Button>
-                        </div>
-                      </div>
-
-                      <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-1 bg-muted/30 sm:bg-transparent p-3 sm:p-0 rounded-lg sm:rounded-none">
-                        <div className={`text-4xl sm:text-3xl font-bold ${getScoreTextColor(score.evaluations[0]?.overallScore || 0)}`}>
-                          {score.evaluations[0]?.overallScore || 0}
-                        </div>
-                        <Badge className={`${getScoreBadgeColor(score.evaluations[0]?.overallScore || 0)} font-bold`}>
-                          {score.evaluations[0]?.overallScore >= 80
-                            ? "Excelente"
-                            : score.evaluations[0]?.overallScore >= 60
-                              ? "Bueno"
-                              : "Necesita Mejora"}
-                        </Badge>
-                      </div>
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="p-4 sm:p-6 pt-2 sm:pt-2">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                      {/* Categories Scores */}
-                      <div>
-                        <h4 className="font-semibold text-levely-blue dark:text-levely-green mb-4 flex items-center gap-2">
-                          <BarChart3 className="w-4 h-4 text-levely-blue dark:text-levely-green" />
-                          Puntuación por Categorías
-                        </h4>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
-                          {score.evaluations[0]?.scores.map((section) => (
-                            <div key={section.id} className="group">
-                              <div className="flex justify-between text-sm mb-1.5">
-                                <span className="text-foreground/80 font-medium group-hover:text-primary transition-colors">
-                                  {categoryMap[section.sectionType as keyof typeof categoryMap] || section.sectionType}
-                                </span>
-                                <span className={`font-semibold ${getScoreTextColor(section.score)}`}>
-                                  {section.score}%
-                                </span>
-                              </div>
-
-                              <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
-                                <div
-                                  className="h-full rounded-full transition-all duration-700"
-                                  style={{
-                                    width: `${section.score}%`,
-                                    background: "linear-gradient(90deg, #3b82f6 0%, #22c55e 100%)"
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Recommendations */}
-                      <div className="bg-muted/20 p-4 rounded-xl border border-border/50">
-                        <h4 className="font-semibold text-levely-blue dark:text-levely-green mb-4 flex items-center gap-2">
-                          <TrendingUp className="w-4 h-4 text-levely-blue dark:text-levely-green" />
-                          Recomendaciones de Mejora
-                        </h4>
-                        <ul className="space-y-3">
-                          {score.evaluations[0]?.recommendations.slice(0, 3).map((rec, idx) => (
-                            <li key={idx} className="flex items-start gap-3 text-sm text-balance">
-                              <div className="w-1.5 h-1.5 bg-primary/80 rounded-full mt-2 flex-shrink-0" />
-                              <span className="text-muted-foreground leading-relaxed">{rec.text}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <EvaluationCard
+                  cv={cv}
+                  onAction={(id) => router.push(`/evaluations/${id}`)}
+                />
               </motion.div>
             ))}
-          </div>
-
-          {/* Empty State */}
-          {scores.length === 0 && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-12">
-              <BarChart3 className="w-16 h-16 text-muted mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-muted mb-2">No hay scores disponibles</h3>
-              <p className="text-muted/80">Crea y analiza tus CVs para ver los scores aquí</p>
-            </motion.div>
+          {/*  Usa el placeholder solo si no hay CVs con evaluaciones */}
+          {cvs.length === 0 && (
+            <EmptyPlaceholder
+              icon={BarChart3}
+              title="No hay evaluaciones aún"
+              description="Crea tu primera evaluación para recibir insights personalizados sobre tus CVs."
+              action={actions}
+            />
           )}
+          </div>
         </motion.div>
       </div>
-    </div>
-  )
+    </main>
+  );
 }

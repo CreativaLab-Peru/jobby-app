@@ -1,3 +1,5 @@
+"use server";
+
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import { Cv, CvEvaluation, CvPreview, CvSection, QueueJob, EvaluationScore, Recommendation } from "@prisma/client";
@@ -12,83 +14,44 @@ export type CvWithRelations = Cv & {
   queueJobs: QueueJob[];
 };
 
-export type CvForCurrentUserResponse = {
-  manuals: {
-    cvs: CvWithRelations[];
-    activeSubscription: boolean;
-  };
-  uploads: {
-    cvs: CvWithRelations[];
-    activeSubscription: boolean;
-  };
-};
-
-export const getCvForCurrentUser = async () => {
+export const getCvForCurrentUser = async (skip = 0, take = 10) => {
   try {
     const user = await getCurrentUser();
-    if (!user) {
-      return;
-    }
+    if (!user) return null;
 
-    const [cvs] = await Promise.all([
-      prisma.cv.findMany({
-        where: {
-          userId: user.id,
-          deletedAt: null,
-        },
-        include: {
-          evaluations: {
-            include: {
-              scores: true,
-              recommendations: true,
-            },
-            orderBy: {
-              createdAt: "desc",
-            },
-            take: 1
-          },
-          sections: {
-            orderBy: {
-              order: "asc",
-            }
-          },
-          previews: {
-            orderBy: {
-              createdAt: "desc"
-            },
-            take: 1
-          },
-          queueJobs: {
-            orderBy: {
-              createdAt: "desc"
-            },
-            take: 1
-          }
-        },
-        orderBy: {
-          createdAt: "desc",
-        }
-      })
-    ]);
-
-    const manuals = cvs.filter(cv => cv.createdByJobId === null);
-    const uploads = cvs.filter(cv => cv.createdByJobId !== null);
-
-    const response: CvForCurrentUserResponse = {
-      manuals: {
-        cvs: [...manuals, ...uploads],
-        activeSubscription: false,
+    const cvs = await prisma.cv.findMany({
+      where: {
+        userId: user.id,
+        deletedAt: null,
+        createdByJobId: null
       },
-      uploads: {
-        cvs: uploads,
-        activeSubscription: false,
+      skip, // Salta los registros ya cargados
+      take, // Trae solo la siguiente tanda
+      include: {
+        evaluations: {
+          include: { scores: true, recommendations: true },
+          orderBy: { createdAt: "desc" },
+          take: 1
+        },
+        sections: { orderBy: { order: "asc" } },
+        previews: { orderBy: { createdAt: "desc" }, take: 1 },
+        queueJobs: { orderBy: { createdAt: "desc" }, take: 1 }
       },
+      orderBy: { createdAt: "desc" }
+    });
+
+    // Contamos el total para saber si hay más páginas
+    const totalCount = await prisma.cv.count({
+      where: { userId: user.id, deletedAt: null }
+    });
+
+    return {
+      cvs,
+      hasMore: skip + take < totalCount,
+      totalCount
     };
-
-    return response;
-
   } catch (error) {
     console.error("[GET_CV_FOR_CURRENT_USER_ERROR]", error);
-    return;
+    return null;
   }
 };

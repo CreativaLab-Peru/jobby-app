@@ -100,8 +100,8 @@ export default function AppSidebar() {
                     className={cn(
                       "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200",
                       isActive(item.href)
-                        ? "text-primary bg-primary/10 font-semibold"
-                        : "text-muted-foreground hover:text-levely-blue hover:bg-levely-blue dark:hover:bg-secondary",
+                        ? "text-primary bg-primary/10 font-semibold dark:bg-accent dark:text-black hover:dark:bg-accent/90"
+                        : "text-muted-foreground hover:text-levely-blue hover:bg-levely-blue",
                     )}
                   >
                     <item.icon className="h-5 w-5 shrink-0" />

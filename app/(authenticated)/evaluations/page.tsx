@@ -1,10 +1,10 @@
-import { ScoresListPage } from "@/features/analysis/components/score-list";
-import { getCurrentCreditLimits } from "@/features/credits/actions/get-current-credits-limits";
+import {ScoresListPage} from "@/features/analysis/components/score-list";
+import {getCurrentCreditLimits} from "@/features/credits/actions/get-current-credits-limits";
 import {geEvaluationsForCurrentUser} from "@/features/cv/actions/get-evaluations-for-current-user";
 
 export default async function MyEvaluationsPage() {
   const [cvData, creditLimits] = await Promise.all([
-    geEvaluationsForCurrentUser(),
+    geEvaluationsForCurrentUser(0, 5),
     getCurrentCreditLimits()
   ]);
 
@@ -13,13 +13,15 @@ export default async function MyEvaluationsPage() {
     cv => cv.evaluations && cv.evaluations.length > 0
   );
 
-  const hasCredits = creditLimits.aiActionsLimit > 0;
-  console.log("[cvData]:", cvData);
+  const canAnalyze = creditLimits.aiActionsLimit > 0;
+  const hasMore = cvData ? cvData.hasMore : false;
 
   return (
     <ScoresListPage
-      cvs={cvsWithEvaluations}
-      disabledButton={!hasCredits}
+      initialCvs={cvsWithEvaluations}
+      canAnalyze={!canAnalyze}
+      hasMoreProp={hasMore}
+      totalCount={cvData.cvs ? cvData.totalCount : 0}
     />
   );
 }

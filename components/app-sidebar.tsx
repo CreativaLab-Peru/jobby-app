@@ -62,8 +62,8 @@ export default function AppSidebar() {
     <Sidebar className={cn("border-r border-border z-30", collapsed ? "w-16" : "w-64")}>
       <SidebarContent className="flex flex-col h-full">
         {/* Logo */}
-        <div className="flex items-center justify-between h-16 lg:h-20">
-          <Link href="/dashboard" className="relative h-30 w-40 lg:h-40 lg:w-52">
+        <div className="flex items-center justify-center mt-3">
+          <Link href="/dashboard" className="relative h-16 w-36">
             <Image
               src="/logo_light.png"
               alt="Levely"
@@ -100,8 +100,8 @@ export default function AppSidebar() {
                     className={cn(
                       "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200",
                       isActive(item.href)
-                        ? "text-primary bg-primary/10 font-semibold dark:bg-accent dark:text-black hover:dark:bg-accent/90"
-                        : "text-muted-foreground hover:text-levely-blue hover:bg-levely-blue",
+                        ? "bg-primary text-secondary font-semibold shadow-sm hover:bg-primary"
+                        : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground"
                     )}
                   >
                     <item.icon className="h-5 w-5 shrink-0" />
@@ -146,26 +146,26 @@ export default function AppSidebar() {
         </SidebarGroup>
 
         {/* Plan Badge y progreso (placeholder) */}
-        {!collapsed && (
-          <div className="mx-4 mb-4 p-4 rounded-xl bg-secondary/50 border border-border">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="p-1.5 rounded-lg bg-levely-blue/10 dark:bg-levely-green/20">
-                <Sparkles className="h-4 w-4 text-levely-blue dark:text-levely-green" />
-              </div>
-              <span className="text-sm font-semibold uppercase tracking-wide">{planName}</span>
-            </div>
-            <p className="text-xs text-muted-foreground mb-2">Completa tu perfil al 100%</p>
-            <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
-              <div
-                className="h-full rounded-full transition-all duration-700"
-                style={{
-                  width: `${profileProgress}%`,
-                  background: "linear-gradient(90deg, #3b82f6 0%, #22c55e 100%)"
-                }}
-              />
-            </div>
-          </div>
-        )}
+        {/*{!collapsed && (*/}
+        {/*  <div className="mx-4 mb-4 p-4 rounded-xl bg-secondary/50 border border-border">*/}
+        {/*    <div className="flex items-center gap-2 mb-2">*/}
+        {/*      <div className="p-1.5 rounded-lg bg-levely-blue/10 dark:bg-levely-green/20">*/}
+        {/*        <Sparkles className="h-4 w-4 text-levely-blue dark:text-levely-green" />*/}
+        {/*      </div>*/}
+        {/*      <span className="text-sm font-semibold uppercase tracking-wide">{planName}</span>*/}
+        {/*    </div>*/}
+        {/*    <p className="text-xs text-muted-foreground mb-2">Completa tu perfil al 100%</p>*/}
+        {/*    <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">*/}
+        {/*      <div*/}
+        {/*        className="h-full rounded-full transition-all duration-700"*/}
+        {/*        style={{*/}
+        {/*          width: `${profileProgress}%`,*/}
+        {/*          background: "linear-gradient(90deg, #3b82f6 0%, #22c55e 100%)"*/}
+        {/*        }}*/}
+        {/*      />*/}
+        {/*    </div>*/}
+        {/*  </div>*/}
+        {/*)}*/}
 
         {/* Bottom Navigation */}
         <SidebarFooter className="border-t border-border">

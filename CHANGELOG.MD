@@ -1,8 +1,6 @@
-# Enhancements
 # v1.1.15 - 2025-02-11 [WIP]
 
 ## Features
-- Fixed an issue that prevented some CVs from uploading successfully
 - Modal to select and analyze CV from evaluations page
 - Icons for Opportunity Type and Professional Profile in CV selection modal
 
@@ -13,7 +11,6 @@
 - Fixed validation logic to properly handle optional fields
 
 ## Enhancements
-- Prompt users to check their email after sign-up to reduce confusion
 - Professional summary is now OPTIONAL for all CV types
 - Education is MANDATORY for: Scholarships, Internships, and Exchange Programs
 - Education is OPTIONAL for: Employment

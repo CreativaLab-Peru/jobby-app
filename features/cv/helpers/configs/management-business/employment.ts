@@ -8,10 +8,20 @@ export const managementBusinessEmployment: SectionConfig = {
         "certifications",
         "skills",
     ],
+    requiredFields: {
+        // Summary opcional en todos los CVs
+        "personal.summary": false,
+        // Educación opcional para empleo
+        "education.level": false,
+        "education.title": false,
+        "education.institution": false,
+        "education.location": false,
+        "education.year": false,
+    },
     examples: {
         "personal.summary":
             "Profesional de negocios con más de 5 años de experiencia en gestión de proyectos y liderazgo de equipos. Habilidades destacadas en análisis financiero, planificación estratégica y optimización de procesos. Comprometido con el desarrollo sostenible y la innovación empresarial.",
-        
+
         // Education
         "education.title":
                 "Licenciatura en Administración de Empresas",
@@ -43,7 +53,7 @@ export const managementBusinessEmployment: SectionConfig = {
                 "Lideré un equipo de 5 personas para desarrollar un plan de negocios innovador que fue reconocido a nivel nacional por su enfoque sostenible y viabilidad económica.",
         "achievements.date":
                 "Noviembre 2023",
-        
+
         // Certifications
         "certifications.name":
                 "Certificación en Gestión de Proyectos Profesional (PMP)",
@@ -51,11 +61,11 @@ export const managementBusinessEmployment: SectionConfig = {
                 "Project Management Institute",
         "certifications.date":
                 "2022",
-        
+
         // Skills
-        "skills.technical": 
+        "skills.technical":
                 "Gestión de proyectos, Análisis financiero, Planificación estratégica, Microsoft Office (Excel, PowerPoint, Word), ERP (SAP, Oracle)",
-        "skills.soft": 
+        "skills.soft":
                 "Liderazgo, Comunicación efectiva, Resolución de problemas, Trabajo en equipo, Pensamiento crítico",
     },
 };

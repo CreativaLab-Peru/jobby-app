@@ -2,30 +2,41 @@ import type { SectionConfig } from "../../types";
 
 export const financeProjectsInternship: SectionConfig = {
   sections: [
-    "personal", 
+    "personal",
     "education",
     "projects",
-    "skills"
+    "skills",
+    "certifications",
   ],
+  requiredFields: {
+    // Summary opcional en todos los CVs
+    "personal.summary": false,
+    // Educación obligatoria para internships
+    "education.level": true,
+    "education.title": true,
+    "education.institution": true,
+    "education.location": true,
+    "education.year": true,
+  },
   examples: {
     // Personal
     "personal.summary":
         "Aspiring finance professional with a strong foundation in financial analysis and investment strategies, seeking to apply my skills in a dynamic internship environment.",
-    
+
     // Education
-    "education.title": 
+    "education.title":
         "Bachelor of Finance",
-    "education.institution": 
+    "education.institution":
         "University of Finance",
-    "education.location": 
+    "education.location":
         "New York, NY",
-    "education.year": 
+    "education.year":
         "2023",
-    "education.honors": 
+    "education.honors":
         "Magna Cum Laude",
 
     // Projects
-    "projects.title": 
+    "projects.title":
         "Plan de Marketing Digital para Pyme textil",
     "projects.description":
         "Diseñé e implementé una estrategia de marketing digital que incrementó en 35% la visibilidad online de una empresa textil. Incluyó gestión de redes sociales, campañas segmentadas en Meta Ads y optimización de contenidos.",
@@ -33,7 +44,7 @@ export const financeProjectsInternship: SectionConfig = {
         "Meta Ads, Canva, Google Analytics",
     "projects.duration":
         "3 meses (Ene 2023 - Mar 2023)",
-    
+
     // Skills
     "skills.technical":
       "Financial Modeling, Data Analysis, Python, R, SQL, Tableau",

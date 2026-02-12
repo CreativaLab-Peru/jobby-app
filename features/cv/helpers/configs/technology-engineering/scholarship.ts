@@ -11,6 +11,8 @@ export const technologyEngineeringScholarship: SectionConfig = {
 
   // Educación opcional para becas
   requiredFields: {
+    // Summary opcional en todos los CVs
+    "personal.summary": false,
     "education.level": false,
     "education.title": false,
     "education.institution": false,

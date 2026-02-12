@@ -1,14 +1,24 @@
 import type { SectionConfig } from "../../types";
 export const financeProjectsEmployment: SectionConfig = {
-  sections: [
-    "personal",
-    "education",
-    "experience",
-    "achievements",
-    "certifications",
-    "skills",
-  ],
-  examples: {
+    sections: [
+        "personal",
+        "education",
+        "experience",
+        "achievements",
+        "certifications",
+        "skills",
+    ],
+    requiredFields: {
+        // Summary opcional en todos los CVs
+        "personal.summary": false,
+        // Educación opcional para empleo
+        "education.level": false,
+        "education.title": false,
+        "education.institution": false,
+        "education.location": false,
+        "education.year": false,
+    },
+    examples: {
     // Personal
     "personal.summary":
       "Profesional de finanzas con sólida experiencia en análisis financiero, gestión de carteras de inversión y planificación financiera estratégica. Especializado en la evaluación de oportunidades de inversión, optimización de recursos y generación de valor mediante decisiones financieras fundamentadas y análisis de mercado.",

@@ -8,6 +8,16 @@ export const scienceEmployment: SectionConfig = {
     "certifications",
     "skills",
   ],
+  requiredFields: {
+    // Summary opcional en todos los CVs
+    "personal.summary": false,
+    // Educación opcional para empleo
+    "education.level": false,
+    "education.title": false,
+    "education.institution": false,
+    "education.location": false,
+    "education.year": false,
+  },
   examples: {
     "personal.summary":
       "Científico investigador con más de 7 años de experiencia en biotecnología y desarrollo de nuevos fármacos. Especializado en biología molecular y análisis de datos genómicos, con publicaciones en revistas de alto impacto. Comprometido con la innovación científica y la colaboración interdisciplinaria para resolver desafíos complejos en salud humana.",

@@ -121,11 +121,6 @@ const variants = {
   },
 }
 
-// Determine if CV is manual based on status
-const isManualCv = (status: string | undefined): boolean => {
-  return status === "CV_READY_FOR_ANALYSIS" || 
-         (status?.startsWith("CV_EVALUATION") && !["CV_IN_PROGRESS", "CV_SUCCEEDED", "CV_FAILED"].includes(status || ""));
-}
 
 export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
   const router = useRouter()
@@ -137,7 +132,7 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
   const isManual = useMemo(() => {
     if (!status?.status) return false;
     // If status starts with CV_READY or we don't have upload-specific statuses
-    return status.status === "CV_READY_FOR_ANALYSIS" || 
+    return status.status === "CV_READY_FOR_ANALYSIS" ||
            !["CV_IN_PROGRESS", "CV_SUCCEEDED", "CV_FAILED"].includes(status.status);
   }, [status]);
 
@@ -161,11 +156,11 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="text-center mb-12">
-        <h1 className="text-2xl font-bold text-foreground mb-2">
+        <h1 className="text-2xl font-bold text-levely-blue dark:text-levely-green mb-2">
           Analizando tu potencial
         </h1>
-        <p className="text-muted-foreground animate-pulse flex items-center justify-center gap-2">
-          <Sparkles className="w-4 h-4 text-secondary" />
+        <p className="text-levely-blue/70 dark:text-levely-green/70 animate-pulse flex items-center justify-center gap-2">
+          <Sparkles className="w-4 h-4" />
           La IA de Levely está procesando tu perfil...
         </p>
       </div>
@@ -174,11 +169,14 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
         {/* Left column: vertical line + icons */}
         <div className="w-12 flex flex-col items-center relative">
           {/* vertical base line */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 top-6 bottom-6 w-1 bg-muted rounded-full" />
+          <div className="absolute left-1/2 transform -translate-x-1/2 top-6 bottom-6 w-1 bg-levely-blue/20 dark:bg-levely-green/20 rounded-full" />
 
           {/* animated fill line - REFACTOR: Usando ai-gradient */}
           <motion.div
-            className="absolute left-1/2 transform -translate-x-1/2 top-6 w-1 ai-gradient rounded-full origin-top"
+            className="absolute left-1/2 transform -translate-x-1/2 top-6 w-1 rounded-full origin-top"
+            style={{
+              background: "linear-gradient(180deg, var(--levely-blue) 0%, var(--levely-green) 100%)",
+            }}
             initial={{ height: 0 }}
             animate={{
               height: activeIndex <= 0 ? 0 : `${(activeIndex / (STEPS.length - 1)) * 100}%`,
@@ -191,7 +189,7 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
               const StepIcon = step.icon
               const state = activeIndex === -1 ? "pending" : idx < activeIndex ? "completed" : idx === activeIndex ? "active" : "pending"
               // For manual CVs, failure is at index 1; for uploads, failure can be at 0 or 3
-              const isFailure = isManual 
+              const isFailure = isManual
                 ? (status?.status === "CV_EVALUATION_FAILED" && idx === 1)
                 : ((status?.status === "CV_FAILED" && idx === 0) || (status?.status === "CV_EVALUATION_FAILED" && idx === 3))
 
@@ -201,25 +199,25 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
                     variants={variants.step}
                     animate={state}
                     className={`flex items-center justify-center h-12 w-12 rounded-full border-4 transition-colors duration-500
-                      ${state === "completed" ? "bg-card border-secondary" :
-                      state === "active" ? "bg-card border-primary shadow-glow" :
-                        "bg-muted border-muted"}`}
+                      ${state === "completed" ? "bg-transparent border-levely-blue dark:border-levely-green/80" :
+                      state === "active" ? "bg-transparent border-levely-blue dark:border-levely-green shadow-lg shadow-levely-blue/20 dark:shadow-levely-green/20" :
+                        "bg-transparent border-levely-blue/20 dark:border-levely-green/20"}`}
                   >
                     <AnimatePresence mode="wait">
                       {isFailure ? (
                         <motion.div key="fail" initial={{ scale: 0 }} animate={{ scale: 1 }}>
-                          <XCircle className="w-6 h-6 text-destructive" />
+                          <XCircle className="w-6 h-6 text-red-500" />
                         </motion.div>
                       ) : state === "completed" ? (
                         <motion.div key="check" initial={{ scale: 0 }} animate={{ scale: 1 }}>
-                          <CheckCircle className="w-6 h-6 text-secondary" />
+                          <CheckCircle className="w-6 h-6 text-levely-blue dark:text-levely-green" />
                         </motion.div>
                       ) : state === "active" ? (
                         <motion.div key="loader" animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }}>
-                          <Loader2 className="w-6 h-6 text-primary" />
+                          <Loader2 className="w-6 h-6 text-levely-blue dark:text-levely-green" />
                         </motion.div>
                       ) : (
-                        <StepIcon className="w-5 h-5 text-muted-foreground/50" />
+                        <StepIcon className="w-5 h-5 text-levely-blue/40 dark:text-levely-green/40" />
                       )}
                     </AnimatePresence>
                   </motion.div>
@@ -236,7 +234,7 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
             const isActive = state === "active"
             const isCompleted = state === "completed"
             // For manual CVs, failure is at index 1; for uploads, failure can be at 0 or 3
-            const isFailure = isManual 
+            const isFailure = isManual
               ? (status?.status === "CV_EVALUATION_FAILED" && idx === 1)
               : ((status?.status === "CV_FAILED" && idx === 0) || (status?.status === "CV_EVALUATION_FAILED" && idx === 3))
 
@@ -248,17 +246,17 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
                 className={`transition-all duration-500 ${isActive ? "scale-105" : "scale-100 opacity-60"}`}
               >
                 <div className={`p-4 rounded-xl border transition-all
-                  ${isActive ? "bg-card shadow-card border-primary/20" : "bg-transparent border-transparent"}`}
+                  ${isActive ? "bg-transparent border-levely-blue/30 dark:border-levely-green/30 shadow-lg shadow-levely-blue/10 dark:shadow-levely-green/10" : "bg-transparent border-transparent"}`}
                 >
                   <div className="flex flex-col">
                     <div className="flex items-center gap-2">
-                      <h3 className={`font-bold text-base ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
+                      <h3 className={`font-bold text-base ${isActive ? "text-levely-blue dark:text-levely-green" : "text-levely-blue/60 dark:text-levely-green/60"}`}>
                         {step.title}
                       </h3>
-                      {isCompleted && <span className="text-[10px] font-bold uppercase tracking-widest text-secondary">Listo</span>}
-                      {isFailure && <span className="text-[10px] font-bold uppercase tracking-widest text-destructive">Error</span>}
+                      {isCompleted && <span className="text-[10px] font-bold uppercase tracking-widest text-levely-blue dark:text-levely-green">Listo</span>}
+                      {isFailure && <span className="text-[10px] font-bold uppercase tracking-widest text-red-500">Error</span>}
                     </div>
-                    <p className={`text-sm mt-1 leading-relaxed ${isActive ? "text-muted-foreground" : "text-muted-foreground/60"}`}>
+                    <p className={`text-sm mt-1 leading-relaxed ${isActive ? "text-levely-blue/80 dark:text-levely-green/80" : "text-levely-blue/50 dark:text-levely-green/50"}`}>
                       {step.desc}
                     </p>
                   </div>

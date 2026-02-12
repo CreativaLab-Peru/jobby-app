@@ -1,7 +1,24 @@
 import type { SectionConfig } from "../../types";
 
 export const socialMediaInternship: SectionConfig = {
-  sections: ["personal", "education", "projects", "skills", "volunteering"],
+  sections: [
+    "personal",
+    "education",
+    "projects",
+    "skills",
+    "certifications",
+  ],
+  requiredFields: {
+    // Summary opcional en todos los CVs
+    "personal.summary": false,
+    // Educación obligatoria para internships
+    "education.level": true,
+    "education.title": true,
+    "education.institution": true,
+    "education.location": true,
+    "education.year": true,
+  },
+
   examples: {
     // Personal
     "personal.summary":

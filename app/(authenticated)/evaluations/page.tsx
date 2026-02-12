@@ -5,7 +5,7 @@ import {getCurrentCreditLimits} from "@/features/credits/actions/get-current-cre
 export default async function MyEvaluationsPage() {
   const cvForCurrentUser = await getCvForCurrentUser();
 
-  // Combine manual and uploaded CVs, filter only those with evaluations
+  // Combine manual and uploaded CVs
   const allCvs = [
     ...(cvForCurrentUser?.manuals?.cvs || []),
   ];
@@ -15,16 +15,13 @@ export default async function MyEvaluationsPage() {
     index === self.findIndex(c => c.id === cv.id)
   );
 
-  // Only show CVs that have at least one evaluation
-  const cvsWithEvaluations = uniqueCvs.filter(cv => cv.evaluations && cv.evaluations.length > 0);
-
   const creditLimits = await getCurrentCreditLimits();
   const hasCredits = creditLimits.aiActionsLimit > 0;
 
   return (
     <>
       <ScoresListPage
-        cvs={cvsWithEvaluations}
+        cvs={uniqueCvs}
         disabledButton={!hasCredits}
       />
     </>

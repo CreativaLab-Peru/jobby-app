@@ -8,6 +8,16 @@ export const educationExchangeProgram: SectionConfig = {
     "languages",
     "certifications",
   ],
+  requiredFields: {
+    // Summary opcional en todos los CVs
+    "personal.summary": false,
+    // Educación obligatoria para intercambios
+    "education.level": true,
+    "education.title": true,
+    "education.institution": true,
+    "education.location": true,
+    "education.year": true,
+  },
   examples: {
     // Personal
     "personal.summary":

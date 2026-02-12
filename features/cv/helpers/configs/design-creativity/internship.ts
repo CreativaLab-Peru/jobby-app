@@ -8,6 +8,16 @@ export const designCreativityInternship: SectionConfig = {
     "skills",
     "certifications",
   ],
+  requiredFields: {
+    // Summary opcional en todos los CVs
+    "personal.summary": false,
+    // Educación obligatoria para internships
+    "education.level": true,
+    "education.title": true,
+    "education.institution": true,
+    "education.location": true,
+    "education.year": true,
+  },
 
   examples: {
     // Personal
@@ -15,25 +25,25 @@ export const designCreativityInternship: SectionConfig = {
       "Estudiante de diseño gráfico con experiencia en desarrollo de proyectos creativos y habilidades técnicas en herramientas de diseño. Apasionado por la innovación visual y la comunicación efectiva a través del diseño. Busco una pasantía para aplicar mis conocimientos y crecer profesionalmente en un entorno dinámico.",
 
     // Education
-    "education.title": 
+    "education.title":
         "Diseño Gráfico",
     "education.institution":
         "Universidad Nacional de San Antonio Abad del Cusco",
-    "education.location": 
+    "education.location":
         "Cusco, Perú",
-    "education.year": 
+    "education.year":
         "Esperado Diciembre 2026",
     "education.honors":
         "Tercio Superior, Participante de Diseño 2023",
 
     // Projects
-    "projects.title": 
+    "projects.title":
         "Diseño de Marca para Empresa de Alimentos",
     "projects.description":
         "Creé la identidad visual de una nueva línea de productos alimenticios, incluyendo logotipo, paleta de colores y tipografía. Realicé investigaciones de mercado para asegurar que el diseño resonara con el público objetivo.",
     "projects.technologies":
         "Adobe Illustrator, Adobe Photoshop, Figma",
-    "projects.duration": 
+    "projects.duration":
         "5 meses (Jun 2024 - Oct 2024)",
 
     // Skills
@@ -45,11 +55,11 @@ export const designCreativityInternship: SectionConfig = {
         "Español (Nativo), Inglés (Intermedio - B1), Quechua (Básico)",
 
     // Certifications
-    "certifications.name": 
+    "certifications.name":
         "Certificación en Diseño Gráfico",
-    "certifications.issuer": 
+    "certifications.issuer":
         "Coursera",
-    "certifications.date": 
-        "Noviembre 2023", 
+    "certifications.date":
+        "Noviembre 2023",
   },
 };

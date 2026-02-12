@@ -37,9 +37,9 @@ export function NavbarPrivate({ creditLimits, user }: NavbarProps) {
         <div className="flex items-center gap-2 sm:gap-4 min-w-0">
           <SidebarTrigger className="lg:hidden flex-shrink-0" />
           <div className="min-w-0 max-w-[120px] sm:max-w-[200px] md:max-w-xs">
-            <h1 className="text-lg sm:text-xl font-bold flex items-center gap-1">
+            <h1 className="text-lg sm:text-xl font-bold flex items-center gap-1 text-levely-blue dark:text-white truncate">
               Hola,{" "}
-              <span className="text-levely-blue dark:text-levely-green truncate">
+              <span className="text-accent dark:text-levely-green truncate">
                 {user?.name?.split(" ")[0] || ""}
               </span>
             </h1>

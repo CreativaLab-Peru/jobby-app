@@ -24,7 +24,6 @@ import { StickyActionButtons } from "@/features/analysis/components/sticky-actio
 import { ScoreBreakdownModal } from "@/features/analysis/components/score-breakdown-modal"
 import { useSidebar } from "@/components/ui/sidebar"
 
-
 import { Recommendation, ScoreCategory } from "@/types/analysis"
 import { Opportunity } from "@prisma/client";
 
@@ -49,7 +48,6 @@ export default function AnalysisScore({
   const [showStickyButtons, setShowStickyButtons] = useState(false)
   const { openMobile } = useSidebar()
 
-
   const resolvedBreakdown = scoreBreakdown.map((cat) => {
     const Icon = ICONS[cat.icon] || Award
     return { ...cat, Icon }
@@ -57,9 +55,7 @@ export default function AnalysisScore({
 
   useEffect(() => {
     const handleScroll = () => {
-      // Si el menú móvil está abierto, no hacemos nada para evitar conflictos de re-renderizado
       if (openMobile) return
-
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop
       const scrollHeight = document.documentElement.scrollHeight
       const clientHeight = document.documentElement.clientHeight
@@ -67,62 +63,57 @@ export default function AnalysisScore({
       setShowStickyButtons(scrollPercentage > 0.8)
     }
 
-
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [openMobile])
 
-
   return (
     <>
-      {/* REFACTOR: Fondo usando la variable background y decoración sutil */}
-      <div className="min-h-screen relative">
-        <div className="absolute inset-0 bg-transparent pointer-events-none" />
-
-        <div className="container relative z-10 py-8">
+      <div className="min-h-screen bg-background/30">
+        <div className="container relative z-10 py-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-6xl mx-auto"
+            className="max-w-5xl mx-auto"
           >
             <AnalysisHeader />
 
-            <Tabs defaultValue="score" className="space-y-8">
-              {/* REFACTOR: Tabs con el sistema de marca Levely */}
-              <TabsList className="grid w-full grid-cols-2 h-auto min-h-[4rem] p-1 bg-levely-blue/10 dark:bg-levely-green/10 shadow-card rounded-xl border border-border">
+            <Tabs defaultValue="score" className="space-y-10">
+              {/* REFACTOR: TabsList con arquitectura de Dashboard Técnico */}
+              <TabsList className="grid w-full grid-cols-2 h-14 p-1.5 bg-secondary/50 backdrop-blur-md rounded-2xl border border-border/60">
                 <TabsTrigger
                   value="score"
-                  className="flex items-center justify-center gap-2 h-full py-3 text-sm sm:text-base font-bold transition-all duration-300
+                  className="flex items-center justify-center gap-3 h-full rounded-xl text-xs font-black uppercase tracking-[0.15em] transition-all duration-300
                     text-muted-foreground
-                    data-[state=active]:ai-gradient data-[state=active]:text-primary data-[state=active]:shadow-glow"
+                    data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border-border/10"
                 >
-                  <Target className="text-levely-blue dark:text-levely-green w-4 h-4 sm:w-5 sm:h-5" />
-                  <span className="text-levely-blue dark:text-levely-green text-center">Score y Sugerencias</span>
+                  <Target className="w-4 h-4" />
+                  <span>Score e Insights</span>
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="opportunities"
-                  className="flex items-center justify-center gap-2 h-full py-3 text-sm sm:text-base font-bold transition-all duration-300
+                  className="flex items-center justify-center gap-3 h-full rounded-xl text-xs font-black uppercase tracking-[0.15em] transition-all duration-300
                     text-muted-foreground
-                    data-[state=active]:ai-gradient data-[state=active]:text-primary data-[state=active]:shadow-glow"
+                    data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border-border/10"
                 >
-                  <Award className="text-levely-blue dark:text-levely-green w-4 h-4 sm:w-5 sm:h-5" />
-                  <span className="text-levely-blue dark:text-levely-green text-center">Oportunidades</span>
+                  <Award className="w-4 h-4" />
+                  <span>Oportunidades</span>
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="score" className="space-y-8 focus-visible:outline-none">
-                {/* CVScoreCard heredará los estilos del sistema */}
+              {/* Contenidos con espaciado consistente */}
+              <TabsContent value="score" className="space-y-10 outline-none">
                 <CVScoreCard score={cvScore} onShowBreakdown={() => setShowScoreBreakdown(true)} />
                 <RecommendationsSection recommendations={recommendations} />
               </TabsContent>
 
-              <TabsContent value="opportunities" className="space-y-8 focus-visible:outline-none">
+              <TabsContent value="opportunities" className="space-y-10 outline-none">
                 <OpportunitiesSection opportunities={opportunities} />
               </TabsContent>
             </Tabs>
 
-            <div className="h-24" />
+            <div className="h-32" />
           </motion.div>
         </div>
         <StickyActionButtons show={showStickyButtons} />

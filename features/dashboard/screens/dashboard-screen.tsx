@@ -1,13 +1,16 @@
 "use client";
 
-import { EmployabilityCard } from "@/features/dashboard/components/employability-card";
-import { ResourcesCard } from "@/features/dashboard/components/resources-card";
-import { RecommendationsList } from "@/features/dashboard/components/recommendations-list";
-import { TopMatchesList } from "@/features/dashboard/components/top-matches-list";
+import { motion } from "framer-motion";
+import { LayoutDashboard } from "lucide-react";
+
+import { PageHeader } from "@/components/shared/page-header";
+
 import { DashboardStats } from "../actions/get-statistics-for-user";
 import { CreditLimits } from "@/features/credits/actions/get-current-credits-limits";
-import {motion} from "framer-motion";
-import {PageHeader} from "@/components/shared/page-header";
+import {EmployabilityCard} from "@/features/dashboard/components/employability-card";
+import {ResourcesCard} from "@/features/dashboard/components/resources-card";
+import {RecommendationsList} from "@/features/dashboard/components/recommendations-list";
+import {TopMatchesList} from "@/features/dashboard/components/top-matches-list";
 
 interface DashboardScreenProps {
   score: number;
@@ -18,55 +21,45 @@ interface DashboardScreenProps {
 }
 
 export default function DashboardScreen({
-  score,
-  stats,
-  recommendations,
-  subscription,
-  limits,
-}: DashboardScreenProps) {
+                                          score,
+                                          stats,
+                                          recommendations,
+                                          subscription,
+                                        }: DashboardScreenProps) {
 
-  const resources = [
-    {
-      label: "Evaluaciones",
-      count: subscription?.manualCvsUsed || 0,
-      colorClass: "text-primary",
-    },
-    {
-      label: "CVs Creados",
-      count: stats?.totalCvs || 0,
-      colorClass: "text-levely-orange",
-    },
-  ];
-
-  const opportunitiesCount = stats?.topOpportunities ? stats.topOpportunities.length : 0;
+  const opportunities = stats?.topOpportunities || [];
 
   return (
-
-    <main className="min-h-[90-vh] p-4 md:p-8">
+    <main className="min-h-screen p-4 md:p-8 bg-background/30">
       <div className="mx-auto max-w-7xl">
         <motion.div
-          initial={{opacity: 0, y: 10}}
-          animate={{opacity: 1, y: 0}}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
           className="space-y-8"
         >
           <PageHeader
             title="Mi Dashboard"
-            description="Visualiza tu puntuación de empleabilidad, recursos disponibles y recomendaciones personalizadas para mejorar tu perfil profesional."
-            actions={null}
+            description="Progreso profesional y análisis de IA en tiempo real."
           />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
-              <EmployabilityCard score={score} sector={stats?.userSector || "General"} />
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-7">
+              <EmployabilityCard
+                score={score}
+                sector={stats?.userSector || "General"}
+              />
             </div>
-            <div>
-              <ResourcesCard resources={resources} opportunitiesCount={opportunitiesCount} />
+            <div className="lg:col-span-5">
+              {/*<ResourcesCard*/}
+              {/*  resources={[*/}
+              {/*  opportunitiesCount={opportunities.length}*/}
+              {/*/>*/}
             </div>
           </div>
 
-          {/* Bottom Row: Growth Areas + Top Matches */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <RecommendationsList recommendations={recommendations} />
-            <TopMatchesList topOpportunities={stats?.topOpportunities || []} />
+            <TopMatchesList topOpportunities={opportunities} />
           </div>
         </motion.div>
       </div>

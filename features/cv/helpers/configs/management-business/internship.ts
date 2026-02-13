@@ -8,6 +8,16 @@ export const managementBusinessInternship: SectionConfig = {
         "skills",
         "certifications",
     ],
+    requiredFields: {
+        // Summary opcional en todos los CVs
+        "personal.summary": false,
+        // Educación obligatoria para internships
+        "education.level": true,
+        "education.title": true,
+        "education.institution": true,
+        "education.location": true,
+        "education.year": true,
+    },
 
     examples: {
         // Personal
@@ -15,25 +25,25 @@ export const managementBusinessInternship: SectionConfig = {
             "Estudiante de Administración de Empresas con sólida base en análisis de negocios y gestión de proyectos. Experiencia en trabajo en equipo y resolución de problemas empresariales. Busco una pasantía para aplicar conocimientos teóricos en un entorno corporativo y contribuir al crecimiento organizacional.",
 
         // Education
-        "education.title": 
+        "education.title":
                 "Administración de Empresas",
         "education.institution":
                 "Universidad Nacional Mayor de San Marcos",
-        "education.location": 
+        "education.location":
                 "Lima, Perú",
-        "education.year": 
+        "education.year":
                 "Esperado Julio 2026",
         "education.honors":
                 "Tercio Superior, Miembro del Club de Emprendimiento",
 
         // Projects
-        "projects.title": 
+        "projects.title":
                 "Análisis de Viabilidad para Startup de Delivery",
         "projects.description":
                 "Desarrollé un plan de negocios completo incluyendo análisis FODA, proyecciones financieras y estrategias de marketing. Presenté propuestas de mejora operativa que redujeron costos proyectados en 15%.",
         "projects.technologies":
                 "Excel, Power BI, Google Analytics, Canva",
-        "projects.duration": 
+        "projects.duration":
                 "4 meses (Ago 2024 - Nov 2024)",
 
         // Skills
@@ -45,11 +55,11 @@ export const managementBusinessInternship: SectionConfig = {
                 "Español (Nativo), Inglés (Intermedio - B2), Portugués (Básico)",
 
         // Certifications
-        "certifications.name": 
+        "certifications.name":
                 "Fundamentos de Gestión de Proyectos",
-        "certifications.issuer": 
+        "certifications.issuer":
                 "Google Career Certificates",
-        "certifications.date": 
-                "Septiembre 2024", 
+        "certifications.date":
+                "Septiembre 2024",
     },
 };

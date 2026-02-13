@@ -7,6 +7,16 @@ export const educationEmployment: SectionConfig = {
     "certifications",
     "skills",
   ],
+  requiredFields: {
+    // Summary opcional en todos los CVs
+    "personal.summary": false,
+    // Educación opcional para empleo
+    "education.level": false,
+    "education.title": false,
+    "education.institution": false,
+    "education.location": false,
+    "education.year": false,
+  },
   examples: {
     // Personal
     "personal.summary":

@@ -8,6 +8,16 @@ export const socialMediaEmployment: SectionConfig = {
     "certifications",
     "skills",
   ],
+  requiredFields: {
+    // Summary opcional en todos los CVs
+    "personal.summary": false,
+    // Educación opcional para empleo
+    "education.level": false,
+    "education.title": false,
+    "education.institution": false,
+    "education.location": false,
+    "education.year": false,
+  },
   examples: {
     "personal.summary":
       "Creador de contenido digital con más de 5 años de experiencia en redes sociales y marketing de influencia. Especializado en producción audiovisual y storytelling, con una audiencia combinada de más de 500K seguidores. Apasionado por crear contenido auténtico que conecta marcas con audiencias de forma genuina.",

@@ -7,6 +7,16 @@ export const technologyEngineeringExchangeProgram: SectionConfig = {
     "skills",
     "volunteering",
   ],
+  requiredFields: {
+    // Summary opcional en todos los CVs
+    "personal.summary": false,
+    // Educación obligatoria para intercambios
+    "education.level": true,
+    "education.title": true,
+    "education.institution": true,
+    "education.location": true,
+    "education.year": true,
+  },
 
   examples: {
     // Personal - Summary
@@ -14,13 +24,13 @@ export const technologyEngineeringExchangeProgram: SectionConfig = {
         "Estudiante de Ingeniería de Sistemas con enfoque en desarrollo de software y análisis de datos. Participación en hackathons y proyectos académicos de programación web y bases de datos. Habilidades en resolución de problemas tecnológicos y aplicación de lenguajes como Python y SQL para optimizar procesos.",
 
     // Education
-    "education.title": 
+    "education.title":
         "Ingeniería de Sistemas e Informática",
     "education.institution":
         "Universidad Nacional de San Antonio Abad del Cusco",
-    "education.location": 
+    "education.location":
         "Cusco, Perú",
-    "education.year": 
+    "education.year":
         "Esperado Diciembre 2026",
     "education.honors":
         "Promedio ponderado: 15.8/20, Participante activo del Club de Programación Competitiva",
@@ -31,16 +41,16 @@ export const technologyEngineeringExchangeProgram: SectionConfig = {
     "skills.soft":
         "Adaptabilidad cultural, Liderazgo comunitario, Colaboración internacional, Comunicación intercultural, Gestión de proyectos, Trabajo remoto",
     "skills.languages":
-        "Español (Nativo), Inglés (Avanzado - C1), Portugués (Intermedio - B1)", 
-      
+        "Español (Nativo), Inglés (Avanzado - C1), Portugués (Intermedio - B1)",
+
     // Volunteering
-    "volunteering.organization": 
+    "volunteering.organization":
         "Código para el Futuro",
-    "volunteering.location": 
+    "volunteering.location":
         "Cusco, Perú",
-    "volunteering.position": 
+    "volunteering.position":
         "Instructor Voluntario",
-    "volunteering.duration": 
+    "volunteering.duration":
         "Marzo 2023 - Diciembre 2023",
     "volunteering.responsibilities":
         "• Impartí talleres semanales de programación básica (HTML, CSS, JavaScript) a niños de 10-14 años.\n• Desarrollé materiales didácticos interactivos para facilitar el aprendizaje.\n• Fomenté un ambiente inclusivo y motivador para los estudiantes.\n• Colaboré con otros voluntarios para organizar eventos de tecnología comunitarios.",

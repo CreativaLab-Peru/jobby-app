@@ -2,18 +2,21 @@
 
 import {AnimatePresence, motion} from "framer-motion";
 import {useRouter} from "next/navigation";
-import {BarChart3, Plus} from "lucide-react";
+import {
+  BarChart3, Plus,
+} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import {PageHeader} from "@/components/shared/page-header";
 import {EmptyPlaceholder} from "@/components/shared/empty-placeholder";
-
-import {CvWithRelations, getCvForCurrentUser} from "@/features/cv/actions/get-cv-for-current-user";
-
+import {CvWithRelations} from "@/features/cv/actions/get-cv-for-current-user";
+import {toast} from "sonner";
 import {EvaluationCard} from "@/features/analysis/components/evaluation-card";
 import {useState, useTransition} from "react";
 import {geEvaluationsForCurrentUser} from "@/features/cv/actions/get-evaluations-for-current-user";
 import {LoadMoreButton} from "@/components/shared/load-more-button";
+import {SelectCvModal} from "@/features/analysis/components/select-cv-modal";
+import {useEvaluationModalStore} from "@/features/analysis/hooks/use-evaluation-modal-store";
 
 interface ScoresListPageProps {
   initialCvs: CvWithRelations[];
@@ -33,6 +36,9 @@ export function ScoresListPage({
   const [hasMore, setHasMore] = useState(hasMoreProp); // Asumiendo batch inicial de 10
   const [isPending, startTransition] = useTransition();
 
+  // Modal status
+  const {onOpen, onClose, selectedCvId, setIsAnalyzing} = useEvaluationModalStore();
+
   const router = useRouter();
 
   const handleLoadMore = () => {
@@ -45,18 +51,57 @@ export function ScoresListPage({
     });
   };
 
+  const handleSelectCV = async () => {
+    if (!selectedCvId) return;
+    // Iniciar el análisis (sea nuevo o re-análisis)
+    setIsAnalyzing(true);
+    try {
+      const response = await fetch("/api/cv/analysis", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({cvId: selectedCvId}),
+      });
+
+      if (response.ok) {
+        // Navegar a la página de progreso del análisis
+        router.push(`/process/${selectedCvId}`);
+        toast.success('Análisis iniciado con éxito');
+        onClose();
+      } else {
+        const error = await response.json();
+        console.error("Error starting analysis:", error);
+        toast.error(error.message || "Error al iniciar el análisis del CV");
+      }
+
+    } catch (error) {
+      console.error("[ERROR_ANALYZE_CV_ON_MODAL]:", error);
+      toast.error(error.message || "Error al iniciar el análisis del CV");
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
 
   const actions = (
-    <Button
-      variant="accent"
-      disabled={canAnalyze}
-      size={'sm'}
-      onClick={() => router.push("/cv")}
-      className="rounded-xl font-bold shadow-lg shadow-accent/20"
-    >
-      <Plus className="w-4 h-4 mr-2"/>
-      Nueva Evaluación
-    </Button>
+    <>
+      <Button
+        variant="default"
+        disabled={canAnalyze}
+        size={'sm'}
+        onClick={() => router.push("/cv")}
+      >
+        <Plus className="w-4 h-4 mr-2"/>
+        Nueva Evaluación
+      </Button>
+      <Button
+        disabled={canAnalyze || cvs.length === 0}
+        onClick={() => onOpen()}
+        variant='secondary'
+        size={'sm'}
+      >
+        <Plus className="w-4 h-4 mr-2"/>
+        Seleccionar CV
+      </Button>
+    </>
   );
 
   return (
@@ -109,12 +154,15 @@ export function ScoresListPage({
                 action={actions}
               />
             </div>
-
-          )
-          }
+          )}
         </motion.div>
       </div>
+
+      {/*  Modal para seleccionar CV existente */}
+      <SelectCvModal
+        cvs={cvs}
+        onConfirm={handleSelectCV}
+      />
     </main>
   );
 }
-

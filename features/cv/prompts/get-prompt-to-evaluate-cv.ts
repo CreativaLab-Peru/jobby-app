@@ -1,32 +1,32 @@
-import { JsonValue } from "@prisma/client/runtime/library";
+export const getPromptToEvaluateCv = (text: string) => {
+  return `
+### ROLE
+Expert Technical Recruiter and Career Coach.
 
-export const getPromptToEvaluateCv = (text: JsonValue) => {
-  return `You are an expert career evaluator. Analyze this CV and return ONLY a valid JSON object.
+### TASK
+Analyze the provided CV and generate a structural evaluation in JSON format.
 
-CV Data:
-${JSON.stringify(text, null, 2)}
+### INPUT DATA (JSON)
+${JSON.stringify(text)}
 
-Return this exact JSON structure (no markdown, no explanation, just raw JSON):
+### OUTPUT FORMAT
+Return a valid JSON object following this schema:
 {
-  "overallScore": <number 0-100>,
-  "summary": "<brief feedback in Spanish, max 200 chars>",
+  "overallScore": number,
+  "summary": "Spanish text, max 200 chars",
   "sectionScores": [
-    {"sectionType": "SUMMARY", "score": <0-100>, "details": {"clarity": <0-100>, "impact": <0-100>}},
-    {"sectionType": "EXPERIENCE", "score": <0-100>, "details": {"relevance": <0-100>, "achievements": <0-100>}},
-    {"sectionType": "EDUCATION", "score": <0-100>, "details": {"completeness": <0-100>}},
-    {"sectionType": "SKILLS", "score": <0-100>, "details": {"relevance": <0-100>, "variety": <0-100>}}
+    { "sectionType": "SUMMARY | EXPERIENCE | EDUCATION | SKILLS | PROJECTS | VOLUNTEERING | CERTIFICATIONS | COMPLEMENTS | ACHIEVEMENTS | CONTACT", "score": number, "details": object }
   ],
   "recommendations": [
-    {"sectionType": "EXPERIENCE", "text": "<advice in Spanish>", "severity": "HIGH"},
-    {"sectionType": "SKILLS", "text": "<advice in Spanish>", "severity": "MEDIUM"}
+    { "sectionType": "string", "text": "Advice in Spanish", "severity": "LOW | MEDIUM | HIGH" }
   ]
 }
 
-CRITICAL RULES:
-- Return ONLY the JSON object, nothing else
-- sectionType must be one of: SUMMARY, EXPERIENCE, EDUCATION, SKILLS, PROJECTS, CERTIFICATIONS, LANGUAGES, CONTACT
-- severity must be: LOW, MEDIUM, or HIGH
-- All text fields in Spanish
-- No trailing commas
-- Valid JSON only`;
+### STRICT CONSTRAINTS
+1. ONLY return the JSON object. No prose, no markdown code blocks ( \`\`\`json ).
+2. If a section is missing in the CV, OMIT it from both "sectionScores" and "recommendations".
+3. Use Spanish for all feedback and advice.
+4. Ensure all strings are properly escaped to maintain valid JSON integrity.
+5. NEVER include trailing commas.
+`;
 };

@@ -65,6 +65,7 @@ export function ScoresListPage({
       if (response.ok) {
         // Navegar a la página de progreso del análisis
         router.push(`/process/${selectedCvId}`);
+        router.refresh();
         toast.success('Análisis iniciado con éxito');
         onClose();
       } else {

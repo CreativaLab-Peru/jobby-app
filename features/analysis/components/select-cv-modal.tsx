@@ -139,7 +139,6 @@ export function SelectCvModal({
     if (!selectedCvId) return;
     await onConfirm(selectedCvId);
   };
-  console.log("CVs en modal:", cvs);
 
   return (
     <AnimatePresence>

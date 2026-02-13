@@ -29,7 +29,7 @@ export function EntityListItem({
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-4">
             {/* Contenedor de Icono usando tokens secundarios y primarios */}
-            <div className="mt-1 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-secondary text-muted-foreground group-hover:text-primary group-hover:bg-primary/10 transition-colors">
+            <div className="mt-1 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-muted-foreground group-hover:text-primary group-hover:bg-primary/20 transition-colors">
               {icon}
             </div>
 

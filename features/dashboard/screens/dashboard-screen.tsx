@@ -1,16 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { LayoutDashboard } from "lucide-react";
-
 import { PageHeader } from "@/components/shared/page-header";
-
 import { DashboardStats } from "../actions/get-statistics-for-user";
 import { CreditLimits } from "@/features/credits/actions/get-current-credits-limits";
 import {EmployabilityCard} from "@/features/dashboard/components/employability-card";
+import {TopMatchesList} from "@/features/dashboard/components/top-matches-list";
 import {ResourcesCard} from "@/features/dashboard/components/resources-card";
 import {RecommendationsList} from "@/features/dashboard/components/recommendations-list";
-import {TopMatchesList} from "@/features/dashboard/components/top-matches-list";
 
 interface DashboardScreenProps {
   score: number;
@@ -19,6 +16,20 @@ interface DashboardScreenProps {
   subscription: DashboardStats["subscription"];
   limits?: CreditLimits;
 }
+
+const resources = [
+  {
+    label: "Evaluaciones",
+    count: 10,
+    colorClass: "text-primary",
+  },
+  {
+    label: "CVs Creados",
+    count: 20,
+    colorClass: "text-levely-orange",
+  },
+];
+
 
 export default function DashboardScreen({
                                           score,
@@ -30,7 +41,7 @@ export default function DashboardScreen({
   const opportunities = stats?.topOpportunities || [];
 
   return (
-    <main className="min-h-screen p-4 md:p-8 bg-background/30">
+    <main className="min-h-[80vh] p-4 md:p-8 bg-background/30 ">
       <div className="mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -50,10 +61,10 @@ export default function DashboardScreen({
               />
             </div>
             <div className="lg:col-span-5">
-              {/*<ResourcesCard*/}
-              {/*  resources={[*/}
-              {/*  opportunitiesCount={opportunities.length}*/}
-              {/*/>*/}
+              <ResourcesCard
+                resources={resources}
+                opportunitiesCount={opportunities.length}
+              />
             </div>
           </div>
 

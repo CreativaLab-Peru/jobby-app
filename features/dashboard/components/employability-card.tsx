@@ -40,21 +40,6 @@ export function EmployabilityCard({ score, sector }: Props) {
   return (
     <Card className="bg-card border-border/40 rounded-lg overflow-hidden group transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5">
       <CardContent className="p-2 md:p-4">
-        {/*/!* Header con Badge dinámico *!/*/}
-        {/*<div className="flex justify-between items-center mb-2">*/}
-        {/*  <div className="flex items-center gap-3">*/}
-        {/*    <div className="p-2.5 bg-primary/10 rounded-xl group-hover:rotate-12 transition-transform duration-500">*/}
-        {/*      <Target className="h-5 w-5 text-primary" />*/}
-        {/*    </div>*/}
-        {/*    <h3 className="font-black uppercase tracking-[0.15em] text-xs text-muted-foreground/80">*/}
-        {/*      Índice de Empleabilidad*/}
-        {/*    </h3>*/}
-        {/*  </div>*/}
-        {/*  <Badge variant="secondary" className="rounded-lg font-black px-3 py-1 text-[9px] uppercase tracking-tighter animate-pulse">*/}
-        {/*    <Sparkles className="w-3 h-3 mr-1" /> IA Live Analysis*/}
-        {/*  </Badge>*/}
-        {/*</div>*/}
-
         <div className="flex flex-col md:flex-row items-center gap-10">
           {/* Circular Progress Container */}
           <div className="">

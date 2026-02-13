@@ -1,6 +1,6 @@
-import {ScoresListPage} from "@/features/analysis/components/score-list";
-import {getCurrentCreditLimits} from "@/features/credits/actions/get-current-credits-limits";
-import {geEvaluationsForCurrentUser} from "@/features/cv/actions/get-evaluations-for-current-user";
+import { ScoresListPage } from "@/features/analysis/components/score-list";
+import { getCurrentCreditLimits } from "@/features/credits/actions/get-current-credits-limits";
+import { geEvaluationsForCurrentUser } from "@/features/cv/actions/get-evaluations-for-current-user";
 
 export default async function MyEvaluationsPage() {
   const [cvData, creditLimits] = await Promise.all([
@@ -8,20 +8,19 @@ export default async function MyEvaluationsPage() {
     getCurrentCreditLimits()
   ]);
 
-  // Obtenemos solo los CVs que tienen al menos una evaluación
-  const cvsWithEvaluations = (cvData?.cvs || []).filter(
-    cv => cv.evaluations && cv.evaluations.length > 0
-  );
+  const cvs = cvData?.evaluations ?? [];
 
-  const canAnalyze = creditLimits.aiActionsLimit > 0;
-  const hasMore = cvData ? cvData.hasMore : false;
+  const canAnalyze = (creditLimits?.aiActionsLimit ?? 0) > 0;
+
+  const hasMore = cvData?.hasMore ?? false;
+  const totalCount = cvData?.totalCount ?? 0;
 
   return (
     <ScoresListPage
-      initialCvs={cvsWithEvaluations}
-      canAnalyze={!canAnalyze}
+      initialCvs={cvs}
+      canAnalyze={canAnalyze}
       hasMoreProp={hasMore}
-      totalCount={cvData.cvs ? cvData.totalCount : 0}
+      totalCount={totalCount}
     />
   );
 }

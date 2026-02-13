@@ -2,27 +2,27 @@
 
 import {AnimatePresence, motion} from "framer-motion";
 import {useRouter} from "next/navigation";
-import {
-  BarChart3, Plus,
-} from "lucide-react";
+import {BarChart3, Plus} from "lucide-react";
+import {toast} from "sonner";
+import {useState, useTransition} from "react";
 
 import {Button} from "@/components/ui/button";
 import {PageHeader} from "@/components/shared/page-header";
 import {EmptyPlaceholder} from "@/components/shared/empty-placeholder";
-import {CvWithRelations} from "@/features/cv/actions/get-cv-for-current-user";
-import {toast} from "sonner";
 import {EvaluationCard} from "@/features/analysis/components/evaluation-card";
-import {useState, useTransition} from "react";
-import {geEvaluationsForCurrentUser} from "@/features/cv/actions/get-evaluations-for-current-user";
 import {LoadMoreButton} from "@/components/shared/load-more-button";
 import {SelectCvModal} from "@/features/analysis/components/select-cv-modal";
 import {useEvaluationModalStore} from "@/features/analysis/hooks/use-evaluation-modal-store";
+import {
+  EvaluationWithRelations,
+  geEvaluationsForCurrentUser
+} from "@/features/cv/actions/get-evaluations-for-current-user";
 
-interface ScoresListPageProps {
-  initialCvs: CvWithRelations[];
-  canAnalyze?: boolean;
-  hasMoreProp?: boolean;
-  totalCount?: number;
+export type ScoresListPageProps = {
+  initialCvs: EvaluationWithRelations[];
+  canAnalyze: boolean;
+  totalCount: number;
+  hasMoreProp: boolean;
 }
 
 export function ScoresListPage({
@@ -30,140 +30,111 @@ export function ScoresListPage({
                                  canAnalyze,
                                  totalCount,
                                  hasMoreProp
-                               }: ScoresListPageProps) {
-
-  const [cvs, setCvs] = useState<CvWithRelations[]>(initialCvs);
-  const [hasMore, setHasMore] = useState(hasMoreProp); // Asumiendo batch inicial de 10
+}: ScoresListPageProps) {
+  const [evaluations, setEvaluations] = useState(initialCvs);
+  const [hasMore, setHasMore] = useState(hasMoreProp);
   const [isPending, startTransition] = useTransition();
+  const [retryingId, setRetryingId] = useState<string | null>(null);
 
-  // Modal status
   const {onOpen, onClose, selectedCvId, setIsAnalyzing} = useEvaluationModalStore();
-
   const router = useRouter();
+
+  // Función maestra de análisis
+  const handleAnalyze = async (id: string) => {
+    const isRetry = id !== selectedCvId;
+    if (isRetry) setRetryingId(id);
+    else setIsAnalyzing(true);
+
+    try {
+      const response = await fetch("/api/cv/analysis", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({cvId: id}),
+      });
+
+      if (response.ok) {
+        toast.success(isRetry ? 'Re-análisis iniciado' : 'Análisis iniciado con éxito');
+        onClose();
+        router.push(`/process/${id}`);
+        router.refresh();
+      } else {
+        const error = await response.json();
+        toast.error(error.message || "Error al procesar el CV");
+      }
+    } catch (error: any) {
+      toast.error("Error de conexión al iniciar el análisis");
+    } finally {
+      setRetryingId(null);
+      setIsAnalyzing(false);
+    }
+  };
 
   const handleLoadMore = () => {
     startTransition(async () => {
-      const result = await geEvaluationsForCurrentUser(cvs.length, 10);
+      const result = await geEvaluationsForCurrentUser(evaluations.length, 5);
       if (result) {
-        setCvs((prev) => [...prev, ...result.cvs]);
+        setEvaluations((prev: any) => [...prev, ...result.evaluations]);
         setHasMore(result.hasMore);
       }
     });
   };
 
-  const handleSelectCV = async () => {
-    if (!selectedCvId) return;
-    // Iniciar el análisis (sea nuevo o re-análisis)
-    setIsAnalyzing(true);
-    try {
-      const response = await fetch("/api/cv/analysis", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({cvId: selectedCvId}),
-      });
-
-      if (response.ok) {
-        // Navegar a la página de progreso del análisis
-        router.push(`/process/${selectedCvId}`);
-        router.refresh();
-        toast.success('Análisis iniciado con éxito');
-        onClose();
-      } else {
-        const error = await response.json();
-        console.error("Error starting analysis:", error);
-        toast.error(error.message || "Error al iniciar el análisis del CV");
-      }
-
-    } catch (error) {
-      console.error("[ERROR_ANALYZE_CV_ON_MODAL]:", error);
-      toast.error(error.message || "Error al iniciar el análisis del CV");
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
-
   const actions = (
-    <>
-      <Button
-        variant="default"
-        disabled={canAnalyze}
-        size={'sm'}
-        onClick={() => router.push("/cv")}
-      >
-        <Plus className="w-4 h-4 mr-2"/>
-        Nueva Evaluación
+    <div className="flex gap-2">
+      <Button variant="outline" disabled={!canAnalyze} size="sm" onClick={() => router.push("/cv")}
+              className="font-bold">
+        <Plus className="w-4 h-4 mr-2"/> Nueva Evaluación
       </Button>
-      <Button
-        disabled={canAnalyze || cvs.length === 0}
-        onClick={() => onOpen()}
-        variant='secondary'
-        size={'sm'}
-      >
-        <Plus className="w-4 h-4 mr-2"/>
-        Seleccionar CV
+      <Button variant="default" disabled={!canAnalyze || evaluations.length === 0} onClick={onOpen}
+              size="sm" className="font-bold">
+        <BarChart3 className="w-4 h-4 mr-2"/> Seleccionar CV
       </Button>
-    </>
+    </div>
   );
 
   return (
     <main className="min-h-[90-vh] p-4 md:p-8">
       <div className="mx-auto max-w-7xl">
         <motion.div initial={{opacity: 0, y: 10}} animate={{opacity: 1, y: 0}}
-                    className="space-y-8">
+                    className="space-y-10">
           <PageHeader
             title="Evaluaciones de IA"
-            description="Analiza el rendimiento y recibe recomendaciones para optimizar tus CVs."
+            description="Gestiona tus análisis y optimiza tu perfil profesional."
             actions={actions}
           />
-          {cvs.length > 0 ? (
-            <>
-              <div className="grid grid-cols-1 gap-3">
-                <AnimatePresence mode="popLayout">
-                  {cvs.map((cv, index) => (
-                    <motion.div
-                      key={cv.id}
-                      initial={{opacity: 0, scale: 0.95}}
-                      animate={{opacity: 1, scale: 1}}
-                      transition={{duration: 0.3, delay: (index % 10) * 0.05}}
-                    >
-                      <EvaluationCard
-                        cv={cv}
-                        onAction={(id) => router.push(`/evaluations/${id}`)}
-                      />
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
 
-              {/* Load More Button */}
+          {evaluations.length > 0 ? (
+            <div className="space-y-4">
+              <AnimatePresence mode="popLayout">
+                {evaluations.map((evaluation) => (
+                  <EvaluationCard
+                    key={evaluation.id}
+                    evaluation={evaluation} // El CV viene dentro de la evaluación ahora
+                    onAction={() => router.push(`/evaluations/${evaluation.id}`)}
+                  />
+                ))}
+              </AnimatePresence>
+
               <LoadMoreButton
                 handleLoadMore={handleLoadMore}
                 hasMore={hasMore}
                 isPending={isPending}
-                currentCount={cvs.length}
+                currentCount={evaluations.length}
                 totalCount={totalCount}
-                label="Mostrar más evaluaciones" // Opcional, por defecto es "Mostrar más"
-              />
-            </>
-          ) : (
-            <div
-              className="rounded-2xl border border-dashed border-border/60 bg-secondary/10 dark:bg-secondary/5">
-              <EmptyPlaceholder
-                icon={BarChart3}
-                title="No hay evaluaciones aún"
-                description="Crea tu primera evaluación para recibir insights personalizados sobre tus CVs."
-                action={actions}
               />
             </div>
+          ) : (
+            <EmptyPlaceholder
+              icon={BarChart3}
+              title="No hay evaluaciones"
+              description="Analiza tu primer CV para obtener insights."
+              action={actions}
+            />
           )}
         </motion.div>
       </div>
 
-      {/*  Modal para seleccionar CV existente */}
-      <SelectCvModal
-        cvs={cvs}
-        onConfirm={handleSelectCV}
-      />
+      <SelectCvModal cvs={evaluations} onConfirm={() => selectedCvId && handleAnalyze(selectedCvId)}/>
     </main>
   );
 }

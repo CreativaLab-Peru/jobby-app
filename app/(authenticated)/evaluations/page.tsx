@@ -1,29 +1,26 @@
-import { getCvForCurrentUser } from "@/features/cv/actions/get-cv-for-current-user";
 import { ScoresListPage } from "@/features/analysis/components/score-list";
-import {getCurrentCreditLimits} from "@/features/credits/actions/get-current-credits-limits";
+import { getCurrentCreditLimits } from "@/features/credits/actions/get-current-credits-limits";
+import { geEvaluationsForCurrentUser } from "@/features/cv/actions/get-evaluations-for-current-user";
 
 export default async function MyEvaluationsPage() {
-  const cvForCurrentUser = await getCvForCurrentUser();
+  const [cvData, creditLimits] = await Promise.all([
+    geEvaluationsForCurrentUser(0, 5),
+    getCurrentCreditLimits()
+  ]);
 
-  // Combine manual and uploaded CVs
-  const allCvs = [
-    ...(cvForCurrentUser?.manuals?.cvs || []),
-  ];
+  const cvs = cvData?.evaluations ?? [];
 
-  // Remove duplicates (manuals already includes uploads in current implementation)
-  const uniqueCvs = allCvs.filter((cv, index, self) =>
-    index === self.findIndex(c => c.id === cv.id)
-  );
+  const canAnalyze = (creditLimits?.aiActionsLimit ?? 0) > 0;
 
-  const creditLimits = await getCurrentCreditLimits();
-  const hasCredits = creditLimits.aiActionsLimit > 0;
+  const hasMore = cvData?.hasMore ?? false;
+  const totalCount = cvData?.totalCount ?? 0;
 
   return (
-    <>
-      <ScoresListPage
-        cvs={uniqueCvs}
-        disabledButton={!hasCredits}
-      />
-    </>
+    <ScoresListPage
+      initialCvs={cvs}
+      canAnalyze={canAnalyze}
+      hasMoreProp={hasMore}
+      totalCount={totalCount}
+    />
   );
 }

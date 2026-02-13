@@ -12,7 +12,7 @@ export default async function ProgressPage({ params }: ProgressPageProps) {
   // Todo: validation if the CV can be accessed by the user (process status is activated?)
 
   return (
-    <div className="w-full h-screen bg-transparent flex items-center justify-center px-4">
+    <div className="w-full min-h-[80vh] bg-transparent flex items-center justify-center px-4">
       <ProgressTimeline cvId={cvId} />
     </div>
   )

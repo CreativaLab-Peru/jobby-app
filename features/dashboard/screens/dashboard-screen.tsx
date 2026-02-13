@@ -1,11 +1,13 @@
 "use client";
 
-import { EmployabilityCard } from "@/features/dashboard/components/employability-card";
-import { ResourcesCard } from "@/features/dashboard/components/resources-card";
-import { RecommendationsList } from "@/features/dashboard/components/recommendations-list";
-import { TopMatchesList } from "@/features/dashboard/components/top-matches-list";
+import { motion } from "framer-motion";
+import { PageHeader } from "@/components/shared/page-header";
 import { DashboardStats } from "../actions/get-statistics-for-user";
 import { CreditLimits } from "@/features/credits/actions/get-current-credits-limits";
+import {EmployabilityCard} from "@/features/dashboard/components/employability-card";
+import {TopMatchesList} from "@/features/dashboard/components/top-matches-list";
+import {ResourcesCard} from "@/features/dashboard/components/resources-card";
+import {RecommendationsList} from "@/features/dashboard/components/recommendations-list";
 
 interface DashboardScreenProps {
   score: number;
@@ -15,46 +17,63 @@ interface DashboardScreenProps {
   limits?: CreditLimits;
 }
 
+const resources = [
+  {
+    label: "Evaluaciones",
+    count: 10,
+    colorClass: "text-primary",
+  },
+  {
+    label: "CVs Creados",
+    count: 20,
+    colorClass: "text-levely-orange",
+  },
+];
+
+
 export default function DashboardScreen({
-  score,
-  stats,
-  recommendations,
-  subscription,
-  limits,
-}: DashboardScreenProps) {
+                                          score,
+                                          stats,
+                                          recommendations,
+                                          subscription,
+                                        }: DashboardScreenProps) {
 
-  const resources = [
-    {
-      label: "Evaluaciones",
-      count: subscription?.manualCvsUsed || 0,
-      colorClass: "text-primary",
-    },
-    {
-      label: "CVs Creados",
-      count: stats?.totalCvs || 0,
-      colorClass: "text-levely-orange",
-    },
-  ];
-
-  const opportunitiesCount = stats?.topOpportunities ? stats.topOpportunities.length : 0;
+  const opportunities = stats?.topOpportunities || [];
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
-      {/* Top Row: Employability + Resources */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <EmployabilityCard score={score} sector={stats?.userSector || "General"} />
-        </div>
-        <div>
-          <ResourcesCard resources={resources} opportunitiesCount={opportunitiesCount} />
-        </div>
-      </div>
+    <main className="min-h-[80vh] p-4 md:p-8 bg-background/30 ">
+      <div className="mx-auto max-w-7xl">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-8"
+        >
+          <PageHeader
+            title="Mi Dashboard"
+            description="Progreso profesional y análisis de IA en tiempo real."
+          />
 
-      {/* Bottom Row: Growth Areas + Top Matches */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <RecommendationsList recommendations={recommendations} />
-        <TopMatchesList topOpportunities={stats?.topOpportunities || []} />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-7">
+              <EmployabilityCard
+                score={score}
+                sector={stats?.userSector || "General"}
+              />
+            </div>
+            <div className="lg:col-span-5">
+              <ResourcesCard
+                resources={resources}
+                opportunitiesCount={opportunities.length}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <RecommendationsList recommendations={recommendations} />
+            <TopMatchesList topOpportunities={opportunities} />
+          </div>
+        </motion.div>
       </div>
-    </div>
+    </main>
   );
 }

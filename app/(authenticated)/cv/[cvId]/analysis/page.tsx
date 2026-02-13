@@ -21,7 +21,7 @@ export default async function AnalysisCVPage({ params }: AnalysisCVPageProps) {
   }
 
   return (
-    <div className="w-full h-screen bg-transparent flex items-center justify-center px-4">
+    <div className="w-full bg-transparent flex items-center justify-center px-4">
       <div className="w-full max-w-2xl">
         <ProgressTimeline cvId={cvId} />
       </div>

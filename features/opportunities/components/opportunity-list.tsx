@@ -1,25 +1,28 @@
 "use client";
 
-
-import {SerializableOpportunity} from "@/features/opportunities/get-opportunities";
+import { Briefcase } from "lucide-react";
 import OpportunityCard from "@/features/opportunities/components/opportunity-card";
+import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
 
 interface Props {
-  opportunities: SerializableOpportunity[];
+  opportunities: any[];
 }
 
 export default function OpportunityList({ opportunities }: Props) {
   if (opportunities.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center p-20 border-2 border-dashed rounded-3xl bg-muted/20">
-        <p className="text-muted-foreground font-bold">No se encontraron oportunidades.</p>
-        <p className="text-sm text-muted-foreground">Analiza un CV para que la IA encuentre vacantes por ti.</p>
+      <div className="rounded-[2rem] border border-dashed border-border/60 bg-secondary/5">
+        <EmptyPlaceholder
+          icon={Briefcase}
+          title="No hay vacantes aún"
+          description="Analiza un CV para que la IA pueda encontrar oportunidades que encajen con tu perfil."
+        />
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
       {opportunities.map((opt) => (
         <OpportunityCard key={opt.id} opportunity={opt} />
       ))}

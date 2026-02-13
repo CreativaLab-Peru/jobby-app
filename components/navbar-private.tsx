@@ -37,11 +37,9 @@ export function NavbarPrivate({ creditLimits, user }: NavbarProps) {
         <div className="flex items-center gap-2 sm:gap-4 min-w-0">
           <SidebarTrigger className="lg:hidden flex-shrink-0" />
           <div className="min-w-0 max-w-[120px] sm:max-w-[200px] md:max-w-xs">
-            <h1 className="text-lg sm:text-xl font-bold flex items-center gap-1">
+            <h1 className="text-lg sm:text-xl font-bold flex items-center gap-1 text-black dark:text-white truncate drop-shadow-[0_1.2px_1.2px_rgba(var(--primary-rgb),0.8)]">
               Hola,{" "}
-              <span className="text-levely-blue dark:text-levely-green truncate">
-                {user?.name?.split(" ")[0] || ""}
-              </span>
+              <span className="text-accent dark:text-levely-green truncate">{user?.name?.split(" ")[0] || ""}</span>
             </h1>
             <p className="text-sm text-muted-foreground hidden md:block">
               Esto es lo que la IA de Levely tiene para ti.
@@ -51,16 +49,15 @@ export function NavbarPrivate({ creditLimits, user }: NavbarProps) {
 
         {/* Center: Quick Actions */}
         <div className="hidden md:flex items-center gap-3">
-          <Button variant="outline" size="sm" asChild>
+          <Button variant="default" size="sm" asChild>
             <Link href="/cv">
               <FileText className="h-4 w-4 mr-2" />
               Crear CV
             </Link>
           </Button>
           <Button
-            variant="outline"
+            variant="secondary"
             size="sm"
-            className="border-levely-blue/50 text-levely-blue dark:border-levely-green/50 dark:text-levely-green hover:bg-levely-green/10"
             asChild
           >
             <Link href="/evaluations">
@@ -68,7 +65,7 @@ export function NavbarPrivate({ creditLimits, user }: NavbarProps) {
               Evaluar Perfil
             </Link>
           </Button>
-          <Button variant="outline" size="sm" asChild>
+          <Button variant="default" size="sm" asChild>
             <Link href="/opportunities">
               <Briefcase className="h-4 w-4 mr-2" />
               Ver Oportunidades

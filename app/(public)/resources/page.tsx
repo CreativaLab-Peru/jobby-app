@@ -89,12 +89,12 @@ export default function Resources() {
             {resources.map((resource) => (
               <div
                 key={resource.title}
-                className="text-levely-dark card-elevated group hover:-translate-y-1 transition-all duration-300"
+                className="group rounded-xl border border-border p-6 flex flex-col justify-between hover:shadow-lg transition-shadow"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div
-                    className="w-12 h-12 rounded-xl bg-levely-dark/10 flex items-center justify-center group-hover:bg-levely-dark/20 transition-colors">
-                    <resource.icon className="w-6 h-6 text-levely-dark"/>
+                    className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
+                    <resource.icon className="w-6 h-6 text-accent"/>
                   </div>
                   <span className="text-xs font-medium px-3 py-1 rounded-full bg-secondary dark:text-white">
                     {resource.type}

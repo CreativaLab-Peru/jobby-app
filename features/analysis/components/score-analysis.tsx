@@ -84,7 +84,6 @@ export default function AnalysisScore({
                 <TabsTrigger
                   value="score"
                   className="flex items-center justify-center gap-3 h-full rounded-xl text-xs font-black uppercase tracking-[0.15em] transition-all duration-300
-                    text-muted-foreground
                     data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border-border/10"
                 >
                   <Target className="w-4 h-4" />
@@ -94,7 +93,6 @@ export default function AnalysisScore({
                 <TabsTrigger
                   value="opportunities"
                   className="flex items-center justify-center gap-3 h-full rounded-xl text-xs font-black uppercase tracking-[0.15em] transition-all duration-300
-                    text-muted-foreground
                     data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border-border/10"
                 >
                   <Award className="w-4 h-4" />

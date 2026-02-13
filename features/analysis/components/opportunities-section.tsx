@@ -1,11 +1,10 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Award, Briefcase, Search, Sparkles } from "lucide-react"
+import { Award, Search, Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
 import { Opportunity } from "@prisma/client"
 import { OpportunityCard } from "@/features/analysis/components/opportunity-card"
-import { cn } from "@/lib/utils"
 
 interface OpportunitiesSectionProps {
   opportunities: Opportunity[]
@@ -18,7 +17,7 @@ export function OpportunitiesSection({ opportunities }: OpportunitiesSectionProp
     <Card className="border-border/60 bg-card/50 backdrop-blur-xl rounded-[2.5rem] overflow-hidden shadow-xl shadow-primary/5">
       {/* Header con estética Dashboard */}
       <CardHeader className="p-8 pb-4">
-        <CardTitle className="flex items-center gap-4 text-xs font-black uppercase tracking-[0.3em] text-muted-foreground/80">
+        <CardTitle className="flex items-center gap-4 text-md font-black">
           <div className="p-2 bg-primary/10 rounded-lg">
             <Award className="w-5 h-5 text-primary" />
           </div>

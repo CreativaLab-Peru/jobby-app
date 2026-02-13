@@ -31,7 +31,7 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
 
       <CardHeader className="relative p-8 pb-4">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-          <CardTitle className="flex items-center gap-4 text-xs font-black uppercase tracking-[0.3em] text-muted-foreground/80">
+          <CardTitle className="flex items-center gap-4 text-md font-black">
             <div className="p-2 bg-primary/10 rounded-lg">
               <Star className="w-5 h-5 text-primary fill-primary/20" />
             </div>
@@ -42,7 +42,7 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
             onClick={onShowBreakdown}
             variant="secondary"
             size="sm"
-            className="rounded-xl font-black uppercase tracking-widest text-[10px] h-10 px-6 border-border/40 hover:border-primary/30 transition-all"
+            className="rounded-xl font-black uppercase text-xs h-10 px-6 border-border/40 hover:border-primary/30 transition-all"
           >
             <Calculator className="w-3.5 h-3.5 mr-2 text-primary" />
             Desglose Técnico
@@ -120,9 +120,9 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
 
         {/* Barra de progreso inferior tipo "Console" */}
         <div className="mt-10 space-y-2">
-          <div className="flex justify-between text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">
+          <div className="flex justify-between text-xs font-black uppercase">
             <span>Nivel de Optimización</span>
-            <span>{score}% Efficiency</span>
+            <span>{score}% Eficiencia</span>
           </div>
           <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
             <motion.div

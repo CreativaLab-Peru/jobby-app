@@ -30,7 +30,7 @@ export function EvaluationCard({ evaluation, onAction, onRetry, isRetrying }: Ev
     <div
       onClick={() => !isFailed && onAction(evaluation.id)}
       className={cn(
-        "group relative flex flex-col md:flex-row md:items-center justify-between p-6 rounded-[2rem] border transition-all duration-300",
+        "group relative flex flex-col md:flex-row md:items-center justify-between p-6 rounded-lg border transition-all duration-300",
         isFailed
           ? "border-destructive/20 bg-card cursor-default"
           : "border-border/40 bg-card hover:bg-secondary/10 hover:border-primary/20 cursor-pointer"

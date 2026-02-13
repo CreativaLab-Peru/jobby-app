@@ -12,45 +12,61 @@ export type EvaluationWithRelations = CvEvaluation & {
   recommendations: Recommendation[]; // Array, no objeto único
 };
 
-export const geEvaluationsForCurrentUser = async (skip = 0, take = 10) => {
+export type EvaluationFilterOptions = {
+  skip?: number;
+  take?: number;
+  cvId?: string; // Nuevo: Filtrar por un CV específico
+  search?: string; // Nuevo: Búsqueda por título o contenido
+};
+
+export const geEvaluationsForCurrentUser = async (options: EvaluationFilterOptions = {}) => {
+  const { skip = 0, take = 10, cvId, search } = options;
+
   try {
     const user = await getCurrentUser();
     if (!user) return null;
 
-    // Filtro centrado en la EVALUACIÓN
+    // CONSTRUCCIÓN DINÁMICA DEL FILTRO (Ingeniería de Consultas)
     const whereFilter: any = {
       cv: {
         userId: user.id,
         deletedAt: null,
+        // Si hay un cvId, filtramos por él
+        ...(cvId && { id: cvId }),
+        // Si hay búsqueda, buscamos en el título del CV
+        ...(search && {
+          title: {
+            contains: search,
+            mode: 'insensitive', // Ignorar mayúsculas/minúsculas
+          }
+        }),
       }
     };
 
-    // Consultamos directamente la tabla de evaluaciones
-    const evaluations = await prisma.cvEvaluation.findMany({
-      where: whereFilter,
-      skip,
-      take,
-      include: {
-        cv: {
-          include: {
-            previews: {
-              orderBy: { createdAt: "desc" },
-              take: 1
+    // Ejecución en paralelo para optimizar performance (KISS & Fast)
+    const [evaluations, totalCount] = await Promise.all([
+      prisma.cvEvaluation.findMany({
+        where: whereFilter,
+        skip,
+        take,
+        include: {
+          cv: {
+            include: {
+              previews: {
+                orderBy: { createdAt: "desc" },
+                take: 1
+              }
             }
-          }
+          },
+          scores: true,
+          recommendations: true
         },
-        scores: true,
-        recommendations: true
-      },
-      orderBy: {
-        createdAt: "desc" // La más reciente siempre primero
-      }
-    });
+        orderBy: { createdAt: "desc" }
+      }),
+      prisma.cvEvaluation.count({ where: whereFilter })
+    ]);
 
-    const totalCount = await prisma.cvEvaluation.count({
-      where: whereFilter
-    });
-
+    // Mapeo limpio (Ingeniería de Datos)
     const formattedEvaluations: EvaluationWithRelations[] = evaluations.map(evaluation => ({
       ...evaluation,
       cv: {
@@ -65,7 +81,7 @@ export const geEvaluationsForCurrentUser = async (skip = 0, take = 10) => {
       hasMore: skip + take < totalCount,
       totalCount,
       evaluations: formattedEvaluations,
-    }
+    };
   } catch (error) {
     console.error("[GET_EVALUATIONS_ERROR]", error);
     return null;

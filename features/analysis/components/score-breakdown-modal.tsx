@@ -2,10 +2,10 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import { Calculator, X, CheckCircle, AlertTriangle, Info, Award } from "lucide-react"
+import { Calculator, X, CheckCircle2, AlertCircle, Info, Award, Sparkles } from "lucide-react"
 import type { ScoreCategory } from "@/types/analysis"
 import { categoryMap } from "@/features/analysis/data/category-map";
+import { cn } from "@/lib/utils"
 
 interface ScoreBreakdownModalProps {
   show: boolean
@@ -22,130 +22,113 @@ export function ScoreBreakdownModal({ show, onClose, scoreBreakdown, totalScore 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-background/60 backdrop-blur-md z-50 flex items-center justify-center p-4"
           onClick={onClose}
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="bg-card border border-border rounded-2xl shadow-card max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="bg-card border border-border rounded-[2.5rem] shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header: REFACTOR a ai-gradient */}
-            <div className="bg-levely-blue/10 dark:bg-levely-green/10 p-6 ai-gradient text-levely-blue dark:text-levely-green relative overflow-hidden">
-              {/* Decoración sutil */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full translate-x-32 -translate-y-32 blur-3xl pointer-events-none" />
-
-              <div className="flex items-center justify-between relative z-10">
-                <div className="flex items-center gap-4">
-                  <div className="p-2 bg-levely-blue/20 dark:bg-levely-green/20 rounded-lg">
-                    <Calculator className="w-8 h-8 text-levely-blue dark:text-levely-green" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-levely-blue dark:text-levely-green">Desglose del Score</h2>
-                    <p className="text-levely-blue/80 dark:text-levely-green/80 font-medium">Análisis detallado: {totalScore}/100 puntos</p>
-                  </div>
+            {/* Header: Uso de Secondary para profundidad */}
+            <div className="border-b border-border p-8 flex items-center justify-between bg-secondary/30">
+              <div className="flex items-center gap-5">
+                <div className="p-3 bg-primary/10 rounded-2xl ring-1 ring-primary/20">
+                  <Calculator className="w-6 h-6 text-primary" />
                 </div>
-                <Button variant="ghost" size="icon" onClick={onClose} className="text-white hover:bg-white/20 rounded-full">
-                  <X className="w-6 h-6" />
-                </Button>
+                <div>
+                  <h2 className="text-xl font-bold text-foreground">Desglose de Puntuación</h2>
+                  <p className="text-sm text-muted-foreground font-medium flex items-center gap-2">
+                    <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse" />
+                    Análisis completo: {totalScore}/100 pts
+                  </p>
+                </div>
               </div>
+              <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full hover:bg-secondary w-10 h-10">
+                <X className="w-5 h-5 text-muted-foreground" />
+              </Button>
             </div>
 
-            <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)] custom-scrollbar">
-              <div className="space-y-6">
+            <div className="p-8 overflow-y-auto max-h-[calc(85vh-120px)] custom-scrollbar space-y-10">
+              {/* Categorías con barras de progreso minimalistas */}
+              <div className="grid gap-8">
                 {scoreBreakdown.map((category, index) => {
                   const IconComponent = category.Icon || Award;
-                  const categoryColor = category.color || 'var(--primary)';
+                  const percentage = Math.round((category.score / category.maxScore) * 100);
 
                   return (
-                    <motion.div
-                      key={`${category.category}-${index}`}
-                      initial={{ opacity: 0, y: 15 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      className="border border-border rounded-xl p-6 bg-card hover:border-primary/30 transition-all shadow-sm"
-                    >
-                      <div className="flex items-start justify-between mb-6">
-                        <div className="flex items-center gap-4">
-                          <div className="p-3 rounded-xl bg-muted">
-                            <IconComponent className="w-7 h-7 text-levely-blue dark:text-levely-green" />
+                    <div key={index} className="space-y-5">
+                      <div className="flex items-end justify-between px-1">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-secondary rounded-lg">
+                            <IconComponent className="w-4 h-4 text-primary" />
                           </div>
-                          <div>
-                            <h3 className="text-lg font-bold text-foreground">
-                              {categoryMap[category.category as keyof typeof categoryMap] || category.category}
-                            </h3>
-                            <p className="text-sm text-muted-foreground">
-                              <span className="font-bold text-foreground">{category.score}</span> de {category.maxScore} pts
-                            </p>
-                          </div>
+                          <h3 className="font-bold text-sm uppercase tracking-wider text-foreground/80">
+                            {categoryMap[category.category as keyof typeof categoryMap] || category.category}
+                          </h3>
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-black text-levely-blue dark:text-levely-green">
-                            {Math.round((category.score / category.maxScore) * 100)}%
-                          </div>
-                          <div className="w-28 h-2 mt-2 rounded-full bg-muted overflow-hidden">
-                            <div
-                              className="h-full rounded-full transition-all duration-700"
-                              style={{
-                                width: `${(category.score / category.maxScore) * 100}%`,
-                                background: "linear-gradient(90deg, #3b82f6 0%, #22c55e 100%)"
-                              }}
-                            />
-                          </div>
+                          <span className="text-sm font-black text-primary">{percentage}%</span>
                         </div>
+                      </div>
+
+                      {/* Progress Line sutil */}
+                      <div className="h-1 w-full bg-secondary rounded-full overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${percentage}%` }}
+                          transition={{ duration: 1, delay: 0.5 }}
+                          className="h-full bg-primary rounded-full"
+                        />
                       </div>
 
                       <div className="grid gap-2">
                         {category.items.map((item, itemIndex) => (
                           <div
                             key={itemIndex}
-                            className="flex items-center justify-between py-3 px-4 bg-muted/30 hover:bg-muted/60 rounded-lg transition-colors border border-transparent hover:border-border"
+                            className="flex items-center justify-between p-4 bg-secondary/20 rounded-2xl border border-transparent hover:border-border/40 hover:bg-secondary/40 transition-all group"
                           >
-                            <div className="flex items-center gap-3 flex-1">
-                              {item.status === "complete" && <CheckCircle className="w-4 h-4 text-levely-green" />}
-                              {item.status === "partial" && <AlertTriangle className="w-4 h-4 text-levely-blue" />}
-                              {item.status === "missing" && <X className="w-4 h-4 text-destructive" />}
-
-                              <span className="text-sm font-medium text-levely-blue dark:text-levely-green">
+                            <div className="flex items-center gap-3">
+                              <div className="transition-transform group-hover:scale-110">
+                                {item.status === "complete" && <CheckCircle2 className="w-4 h-4 text-primary" />}
+                                {item.status === "partial" && <AlertCircle className="w-4 h-4 text-amber-500" />}
+                                {item.status === "missing" && <X className="w-4 h-4 text-destructive" />}
+                              </div>
+                              <span className="text-sm text-muted-foreground font-medium group-hover:text-foreground transition-colors">
                                 {item.name}
                               </span>
                             </div>
-                            <div className="flex items-center gap-3">
-                              <span className="text-xs font-bold px-2 py-1 rounded"
-                                style={{
-                                  background: "linear-gradient(90deg, #3b82f6 0%, #22c55e 100%)",
-                                  color: "white"
-                                }}>
-                                {item.points} pts
-                              </span>
-                            </div>
+                            <span className="text-[10px] font-black text-primary bg-primary/10 px-2.5 py-1 rounded-lg">
+                              +{item.points} PTS
+                            </span>
                           </div>
                         ))}
                       </div>
-                    </motion.div>
+                    </div>
                   );
                 })}
               </div>
 
-              {/* Tips Section REFACTOR */}
-              <div className="mt-8 p-6 bg-levely-blue/5 dark:bg-levely-green/5 rounded-xl border border-levely-blue/20 dark:border-levely-green/20 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                  <Sparkles className="w-12 h-12 text-levely-blue dark:text-levely-green" />
-                </div>
-                <div className="flex items-start gap-4 relative z-10">
-                  <div className="p-2 bg-levely-blue/10 rounded-lg">
-                    <Info className="w-6 h-6 text-levely-blue dark:text-levely-green" />
+              {/* Tips Section: Más vida con Sparkles */}
+              <div className="p-6 bg-secondary/40 rounded-[2rem] border border-border/50 relative overflow-hidden group">
+                <Sparkles className="absolute -right-2 -top-2 w-12 h-12 text-primary/5 -rotate-12 group-hover:text-primary/10 transition-colors" />
+
+                <div className="flex items-start gap-4">
+                  <div className="p-2.5 bg-background rounded-xl shadow-sm">
+                    <Info className="w-5 h-5 text-primary" />
                   </div>
-                  <div>
-                    <h4 className="font-bold text-levely-blue dark:text-levely-green mb-2">¿Cómo mejorar tu score con Levely?</h4>
-                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-sm text-muted-foreground">
-                      <li className="flex items-center gap-2">• Completa campos obligatorios</li>
-                      <li className="flex items-center gap-2">• Agrega resultados medibles</li>
-                      <li className="flex items-center gap-2">• Incluye certificaciones</li>
-                      <li className="flex items-center gap-2">• Refina tus descripciones</li>
-                    </ul>
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-sm tracking-tight">Estrategias de Optimización</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {["Resultados medibles", "Certificaciones", "Keywords", "Estructura limpia"].map((tip) => (
+                        <div key={tip} className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
+                          <div className="w-1.5 h-1.5 rounded-full bg-primary/40" />
+                          {tip}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -154,12 +137,5 @@ export function ScoreBreakdownModal({ show, onClose, scoreBreakdown, totalScore 
         </motion.div>
       )}
     </AnimatePresence>
-  )
-}
-
-// Icono extra para el diseño
-function Sparkles(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
   )
 }

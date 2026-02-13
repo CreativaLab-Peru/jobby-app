@@ -47,7 +47,7 @@ export function RecommendationsSection({ recommendations }: RecommendationsSecti
   return (
     <Card className="border-border/60 bg-card/50 backdrop-blur-xl rounded-[2.5rem] overflow-hidden shadow-xl shadow-primary/5">
       <CardHeader className="p-8 pb-4">
-        <CardTitle className="flex items-center gap-4 text-xs font-black uppercase tracking-[0.3em] text-muted-foreground/80">
+        <CardTitle className="flex items-center gap-4 text-md font-black">
           <div className="p-2 bg-primary/10 rounded-lg">
             <Lightbulb className="w-5 h-5 text-primary" />
           </div>

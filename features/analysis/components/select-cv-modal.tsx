@@ -19,6 +19,7 @@ import {Badge} from "@/components/ui/badge";
 import {formatDate} from "@/utils/format-date";
 import {useEvaluationModalStore} from "../hooks/use-evaluation-modal-store";
 import {CvType, OpportunityType} from "@prisma/client";
+import {CvWithRelations} from "@/features/cv/actions/get-cv-for-current-user";
 
 // Mapeos extraídos de tu contexto
 const cvTypeIcons: Record<CvType, { icon: React.ReactNode; label: string; color: string }> = {
@@ -125,7 +126,7 @@ const getScoreBadgeColor = (score: number) => {
 };
 
 interface SelectCvModalProps {
-  cvs: any[];
+  cvs: CvWithRelations[];
   onConfirm: (cvId: string) => Promise<void>;
 }
 

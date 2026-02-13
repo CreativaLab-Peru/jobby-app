@@ -17,21 +17,24 @@ import {
   EvaluationWithRelations,
   geEvaluationsForCurrentUser
 } from "@/features/cv/actions/get-evaluations-for-current-user";
+import {CvWithRelations} from "@/features/cv/actions/get-cv-for-current-user";
 
 export type ScoresListPageProps = {
-  initialCvs: EvaluationWithRelations[];
+  initialEvaluations: EvaluationWithRelations[];
+  initialCvs: CvWithRelations[];
   canAnalyze: boolean;
   totalCount: number;
   hasMoreProp: boolean;
 }
 
 export function ScoresListPage({
+                                 initialEvaluations,
                                  initialCvs,
                                  canAnalyze,
                                  totalCount,
                                  hasMoreProp
 }: ScoresListPageProps) {
-  const [evaluations, setEvaluations] = useState(initialCvs);
+  const [evaluations, setEvaluations] = useState(initialEvaluations);
   const [hasMore, setHasMore] = useState(hasMoreProp);
   const [isPending, startTransition] = useTransition();
   const [retryingId, setRetryingId] = useState<string | null>(null);
@@ -134,7 +137,10 @@ export function ScoresListPage({
         </motion.div>
       </div>
 
-      <SelectCvModal cvs={evaluations} onConfirm={() => selectedCvId && handleAnalyze(selectedCvId)}/>
+      <SelectCvModal
+        cvs={initialCvs}
+        onConfirm={() => selectedCvId && handleAnalyze(selectedCvId)}
+      />
     </main>
   );
 }

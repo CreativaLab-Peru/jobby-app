@@ -1,23 +1,31 @@
 import { ScoresListPage } from "@/features/analysis/components/score-list";
 import { getCurrentCreditLimits } from "@/features/credits/actions/get-current-credits-limits";
 import { geEvaluationsForCurrentUser } from "@/features/cv/actions/get-evaluations-for-current-user";
+import {getAllCvForCurrentUser} from "@/features/cv/actions/get-all-cv-for-current-user";
 
 export default async function MyEvaluationsPage() {
-  const [cvData, creditLimits] = await Promise.all([
+  const [cvEvaluations, creditLimits, cvData] = await Promise.all([
     geEvaluationsForCurrentUser(0, 5),
-    getCurrentCreditLimits()
+    getCurrentCreditLimits(),
+    getAllCvForCurrentUser(0, 50),
   ]);
+  console.log("cvEvaluations", cvEvaluations.evaluations.length);
+  console.log("creditLimits", creditLimits);
+  console.log("cvData", cvData.cvs.length);
 
-  const cvs = cvData?.evaluations ?? [];
+  const initialCvs = cvData.cvs;
+
+  const evaluations = cvEvaluations?.evaluations ?? [];
 
   const canAnalyze = (creditLimits?.aiActionsLimit ?? 0) > 0;
 
-  const hasMore = cvData?.hasMore ?? false;
-  const totalCount = cvData?.totalCount ?? 0;
+  const hasMore = cvEvaluations?.hasMore ?? false;
+  const totalCount = cvEvaluations?.totalCount ?? 0;
 
   return (
     <ScoresListPage
-      initialCvs={cvs}
+      initialEvaluations={evaluations}
+      initialCvs={initialCvs}
       canAnalyze={canAnalyze}
       hasMoreProp={hasMore}
       totalCount={totalCount}

@@ -3,14 +3,16 @@ import type { SectionConfig } from "../../types";
 export const marketingStrategyScholarship: SectionConfig = {
     sections: ["personal", "projects", "achievements", "education"],
 
-    // Educación opcional para becas
-    requiredFields: {
-        "education.level": false,
-        "education.title": false,
-        "education.institution": false,
-        "education.location": false,
-        "education.year": false,
-    },
+  // Educación opcional para becas
+  requiredFields: {
+    // Summary opcional en todos los CVs
+    "personal.summary": false,
+    "education.level": false,
+    "education.title": false,
+    "education.institution": false,
+    "education.location": false,
+    "education.year": false,
+  },
 
     examples: {
         // Personal - Summary

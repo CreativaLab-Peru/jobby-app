@@ -1,10 +1,23 @@
-# v1.1.15 - 2025-02-11
+# v1.1.15 - 2025-02-11 [WIP]
 
-# Fixes
-- Fixed an issue that prevented some CVs from uploading successfully
+## Features
+- Modal to select and analyze CV from evaluations page
+- Icons for Opportunity Type and Professional Profile in CV selection modal
 
-# Enhancements
-- Prompt users to check their email after sign-up to reduce confusion
+## Fixes
+- Fixed CV list in modal to show ALL CVs (not just analyzed ones)
+- Fixed "Failed to save, not advancing" error in CV creation form
+- Improved error handling and user feedback in CV form navigation
+- Fixed validation logic to properly handle optional fields
+
+## Enhancements
+- Professional summary is now OPTIONAL for all CV types
+- Education is MANDATORY for: Scholarships, Internships, and Exchange Programs
+- Education is OPTIONAL for: Employment
+- Improved navigation flow in CV creation form
+- Background saving while navigating between sections
+- Strict validation only on final step before preview
+- Better error handling with toast notifications
 
 # v1.1.11, v1.1.12, v1.1.13, v1.1.14 - 2025-02-06
 

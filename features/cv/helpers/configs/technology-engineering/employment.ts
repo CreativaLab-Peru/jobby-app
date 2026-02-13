@@ -8,6 +8,16 @@ export const technologyEngineeringEmployment: SectionConfig = {
     "certifications",
     "skills",
   ],
+  requiredFields: {
+    // Summary opcional en todos los CVs
+    "personal.summary": false,
+    // Educación opcional para empleo
+    "education.level": false,
+    "education.title": false,
+    "education.institution": false,
+    "education.location": false,
+    "education.year": false,
+  },
   examples: {
     "personal.summary":
       "Ingeniero de software con más de 5 años de experiencia en desarrollo de aplicaciones web y móviles. Especializado en tecnologías de frontend y backend, con un enfoque en la creación de soluciones escalables y eficientes. Apasionado por la innovación y la mejora continua en el desarrollo de software.",

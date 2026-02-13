@@ -13,6 +13,7 @@ import { CVData } from "@/types/cv";
 import { updateCvAndSections } from "@/features/cv/actions/update-cv-and-sections";
 import { OpportunityType, CvType } from "@prisma/client"
 import {routes} from "@/lib/routes";
+import { toast } from "sonner";
 
 interface CreateCVPageProps {
   cv: CVData
@@ -41,11 +42,15 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
       if (result?.success) {
         return true
       } else {
-        console.error("Failed to save CV:", result?.message)
+        const errorMsg = result?.message || "Error desconocido al guardar"
+        console.error("Failed to save CV:", errorMsg)
+        toast.error(errorMsg)
         return false
       }
     } catch (error) {
+      const errorMsg = error?.message || "Error al guardar el CV"
       console.error("Error saving CV:", error)
+      toast.error(errorMsg)
       return false
     } finally {
       setIsSaving(false)
@@ -54,22 +59,26 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
 
   const handleNext = async () => {
     // Validar campos obligatorios antes de avanzar
-    if (formRef.current && !formRef.current.validate()) {
-      return;
-    }
+    const isValid = formRef.current?.validate()
 
-    // Esperar a que se guarde antes de avanzar
-    const saved = await submit()
-
-    if (!saved) {
-      console.error("Failed to save, not advancing")
+    if (!isValid) {
+      // Si hay campos requeridos incompletos, NO avanzar
+      // El validador ya mostró el toast.error
       return
     }
 
+    // Guardado en background - no bloquea navegación
+    submit()
+
+    // Navegar a la siguiente sección
     if (activeSection < sections.length - 1) {
       setActiveSection(activeSection + 1)
     } else {
-      router.push(routes.app.cv.preview(id))
+      // En la última sección, esperar guardado antes de ir a preview
+      const saved = await submit()
+      if (saved) {
+        router.push(routes.app.cv.preview(id))
+      }
     }
   }
 

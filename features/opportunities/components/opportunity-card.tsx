@@ -4,12 +4,11 @@ import { Calendar, ExternalLink, MapPin, Target, Eye, Building2, Sparkles } from
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { SerializableOpportunity } from "@/features/opportunities/get-opportunities";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 interface Props {
-  opportunity: SerializableOpportunity;
+  opportunity: any;
 }
 
 export default function OpportunityCard({ opportunity }: Props) {

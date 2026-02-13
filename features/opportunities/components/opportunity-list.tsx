@@ -1,12 +1,11 @@
 "use client";
 
 import { Briefcase } from "lucide-react";
-import { SerializableOpportunity } from "@/features/opportunities/get-opportunities";
 import OpportunityCard from "@/features/opportunities/components/opportunity-card";
 import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
 
 interface Props {
-  opportunities: SerializableOpportunity[];
+  opportunities: any[];
 }
 
 export default function OpportunityList({ opportunities }: Props) {

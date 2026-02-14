@@ -164,7 +164,9 @@ export function SelectCvModal({
                     className="flex items-center gap-1.5 mt-2 text-xs font-medium text-muted-foreground">
                     <Sparkles className="w-3.5 h-3.5 text-primary"/>
                     <span>Esto consumirá un crédito de <span
-                      className="font-bold text-foreground uppercase tracking-wider">Acciones IA</span></span>
+                      className="font-bold text-secondary uppercase tracking-wider bg-primary px-3 rounded-lg text-[10px]">
+                      Acciones IA
+                    </span></span>
                   </div>
                 </div>
                 <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full">

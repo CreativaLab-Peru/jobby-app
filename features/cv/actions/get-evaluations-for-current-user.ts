@@ -17,10 +17,11 @@ export type EvaluationFilterOptions = {
   take?: number;
   cvId?: string; // Nuevo: Filtrar por un CV específico
   search?: string; // Nuevo: Búsqueda por título o contenido
+  onlySuccessful?: boolean; // Nuevo: Excluir evaluaciones fallidas
 };
 
 export const geEvaluationsForCurrentUser = async (options: EvaluationFilterOptions = {}) => {
-  const { skip = 0, take = 10, cvId, search } = options;
+  const { skip = 0, take = 10, cvId, search, onlySuccessful } = options;
 
   try {
     const user = await getCurrentUser();
@@ -40,7 +41,8 @@ export const geEvaluationsForCurrentUser = async (options: EvaluationFilterOptio
             mode: 'insensitive', // Ignorar mayúsculas/minúsculas
           }
         }),
-      }
+      },
+      status: onlySuccessful ? { not: "FAILED" } : undefined, // Excluir evaluaciones fallidas si se indica
     };
 
     // Ejecución en paralelo para optimizar performance (KISS & Fast)

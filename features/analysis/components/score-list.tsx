@@ -19,6 +19,8 @@ import {
 } from "@/features/cv/actions/get-evaluations-for-current-user";
 import { CvWithRelations } from "@/features/cv/actions/get-cv-for-current-user";
 import { SearchableSelect } from "@/components/shared/searchable-select";
+import {Input} from "@/components/ui/input";
+import {Switch} from "@/components/ui/switch";
 
 export type ScoresListPageProps = {
   initialEvaluations: EvaluationWithRelations[];
@@ -39,7 +41,10 @@ export function ScoresListPage({
   const [hasMore, setHasMore] = useState(hasMoreProp);
   const [totalCount, setTotalCount] = useState(initialTotal);
   const [isPending, startTransition] = useTransition();
+
+  // Filters state
   const [filterCvId, setFilterCvId] = useState<string | null>(null);
+  const [justSuccessful, setJustSuccessful] = useState(true);
 
   const { onOpen, onClose, selectedCvId, setIsAnalyzing } = useEvaluationModalStore();
   const router = useRouter();
@@ -50,14 +55,19 @@ export function ScoresListPage({
   }));
 
   useEffect(() => {
-    if (filterCvId === null && evaluations === initialEvaluations) return;
+    const isInitialState = filterCvId === null &&
+      justSuccessful === true &&
+      evaluations === initialEvaluations;
+
+    if (isInitialState) return;
 
     const fetchFilteredData = () => {
       startTransition(async () => {
         const result = await geEvaluationsForCurrentUser({
           skip: 0,
           take: 5,
-          cvId: filterCvId || undefined
+          cvId: filterCvId || undefined,
+          onlySuccessful: justSuccessful,
         });
 
         if (result) {
@@ -69,7 +79,7 @@ export function ScoresListPage({
     };
 
     fetchFilteredData();
-  }, [filterCvId]);
+  }, [filterCvId, justSuccessful]);
 
   const handleLoadMore = () => {
     startTransition(async () => {
@@ -125,9 +135,6 @@ export function ScoresListPage({
           {/* Barra de Filtros con Feedback de Carga */}
           <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-lg border border-border bg-card/50 backdrop-blur-sm">
             <div className="flex items-center gap-4">
-              {/*<div className="p-2 bg-secondary rounded-lg">*/}
-              {/*  <Search className="w-4 h-4 text-primary" />*/}
-              {/*</div>*/}
               <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                 <span className="text-xs font-black">
                   Filtra por Cv:
@@ -140,15 +147,26 @@ export function ScoresListPage({
                 />
               </div>
             </div>
+            <div className="flex items-center gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                <span className="text-xs font-black">
+                  Solo analisis exitosos:
+                </span>
+                <Switch
+                  checked={justSuccessful}
+                  onCheckedChange={(checked) => setJustSuccessful(checked)}
+                />
+              </div>
+            </div>
 
             <div className="flex items-center gap-3">
-              {isPending && (
-                <div className="flex gap-1">
-                  <span className="w-1 h-1 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]" />
-                  <span className="w-1 h-1 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]" />
-                  <span className="w-1 h-1 rounded-full bg-primary animate-bounce" />
-                </div>
-              )}
+              {/*{isPending && (*/}
+              {/*  <div className="flex gap-1">*/}
+              {/*    <span className="w-1 h-1 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]" />*/}
+              {/*    <span className="w-1 h-1 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]" />*/}
+              {/*    <span className="w-1 h-1 rounded-full bg-primary animate-bounce" />*/}
+              {/*  </div>*/}
+              {/*)}*/}
               <div className="text-xs px-3 py-1">
                 {totalCount} totales
               </div>

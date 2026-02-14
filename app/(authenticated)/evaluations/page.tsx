@@ -10,6 +10,7 @@ export default async function MyEvaluationsPage() {
   const params: EvaluationFilterOptions = {
     skip: 0,
     take: 5,
+    onlySuccessful: true,
   }
 
   const [cvEvaluations, creditLimits, cvData] = await Promise.all([

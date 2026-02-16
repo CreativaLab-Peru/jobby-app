@@ -3,6 +3,7 @@
 import { ArrowRight, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import {useRouter} from "next/navigation";
 
 interface TopOpportunity {
   id: string;
@@ -13,6 +14,7 @@ interface TopOpportunity {
 }
 
 export function TopMatchesList({ topOpportunities }: { topOpportunities: TopOpportunity[] }) {
+  const route = useRouter();
   return (
     <div className="bg-card border-border/40 rounded-lg overflow-hidden group transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 p-5">
       {/* Header con estilo de Módulo */}
@@ -31,6 +33,7 @@ export function TopMatchesList({ topOpportunities }: { topOpportunities: TopOppo
             <div
               key={opt.id}
               className="group flex items-center justify-between gap-4 p-4 rounded-2xl border border-border/50 hover:border-primary/30 transition-all duration-300 hover:cursor-pointer"
+              onClick={() => route.push(`/opportunities/${opt.id}/details`)}
             >
               <div className="flex items-center gap-4">
                 {/* Porcentaje con estilo Squircle */}
@@ -43,7 +46,7 @@ export function TopMatchesList({ topOpportunities }: { topOpportunities: TopOppo
                     {opt.title}
                   </h4>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">
+                    <span className="text-xs text-muted-foreground font-bold">
                       {opt.type.replace("_", " ")}
                     </span>
                   </div>

@@ -87,7 +87,7 @@ export function EmployabilityCard({ score, sector }: Props) {
               </Badge>
             </div>
 
-            <p className="text-muted-foreground leading-relaxed text-sm md:text-base font-medium max-w-sm">
+            <p className="text-muted-foreground leading-relaxed text-xs md:text-base font-medium max-w-sm">
               Tu perfil destaca en <span className="text-foreground font-bold">{displaySector}</span>.
             </p>
 
@@ -96,7 +96,7 @@ export function EmployabilityCard({ score, sector }: Props) {
                 <div className="w-1.5 h-1.5 rounded-full bg-primary" />
                 Actualizado
               </div>
-              <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-primary/5 border border-primary/20 text-[10px] font-black uppercase tracking-tight text-primary">
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-primary/5 border border-primary/20 text-[10px] font-bold uppercase tracking-tight text-primary">
                 Levely AI Verified
               </div>
             </div>

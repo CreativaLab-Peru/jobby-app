@@ -39,14 +39,14 @@ export const getStatusCvById = async (cvId: string): Promise<CvStatus | null> =>
     const evaluateJob = await prisma.cvEvaluation.findFirst({
       where: { cvId: cv.id },
       orderBy: {
-        createdAt: "desc",
+        updatedAt: "desc",
       },
     });
 
     // For uploaded CVs (have queueJob)
     if (queueJob) {
       const statusQueueJob = queueJob.status;
-      
+
       if (statusQueueJob === JobStatus.IN_PROGRESS) {
         return { status: "CV_IN_PROGRESS" };
       }
@@ -68,11 +68,11 @@ export const getStatusCvById = async (cvId: string): Promise<CvStatus | null> =>
     }
 
     const statusEvaluateJob = evaluateJob.status;
-    
+
     if (statusEvaluateJob === JobStatus.PENDING) {
       return { status: "CV_EVALUATION_PENDING_EVALUATION" };
     }
-    
+
     if (statusEvaluateJob === JobStatus.IN_PROGRESS) {
       return { status: "CV_EVALUATION_IN_PROGRESS" };
     }

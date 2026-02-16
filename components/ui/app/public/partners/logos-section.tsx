@@ -1,5 +1,5 @@
 const partnerLogos = [
-  // { name: "AIESEC", light: "/partners/AIESEC-light.png", dark: "/partners/AIESEC-dark.png" },
+  { name: "AIESEC", light: "/partners/AIESEC-light.png", dark: "/partners/AIESEC-dark.png" },
   { name: "Universidad Continental", light: "/partners/Continental-light.png", dark: "/partners/Continental-dark.png" },
   { name: "Mujeres Digitales", light: "/partners/MujeresDigitales-light.png", dark: "/partners/MujeresDigitales-dark.png" },
   { name: "Data Science Perú", light: "/partners/data_science-light.png", dark: "/partners/data_science-dark.png" },

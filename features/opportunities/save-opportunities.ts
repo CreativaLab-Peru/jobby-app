@@ -22,7 +22,7 @@ export const saveOpportunities = async (cvId: string, opportunities: MatchAnalys
       const title = opp.details?.title || "Sin título";
       const linkUrl = opp.details?.url || "#";
       const deadline = opp.details?.deadline ? new Date(opp.details.deadline) : null;
-      
+
       // Build requirements from skill arrays
       let requirements = "";
       if (opp.details?.requiredSkills && opp.details.requiredSkills.length > 0) {
@@ -35,13 +35,13 @@ export const saveOpportunities = async (cvId: string, opportunities: MatchAnalys
       if (!requirements) {
         requirements = "Ver detalle para más información";
       }
-      
+
       const company = opp.details?.organization?.organization_name || null;
       const modality = opp.details?.modality || null;
       const location = opp.details?.ubication || null;
       const description = opp.details?.description || null;
       const benefits = opp.details?.benefits || null;
-      
+
       // Format salary if available
       let salary = null;
       if (opp.details?.salary) {
@@ -53,7 +53,7 @@ export const saveOpportunities = async (cvId: string, opportunities: MatchAnalys
           salary = `${currencyCode} ${min}+`;
         }
       }
-      
+
       // Use the CV's opportunity type as the source of truth
       const type = cv.opportunityType;
 
@@ -63,7 +63,7 @@ export const saveOpportunities = async (cvId: string, opportunities: MatchAnalys
         },
         create: {
           id: opp.opportunity_id,
-          type: type, 
+          type: type,
           title: title,
           deadline: deadline,
           requirements: requirements,

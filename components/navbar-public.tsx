@@ -23,7 +23,7 @@ const NavbarPublic = ({ authenticated }: HeaderProps) => {
       {/* NAVBAR */}
       <nav className="container mx-auto flex h-16 items-center justify-between px-4 lg:h-20">
         {/* Logo */}
-        <Link href="/" className="relative h-30 w-40 lg:h-40 lg:w-52">
+        <Link href="/" className="relative h-10 w-32 lg:h-12 lg:w-40">
           <Image
             src="/logo_light.png"
             alt="Levely"

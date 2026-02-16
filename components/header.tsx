@@ -18,7 +18,7 @@ const navItems = [
   { name: "Career Accelerator", href: "/career-accelerator" },
   { name: "Partners", href: "/partners" },
   // { name: "Empresas", href: "/empresas" },
-  { name: "Resources", href: "/resources" },
+  // { name: "Resources", href: "/resources" },
 ];
 
 export default function Header({ authenticated }: HeaderProps) {
@@ -31,7 +31,7 @@ export default function Header({ authenticated }: HeaderProps) {
       <div className="container-levely">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link href="/" className="relative h-30 w-40 lg:h-40 lg:w-52">
+          <Link href="/" className="relative h-10 w-32 lg:h-12 lg:w-40">
             <Image
               src="/logo_light.png"
               alt="Levely"

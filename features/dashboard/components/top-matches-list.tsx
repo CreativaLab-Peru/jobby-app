@@ -43,7 +43,7 @@ export function TopMatchesList({ topOpportunities }: { topOpportunities: TopOppo
                     {opt.title}
                   </h4>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">
+                    <span className="text-xs text-muted-foreground font-bold">
                       {opt.type.replace("_", " ")}
                     </span>
                   </div>

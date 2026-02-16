@@ -19,8 +19,11 @@ import {
 } from "@/features/cv/actions/get-evaluations-for-current-user";
 import { CvWithRelations } from "@/features/cv/actions/get-cv-for-current-user";
 import { SearchableSelect } from "@/components/shared/searchable-select";
-import {Input} from "@/components/ui/input";
 import {Switch} from "@/components/ui/switch";
+import {analyzeCvById} from "@/features/analysis/actions/analyze-cv-by-id";
+import {
+  reAnalyzeCvByEvaluationId
+} from "@/features/analysis/actions/re-analyze-cv-by-evaluation-id";
 
 export type ScoresListPageProps = {
   initialEvaluations: EvaluationWithRelations[];
@@ -28,6 +31,10 @@ export type ScoresListPageProps = {
   canAnalyze: boolean;
   totalCount: number;
   hasMoreProp: boolean;
+  currentFilters: {
+    cvId: string | null;
+    justSuccessful: boolean;
+  }
 }
 
 export function ScoresListPage({
@@ -35,7 +42,8 @@ export function ScoresListPage({
                                  initialCvs,
                                  canAnalyze,
                                  totalCount: initialTotal,
-                                 hasMoreProp
+                                 hasMoreProp,
+                                 currentFilters
                                }: ScoresListPageProps) {
   const [evaluations, setEvaluations] = useState(initialEvaluations);
   const [hasMore, setHasMore] = useState(hasMoreProp);
@@ -43,7 +51,7 @@ export function ScoresListPage({
   const [isPending, startTransition] = useTransition();
 
   // Filters state
-  const [filterCvId, setFilterCvId] = useState<string | null>(null);
+  const [filterCvId, setFilterCvId] = useState<string | null>(currentFilters?.cvId || null);
   const [justSuccessful, setJustSuccessful] = useState(true);
 
   const { onOpen, onClose, selectedCvId, setIsAnalyzing } = useEvaluationModalStore();
@@ -86,7 +94,8 @@ export function ScoresListPage({
       const result = await geEvaluationsForCurrentUser({
         skip: evaluations.length,
         take: 5,
-        cvId: filterCvId || undefined
+        cvId: filterCvId || undefined,
+        onlySuccessful: justSuccessful,
       });
       if (result) {
         setEvaluations((prev) => [...prev, ...result.evaluations]);
@@ -98,17 +107,13 @@ export function ScoresListPage({
   const handleAnalyze = async (id: string) => {
     setIsAnalyzing(true);
     try {
-      const response = await fetch("/api/cv/analysis", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cvId: id }),
-      });
-
-      if (response.ok) {
+      const response = await analyzeCvById(id);
+      if (response.success) {
         toast.success('Análisis iniciado');
         onClose();
         router.push(`/process/${id}`);
       } else {
+        console.error("Error response from API:", response);
         toast.error("Error al procesar el CV");
       }
     } catch (error) {
@@ -117,6 +122,24 @@ export function ScoresListPage({
       setIsAnalyzing(false);
     }
   };
+
+  const handleReAnalyze = async (evaluationId: string) => {
+    setIsAnalyzing(true);
+    try {
+      const cvId = evaluations.find(e => e.id === evaluationId)?.cvId;
+      const response = await reAnalyzeCvByEvaluationId(evaluationId);
+      if (response.success) {
+        toast.success('Reanálisis iniciado');
+        router.push(`/process/${cvId}`);
+      } else {
+        toast.error("Error al reanalizar");
+      }
+    } catch (error) {
+      toast.error("Error de conexión");
+    } finally {
+      setIsAnalyzing(false);
+    }
+  }
 
   return (
     <main className="min-h-[90vh] p-4 md:p-8">
@@ -160,13 +183,6 @@ export function ScoresListPage({
             </div>
 
             <div className="flex items-center gap-3">
-              {/*{isPending && (*/}
-              {/*  <div className="flex gap-1">*/}
-              {/*    <span className="w-1 h-1 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]" />*/}
-              {/*    <span className="w-1 h-1 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]" />*/}
-              {/*    <span className="w-1 h-1 rounded-full bg-primary animate-bounce" />*/}
-              {/*  </div>*/}
-              {/*)}*/}
               <div className="text-xs px-3 py-1">
                 {totalCount} totales
               </div>
@@ -196,6 +212,8 @@ export function ScoresListPage({
                       key={evaluation.id}
                       evaluation={evaluation}
                       onAction={() => router.push(`/evaluations/${evaluation.id}`)}
+                      onRetry={handleReAnalyze}
+                      isRetrying={isPending}
                     />
                   ))}
                 </AnimatePresence>

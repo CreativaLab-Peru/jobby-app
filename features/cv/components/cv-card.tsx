@@ -119,19 +119,19 @@ export function CVCard({ cv }: CVCardProps) {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => router.push(`/cv/${cv.id}/history`)}
+              onClick={() => router.push(`/evaluations?cvId=${cv.id}`)}
               className="text-xs font-bold text-muted-foreground hover:text-primary transition-colors"
             >
-              Ver analisis
+              Ver Evaluaciones
               <FileText className="ml-2 h-3.5 w-3.5" />
             </Button>
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => router.push(`/cv/${cv.id}/preview`)}
+              onClick={() => router.push(`/opportunities?cvId=${cv.id}`)}
               className="text-xs font-bold text-muted-foreground hover:text-primary transition-colors"
             >
-              Ver link
+              Ver Oportunidades
               <ExternalLink className="ml-2 h-3.5 w-3.5" />
             </Button>
             <Button
@@ -139,7 +139,7 @@ export function CVCard({ cv }: CVCardProps) {
               onClick={() => router.push(`/cv/${cv.id}/preview`)}
               className="h-9 rounded-lg px-6 text-xs font-bold shadow-sm"
             >
-              Ver detalle
+              Ver Detalles
             </Button>
           </div>
         }

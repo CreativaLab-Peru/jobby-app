@@ -25,8 +25,8 @@ export function ResourcesCard({
 
       {/* Header del Card */}
       <div className="flex items-center gap-3 mb-1">
-        <div className="p-2.5 bg-primary/10 rounded-xl group-hover:scale-110 transition-transform">
-          <Folder className="w-3 h-3 text-primary"/>
+        <div className="p-2.5 bg-primary/10 rounded-xl">
+          <Folder className="w-5 h-5 text-primary"/>
         </div>
         <h3 className="font-black text-sm text-primary">
           Mis Recursos
@@ -59,10 +59,10 @@ export function ResourcesCard({
       </div>
 
       {/* Footer / CTA */}
-      <div className="mt-6">
+      <div className="mt-4">
         <Link
           href="/credits"
-          className="flex items-center justify-between p-2 px-4 rounded-2xl bg-secondary text-xs font-black uppercase tracking-widest text-primary hover:bg-primary/10 hover:text-primary transition-all duration-300 group/btn"
+          className="flex items-center justify-between p-2 px-4 rounded-2xl bg-secondary text-sm font-semibold tracking-widest text-primary hover:bg-primary/10 hover:text-primary transition-all duration-300 group/btn"
         >
           <span>Mejorar Plan</span>
           <ArrowUpRight

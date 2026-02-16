@@ -2,6 +2,7 @@
 
 import {AlertCircle, Search} from "lucide-react";
 import {Card} from "@/components/ui/card";
+import {CV_TYPE_OPTIONS, CvSectionType} from "@/features/cv/consts";
 
 interface Recommendation {
   id: string;
@@ -15,7 +16,7 @@ export function RecommendationsList({recommendations}: { recommendations: Recomm
     <Card
       className="bg-card border-border/40 rounded-lg overflow-hidden group transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 p-5">
       <div className="flex items-center gap-2 mb-6">
-        <div className="p-2.5 bg-primary/10 rounded-xl group-hover:scale-110 transition-transform">
+        <div className="p-2.5 bg-primary/10 rounded-xl">
           <Search className="w-5 h-5 text-primary"/>
         </div>
         <h3 className="font-black text-sm text-primary">
@@ -40,8 +41,8 @@ export function RecommendationsList({recommendations}: { recommendations: Recomm
               </div>
               <div className="flex-1">
                 <h4
-                  className="font-semibold text-xs uppercase tracking-widest mb-1 text-primary">
-                  {rec.sectionType}
+                  className="font-bold text-sm mb-1 text-primary">
+                  {CvSectionType[rec.sectionType] || rec.sectionType}
                 </h4>
                 <p className="text-sm text-foreground">{rec.text}</p>
               </div>

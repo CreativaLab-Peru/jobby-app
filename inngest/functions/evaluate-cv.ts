@@ -1,7 +1,7 @@
-import { inngest } from "./client";
-import { prisma } from "@/lib/prisma";
-import { CvSectionType, JobStatus, LogAction, LogLevel } from "@prisma/client";
-import { logsService } from "@/features/share/services/logs-service";
+import {inngest} from "./client";
+import {prisma} from "@/lib/prisma";
+import {CvSectionType, JobStatus, LogAction, LogLevel} from "@prisma/client";
+import {logsService} from "@/features/share/services/logs-service";
 import {getPromptToEvaluateCv} from "@/features/cv/prompts/get-prompt-to-evaluate-cv";
 import {queryGemini} from "@/features/cv/queries/query-gemini";
 
@@ -25,13 +25,13 @@ type EvaluateCvResponse = {
  */
 function buildCvDataFromSections(sections: any[]): Record<string, any> {
   const cvData: Record<string, any> = {};
-  
+
   for (const section of sections) {
     const sectionType = section.sectionType?.toLowerCase() || "";
     const content = section.contentJson;
-    
+
     if (!content) continue;
-    
+
     switch (section.sectionType) {
       case CvSectionType.SUMMARY:
         cvData.summary = content.text || content;
@@ -65,7 +65,7 @@ function buildCvDataFromSections(sections: any[]): Record<string, any> {
         break;
     }
   }
-  
+
   return cvData;
 }
 
@@ -75,17 +75,17 @@ function buildCvDataFromSections(sections: any[]): Record<string, any> {
 async function refundAnalysisToken(userId: string): Promise<void> {
   try {
     const userPayment = await prisma.userPayment.findFirst({
-      where: { 
+      where: {
         userId,
-        uploadCvsUsed: { gt: 0 }
+        uploadCvsUsed: {gt: 0}
       },
-      orderBy: { updatedAt: "desc" },
+      orderBy: {updatedAt: "desc"},
     });
 
     if (userPayment && userPayment.uploadCvsUsed > 0) {
       await prisma.userPayment.update({
-        where: { id: userPayment.id },
-        data: { uploadCvsUsed: userPayment.uploadCvsUsed - 1 },
+        where: {id: userPayment.id},
+        data: {uploadCvsUsed: userPayment.uploadCvsUsed - 1},
       });
     }
   } catch (error) {
@@ -94,20 +94,20 @@ async function refundAnalysisToken(userId: string): Promise<void> {
 }
 
 export const evaluateCv = inngest.createFunction(
-  { id: "evaluate-cv" },
-  { event: "cv/ready-for-evaluation" },
-  async ({ event }) => {
-    const { cvId, userId } = event.data;
+  {id: "evaluate-cv"},
+  {event: "cv/ready-for-evaluation"},
+  async ({event}) => {
+    const {cvId, userId, evaluationId} = event.data;
 
     // Fetch CV with sections for manual CVs support
-    const cv = await prisma.cv.findUnique({ 
-      where: { id: cvId },
-      include: { sections: true }
+    const cv = await prisma.cv.findUnique({
+      where: {id: cvId},
+      include: {sections: true}
     });
-    
+
     // Build CV data from extractedJson OR sections
     let cvDataForEvaluation: any;
-    
+
     if (cv?.extractedJson) {
       // Uploaded CV with extracted data
       cvDataForEvaluation = cv.extractedJson;
@@ -119,11 +119,23 @@ export const evaluateCv = inngest.createFunction(
       await refundAnalysisToken(userId);
       throw new Error("CV data not available - no extractedJson or sections found");
     }
+    let evaluation: any = null;
 
     // ✅ Create evaluation record
-    const evaluation = await prisma.cvEvaluation.create({
-      data: { cvId, status: JobStatus.IN_PROGRESS },
-    });
+    if (evaluationId) {
+      evaluation = await prisma.cvEvaluation.findUnique({
+        where: {id: evaluationId},
+      });
+
+      if (!evaluation) {
+        await refundAnalysisToken(userId);
+        throw new Error("Evaluation record not found for provided evaluationId");
+      }
+    } else {
+      evaluation = await prisma.cvEvaluation.create({
+        data: {cvId, status: JobStatus.IN_PROGRESS},
+      });
+    }
 
     // ✅ Log: Evaluation started
     await logsService.createLog({
@@ -133,7 +145,7 @@ export const evaluateCv = inngest.createFunction(
       entity: "CV_EVALUATION",
       entityId: evaluation.id,
       message: "Started evaluating CV",
-      metadata: { cvId },
+      metadata: {cvId},
     });
 
     try {
@@ -147,7 +159,7 @@ export const evaluateCv = inngest.createFunction(
         entity: "CV_EVALUATION",
         entityId: evaluation.id,
         message: "Prompt generated for CV evaluation",
-        metadata: { promptLength: promptToEvaluateCv.length },
+        metadata: {promptLength: promptToEvaluateCv.length},
       });
 
       // ✅ Query Gemini
@@ -193,7 +205,7 @@ export const evaluateCv = inngest.createFunction(
       // ✅ Save everything inside a transaction
       await prisma.$transaction(async (tx) => {
         await tx.cvEvaluation.update({
-          where: { id: evaluation.id },
+          where: {id: evaluation.id},
           data: {
             status: JobStatus.SUCCEEDED,
             overallScore: result.data.overallScore,
@@ -241,8 +253,8 @@ export const evaluateCv = inngest.createFunction(
     } catch (error: any) {
       // ✅ Update evaluation record
       await prisma.cvEvaluation.update({
-        where: { id: evaluation.id },
-        data: { status: JobStatus.FAILED },
+        where: {id: evaluation.id},
+        data: {status: JobStatus.FAILED},
       });
 
       // ✅ Refund the analysis token since evaluation failed

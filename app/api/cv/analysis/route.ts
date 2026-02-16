@@ -74,10 +74,11 @@ export async function POST(request: Request) {
     });
 
     // Send event to get and save opportunities
-    await inngest.send({
-      name: "get.and.save.opportunities",
-      data: { cvId, userId: currentUser.id },
-    });
+    // Todo: delete when we use in another place
+    // await inngest.send({
+    //   name: "get.and.save.opportunities",
+    //   data: { cvId, userId: currentUser.id },
+    // });
 
     return NextResponse.json(
       {

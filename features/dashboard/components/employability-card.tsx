@@ -1,89 +1,108 @@
 "use client";
 
-import { Target } from "lucide-react";
+import { Target, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface Props {
   score: number;
   sector: string | null;
 }
 
+// Helper de Ingeniería: Mover fuera del componente para evitar re-cargas
+const SECTOR_LABELS: Record<string, string> = {
+  TECHNOLOGY_ENGINEERING: "Tecnología e Ingeniería",
+  DESIGN_CREATIVITY: "Diseño y Creatividad",
+  MARKETING_STRATEGY: "Marketing y Estrategia",
+  MANAGEMENT_BUSINESS: "Gestión y Negocios",
+  FINANCE_PROJECTS: "Finanzas y Proyectos",
+  SOCIAL_MEDIA: "Redes Sociales",
+  EDUCATION: "Educación",
+  SCIENCE: "Ciencia",
+};
+
+const getStatus = (score: number) => {
+  if (score >= 85) return "Altamente Competitivo";
+  if (score >= 70) return "Competitivo";
+  if (score >= 50) return "En Desarrollo";
+  return "Iniciando";
+};
+
 export function EmployabilityCard({ score, sector }: Props) {
-  const radius = 58;
+  const radius = 54; // Reducido un poco para dar aire
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference * (1 - score / 100);
-    const getStatus = (score: number) => {
-    if (score >= 85) return "Altamente Competitivo";
-    if (score >= 70) return "Competitivo";
-    if (score >= 50) return "esta en Desarrollo";
-    return "Iniciando";
-    };
-    const getSectorType = (sector: string) => {
-      if (sector === "TECHNOLOGY_ENGINEERING") return "Tecnología e Ingeniería";
-      if (sector === "DESIGN_CREATIVITY") return "Diseño y Creatividad";
-      if (sector === "MARKETING_STRATEGY") return "Marketing y Estrategia";
-      if (sector === "MANAGEMENT_BUSINESS") return "Gestión y Negocios";
-      if (sector === "FINANCE_PROJECTS") return "Finanzas y Proyectos";
-      if (sector === "SOCIAL_MEDIA") return "Redes Sociales";
-      if (sector === "EDUCATION") return "Educación";
-      if (sector === "SCIENCE") return "Ciencia";
-      return sector || "General";
-    };
 
+  const displaySector = sector ? (SECTOR_LABELS[sector] || sector) : "General";
+  const status = getStatus(score);
 
   return (
-    <Card className="bg-card border border-border rounded-2xl p-6 hover:border-levely-blue/30 dark:hover:border-levely-green/30 transition-colors">
-      <div className="flex items-center gap-2 mb-6">
-        <Target className="h-5 w-5 text-levely-blue dark:text-levely-green" />
-        <h3 className="font-semibold uppercase tracking-wide text-sm">Índice de Empleabilidad</h3>
-      </div>
+    <Card className="bg-card border-border/40 rounded-lg overflow-hidden group transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5">
+      <CardContent className="p-2 md:p-4">
+        <div className="flex flex-col md:flex-row items-center gap-10">
+          {/* Circular Progress Container */}
+          <div className="">
+            <div className="relative w-40 h-40 shrink-0 flex items-center justify-center">
+              <svg className="w-full h-full transform -rotate-90 drop-shadow-[0_0_8px_rgba(var(--primary),0.2)]">
+                <circle
+                  cx="80" cy="80" r={radius}
+                  stroke="currentColor"
+                  strokeWidth="12"
+                  fill="none"
+                  className="text-secondary/50"
+                />
+                <circle
+                  cx="80" cy="80" r={radius}
+                  stroke="currentColor"
+                  strokeWidth="12"
+                  fill="none"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={strokeDashoffset}
+                  strokeLinecap="round"
+                  className="text-primary transition-all duration-1000 ease-out"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-4xl font-black tracking-tighter text-foreground">
+                {score}%
+              </span>
+                <span className="text-[8px] font-black uppercase text-muted-foreground tracking-widest">Score</span>
+              </div>
 
-      <div className="flex items-center gap-6">
-        {/* Circular Progress */}
-        <div className="relative w-32 h-32 shrink-0">
-          <svg className="w-full h-full transform -rotate-90" role="img" aria-label={`${score}% de empleabilidad`}>
-            <defs>
-              <linearGradient id="progress-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#D2FF7D" />
-                <stop offset="100%" stopColor="#3EC6FF" />
-              </linearGradient>
-            </defs>
-            <circle cx="64" cy="64" r="58" stroke="hsl(var(--secondary))" strokeWidth="10" fill="none" />
-            <circle
-              cx="64" cy="64" r="58"
-              stroke="url(#progress-gradient)"
-              strokeWidth="10" fill="none"
-              strokeDasharray={circumference}
-              strokeDashoffset={strokeDashoffset}
-              strokeLinecap="round"
-              className="transition-all duration-1000 ease-out"
-            />
-          </svg>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-3xl font-bold text-levely-blue dark:text-levely-green">{score}%</span>
+            </div>
+            <div className="text-xs text-primary">
+              Indice de Empleabilidad
+            </div>
+          </div>
+
+          {/* Info & Insights */}
+          <div className="flex-1 text-center md:text-left space-y-4">
+            <div>
+              <h4 className="text-3xl md:text-4xl font-black tracking-tighter leading-none mb-2">
+                {status}
+              </h4>
+              <Badge variant="secondary" className="font-bold text-xs px-4 py-1.5 rounded-full">
+                {displaySector}
+              </Badge>
+            </div>
+
+            <p className="text-muted-foreground leading-relaxed text-xs md:text-base font-medium max-w-sm">
+              Tu perfil destaca en <span className="text-foreground font-bold">{displaySector}</span>.
+            </p>
+
+            <div className="flex flex-wrap justify-center md:justify-start gap-2 pt-2">
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-secondary/50 border border-border/40 text-[10px] font-black uppercase tracking-tight text-muted-foreground">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                Actualizado
+              </div>
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-primary/5 border border-primary/20 text-[10px] font-bold uppercase tracking-tight text-primary">
+                Levely AI Verified
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* Info */}
-        <div className="flex-1">
-          <h4 className="text-xl font-bold text-levely-blue dark:text-levely-green uppercase tracking-wide mb-1">
-            {getStatus(score)}
-          </h4>
-          <Badge variant="secondary" className="mb-3">{getSectorType(sector || "")}</Badge>
-          <p className="text-sm text-muted-foreground mb-3">
-            Tu perfil es <span className="font-medium text-foreground">{getStatus(score)}</span> en el sector de{" "}
-            <span className="font-medium text-foreground">{getSectorType(sector || "")}</span>
-          </p>
-
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="outline" className="text-xs">Actualizado</Badge>
-            <Badge variant="outline" className="text-xs border-levely-blue/50 text-levely-blue dark:border-levely-green/50 dark:text-levely-green">
-              Levely AI Verified
-            </Badge>
-          </div>
-        </div>
-      </div>
+      </CardContent>
     </Card>
   );
 }

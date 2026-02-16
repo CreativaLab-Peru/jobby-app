@@ -1,10 +1,23 @@
-# v1.1.15 - 2025-02-11
+# v1.1.15 - 2026-02-16
 
-# Fixes
-- Fixed an issue that prevented some CVs from uploading successfully
+## Features
+- New "Quick Match" functionality in sidebar for fast opportunity search without full analysis
+- Intelligent credit consumption logic for opportunity matching:
+    - Charges 1 `SEARCH_OPPORTUNITIES` credit only when matches are found or for refreshing existing CV opportunities
+    - No credit consumed for new CVs with no matches found (Better UX)
 
-# Enhancements
-- Prompt users to check their email after sign-up to reduce confusion
+## Enhancements
+- Updated Privacy Policy and Terms & Conditions
+- Updated meetings/booking link
+- Professional summary is now OPTIONAL for all CV types
+- Education is MANDATORY for: Scholarships, Internships, and Exchange Programs
+- Education is OPTIONAL for: Employment
+- Improved navigation flow in CV creation form
+- Background saving while navigating between sections
+- Strict validation only on final step before preview
+- Better error handling with toast notifications
+- Hidden "Brochure" button in partners section
+- Hidden "Resources" link in the main header navigation
 
 # v1.1.11, v1.1.12, v1.1.13, v1.1.14 - 2025-02-06
 

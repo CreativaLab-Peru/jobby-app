@@ -7,7 +7,7 @@ const Instituciones = () => {
     <div className="min-h-screen">
 
       {/* Hero Section */}
-      <section 
+      <section
         className="
           min-h-screen flex items-center pt-32 pb-20 px-4 sm:px-6 lg:px-8
           bg-cover bg-center bg-no-repeat

@@ -8,11 +8,21 @@ export const designCreativityEmployment: SectionConfig = {
     "certifications",
     "skills",
   ],
+  requiredFields: {
+    // Summary opcional en todos los CVs
+    "personal.summary": false,
+    // Educación opcional para empleo
+    "education.level": false,
+    "education.title": false,
+    "education.institution": false,
+    "education.location": false,
+    "education.year": false,
+  },
     examples: {
     // Personal
     "personal.summary":
         "Diseñador Gráfico con experiencia en la creación de soluciones visuales innovadoras para diversas industrias. Habilidad para trabajar en equipo y adaptarse a entornos dinámicos, con un enfoque en el diseño centrado en el usuario y la creatividad aplicada.",
-    
+
     // Education
     "education.title":
         "Licenciatura en Diseño Gráfico",
@@ -24,11 +34,11 @@ export const designCreativityEmployment: SectionConfig = {
         "Esperado Diciembre 2025",
     "education.honors":
         "Promedio ponderado: 16.2/20, Participante activo del Club de Diseño y Creatividad",
-    
+
     // Experience
     "experience.title":
         "Diseñador Gráfico Junior en Agencia Creativa XYZ",
-    "experience.location":    
+    "experience.location":
         "Lima, Perú",
     "experience.year":
         "2022 - Presente",
@@ -43,7 +53,7 @@ export const designCreativityEmployment: SectionConfig = {
     "achievements.description":
         "Reconocido por la creación de una campaña visual innovadora que destacó por su creatividad y efectividad en la comunicación del mensaje.",
     "achievements.date":
-        "Noviembre 2023",   
+        "Noviembre 2023",
 
     // Certifications
     "certifications.name":
@@ -52,7 +62,7 @@ export const designCreativityEmployment: SectionConfig = {
         "Coursera",
     "certifications.date":
         "2023",
-    
+
     // Skills
     "skills.technical":
         "Dominio de herramientas de diseño como Adobe Creative Suite (Photoshop, Illustrator, InDesign), así como habilidades en diseño web y UX/UI.",

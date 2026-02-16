@@ -20,10 +20,9 @@ export function ThemeToggle({ className }: { className?: string }) {
 
   return (
     <Button
-      variant="outline"
+      variant="hero"
       size="icon"
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className={`cursor-pointer w-10 h-10 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-[#23272f] hover:bg-gray-200 dark:hover:bg-[#2d333b] text-gray-700 dark:text-gray-200 transition-colors ${className ?? ""}`}
       title="Cambiar tema"
     >
       {/* Icono Sol: Visible en Light, Invisible en Dark */}

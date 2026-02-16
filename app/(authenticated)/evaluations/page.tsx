@@ -1,32 +1,55 @@
-import { getCvForCurrentUser } from "@/features/cv/actions/get-cv-for-current-user";
 import { ScoresListPage } from "@/features/analysis/components/score-list";
-import {getCurrentCreditLimits} from "@/features/credits/actions/get-current-credits-limits";
+import { getCurrentCreditLimits } from "@/features/credits/actions/get-current-credits-limits";
+import {
+  EvaluationFilterOptions,
+  geEvaluationsForCurrentUser
+} from "@/features/cv/actions/get-evaluations-for-current-user";
+import {getAllCvForCurrentUser} from "@/features/cv/actions/get-all-cv-for-current-user";
 
-export default async function MyEvaluationsPage() {
-  const cvForCurrentUser = await getCvForCurrentUser();
+type MyEvaluationsPageProps = {
+  searchParams?: Promise<{
+    cvId?: string;
+  }>
+}
 
-  // Combine manual and uploaded CVs, filter only those with evaluations
-  const allCvs = [
-    ...(cvForCurrentUser?.manuals?.cvs || []),
-  ];
+export default async function MyEvaluationsPage({
+                                                  searchParams
+                                                }:MyEvaluationsPageProps) {
+  const { cvId } = searchParams ? await searchParams : {};
 
-  // Remove duplicates (manuals already includes uploads in current implementation)
-  const uniqueCvs = allCvs.filter((cv, index, self) =>
-    index === self.findIndex(c => c.id === cv.id)
-  );
+  const params: EvaluationFilterOptions = {
+    skip: 0,
+    take: 5,
+    onlySuccessful: true,
+    cvId
+  }
 
-  // Only show CVs that have at least one evaluation
-  const cvsWithEvaluations = uniqueCvs.filter(cv => cv.evaluations && cv.evaluations.length > 0);
+  const [cvEvaluations, creditLimits, cvData] = await Promise.all([
+    geEvaluationsForCurrentUser(params),
+    getCurrentCreditLimits(),
+    getAllCvForCurrentUser(0, 50),
+  ]);
 
-  const creditLimits = await getCurrentCreditLimits();
-  const hasCredits = creditLimits.aiActionsLimit > 0;
+  const initialCvs = cvData.cvs;
+
+  const evaluations = cvEvaluations?.evaluations ?? [];
+
+  const canAnalyze = (creditLimits?.aiActionsLimit ?? 0) > 0;
+
+  const hasMore = cvEvaluations?.hasMore ?? false;
+  const totalCount = cvEvaluations?.totalCount ?? 0;
 
   return (
-    <>
-      <ScoresListPage
-        cvs={cvsWithEvaluations}
-        disabledButton={!hasCredits}
-      />
-    </>
+    <ScoresListPage
+      initialEvaluations={evaluations}
+      initialCvs={initialCvs}
+      canAnalyze={canAnalyze}
+      hasMoreProp={hasMore}
+      totalCount={totalCount}
+      currentFilters={{
+        cvId: cvId || null,
+        justSuccessful: true,
+      }}
+    />
   );
 }

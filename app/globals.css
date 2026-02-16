@@ -1,4 +1,3 @@
-
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -14,6 +13,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: 'Arial';
   src: url('/fonts/Arial/ARIALI.TTF') format('truetype');
@@ -21,6 +21,7 @@
   font-style: italic;
   font-display: swap;
 }
+
 @font-face {
   font-family: 'Arial';
   src: url('/fonts/Arial/ARIALBD.TTF') format('truetype');
@@ -28,6 +29,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: 'Arial';
   src: url('/fonts/Arial/ARIALBI.TTF') format('truetype');
@@ -39,7 +41,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-poppins: Poppins, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui;
+  --font-poppins: 'Poppins', sans-serif;
 
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
@@ -47,8 +50,8 @@
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
 
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary: hsl(var(--accent));
+  --color-primary-foreground: hsl(var(--accent-foreground));
 
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
@@ -71,21 +74,25 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
 
-  --color-levely-blue: rgb(86 135 255);
+  /* Sidebar Theme Mapping */
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  /* Custom Levely Palette */
   --color-levely-offwhite: rgb(245 245 240);
   --color-levely-dark: rgb(25 40 45);
   --color-levely-green: rgb(210 255 125);
   --color-levely-pink: rgb(255 85 245);
   --color-levely-orange: rgb(240 90 80);
+
+  --color-levely-blue: hsl(var(--levely-blue));
 }
 
 /* ========================================================= */
@@ -93,81 +100,55 @@
 /* ========================================================= */
 
 :root {
-  /* Warm cream background inspired by #F5F5F0 */
+
+  --levely-blue: 223 100% 67%;
+
   --background: 60 20% 97%;
   --foreground: 222 47% 11%;
 
-  /* Cards with subtle warmth */
   --card: 60 20% 99%;
   --card-foreground: 222 47% 11%;
 
   --popover: 60 20% 99%;
   --popover-foreground: 222 47% 11%;
 
-  /* Deep navy primary - trust & professionalism */
-  --primary: 222 47% 11%;
-  --primary-foreground: 60 20% 97%;
+  /* Accent color */
+  --primary: 192 27% 14%;
+  --primary-foreground: 0 0% 100%;;
 
-  /* Soft secondary */
-  --secondary: 60 10% 92%;
-  --secondary-foreground: 222 47% 11%;
+  --secondary: 83 100% 74%;
+  --secondary-foreground: 195 29% 14%;
 
-  /* Muted tones */
   --muted: 60 10% 94%;
   --muted-foreground: 220 9% 46%;
 
-  /* Accent - deep teal for CTAs */
   --accent: 192 27% 14%;
   --accent-foreground: 0 0% 100%;
 
-  /* Lime accent for CV Builder - use teal in light mode for better contrast */
-  --lime: 192 27% 14%;
-  --lime-foreground: 0 0% 100%;
-
-  /* Blue accent for Home */
-  --blue: 222 91% 67%;
-  --blue-foreground: 0 0% 100%;
-
-  /* Coral/Red accent for Career Accelerator */
-  --coral: 6 86% 63%;
-  --coral-foreground: 0 0% 100%;
-
-  /* Destructive */
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
 
-  /* Borders and inputs */
-  --border: 60 10% 90%;
-  --input: 60 10% 90%;
-  --ring: 192 27% 14%;
+  --border: 195 29% 14% / 0.1;
+  --input: 195 29% 14% / 0.1;
+  --ring: 221 100% 66%;
 
   --radius: 0.75rem;
 
-  /* Custom Levely tokens */
-  --gradient-hero: linear-gradient(
-    135deg,
-    hsl(60 20% 97%) 0%,
-    hsl(60 15% 94%) 50%,
-    hsl(192 20% 94%) 100%
-  );
-  --gradient-accent: linear-gradient(135deg, hsl(192 27% 14%) 0%, hsl(192 27% 20%) 100%);
-  --gradient-lime: linear-gradient(135deg, hsl(83 100% 74%) 0%, hsl(90 80% 65%) 100%);
-  --gradient-blue: linear-gradient(135deg, hsl(222 91% 67%) 0%, hsl(230 80% 60%) 100%);
-  --gradient-coral: linear-gradient(135deg, hsl(6 86% 63%) 0%, hsl(15 80% 55%) 100%);
-  --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(60 20% 98%) 100%);
-  --shadow-soft: 0 4px 20px -4px hsl(222 47% 11% / 0.08);
-  --shadow-card: 0 8px 32px -8px hsl(222 47% 11% / 0.1);
-  --shadow-hover: 0 12px 40px -8px hsl(222 47% 11% / 0.15);
-
-  /* Sidebar */
-  --sidebar-background: 60 20% 98%;
-  --sidebar-foreground: 222 47% 11%;
+  /* Sidebar Light */
+  --sidebar: 0 0% 100%;
+  --sidebar-foreground: 195 29% 14%;
   --sidebar-primary: 192 27% 14%;
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 60 10% 94%;
+  --sidebar-accent: 221 100% 95%;
   --sidebar-accent-foreground: 222 47% 11%;
-  --sidebar-border: 60 10% 90%;
+  --sidebar-border: 220 13% 91%;
   --sidebar-ring: 192 27% 14%;
+
+  /* Gradients & Shadows */
+  --gradient-hero: linear-gradient(135deg, hsl(60 20% 97%) 0%, hsl(60 15% 94%) 50%, hsl(192 20% 94%) 100%);
+  --gradient-accent: linear-gradient(135deg, hsl(192 27% 14%) 0%, hsl(192 27% 20%) 100%);
+  --shadow-card: 0 8px 32px -8px hsl(222 47% 11% / 0.1);
+  --shadow-hover: 0 12px 40px -8px hsl(222 47% 11% / 0.15);
 }
 
 /* ========================================================= */
@@ -175,7 +156,8 @@
 /* ========================================================= */
 
 .dark {
-  /* #19282D = HSL 195 29% 14% */
+  --levely-green: 83 100% 74%;
+
   --background: 195 29% 14%;
   --foreground: 60 20% 97%;
 
@@ -185,7 +167,8 @@
   --popover: 195 25% 18%;
   --popover-foreground: 60 20% 97%;
 
-  --primary: 60 20% 97%;
+  /* Accent color */
+  --primary: 83 100% 74%;
   --primary-foreground: 195 29% 14%;
 
   --secondary: 195 25% 20%;
@@ -197,29 +180,24 @@
   --accent: 83 100% 74%;
   --accent-foreground: 195 29% 14%;
 
-  --lime: 83 100% 74%;
-  --lime-foreground: 195 29% 14%;
-
-  --blue: 222 91% 40%;
-  --blue-foreground: 60 20% 97%;
-
   --destructive: 0 62% 30%;
   --destructive-foreground: 60 20% 97%;
 
-  --border: 195 20% 25%;
-  --input: 195 20% 25%;
+  --border: 60 20% 97% / 0.1;
+  --input: 60 20% 97% / 0.1;
   --ring: 83 100% 74%;
 
-  --shadow-card: 0 10px 40px hsl(0 0% 0% / 0.5);
-
-  --sidebar: 195 29% 14%;
+  /* Sidebar Dark */
+  --sidebar: 195 29% 12%;
   --sidebar-foreground: 60 20% 97%;
   --sidebar-primary: 83 100% 74%;
   --sidebar-primary-foreground: 195 29% 14%;
-  --sidebar-accent: 195 25% 20%;
+  --sidebar-accent: 195 25% 18%;
   --sidebar-accent-foreground: 60 20% 97%;
   --sidebar-border: 195 20% 25%;
   --sidebar-ring: 83 100% 74%;
+
+  --shadow-card: 0 10px 40px hsl(0 0% 0% / 0.5);
 }
 
 /* ========================================================= */
@@ -227,8 +205,8 @@
 /* ========================================================= */
 
 @layer base {
-  * {
-    @apply border-border;
+  *, ::after, ::before {
+    border-color: var(--color-border, currentColor);
   }
 
   html {
@@ -237,11 +215,15 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Inter', system-ui, sans-serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-bold tracking-tight;
+  }
+
+  button, [role="button"] {
+    border-width: 0;
+    border-style: none;
   }
 }
 
@@ -258,71 +240,30 @@
     @apply text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.1] tracking-tight;
   }
 
-  .headline-lg {
-    @apply text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.15] tracking-tight;
-  }
-
-  .headline-md {
-    @apply text-2xl sm:text-3xl font-bold leading-tight;
-  }
-
   .text-balance {
     text-wrap: balance;
   }
 
-  .gradient-hero {
-    background: var(--gradient-hero);
-  }
-
-  .gradient-accent {
-    background: var(--gradient-accent);
-  }
-
   .card-elevated {
-    @apply bg-card rounded-2xl p-6 sm:p-8;
+    @apply bg-card rounded-2xl p-6 sm:p-8 transition-shadow duration-300;
     box-shadow: var(--shadow-card);
-    background: var(--gradient-card);
   }
 
   .card-elevated:hover {
     box-shadow: var(--shadow-hover);
   }
 
-  .btn-primary {
-    @apply inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-full transition-all duration-200;
-    background: var(--gradient-accent);
-    color: hsl(var(--accent-foreground));
-    box-shadow: 0 4px 14px -3px hsl(192 27% 14% / 0.3);
-  }
-  
-  .gradient-lime {
-    background: var(--gradient-lime);
-  }
-
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px -3px hsl(192 27% 14% / 0.4);
-  }
-
-  .btn-secondary {
-    @apply inline-flex items-center justify-center px-6 py-3 text-base font-semibold rounded-full bg-secondary text-secondary-foreground transition-all duration-200 hover:bg-secondary/80;
-  }
-
   .text-gradient {
     @apply bg-clip-text text-transparent;
     background-image: linear-gradient(135deg, hsl(222 91% 67%) 0%, hsl(192 27% 14%) 100%);
   }
-  
-  .gradient-blue {
-    background: var(--gradient-blue);
-  }
-  
-  .gradient-coral {
-    background: var(--gradient-coral);
-  }
 }
 
 @layer utilities {
+  .text-border-primary {
+    -webkit-text-stroke: 1px theme('colors.secondary');
+  }
+
   .animate-float {
     animation: float 6s ease-in-out infinite;
   }
@@ -351,3 +292,4 @@
     }
   }
 }
+

@@ -1,17 +1,22 @@
-import {CvListScreen} from "@/features/cv/components/cv-list-screen";
-import {getCvForCurrentUser} from "@/features/cv/actions/get-cv-for-current-user";
-import {getCurrentCreditLimits} from "@/features/credits/actions/get-current-credits-limits";
+import { CvListScreen } from "@/features/cv/components/cv-list-screen";
+import { getCvForCurrentUser } from "@/features/cv/actions/get-cv-for-current-user";
+import { getCurrentCreditLimits } from "@/features/credits/actions/get-current-credits-limits";
 
 export default async function CVPage() {
-  const cvForCurrentUser = await getCvForCurrentUser();
+  const [cvData, creditLimits] = await Promise.all([
+    getCvForCurrentUser(0, 6),
+    getCurrentCreditLimits()
+  ]);
 
-  const creditLimits = await getCurrentCreditLimits();
-  const hasCredits = creditLimits.manageCvsLimit > 0;
-
+  // Si el límite es mayor a 0, puede crear.
+  const canCreate = creditLimits.manageCvsLimit > 0;
+  const hasMore = cvData ? cvData.hasMore : false;
   return (
     <CvListScreen
-      cvs={cvForCurrentUser?.manuals?.cvs ?? []}
-      disabledButton={!hasCredits}
+      initialCvs={cvData.cvs ?? []}
+      canCreate={canCreate}
+      hasMoreProp={hasMore}
+      totalCount={cvData.totalCount}
     />
   );
 }

@@ -8,6 +8,16 @@ export const technologyEngineeringInternship: SectionConfig = {
     "skills",
     "certifications",
   ],
+  requiredFields: {
+    // Summary opcional en todos los CVs
+    "personal.summary": false,
+    // Educación obligatoria para internships
+    "education.level": true,
+    "education.title": true,
+    "education.institution": true,
+    "education.location": true,
+    "education.year": true,
+  },
 
   examples: {
     // Personal - Summary
@@ -24,13 +34,13 @@ export const technologyEngineeringInternship: SectionConfig = {
       "Tercio Superior, Participante de Hackathon Universitario 2023",
 
     // Projects
-    "projects.title": 
+    "projects.title":
         "Plataforma de E-learning con Gamificación",
     "projects.description":
         "Desarrollé una plataforma web educativa que implementa mecánicas de juego para aumentar el engagement estudiantil. Utilicé React para el frontend, Node.js/Express para el backend, y PostgreSQL para gestión de datos. El proyecto logró incrementar la participación estudiantil en un 45% durante las pruebas piloto con 200 usuarios.",
     "projects.technologies":
         "React, Node.js, Express, PostgreSQL, JWT, TailwindCSS, Git",
-    "projects.duration": 
+    "projects.duration":
         "4 meses (Julio 2024 - Octubre 2024)",
 
     // Skills
@@ -42,12 +52,12 @@ export const technologyEngineeringInternship: SectionConfig = {
         "Español (Nativo), Inglés (Intermedio - B1), Quechua (Básico)",
 
     // Certifications
-    "certifications.name": 
+    "certifications.name":
         "Certificación en Desarrollo Web Full-Stack",
-    "certifications.issuer": 
+    "certifications.issuer":
         "Platzi",
-    "certifications.date": 
-        "Noviembre 2023", 
+    "certifications.date":
+        "Noviembre 2023",
 
   // TODO: Agregar tipado estricto
   },

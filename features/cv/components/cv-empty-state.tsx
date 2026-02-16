@@ -1,26 +1,28 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { FileText } from "lucide-react"
+import { Sparkles, PlusCircle } from "lucide-react"
 
 export function CVEmptyState() {
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="text-center py-16"
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="flex flex-col items-center justify-center py-20 text-center"
     >
-      <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-        <FileText className="h-8 w-8 text-muted-foreground" />
+      <div className="relative mb-6">
+        <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
+        <div className="relative flex h-24 w-24 items-center justify-center rounded-[2.5rem] bg-card border-2 border-primary/20 shadow-xl">
+          <Sparkles className="h-12 w-12 text-primary animate-pulse" />
+        </div>
       </div>
 
-      <h3 className="text-xl font-semibold text-foreground mb-2">
-        No tienes CVs creados
+      <h3 className="text-3xl font-black tracking-tight text-foreground mb-3">
+        Tu futuro empieza aquí 🚀
       </h3>
 
-      <p className="text-muted-foreground max-w-sm mx-auto">
-        Comienza creando tu primer currículum y deja que la IA optimice tu perfil
-        profesional.
+      <p className="text-muted-foreground max-w-xs font-medium leading-relaxed">
+        Aún no tienes currículums. ¡Crea el primero y deja que la IA haga su magia!
       </p>
     </motion.div>
   )

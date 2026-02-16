@@ -44,9 +44,9 @@ export function ProfileButton({ user }: ProfileButtonProps) {
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
-          className="h-10 w-10 rounded-full p-0"
+          className="h-10 w-10 rounded-full p-0 ring-offset-background transition-colors hover:bg-accent"
         >
-          <Avatar className="h-10 w-10">
+          <Avatar className="h-10 w-10 border border-border">
             <AvatarImage
               src={user?.image || "/images/user-avatar.png"}
               alt="User avatar"
@@ -60,13 +60,13 @@ export function ProfileButton({ user }: ProfileButtonProps) {
 
       <PopoverContent
         align="end"
-        className="w-48 rounded-lg border bg-popover p-2 text-popover-foreground shadow-md dark:bg-[#23272f] dark:border-gray-700 dark:text-gray-100"
+        className="w-56 rounded-xl border border-border bg-popover p-2 text-popover-foreground shadow-lg"
       >
         <div className="flex flex-col gap-1">
 
           {/* USER INFO */}
-          <div className="flex items-center gap-2 px-2 py-2 border-b dark:border-gray-700">
-            <Avatar className="h-8 w-8">
+          <div className="flex items-center gap-3 px-2 py-3 mb-1 border-b border-border">
+            <Avatar className="h-9 w-9 border border-border">
               <AvatarImage
                 src={user?.image || "/images/user-avatar.png"}
                 alt="User avatar"
@@ -75,51 +75,56 @@ export function ProfileButton({ user }: ProfileButtonProps) {
                 <User className="h-4 w-4 text-muted-foreground" />
               </AvatarFallback>
             </Avatar>
-            <div className="text-sm font-medium truncate">
-              {user.name || "Usuario"}
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-semibold truncate leading-none mb-1">
+                {user.name || "Usuario"}
+              </span>
+              <span className="text-xs text-muted-foreground truncate">
+                {user.email}
+              </span>
             </div>
           </div>
 
           {/* ACTIONS */}
-          <MenuButton onClick={() => router.push("/")}> 
-            <Home className="h-4 w-4 dark:text-gray-400" />
-            <span className="text-black dark:text-gray-400">Inicio</span>
+          <MenuButton onClick={() => router.push("/")}>
+            <Home className="h-4 w-4 text-muted-foreground" />
+            <span>Inicio</span>
           </MenuButton>
 
-          <MenuButton onClick={() => router.push("/settings")}> 
-            <Settings className="h-4 w-4 dark:text-gray-400" />
-            <span className="text-black dark:text-gray-400">Configuración</span>
+          <MenuButton onClick={() => router.push("/settings")}>
+            <Settings className="h-4 w-4 text-muted-foreground" />
+            <span>Configuración</span>
           </MenuButton>
+
+
+
+          <Separator className="my-1 bg-border" />
+
+          <MenuButton onClick={() => router.push("/complaints")}>
+            <BookA className="h-4 w-4 text-muted-foreground" />
+            <span className='text-start'>Libro de reclamaciones</span>
+          </MenuButton>
+
+          <Separator className="my-1 bg-border" />
 
           <MenuButton
             disabled={isLoading}
             onClick={handleLogout}
-            className={cn(
-              "text-destructive",
-              isLoading && "justify-center"
-            )}
+            // @ts-ignore
+            variant={'destructive'}
           >
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <>
                 <LogOut className="h-4 w-4" />
-                Cerrar sesión
+                <span>Cerrar sesión</span>
               </>
             )}
           </MenuButton>
 
-          <Separator className="my-2" />
-
-          <MenuButton onClick={() => router.push("/complaints")}> 
-            <BookA className="h-4 w-4 dark:text-gray-400" />
-            <span className="text-black dark:text-gray-400">Reclamaciones</span>
-          </MenuButton>
-
-          <Separator className="my-2" />
-
           {/* VERSION */}
-          <div className="text-center text-xs text-muted-foreground">
+          <div className="py-1 text-center text-[10px] uppercase tracking-wider text-muted-foreground/60 font-medium">
             Versión 1.0.0
           </div>
         </div>
@@ -129,26 +134,25 @@ export function ProfileButton({ user }: ProfileButtonProps) {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                               Helper Button                                */
+/* Helper Button                                */
 /* -------------------------------------------------------------------------- */
 
 function MenuButton({
-  children,
-  className = "",
-  ...props
-}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+                      children,
+                      className = "",
+                      ...props
+                    }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <button
-      {...props}
+    <Button
+      variant="ghost"
+      size="sm"
       className={cn(
-        "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors",
-        "text-foreground hover:bg-accent hover:text-accent-foreground",
-        "dark:hover:bg-blue-900/60 dark:hover:text-blue-200 dark:text-gray-100",
-        "disabled:opacity-50 disabled:pointer-events-none",
+        "w-full justify-start",
         className
       )}
+      {...props}
     >
       {children}
-    </button>
+    </Button>
   )
 }

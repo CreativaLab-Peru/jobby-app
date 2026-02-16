@@ -40,6 +40,7 @@ export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
       sectionIds={sectionIds}
       canAnalyze={hasCredits}
       analysisTokens={creditLimits.aiActionsLimit}
+      opportunitiesActionTokens={creditLimits.opportunitiesActionsLimit}
     />
   )
 }

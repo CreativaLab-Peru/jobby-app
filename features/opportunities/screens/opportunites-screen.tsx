@@ -7,9 +7,15 @@ import {AnimatePresence, motion} from "framer-motion";
 import OpportunityCard from "@/features/opportunities/components/opportunity-card";
 import {EmptyPlaceholder} from "@/components/shared/empty-placeholder";
 import {Opportunity} from ".prisma/client";
-import {useState, useTransition} from "react";
+import {useState, useTransition, useEffect} from "react";
 import {getOpportunities} from "@/features/opportunities/get-opportunities";
 import {LoadMoreButton} from "@/components/shared/load-more-button";
+import {Button} from "@/components/ui/button";
+import { QuickMatchCvModal } from "@/features/opportunities/components/quick-match-cv-modal";
+import { useQuickMatchModalStore } from "@/features/opportunities/hooks/use-quick-match-modal-store";
+import { getCvForCurrentUser } from "@/features/cv/actions/get-cv-for-current-user";
+import { CvWithRelations } from "@/features/cv/actions/get-cv-for-current-user";
+import { useCredits } from "@/features/credits/hooks/use-credits";
 
 interface Props {
   initialData: Opportunity[];
@@ -25,6 +31,10 @@ export default function OpportunitiesScreen({
   const [opportunities, setOpportunities] = useState<Opportunity[]>(initialData);
   const [hasMore, setHasMore] = useState(hasMoreProp);
   const [isPending, startTransition] = useTransition();
+  const [cvs, setCvs] = useState<CvWithRelations[]>([]);
+  const [isCvsLoading, setIsCvsLoading] = useState(false);
+  const { onOpen } = useQuickMatchModalStore();
+  const { credits } = useCredits();
 
   const handleLoadMore = () => {
     startTransition(async () => {
@@ -40,11 +50,26 @@ export default function OpportunitiesScreen({
     });
   };
 
+  const handleQuickMatchClick = async () => {
+    setIsCvsLoading(true);
+    try {
+      const cvData = await getCvForCurrentUser(0, 1000);
+      if (cvData?.cvs) {
+        setCvs(cvData.cvs);
+        onOpen();
+      }
+    } catch (error) {
+      console.error("Error loading CVs:", error);
+    } finally {
+      setIsCvsLoading(false);
+    }
+  };
+
   const actions = (
-    <div className="flex items-center space-x-2">
-      <Rocket className="w-4 h-4 text-primary"/>
-      <span className="text-sm font-medium text-primary">Recomendaciones basadas en IA</span>
-    </div>
+    <Button onClick={handleQuickMatchClick} disabled={isCvsLoading}>
+      <Rocket className="mr-2 h-4 w-4"/>
+      {isCvsLoading ? "Cargando..." : "Hacer Match"}
+    </Button>
   );
 
   return (
@@ -109,6 +134,7 @@ export default function OpportunitiesScreen({
           )}
         </motion.div>
       </div>
+      <QuickMatchCvModal cvs={cvs} credits={credits} />
     </main>
   );
 }

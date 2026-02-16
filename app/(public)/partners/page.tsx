@@ -80,7 +80,7 @@ export default function Partners() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="https://calendly.com/mariluzdara/asesoria"
+                href="https://calendly.com/joinlevely/30min"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -89,10 +89,10 @@ export default function Partners() {
                   <ArrowRight className="w-5 h-5"/>
                 </Button>
               </a>
-              <Button variant="outline" size="lg"
-                      className="cursor-pointer dark:border-white/20 dark:text-white dark:hover:bg-white/10">
-                Descargar brochure
-              </Button>
+              {/*<Button variant="outline" size="lg"*/}
+              {/*        className="cursor-pointer dark:border-white/20 dark:text-white dark:hover:bg-white/10">*/}
+              {/*  Descargar brochure*/}
+              {/*</Button>*/}
             </div>
           </div>
         </div>
@@ -194,7 +194,7 @@ export default function Partners() {
                 ayudar a mejorar los resultados de empleabilidad de tu institución.
               </p>
               <a
-                href="https://calendly.com/mariluzdara/asesoria"
+                href="https://calendly.com/joinlevely/30min"
                 target="_blank"
                 rel="noopener noreferrer"
               >

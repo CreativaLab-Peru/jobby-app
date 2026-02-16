@@ -19,16 +19,18 @@ interface PreviewCVComponentProps {
   sectionIds: string[]
   canAnalyze: boolean
   analysisTokens: number
+  opportunitiesActionTokens?: number
 }
 
-export function PreviewCVComponent({ 
-  cv: cvData, 
-  cvId, 
-  opportunityType, 
-  cvType, 
+export function PreviewCVComponent({
+  cv: cvData,
+  cvId,
+  opportunityType,
+  cvType,
   sectionIds,
   canAnalyze,
-  analysisTokens 
+  analysisTokens,
+  opportunitiesActionTokens = 0
 }: PreviewCVComponentProps) {
   const [isDisabled] = useState(false)
   const router = useRouter()
@@ -67,6 +69,7 @@ export function PreviewCVComponent({
                 cvId={cvId}
                 canAnalyze={canAnalyze}
                 analysisTokens={analysisTokens}
+                opportunitiesActionTokens={opportunitiesActionTokens}
                 onHome={() => router.push('/cv')}
                 onEditCV={() => router.push(`/cv/${cvId}/edit`)}
               />

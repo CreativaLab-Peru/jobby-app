@@ -18,7 +18,7 @@ const navItems = [
   { name: "Career Accelerator", href: "/career-accelerator" },
   { name: "Partners", href: "/partners" },
   // { name: "Empresas", href: "/empresas" },
-  { name: "Resources", href: "/resources" },
+  // { name: "Resources", href: "/resources" },
 ];
 
 export default function PublicNavbar({ authenticated }: HeaderProps) {

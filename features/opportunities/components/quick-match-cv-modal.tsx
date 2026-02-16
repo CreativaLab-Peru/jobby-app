@@ -213,7 +213,7 @@ export function QuickMatchCvModal({ cvs, credits }: QuickMatchCvModalProps) {
                           Tienes <span className="font-bold text-foreground">{credits.opportunitiesActionsLimit}</span> crédito(s) disponibles
                         </p>
                         <p className="text-xs text-muted-foreground italic">
-                          💡 Se deducirá 1 crédito solo si se encuentran oportunidades válidas
+                          Se deducirá 1 crédito solo si se encuentran oportunidades válidas
                         </p>
                       </div>
                     ) : (

@@ -1,12 +1,18 @@
 import {inngest} from "./client";
 import {prisma} from "@/lib/prisma";
-import {CreditBalanceType, CvSectionType, LogAction, LogLevel, OpportunityType} from "@prisma/client";
+import {
+  CreditBalanceType,
+  CvSectionType,
+  LogAction,
+  LogLevel,
+  OpportunityType
+} from "@prisma/client";
 import {logsService} from "@/features/share/services/logs-service";
 import {
   getOpportunitiesFromEngine
 } from "@/features/opportunities/get-opportunities-from-engine";
 import {saveOpportunities} from "@/features/opportunities/save-opportunities";
-import { consumeCredits } from "@/features/credits/actions/consume-credits";
+import {consumeCredits} from "@/features/credits/actions/consume-credits";
 
 // Map internal OpportunityType to external API types
 /**
@@ -91,13 +97,13 @@ export const getAndSaveOpportunities = inngest.createFunction(
         // Original code handled 'soft' and 'technical' keys, but check if it's direct array
         const json: any = skillsSection.contentJson;
         if (json['soft']) {
-           skills = [...skills, ...json['soft']]
+          skills = [...skills, ...json['soft']]
         }
         if (json['technical']) {
-           skills = [...skills, ...json['technical']]
+          skills = [...skills, ...json['technical']]
         }
         if (Array.isArray(json)) {
-             skills = [...skills, ...json.map((s: any) => typeof s === 'string' ? s : s.name)]
+          skills = [...skills, ...json.map((s: any) => typeof s === 'string' ? s : s.name)]
         }
       }
 
@@ -116,18 +122,18 @@ export const getAndSaveOpportunities = inngest.createFunction(
       let experience_text = ''
       const experienceSection = cv.sections.find(s => s.sectionType === CvSectionType.EXPERIENCE)
       if (experienceSection && experienceSection.contentJson && Array.isArray(experienceSection.contentJson)) {
-          const items = experienceSection.contentJson as any[];
-          experience_text = items.map(item => {
-              return `${item.title || ''} at ${item.company || ''}. ${item.description || ''} ${item.summary || ''}`
-          }).join('. ');
+        const items = experienceSection.contentJson as any[];
+        experience_text = items.map(item => {
+          return `${item.title || ''} at ${item.company || ''}. ${item.description || ''} ${item.summary || ''}`
+        }).join('. ');
       }
 
       // Languages section (NEW)
       let languages: string[] = []
       const languagesSection = cv.sections.find(s => s.sectionType === CvSectionType.LANGUAGES)
       if (languagesSection && languagesSection.contentJson && Array.isArray(languagesSection.contentJson)) {
-          const items = languagesSection.contentJson as any[];
-          languages = items.map(item => item.language || item.name || '').filter(Boolean);
+        const items = languagesSection.contentJson as any[];
+        languages = items.map(item => item.language || item.name || '').filter(Boolean);
       }
 
       const cvAnalysis: any = {
@@ -146,7 +152,7 @@ export const getAndSaveOpportunities = inngest.createFunction(
       const matchRequest = {
         cv_data: cvAnalysis,
         preferences: {
-            top_k: 5
+          top_k: 5
         }
       };
 
@@ -160,7 +166,7 @@ export const getAndSaveOpportunities = inngest.createFunction(
         entity: "CV_OPPORTUNITY",
         entityId: cvId,
         message: "Requesting opportunities from engine",
-        metadata: { cvId, userId, cvData: cvAnalysis },
+        metadata: {cvId, userId, cvData: cvAnalysis},
       });
 
       const opportunities = await getOpportunitiesFromEngine(userId, cvId, matchRequest);
@@ -246,9 +252,9 @@ export const getAndSaveOpportunities = inngest.createFunction(
         // Delete old opportunities before saving new ones
         console.log(`[GET_AND_SAVE_OPPORTUNITIES] Deleting ${existingOpportunitiesCount} old opportunities`);
 
-        await prisma.opportunity.deleteMany({
-          where: { cvId: cv.id }
-        });
+        // await prisma.opportunity.deleteMany({
+        //   where: {cvId: cv.id}
+        // });
 
         // Save new opportunities
         await saveOpportunities(cv.id, opportunities.matches);
@@ -264,7 +270,12 @@ export const getAndSaveOpportunities = inngest.createFunction(
           entity: "CV_OPPORTUNITY",
           entityId: cvId,
           message,
-          metadata: {cvId, userId, opportunitiesCount: matchCount, previousCount: existingOpportunitiesCount},
+          metadata: {
+            cvId,
+            userId,
+            opportunitiesCount: matchCount,
+            previousCount: existingOpportunitiesCount
+          },
         });
       } else {
         // No matches found - keep old opportunities if any exist
@@ -282,7 +293,13 @@ export const getAndSaveOpportunities = inngest.createFunction(
           entity: "CV_OPPORTUNITY",
           entityId: cvId,
           message,
-          metadata: {cvId, userId, opportunitiesCount: 0, previousCount: existingOpportunitiesCount, creditConsumed: shouldConsumeCredit},
+          metadata: {
+            cvId,
+            userId,
+            opportunitiesCount: 0,
+            previousCount: existingOpportunitiesCount,
+            creditConsumed: shouldConsumeCredit
+          },
         });
       }
 

@@ -6,11 +6,22 @@ import {
 } from "@/features/cv/actions/get-evaluations-for-current-user";
 import {getAllCvForCurrentUser} from "@/features/cv/actions/get-all-cv-for-current-user";
 
-export default async function MyEvaluationsPage() {
+type MyEvaluationsPageProps = {
+  searchParams?: Promise<{
+    cvId?: string;
+  }>
+}
+
+export default async function MyEvaluationsPage({
+                                                  searchParams
+                                                }:MyEvaluationsPageProps) {
+  const { cvId } = searchParams ? await searchParams : {};
+
   const params: EvaluationFilterOptions = {
     skip: 0,
     take: 5,
     onlySuccessful: true,
+    cvId
   }
 
   const [cvEvaluations, creditLimits, cvData] = await Promise.all([
@@ -35,6 +46,10 @@ export default async function MyEvaluationsPage() {
       canAnalyze={canAnalyze}
       hasMoreProp={hasMore}
       totalCount={totalCount}
+      currentFilters={{
+        cvId: cvId || null,
+        justSuccessful: true,
+      }}
     />
   );
 }

@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, ChevronDown, User } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/button-toggle-theme";
@@ -21,7 +21,7 @@ const navItems = [
   // { name: "Resources", href: "/resources" },
 ];
 
-export default function Header({ authenticated }: HeaderProps) {
+export default function PublicNavbar({ authenticated }: HeaderProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = React.useState(false);
   const [mobileRegisterOpen, setMobileRegisterOpen] = React.useState(false);
@@ -31,7 +31,7 @@ export default function Header({ authenticated }: HeaderProps) {
       <div className="container-levely">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link href="/" className="relative h-10 w-32 lg:h-12 lg:w-40">
+          <Link href="/" className="relative h-30 w-20 lg:h-20 lg:w-30">
             <Image
               src="/logo_light.png"
               alt="Levely"

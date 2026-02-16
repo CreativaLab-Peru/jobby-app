@@ -10,7 +10,7 @@ import { EvaluationWithRelations } from "@/features/cv/actions/get-evaluations-f
 interface EvaluationCardProps {
   evaluation: EvaluationWithRelations; // Cambiado de 'cv' a 'evaluation' para ser semánticos
   onAction: (id: string) => void;
-  onRetry?: (cvId: string) => void;
+  onRetry?: (evaluationId: string) => void;
   isRetrying?: boolean;
 }
 
@@ -95,7 +95,7 @@ export function EvaluationCard({ evaluation, onAction, onRetry, isRetrying }: Ev
             disabled={isRetrying}
             onClick={(e) => {
               e.stopPropagation();
-              onRetry?.(cvData.id); // Usamos el ID del CV para el re-análisis
+              onRetry?.(evaluation.id);
             }}
             className="font-black uppercase tracking-widest text-[10px] px-6 rounded-xl"
           >

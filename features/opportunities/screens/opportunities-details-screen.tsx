@@ -28,7 +28,7 @@ interface Props {
 const StatCard = ({ icon: Icon, label, value }: any) => (
   <motion.div
     whileHover={{ y: -2 }}
-    className="bg-card/50 border border-border/40 p-4 rounded-2xl flex flex-col items-center text-center gap-1"
+    className="bg-card/50 border border-border p-4 rounded-2xl flex flex-col items-center text-center gap-1"
   >
     <Icon className="w-4 h-4 text-primary/60" />
     <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60">{label}</span>
@@ -132,7 +132,7 @@ export function OpportunityDetailsScreen({
               {/* Descripción */}
               <section className="space-y-4">
                 <h2 className="text-sm font-black uppercase tracking-[0.2em] text-primary/80">Descripción</h2>
-                <p className="text-lg md:text-xl text-foreground/90 font-medium leading-relaxed italic">
+                <p className="text-sm md:text-md text-foreground/90 font-medium leading-relaxed italic">
                   "{opportunity.description}"
                 </p>
               </section>

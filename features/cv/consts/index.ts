@@ -24,3 +24,19 @@ export const OPPORTUNITY_CONFIG: Record<string, string> = {
 
 // Map value and label for select options
 export const CV_TYPE_OPTIONS = Object.entries(CV_TYPE_CONFIG).map(([value, { label }]) => ({ value, label }));
+
+// Map CvType
+export const CvSectionType = {
+  SUMMARY: "Resumida",
+  EXPERIENCE: "Experiencia",
+  EDUCATION: "Educación",
+  SKILLS: "Habilidades",
+  PROJECTS: "Proyectos",
+  VOLUNTEERING: "Voluntariado",
+  CERTIFICATIONS: "Certificaciones",
+  LANGUAGES: "Idiomas",
+  CONTACT: "Contacto",
+  COMPLEMENTS: "Complementos",
+  ACHIEVEMENTS: "Logros",
+  INTERESTS: "Intereses",
+}

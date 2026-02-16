@@ -126,6 +126,12 @@ export function AccountStep() {
             onChange={(e) => updateFormData({acceptedTerms: e.target.checked})}
           />
           <span>Acepto los términos y condiciones</span>
+          <a
+            href="/terminos-y-condiciones"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:underline text-xs"
+          >Ver</a>
           {errors.acceptedTerms && (
             <span className="text-red-600 text-xs mt-1">{errors.acceptedTerms}</span>
           )}

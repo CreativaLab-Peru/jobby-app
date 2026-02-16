@@ -1,21 +1,10 @@
-# v1.1.15 - 2026-02-15 [WIP]
+# v1.1.15 - 2026-02-16
 
 ## Features
 - New "Quick Match" functionality in sidebar for fast opportunity search without full analysis
 - Intelligent credit consumption logic for opportunity matching:
     - Charges 1 `SEARCH_OPPORTUNITIES` credit only when matches are found or for refreshing existing CV opportunities
     - No credit consumed for new CVs with no matches found (Better UX)
-- Improved opportunity management:
-    - Automatically replaces old matches when new ones are found
-    - Preserves old matches when no new results are found to avoid empty sections
-- Modal to select and analyze CV from evaluations page
-- Icons for Opportunity Type and Professional Profile in CV selection modal
-
-## Fixes
-- Fixed CV list in modal to show ALL CVs (not just analyzed ones)
-- Fixed "Failed to save, not advancing" error in CV creation form
-- Improved error handling and user feedback in CV form navigation
-- Fixed validation logic to properly handle optional fields
 
 ## Enhancements
 - Updated Privacy Policy and Terms & Conditions

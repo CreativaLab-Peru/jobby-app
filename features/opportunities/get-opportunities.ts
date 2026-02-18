@@ -5,7 +5,9 @@ import {prisma} from "@/lib/prisma";
 
 export interface paginationParams {
   skip?: number,
-  take?: number
+  take?: number,
+  cvId?: string,
+  query?: string
 }
 
 export const getOpportunities = async (params?: paginationParams) => {
@@ -13,13 +15,27 @@ export const getOpportunities = async (params?: paginationParams) => {
     const currentUser = await getCurrentUser();
     if (!currentUser) return null;
 
-    const {skip = 0, take = 6} = params || {};
+    const {skip = 0, take = 6, cvId, query} = params || {};
+
+    const whereClause: any = {
+      cv: {userId: currentUser.id}
+    };
+
+    if (cvId) {
+      whereClause.cvId = cvId;
+    }
+
+    if (query) {
+      whereClause.OR = [
+        { title: { contains: query, mode: "insensitive" } },
+        { company: { contains: query, mode: "insensitive" } },
+        { description: { contains: query, mode: "insensitive" } },
+      ];
+    }
 
     const [data, count] = await Promise.all([
       prisma.opportunity.findMany({
-        where: {
-          cv: {userId: currentUser.id}
-        },
+        where: whereClause,
         orderBy: [
           {match: "desc"},
           {createdAt: "desc"}
@@ -28,9 +44,7 @@ export const getOpportunities = async (params?: paginationParams) => {
         take
       }),
       prisma.opportunity.count({
-        where: {
-          cv: {userId: currentUser.id}
-        }
+        where: whereClause
       })
     ]);
 

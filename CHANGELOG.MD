@@ -1,3 +1,19 @@
+# v1.1.16 - 2026-02-17
+
+## Features
+- **Advanced Opportunity Filtering**: Added a CV-specific filter in the Opportunities section to match profiles more accurately.
+- **Search Functionality**: Implemented a search bar with debounce (500ms) to filter opportunities by job title or company name.
+- **Improved IA Matching UX**: Created a new `QuickMatchLoadingModal` with a guaranteed 10-second simulation that shows realistic progress steps ("Analyzing profile", "Searching vacancies", etc.) for a more professional feel.
+
+## Enhancements
+- **UI Consistency**: Standardized the size and style of all action buttons in the CV Preview sidebar (Download, Analyze, Match).
+- **Responsive Filters**: Improved the layout of the filter bar in the Opportunities and Evaluations screens.
+- **Smarter Placeholders**: Updated empty states to provide relevant feedback when filters or search queries yield no results.
+
+## Fixes
+- **Duplicate Name Conflict**: Fixed a bug where multiple CVs with the same name would all be highlighted simultaneously in the selection menus by integrating unique IDs into the selection logic.
+
+
 # v1.1.15 - 2026-02-16
 
 ## Features

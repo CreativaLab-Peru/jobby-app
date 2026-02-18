@@ -62,7 +62,7 @@ export function CreditPackCard({ pack, onPurchase }: PackProps) {
         variant={pack.variant}
         className={`w-full py-6 rounded-2xl font-bold
           ${pack.highlight
-            ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-200"
+            ? "bg-blue-600 hover:bg-blue-700 text-white"
             : ""}`}
         onClick={() => onPurchase(pack.id)}
       >

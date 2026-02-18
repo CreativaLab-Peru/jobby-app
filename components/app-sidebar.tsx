@@ -114,36 +114,36 @@ export default function AppSidebar() {
         </SidebarGroup>
 
         {/* Comunidad (placeholder, descomentar si hay lógica de plan) */}
-        <SidebarGroup>
-          <SidebarGroupLabel
-            className={cn(
-              "px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider",
-              collapsed && "sr-only",
-            )}
-          >
-            Comunidad
-          </SidebarGroupLabel>
-          <SidebarMenu>
-            {communityItems.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild>
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200",
-                      isActive(item.href)
-                        ? "bg-levely-blue dark:bg-levely-green text-white dark:text-levely-dark font-semibold"
-                        : "text-muted-foreground hover:text-levely-blue hover:bg-levely-blue dark:hover:bg-secondary",
-                    )}
-                  >
-                    <item.icon className="h-5 w-5 shrink-0" />
-                    {!collapsed && <span>{item.title}</span>}
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
+        {/*<SidebarGroup>*/}
+        {/*  <SidebarGroupLabel*/}
+        {/*    className={cn(*/}
+        {/*      "px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider",*/}
+        {/*      collapsed && "sr-only",*/}
+        {/*    )}*/}
+        {/*  >*/}
+        {/*    Comunidad*/}
+        {/*  </SidebarGroupLabel>*/}
+        {/*  <SidebarMenu>*/}
+        {/*    {communityItems.map((item) => (*/}
+        {/*      <SidebarMenuItem key={item.title}>*/}
+        {/*        <SidebarMenuButton asChild>*/}
+        {/*          <Link*/}
+        {/*            href={item.href}*/}
+        {/*            className={cn(*/}
+        {/*              "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200",*/}
+        {/*              isActive(item.href)*/}
+        {/*                ? "bg-levely-blue dark:bg-levely-green text-white dark:text-levely-dark font-semibold"*/}
+        {/*                : "text-muted-foreground hover:text-levely-blue hover:bg-levely-blue dark:hover:bg-secondary",*/}
+        {/*            )}*/}
+        {/*          >*/}
+        {/*            <item.icon className="h-5 w-5 shrink-0" />*/}
+        {/*            {!collapsed && <span>{item.title}</span>}*/}
+        {/*          </Link>*/}
+        {/*        </SidebarMenuButton>*/}
+        {/*      </SidebarMenuItem>*/}
+        {/*    ))}*/}
+        {/*  </SidebarMenu>*/}
+        {/*</SidebarGroup>*/}
 
         {/* Plan Badge y progreso (placeholder) */}
         {/*{!collapsed && (*/}

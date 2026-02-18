@@ -7,7 +7,7 @@ import {AnimatePresence, motion} from "framer-motion";
 import OpportunityCard from "@/features/opportunities/components/opportunity-card";
 import {EmptyPlaceholder} from "@/components/shared/empty-placeholder";
 import {Opportunity} from ".prisma/client";
-import {useState, useTransition, useEffect} from "react";
+import {useState, useTransition} from "react";
 import {getOpportunities} from "@/features/opportunities/get-opportunities";
 import {LoadMoreButton} from "@/components/shared/load-more-button";
 import {Button} from "@/components/ui/button";

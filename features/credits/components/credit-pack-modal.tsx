@@ -15,18 +15,20 @@ import {useState, useTransition} from "react";
 import {
   createPreferenceForNewUser
 } from "@/features/billing/actions/create-preference-for-new-user";
+import {useAnalysisStore} from "@/hooks/use-analysis-store";
 
 export function CreditPackModal() {
   const { isOpen, onClose } = useCreditModal()
+  const {userId} = useAnalysisStore();
 
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState(null);
 
-  const handlePurchase = (packId: string) => {
+  const handlePurchase = () => {
     if (isPending) return;
 
     startTransition(async () => {
-      const result = await createPreferenceForNewUser(packId);
+      const result = await createPreferenceForNewUser(userId);
       if (result.success) {
         window.location.href = result.redirect;
       } else {
@@ -60,7 +62,7 @@ export function CreditPackModal() {
                 <CreditPackCard
                   key={pack.id}
                   pack={pack}
-                  onPurchase={() => handlePurchase(pack.id)}
+                  onPurchase={() => handlePurchase()}
                 />
               ))}
             </div>

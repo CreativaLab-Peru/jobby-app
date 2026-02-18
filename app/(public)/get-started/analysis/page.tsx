@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, Lock, Briefcase, Zap, TrendingUp, Search } from "lucide-react";
+import {Loader2, Lock, Briefcase, Search, Lightbulb, TrendingUp, Zap} from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { useAnalysisStore } from "@/hooks/use-analysis-store";
 import { Badge } from "@/components/ui/badge";
-import {useCreditModal} from "@/features/credits/hooks/use-credit-modal";
-import {CreditPackModal} from "@/features/credits/components/credit-pack-modal";
+import { useCreditModal } from "@/features/credits/hooks/use-credit-modal";
+import { CreditPackModal } from "@/features/credits/components/credit-pack-modal";
+import { CardContent, CardTitle } from "@/components/ui/card";
 
 export default function AnalysisPage() {
   const { fileName, userId } = useAnalysisStore();
@@ -16,7 +17,7 @@ export default function AnalysisPage() {
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState("Extrayendo texto del PDF...");
 
-  const creditModal = useCreditModal()
+  const creditModal = useCreditModal();
 
   useEffect(() => {
     if (stage === "loading") {
@@ -34,14 +35,14 @@ export default function AnalysisPage() {
           if (next === 90) setMessage("Finalizando reporte personalizado...");
           return next;
         });
-      }, 40); // Ajusta la velocidad aquí
+      }, 30);
       return () => clearInterval(timer);
     }
   }, [stage]);
 
   return (
     <>
-      <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-background to-background p-6">
+      <div className="min-h-screen p-6 bg-[#f8f9fa]">
         <AnimatePresence mode="wait">
           {stage === "loading" ? (
             <motion.div
@@ -75,112 +76,136 @@ export default function AnalysisPage() {
               animate={{ opacity: 1, y: 0 }}
               className="max-w-5xl mx-auto space-y-8 pb-20"
             >
-              {/* Header / Score */}
-              <header className="flex flex-col md:flex-row gap-8 items-center bg-card/60 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/20 shadow-2xl">
-                <div className="relative w-40 h-40 flex items-center justify-center">
-                  <svg className="w-full h-full transform -rotate-90">
-                    <circle cx="80" cy="80" r="70" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-primary/10" />
-                    <motion.circle
-                      cx="80" cy="80" r="70" stroke="currentColor" strokeWidth="12" fill="transparent"
-                      strokeDasharray={440}
-                      initial={{ strokeDashoffset: 440 }}
-                      animate={{ strokeDashoffset: 440 * (1 - 0.82) }}
-                      transition={{ duration: 1.5, ease: "easeOut" }}
-                      className="text-primary"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <div className="absolute flex flex-col items-center blur">
-                    <span className="text-4xl font-black italic">82</span>
-                    <span className="text-[10px] uppercase tracking-tighter font-bold opacity-60">Score ATS</span>
+              {/* Score Header - Basado en la imagen 1 */}
+              <header className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm relative overflow-hidden">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                      <TrendingUp className="w-4 h-4" />
+                      <span className="text-sm font-medium uppercase tracking-wider">Score de Empleabilidad</span>
+                    </div>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-6xl font-black tracking-tighter">85</span>
+                      <span className="text-2xl text-muted-foreground font-medium">/100</span>
+                    </div>
                   </div>
+
+                  <Badge variant="secondary" className="bg-gray-50 text-gray-600 border-none px-4 py-2 rounded-full flex gap-2 items-center">
+                    <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                    ✨ Análisis IA completado
+                  </Badge>
                 </div>
-                <div className="text-center md:text-left space-y-2">
-                  <Badge variant="outline" className="mb-2 border-primary/30 text-primary">Análisis Exitoso</Badge>
-                  <h1 className="text-4xl font-black tracking-tight text-foreground">Tu potencial de mercado es <span className="text-primary">Alto</span></h1>
-                  <p className="text-muted-foreground max-w-md">
-                    Hemos procesado tu perfil bajo el ID <span className="font-mono text-primary">{userId?.slice(0,8)}</span>.
-                    Detectamos oportunidades inmediatas de mejora.
-                  </p>
+
+                {/* Progress Bar - Estilo imagen 1 */}
+                <div className="mt-8 space-y-2">
+                  <div className="relative h-4 w-full bg-gray-100 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: "85%" }}
+                      transition={{ duration: 1, ease: "easeOut" }}
+                      className="h-full bg-slate-800 rounded-full"
+                    />
+                  </div>
+                  <div className="flex justify-between text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-1">
+                    <span>Bajo</span>
+                    <span>Promedio</span>
+                    <span>Excelente</span>
+                  </div>
                 </div>
               </header>
 
-              {/* Main Content Area */}
-              <div className="relative">
-                {/* Contenido Borroso Realista */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 blur-[8px] select-none pointer-events-none opacity-50">
+              {/* Insights & Improvements - Basado en la imagen 1 */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card className="p-8 bg-white border-none shadow-sm group hover:shadow-md transition-shadow">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-blue-50 rounded-lg text-blue-600 group-hover:scale-110 transition-transform">
+                      <Lightbulb className="w-5 h-5" />
+                    </div>
+                    <h3 className="font-bold text-lg">Insight de tu perfil</h3>
+                  </div>
+                  <p className="text-slate-600 leading-relaxed">
+                    Tu perfil muestra una sólida trayectoria en desarrollo de software con énfasis en tecnologías modernas.
+                  </p>
+                </Card>
 
-                  {/* Recomendaciones (Col 1 y 2) */}
-                  <div className="md:col-span-2 space-y-6">
-                    <section className="p-6 border rounded-3xl bg-card space-y-4">
-                      <h3 className="font-bold text-xl flex items-center gap-2"><Zap className="text-yellow-500"/> Puntos de Mejora Críticos</h3>
-                      <div className="space-y-3">
-                        <div className="h-12 bg-muted rounded-xl w-full" />
-                        <div className="h-12 bg-muted rounded-xl w-[90%]" />
-                        <div className="h-12 bg-muted rounded-xl w-[95%]" />
-                      </div>
-                    </section>
+                <Card className="p-8 bg-white border-none shadow-sm group hover:shadow-md transition-shadow">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-red-50 rounded-lg text-red-500 group-hover:scale-110 transition-transform">
+                      <TrendingUp className="w-5 h-5 rotate-45" />
+                    </div>
+                    <h3 className="font-bold text-lg">Área de mejora</h3>
+                  </div>
+                  <p className="text-slate-600 leading-relaxed">
+                    Fortalecer las habilidades de liderazgo y gestión de equipos para roles senior.
+                  </p>
+                </Card>
+              </div>
 
-                    <section className="p-6 border rounded-3xl bg-card space-y-4">
-                      <h3 className="font-bold text-xl flex items-center gap-2"><TrendingUp className="text-green-500"/> Habilidades más demandadas</h3>
-                      <div className="flex wrap gap-2">
-                        {[1,2,3,4,5,6].map(i => <div key={i} className="h-8 w-24 bg-muted rounded-full" />)}
-                      </div>
-                    </section>
+              {/* Jobs Section con "Candado" - Basado en la imagen 2 */}
+              <Card className="p-8 bg-white border-none shadow-sm transition-shadow overflow-hidden">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between px-2 mb-6">
+                    <h3 className="text-xl font-bold flex items-center gap-2">
+                      <Briefcase className="w-5 h-5 text-slate-400" />
+                      Oportunidades sugeridas
+                    </h3>
+                    <Badge variant="outline" className="text-[10px] uppercase tracking-widest opacity-70">
+                      Contenido bloqueado
+                    </Badge>
                   </div>
 
-                  {/* Oportunidades (Col 3) */}
-                  <div className="md:col-span-1 p-6 border rounded-3xl bg-card space-y-6">
-                    <h3 className="font-bold text-xl flex items-center gap-2"><Briefcase className="text-blue-500"/> Matches de Empleo</h3>
-                    {[1,2,3,4].map(i => (
-                      <div key={i} className="flex gap-3 items-center p-3 border rounded-2xl">
-                        <div className="w-10 h-10 bg-muted rounded-lg shrink-0" />
-                        <div className="space-y-2 w-full">
-                          <div className="h-3 bg-muted rounded w-3/4" />
-                          <div className="h-2 bg-muted rounded w-1/2" />
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="group relative">
+                      {/* Item de Oportunidad (Borroso) */}
+                      <div className="bg-white p-6 rounded-2xl flex items-center justify-between border border-gray-100 filter blur-[3px] opacity-40 select-none pointer-events-none transition-all">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-gray-200 rounded-xl" />
+                          <div>
+                            <div className="h-5 bg-gray-200 w-48 rounded mb-2" />
+                            <div className="h-4 bg-gray-100 w-32 rounded" />
+                          </div>
                         </div>
+                        <Badge className="bg-gray-100 text-gray-400 border-none">
+                          {85 + i}% match
+                        </Badge>
                       </div>
-                    ))}
-                  </div>
-                </div>
 
-                {/* Paywall Overlay */}
-                <div className="absolute inset-0 z-10 flex items-start justify-center pt-12 md:pt-20 px-4">
+                      {/* Overlay de Bloqueo Individual (El "Candado") */}
+                      <div className="absolute inset-0 z-10 flex items-center justify-center">
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="flex flex-col items-center gap-1"
+                        >
+                          {/* Si quieres que diga "Candado" como en tu imagen de referencia, puedes usar el texto o el icono */}
+                          <div className="bg-white/90 backdrop-blur-sm px-6 py-2 rounded-full shadow-sm border border-gray-100 flex items-center gap-2">
+                            <Lock className="w-4 h-4 text-slate-800" />
+                            <span className="text-sm font-bold tracking-tight text-slate-800 uppercase">Bloqueado</span>
+                          </div>
+                        </motion.div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Botón de Acción Principal al final de la lista */}
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.5 }}
-                    className="max-w-md w-full"
+                    initial={{ y: 10, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    className="mt-8 pt-4 border-t border-dashed border-gray-200 flex flex-col items-center"
                   >
-                    <Card className="p-8 text-center shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)] border-primary/30 bg-card/95 backdrop-blur-md relative overflow-hidden">
-                      {/* Glow effect detrás del candado */}
-                      <div className="absolute -top-24 -left-24 w-48 h-48 bg-primary/20 rounded-full blur-3xl" />
-
-                      <div className="relative z-20">
-                        <div className="mx-auto w-20 h-20 bg-primary rounded-[2rem] flex items-center justify-center mb-6 shadow-glow rotate-3">
-                          <Lock className="w-10 h-10 text-white" />
-                        </div>
-
-                        <h3 className="text-3xl font-black mb-4 tracking-tight">Reporte Bloqueado</h3>
-                        <p className="text-muted-foreground mb-8 leading-relaxed">
-                          Para ver tus <span className="text-foreground font-bold italic">2 recomendaciones personalizadas</span> y las vacantes con <span className="text-foreground font-bold italic">+80% de match</span>, completa tu registro profesional.
-                        </p>
-
-                        <div className="space-y-3">
-                          <Button
-                            onClick={creditModal.onOpen}
-                            className="w-full h-14 ai-gradient text-white font-bold text-lg rounded-2xl shadow-lg hover:scale-[1.02] transition-transform">
-                            Desbloquear Análisis Completo
-                          </Button>
-                          <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">
-                            Análisis procesado por IA v4.2
-                          </p>
-                        </div>
-                      </div>
-                    </Card>
+                    <Button
+                      onClick={creditModal.onOpen}
+                      className="w-full max-w-xs h-12 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl shadow-lg transition-all active:scale-95 flex items-center gap-2"
+                    >
+                      <Zap className="w-4 h-4 fill-current" />
+                      Desbloquear Matches
+                    </Button>
+                    <p className="mt-3 text-[11px] text-muted-foreground font-medium uppercase tracking-tighter">
+                      Requiere el paquete STARTER de créditos
+                    </p>
                   </motion.div>
                 </div>
-              </div>
+              </Card>
             </motion.div>
           )}
         </AnimatePresence>
@@ -190,10 +215,9 @@ export default function AnalysisPage() {
   );
 }
 
-// Componente Card local simplificado pero con estilo refinado
 function Card({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`bg-card border rounded-[2.5rem] shadow-sm ${className}`}>
+    <div className={`bg-card border rounded-[2rem] ${className}`}>
       {children}
     </div>
   );

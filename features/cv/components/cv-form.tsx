@@ -62,7 +62,6 @@ export function CVForm({ formData, onFormDataChange }: CVFormProps) {
           placeholder="Ejemplo: CV Ingeniero de Software"
           value={formData.title}
           onChange={(e) => updateFormData({ title: e.target.value })}
-          className="w-full border border-gray-300 focus:border-gray-400 focus:ring-1 focus:ring-gray-400 dark:border-gray-600 dark:focus:border-gray-500 dark:focus:ring-gray-500 bg-white dark:bg-[#2d333b] text-black dark:text-white"
         />
         <p>
           <span className="text-sm text-gray-500 dark:text-gray-400">

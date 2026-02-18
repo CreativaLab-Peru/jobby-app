@@ -150,7 +150,7 @@ export function ActionsSidebar({
 
         <Button
           disabled={isDisabled || downloading}
-          className="w-full bg-levely-blue hover:bg-levely-blue dark:bg-levely-green dark:hover:bg-levely-green/60"
+          className="w-full"
           onClick={handleDownloadPdf}
         >
           {downloading ? (
@@ -164,7 +164,7 @@ export function ActionsSidebar({
         {showMatchButton && (
           <Button
             disabled={isDisabled || matching}
-            className="w-full bg-levely-blue hover:bg-levely-blue/90 dark:bg-levely-green dark:hover:bg-levely-green/60"
+            className="w-full"
             onClick={handleQuickMatch}
           >
             {matching ? (
@@ -179,7 +179,8 @@ export function ActionsSidebar({
         {showAnalyzeButton && (
           <Button
             disabled={isDisabled || analyzing || !canAnalyze}
-            className="w-full bg-levely-blue hover:bg-levely-blue/90 dark:bg-levely-green dark:hover:bg-levely-green/60"
+            className="w-full"
+            variant={'secondary'}
             onClick={handleAnalyzeCv}
           >
             {analyzing ? (
@@ -193,8 +194,8 @@ export function ActionsSidebar({
 
         <Button
           disabled={isDisabled}
-          variant="outline"
-          className="w-full bg-transparent border-border text-foreground hover:bg-muted"
+          variant={'secondary'}
+          className="w-full"
           onClick={onHome}
         >
           <Home className="w-4 h-4 mr-2" />
@@ -203,8 +204,8 @@ export function ActionsSidebar({
 
         <Button
           disabled={isDisabled}
-          variant="outline"
-          className="w-full bg-transparent border-border text-foreground hover:bg-muted"
+          variant={'secondary'}
+          className="w-full"
           onClick={onEditCV}
         >
           <ArrowLeft className="w-4 h-4 mr-2" />

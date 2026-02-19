@@ -9,7 +9,6 @@ import { useAnalysisStore } from "@/hooks/use-analysis-store";
 import { Badge } from "@/components/ui/badge";
 import { useCreditModal } from "@/features/credits/hooks/use-credit-modal";
 import { CreditPackModal } from "@/features/credits/components/credit-pack-modal";
-import { CardContent, CardTitle } from "@/components/ui/card";
 
 export default function AnalysisPage() {
   const { fileName, userId } = useAnalysisStore();

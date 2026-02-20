@@ -12,7 +12,7 @@ export async function getOpportunityDetails(id: string) {
       return { error: "No autorizado", status: 401 };
     }
 
-    const opportunity = await prisma.opportunity.findUnique({
+    const opportunity = await prisma.opportunity.findFirst({
       where: { id },
       include: { cv: true },
     });
@@ -25,13 +25,8 @@ export async function getOpportunityDetails(id: string) {
       return { error: "No tienes permiso", status: 403 };
     }
 
-    // --- SANITIZACIÓN Y TRANSFORMACIÓN ---
-
-    // 1. Convertimos el Decimal a Number de JS inmediatamente
     const matchValue = Math.round(Number(opportunity.match) * 100);
 
-    // 2. Creamos un objeto plano (Plain Old JavaScript Object)
-    // Evitamos pasar el objeto 'opportunity' directamente para limpiar los Decimals y Dates
     const sanitizedOpportunity = {
       id: opportunity.id,
       title: opportunity.title,

@@ -172,10 +172,10 @@ export function QuickMatchCvModal({ cvs, credits }: QuickMatchCvModalProps) {
       // Refresh credits after match
       await refreshCredits();
 
-      // Ensure at least 15 seconds of loading animation to allow Inngest to complete saving
+      // Ensure at least 10 seconds of loading animation to allow Inngest to complete saving
       // (Inngest processes asynchronously, and we need to wait for DB writes to complete)
       const elapsedTime = Date.now() - startTime;
-      const remainingTime = Math.max(0, 15000 - elapsedTime);
+      const remainingTime = Math.max(0, 10000 - elapsedTime);
 
       setTimeout(() => {
         toast.success("¡Match finalizado!");

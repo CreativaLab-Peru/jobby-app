@@ -41,13 +41,18 @@ export default function OpportunitiesScreen({
   const [filterCvId, setFilterCvId] = useState<string | null>(currentFilterCvId);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const {onOpen} = useQuickMatchModalStore();
+  const {onOpen, setSelectedCvId} = useQuickMatchModalStore();
   const {credits} = useCredits();
 
   const cvOptions = initialCvs.map(cv => ({
     value: cv.id,
     label: cv.title || "CV Sin título"
   }));
+
+  // Sync filterCvId when currentFilterCvId changes (from URL params)
+  useEffect(() => {
+    setFilterCvId(currentFilterCvId);
+  }, [currentFilterCvId]);
 
   // Debounce search query
   useEffect(() => {
@@ -58,10 +63,8 @@ export default function OpportunitiesScreen({
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
+  // Apply filters when they change
   useEffect(() => {
-    if (filterCvId === currentFilterCvId &&
-        debouncedSearchQuery === "" &&
-        opportunities === initialData) return;
 
     startTransition(async () => {
       const result = await getOpportunities({
@@ -100,6 +103,10 @@ export default function OpportunitiesScreen({
       const cvData = await getCvForCurrentUser(0, 1000);
       if (cvData?.cvs) {
         setCvs(cvData.cvs);
+        // Pre-select the currently filtered CV if one is active
+        if (filterCvId) {
+          setSelectedCvId(filterCvId);
+        }
         onOpen();
       }
     } catch (error) {

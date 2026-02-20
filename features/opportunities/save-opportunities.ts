@@ -1,10 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import {MatchAnalysis} from "@/features/opportunities/get-opportunities-from-engine";
 
-import { OpportunityType } from "@prisma/client";
-
 export const saveOpportunities = async (cvId: string, opportunities: MatchAnalysis[]) => {
   try {
+    console.log(`[SAVE_OPPORTUNITIES] Starting to save ${opportunities.length} opportunities for CV ${cvId}`);
+
     // We need the CV type to enforce consistency if creating new opportunities
     const cv = await prisma.cv.findUnique({
       where: { id: cvId },
@@ -16,12 +16,24 @@ export const saveOpportunities = async (cvId: string, opportunities: MatchAnalys
       return false;
     }
 
+    console.log(`[SAVE_OPPORTUNITIES] CV found, opportunityType: ${cv.opportunityType}`);
+
+    // Delete all existing opportunities for this CV before saving new ones
+    const deleted = await prisma.opportunity.deleteMany({ where: { cvId } });
+    if (deleted.count > 0) {
+      console.log(`[SAVE_OPPORTUNITIES] Deleted ${deleted.count} old opportunities for CV ${cvId}`);
+    }
+
+    let savedCount = 0;
     for (const opp of opportunities) {
       // Map API fields to Prisma schema (new nested format)
+      // Prisma automatically handles conversion to Decimal type
       const matchScore = opp.match_score;
       const title = opp.details?.title || "Sin título";
       const linkUrl = opp.details?.url || "#";
       const deadline = opp.details?.deadline ? new Date(opp.details.deadline) : null;
+
+      console.log(`[SAVE_OPPORTUNITIES] Processing opportunity: ${opp.opportunity_id}, matchScore: ${matchScore}, title: ${title}`);
 
       // Build requirements from skill arrays
       let requirements = "";
@@ -57,41 +69,37 @@ export const saveOpportunities = async (cvId: string, opportunities: MatchAnalys
       // Use the CV's opportunity type as the source of truth
       const type = cv.opportunityType;
 
-      await prisma.opportunity.upsert({
-        where: {
-          id: opp.opportunity_id,
-        },
-        create: {
-          id: opp.opportunity_id,
-          type: type,
-          title: title,
-          deadline: deadline,
-          requirements: requirements,
-          linkUrl: linkUrl,
-          match: matchScore,
-          company: company,
-          location: location,
-          modality: modality,
-          salary: salary,
-          description: description,
-          benefits: benefits,
-          cv: { connect: { id: cvId } },
-        },
-        update: {
-          match: matchScore,
-          title: title,
-          deadline: deadline,
-          linkUrl: linkUrl,
-          company: company,
-          location: location,
-          modality: modality,
-          salary: salary,
-          description: description,
-          benefits: benefits,
-        }
-      });
+      try {
+        // Round matchScore to 4 decimal places to fit Decimal(8,4) schema constraint
+        const matchDecimal = Math.round(matchScore * 10000) / 10000;
+
+        await prisma.opportunity.create({
+          data: {
+            id: opp.opportunity_id,
+            type: type,
+            title: title,
+            deadline: deadline,
+            requirements: requirements,
+            linkUrl: linkUrl,
+            match: matchDecimal,
+            company: company,
+            location: location,
+            modality: modality,
+            salary: salary,
+            description: description,
+            benefits: benefits,
+            cv: { connect: { id: cvId } },
+          },
+        });
+        savedCount++;
+        console.log(`[SAVE_OPPORTUNITIES] ✅ Opportunity ${opp.opportunity_id} saved successfully`);
+      } catch (createError) {
+        console.error(`[SAVE_OPPORTUNITIES] ❌ Failed to save opportunity ${opp.opportunity_id}:`, createError);
+      }
     }
-    return true;
+
+    console.log(`[SAVE_OPPORTUNITIES] Completed: ${savedCount}/${opportunities.length} opportunities saved`);
+    return savedCount > 0;
   } catch (e) {
     console.error("[ERROR_SAVE_OPPORTUNITIES]:", e)
     return false;

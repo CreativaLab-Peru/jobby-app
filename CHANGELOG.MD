@@ -1,4 +1,4 @@
-# v1.1.16 - 2026-02-17
+# v1.1.16 - 2026-02-20
 
 ## Features
 - **Advanced Opportunity Filtering**: Added a CV-specific filter in the Opportunities section to match profiles more accurately.

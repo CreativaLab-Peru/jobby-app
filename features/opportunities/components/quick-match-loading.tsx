@@ -41,11 +41,8 @@ export function QuickMatchLoading({cvId}: QuickMatchLoadingModalProps) {
           // --- NAVEGACIÓN ATÓMICA ---
           // Usamos startTransition para que Next.js priorice
           // la renderización de la nueva página
-          startTransition(() => {
-            router.push(`/opportunities?cvId=${cvId}`);
-            router.refresh(); // Forzamos al SSR a buscar nuevos datos
-          });
-
+          router.push(`/opportunities?cvId=${cvId}`);
+          router.refresh(); // Forzamos al SSR a buscar nuevos datos
           return 100;
         }
         return nextValue;

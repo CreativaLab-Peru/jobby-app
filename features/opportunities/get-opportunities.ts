@@ -27,9 +27,9 @@ export const getOpportunities = async (params?: paginationParams) => {
 
     if (query) {
       whereClause.OR = [
-        { title: { contains: query, mode: "insensitive" } },
-        { company: { contains: query, mode: "insensitive" } },
-        { description: { contains: query, mode: "insensitive" } },
+        {title: {contains: query, mode: "insensitive"}},
+        {company: {contains: query, mode: "insensitive"}},
+        {description: {contains: query, mode: "insensitive"}},
       ];
     }
 
@@ -40,6 +40,7 @@ export const getOpportunities = async (params?: paginationParams) => {
           {match: "desc"},
           {createdAt: "desc"}
         ],
+        include: {cv: true},
         skip,
         take
       }),
@@ -51,7 +52,11 @@ export const getOpportunities = async (params?: paginationParams) => {
     const opportunitiesFormatted = JSON.parse(JSON.stringify(
       data.map(opt => ({
         ...opt,
-        match: Number(opt.match)
+        match: Number(opt.match),
+        cv: {
+          id: opt.cv.id,
+          title: opt.cv.title
+        }
       }))
     ));
 

@@ -6,7 +6,6 @@ import {PageHeader} from "@/components/shared/page-header";
 import {AnimatePresence, motion} from "framer-motion";
 import OpportunityCard from "@/features/opportunities/components/opportunity-card";
 import {EmptyPlaceholder} from "@/components/shared/empty-placeholder";
-import {Opportunity} from ".prisma/client";
 import {useState, useTransition, useEffect} from "react";
 import {getOpportunities} from "@/features/opportunities/get-opportunities";
 import {LoadMoreButton} from "@/components/shared/load-more-button";
@@ -16,9 +15,18 @@ import {useQuickMatchModalStore} from "@/features/opportunities/hooks/use-quick-
 import {CvWithRelations, getCvForCurrentUser} from "@/features/cv/actions/get-cv-for-current-user";
 import {useCredits} from "@/features/credits/hooks/use-credits";
 import {SearchableSelect} from "@/components/shared/searchable-select";
+import {Opportunity} from ".prisma/client";
 
 interface Props {
-  initialData: Opportunity[];
+  initialData: (
+    Opportunity & {
+    match: number;
+    cv: {
+      id: string;
+      title: string;
+    }
+  }
+  )[];
   initialCvs: CvWithRelations[];
   hasMoreProp?: boolean;
   totalCount?: number;
@@ -32,7 +40,15 @@ export default function OpportunitiesScreen({
                                                hasMoreProp,
                                                currentFilterCvId
                                              }: Props) {
-  const [opportunities, setOpportunities] = useState<Opportunity[]>(initialData);
+  const [opportunities, setOpportunities] = useState<(
+    Opportunity & {
+    match: number;
+    cv: {
+      id: string;
+      title: string;
+    }
+  }
+    )[]>(initialData);
   const [hasMore, setHasMore] = useState(hasMoreProp);
   const [totalCount, setTotalCount] = useState(initialTotal || 0);
   const [isPending, startTransition] = useTransition();

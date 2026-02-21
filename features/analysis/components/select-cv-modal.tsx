@@ -86,31 +86,6 @@ const opportunityTypeIcons: Record<OpportunityType, {
     label: "Intercambio",
     color: "text-purple-500"
   },
-  [OpportunityType.RESEARCH_FELLOWSHIP]: {
-    icon: <Code className="w-4 h-4"/>,
-    label: "Investigación",
-    color: "text-indigo-500"
-  },
-  [OpportunityType.GRADUATE_PROGRAM]: {
-    icon: <BookOpen className="w-4 h-4"/>,
-    label: "Posgrado",
-    color: "text-cyan-500"
-  },
-  [OpportunityType.FREELANCE]: {
-    icon: <Briefcase className="w-4 h-4"/>,
-    label: "Freelance",
-    color: "text-orange-500"
-  },
-  [OpportunityType.FULL_TIME]: {
-    icon: <Briefcase className="w-4 h-4"/>,
-    label: "Tiempo Completo",
-    color: "text-blue-600"
-  },
-  [OpportunityType.PART_TIME]: {
-    icon: <Briefcase className="w-4 h-4"/>,
-    label: "Tiempo Parcial",
-    color: "text-blue-400"
-  },
 };
 
 const getScoreTextColor = (score: number) => {

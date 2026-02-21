@@ -1,31 +1,32 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
-import { getSession } from "@/features/authentication/actions/get-session";
-import { parseRequirements } from "@/utils/parse-requirements";
+import {prisma} from "@/lib/prisma";
+import {parseRequirements} from "@/utils/parse-requirements";
+import {getCurrentUser} from "@/features/share/actions/get-current-user";
 
-export async function getOpportunityDetails(id: string) {
+export async function getOpportunityDetails(opportunityId: string, cvId: string) {
   try {
-    const session = await getSession();
-
-    if (!session.success || !session.user?.id) {
-      return { error: "No autorizado", status: 401 };
+    const currentUser = await getCurrentUser();
+    if (!currentUser) {
+      return null;
     }
 
-    const opportunity = await prisma.opportunity.findUnique({
-      where: { id },
-      include: { cv: true },
+    const opportunity = await prisma.opportunity.findFirst({
+      where: {
+        id: opportunityId,
+        cvId,
+        cv: {
+          userId: currentUser.id,
+        }
+      },
+      include: {
+        cv: true
+      },
     });
 
     if (!opportunity) {
-      return { error: "Oportunidad no encontrada", status: 404 };
+      return null;
     }
-
-    if (opportunity.cv.userId !== session.user.id) {
-      return { error: "No tienes permiso", status: 403 };
-    }
-
-    // --- SANITIZACIÓN Y TRANSFORMACIÓN ---
 
     // 1. Convertimos el Decimal a Number de JS inmediatamente
     const matchValue = Math.round(Number(opportunity.match) * 100);
@@ -53,16 +54,18 @@ export async function getOpportunityDetails(id: string) {
         : null,
       requirements: opportunity.requirements
         ? parseRequirements(opportunity.requirements)
-        : { required: null, optional: null },
+        : {required: null, optional: null},
+      cv: {
+        id: opportunity.cv.id,
+        title: opportunity.cv.title,
+      }
     };
+    console.log(sanitizedOpportunity);
 
-    return {
-      success: true,
-      data: sanitizedOpportunity
-    };
+    return sanitizedOpportunity;
 
   } catch (error) {
     console.error("[GET_OPPORTUNITY_DETAILS_ERROR]", error);
-    return { error: "Error interno", status: 500 };
+    return null;
   }
 }

@@ -62,11 +62,14 @@ export const getStatisticsForUser = async (): Promise<DashboardStats | null> => 
       where: { userId: currentUser.id, deletedAt: null }
     });
 
-    const lastCv = await prisma.cv.findFirst({
+    const preference = await prisma.userPreference.findFirst({
       where: { userId: currentUser.id },
-      orderBy: { updatedAt: "desc" },
-      select: { cvType: true }
+      orderBy: {
+        updatedAt: "desc",
+      }
     });
+
+    console.log("[PREFERENCE]", preference);
 
     // IMPORTANTE: Estructuramos el retorno explícitamente
     // para asegurar que todo sea serializable.
@@ -75,7 +78,7 @@ export const getStatisticsForUser = async (): Promise<DashboardStats | null> => 
       topOpportunities,
       subscription,
       totalCvs,
-      userSector: lastCv?.cvType || null,
+      userSector: preference?.[0]?.cvType || null,
     }));
 
   } catch (error) {

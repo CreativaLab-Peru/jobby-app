@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Check, ChevronsUpDown, Search, X } from "lucide-react";
+import { Check, ChevronsUpDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -77,7 +77,7 @@ export function SearchableSelect({
                 {items.map((item) => (
                   <CommandItem
                     key={item.value}
-                    value={item.label} // Buscamos por el texto del label
+                    value={`${item.label} ${item.value}`}
                     onSelect={() => {
                       onSelect(item.value === selectedValue ? null : item.value);
                       setOpen(false);

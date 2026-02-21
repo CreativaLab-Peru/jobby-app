@@ -104,7 +104,7 @@ export async function GET(request: Request) {
       return;
     }
 
-    await saveOpportunities(cv.id, opportunities.matches)
+    await saveOpportunities(cv, opportunities.matches)
 
     return new Response("Processed", { status: 200 });
   } catch (error) {

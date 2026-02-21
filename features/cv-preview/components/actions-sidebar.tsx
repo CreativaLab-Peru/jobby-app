@@ -8,7 +8,7 @@ import { ArrowLeft, Home, Download, Loader2, Sparkles, Rocket } from "lucide-rea
 import { CVData, CVSection } from "@/types/cv"
 import { toast } from "sonner"
 import { useCreditsStore } from "@/store/use-credits-store"
-import { QuickMatchLoadingModal } from "@/features/opportunities/components/quick-match-loading-modal"
+import { QuickMatchLoading } from "@/features/opportunities/components/quick-match-loading"
 
 interface ActionsSidebarProps {
   cvData: CVData
@@ -159,7 +159,6 @@ export function ActionsSidebar({
 
   return (
     <>
-      <QuickMatchLoadingModal isOpen={showLoadingModal} />
       <Card className="shadow-card border-0 bg-card/90 backdrop-blur-sm">
         <CardContent className="p-6 space-y-4 text-card-foreground">
           <h3 className="text-xl font-semibold mb-2">

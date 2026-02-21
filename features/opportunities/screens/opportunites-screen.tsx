@@ -49,11 +49,6 @@ export default function OpportunitiesScreen({
     label: cv.title || "CV Sin título"
   }));
 
-  // Sync filterCvId when currentFilterCvId changes (from URL params)
-  useEffect(() => {
-    setFilterCvId(currentFilterCvId);
-  }, [currentFilterCvId]);
-
   // Debounce search query
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -65,7 +60,6 @@ export default function OpportunitiesScreen({
 
   // Apply filters when they change
   useEffect(() => {
-
     startTransition(async () => {
       const result = await getOpportunities({
         skip: 0,

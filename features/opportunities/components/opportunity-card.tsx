@@ -39,7 +39,7 @@ export default function OpportunityCard({
   return (
     <Card
       className="group relative overflow-hidden border-border/40 bg-card rounded-[2rem] hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 flex flex-col">
-      {/* Indicador de High Match */}
+
       {isHighMatch && (
         <div className="absolute top-0 right-0 p-3">
           <Sparkles className="h-5 w-5 text-primary animate-pulse"/>

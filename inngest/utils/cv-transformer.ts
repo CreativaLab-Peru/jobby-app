@@ -1,20 +1,6 @@
-import { Cv, CvSection, CvSectionType, OpportunityType } from "@prisma/client";
+import { Cv, CvSection, CvSectionType } from "@prisma/client";
 import {Opportunity} from "@/types/analysis";
 import {CVAnalysis} from "@/features/opportunities/get-opportunities-from-engine";
-
-/**
- * Normaliza los tipos de oportunidad para el motor externo
- */
-export function mapOpportunityType(type: OpportunityType): string {
-  const mapping: Partial<Record<OpportunityType, string>> = {
-    FULL_TIME: 'EMPLOYMENT',
-    PART_TIME: 'EMPLOYMENT',
-    FREELANCE: 'EMPLOYMENT',
-    RESEARCH_FELLOWSHIP: 'SCHOLARSHIP',
-    GRADUATE_PROGRAM: 'SCHOLARSHIP',
-  };
-  return mapping[type] || type;
-}
 
 /**
  * Orquestador de la transformación del CV y Preferencias a CVAnalysis
@@ -75,7 +61,7 @@ export function transformCvToAnalysis(
     experience_text,
     languages: (sections.find(s => s.sectionType === CvSectionType.LANGUAGES)?.contentJson as any[])
       ?.map(item => item.language || item.name || '').filter(Boolean) || [],
-    type: mapOpportunityType(cv.opportunityType),
+    type: cv.opportunityType,
     level: userPrefs?.expLevel || "JUNIOR", // Usamos el dato real de la tabla
     location: userPrefs?.country || undefined,
     countries: userPrefs?.country ? [userPrefs.country] : [],

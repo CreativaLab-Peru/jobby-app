@@ -1,3 +1,13 @@
+# v1.1.17 - 2026-02-17
+
+## Features
+- Filter opportunities by CV: Added a new filter in the Opportunities section that allows users to select a specific CV and see only the opportunities that match that profile. This helps users find relevant job openings more efficiently.
+- Search bar with debounce: Implemented a search bar in the Opportunities section that allows users to
+
+## Fixes
+- Fix colors for dark and light mode
+- Fixed a bug where multiple CVs with the same name would all be highlighted simultaneously in the selection menus by integrating unique IDs into the selection logic.
+
 # v1.1.16 - 2026-02-17
 
 ## Features

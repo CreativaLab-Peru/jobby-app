@@ -186,7 +186,7 @@ model Cv {
   createdByJobId  String?
   language        Language        @default(EN)
   opportunityType OpportunityType
-  cvType          CvType
+  cvType          CvType?
   title           String?
   extractedJson   Json?
   fullTextSearch  String?

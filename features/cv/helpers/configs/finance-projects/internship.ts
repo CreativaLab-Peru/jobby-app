@@ -21,36 +21,36 @@ export const financeProjectsInternship: SectionConfig = {
   examples: {
     // Personal
     "personal.summary":
-        "Aspiring finance professional with a strong foundation in financial analysis and investment strategies, seeking to apply my skills in a dynamic internship environment.",
+      "Aspirante a profesional en finanzas con una sólida base en análisis financiero y estrategias de inversión, buscando aplicar mis habilidades en un entorno de pasantía dinámico.",
 
     // Education
     "education.title":
-        "Bachelor of Finance",
+      "Bachiller en Finanzas",
     "education.institution":
-        "University of Finance",
+      "Universidad de Finanzas",
     "education.location":
-        "New York, NY",
+      "Nueva York, NY",
     "education.year":
-        "2023",
+      "2023",
     "education.honors":
-        "Magna Cum Laude",
+      "Magna Cum Laude",
 
     // Projects
     "projects.title":
-        "Plan de Marketing Digital para Pyme textil",
+      "Plan de Marketing Digital para Pyme textil",
     "projects.description":
-        "Diseñé e implementé una estrategia de marketing digital que incrementó en 35% la visibilidad online de una empresa textil. Incluyó gestión de redes sociales, campañas segmentadas en Meta Ads y optimización de contenidos.",
+      "Diseñé e implementé una estrategia de marketing digital que incrementó en un 35% la visibilidad online de una empresa textil. Incluyó gestión de redes sociales, campañas segmentadas en Meta Ads y optimización de contenidos.",
     "projects.technologies":
-        "Meta Ads, Canva, Google Analytics",
+      "Meta Ads, Canva, Google Analytics",
     "projects.duration":
-        "3 meses (Ene 2023 - Mar 2023)",
+      "3 meses (Enero 2023 - Marzo 2023)",
 
     // Skills
     "skills.technical":
-      "Financial Modeling, Data Analysis, Python, R, SQL, Tableau",
+      "Modelado Financiero, Análisis de Datos, Python, R, SQL, Tableau",
     "skills.soft":
-      "Analytical Thinking, Problem Solving, Communication, Teamwork",
+      "Pensamiento Analítico, Resolución de Problemas, Comunicación Asertiva, Trabajo en Equipo",
     "skills.languages":
-      "English (Native), Spanish (Fluent)",
+      "Inglés (Nativo), Español (Fluido)",
   },
 };

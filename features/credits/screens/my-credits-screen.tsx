@@ -60,8 +60,8 @@ export function MyCreditsScreen({ currentCredit }: MyCreditsScreenProps) {
         ))}
       </div>
 
-      <footer className="border rounded-2xl p-6 flex flex-col items-center gap-3 bg-zinc-50/50">
-        <div className="flex items-center gap-2 text-zinc-700 font-semibold">
+      <footer className="border rounded-2xl p-6 flex flex-col items-center gap-3">
+        <div className="flex items-center gap-2 font-semibold">
           <CreditCard className="h-5 w-5" /> Pago seguro
         </div>
         <p className="text-xs text-zinc-500 text-center max-w-sm">

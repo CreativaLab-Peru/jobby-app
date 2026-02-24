@@ -42,7 +42,7 @@ export const getAndSaveOpportunities = inngest.createFunction(
         cv_data: cvAnalysis as any,
         preferences: {
           top_k: 5,
-          modality: userPrefs?.workModality?.[0] as any
+          // modality: userPrefs?.workModality?.[0] as any // TODO: new to be more dynamic with preferences
         }
       });
     });

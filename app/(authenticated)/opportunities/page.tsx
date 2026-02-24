@@ -29,8 +29,8 @@ export default async function OpportunitiesPage({
 
   return (
     <OpportunitiesScreen
-      initialData={data?.opportunities || []}
       initialCvs={initialCvs}
+      initialData={data?.opportunities || []}
       hasMoreProp={hasMore}
       totalCount={data?.totalCount || 0}
       currentFilterCvId={cvId || null}

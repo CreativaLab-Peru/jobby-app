@@ -9,7 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { CvType, OpportunityType } from "@prisma/client"
+import { CvType, OpportunityType } from "@prisma/client";
+import {cvTypes} from "@/const";
 
 interface CVFormData {
   title: string
@@ -22,27 +23,11 @@ interface CVFormProps {
   onFormDataChange: (data: CVFormData) => void
 }
 
-export const cvTypes = [
-  { key: CvType.TECHNOLOGY_ENGINEERING, value: "Tecnología e Ingeniería" },
-  { key: CvType.DESIGN_CREATIVITY, value: "Diseño y Creatividad" },
-  { key: CvType.MARKETING_STRATEGY, value: "Marketing y Estrategia" },
-  { key: CvType.MANAGEMENT_BUSINESS, value: "Gestión y Negocios" },
-  { key: CvType.FINANCE_PROJECTS, value: "Finanzas y Proyectos" },
-  { key: CvType.SOCIAL_MEDIA, value: "Redes Sociales y Contenido Digital" },
-  { key: CvType.EDUCATION, value: "Educación y Desarrollo Humano" },
-  { key: CvType.SCIENCE, value: "Ciencia e Innovación" },
-]
-
 export const opportunityTypes = [
   { key: OpportunityType.INTERNSHIP, value: "Pasantía" },
   { key: OpportunityType.SCHOLARSHIP, value: "Beca" },
   { key: OpportunityType.EXCHANGE_PROGRAM, value: "Intercambio" },
   { key: OpportunityType.EMPLOYMENT, value: "Empleo" },
-  // { key: OpportunityType.RESEARCH_FELLOWSHIP, value: "Investigación o Fellowship" },
-  // { key: OpportunityType.GRADUATE_PROGRAM, value: "Programa de Posgrado" },
-  // { key: OpportunityType.FREELANCE, value: "Freelance / Independiente" },
-  // { key: OpportunityType.FULL_TIME, value: "Trabajo a Tiempo Completo" },
-  // { key: OpportunityType.PART_TIME, value: "Trabajo a Medio Tiempo" },
 ]
 
 
@@ -62,7 +47,6 @@ export function CVForm({ formData, onFormDataChange }: CVFormProps) {
           placeholder="Ejemplo: CV Ingeniero de Software"
           value={formData.title}
           onChange={(e) => updateFormData({ title: e.target.value })}
-          className="w-full border border-gray-300 focus:border-gray-400 focus:ring-1 focus:ring-gray-400 dark:border-gray-600 dark:focus:border-gray-500 dark:focus:ring-gray-500 bg-white dark:bg-[#2d333b] text-black dark:text-white"
         />
         <p>
           <span className="text-sm text-gray-500 dark:text-gray-400">

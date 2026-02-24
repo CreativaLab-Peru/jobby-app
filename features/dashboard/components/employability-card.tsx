@@ -70,7 +70,7 @@ export function EmployabilityCard({ score, sector }: Props) {
 
             </div>
             <div className="text-xs text-primary">
-              Indice de Empleabilidad
+              Índice de Empleabilidad
             </div>
           </div>
 

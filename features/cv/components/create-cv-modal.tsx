@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Loader2, Sparkles } from "lucide-react";
 import { CvType, OpportunityType } from "@prisma/client";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -49,6 +50,9 @@ export function CreateCVModal() {
           await refreshCredits();
           router.refresh();
           router.push(`/cv/${result.data.id}/edit`);
+          toast.success("Cv agregado correctamente. ¡Manos a la obra!");
+        } else {
+          toast.error(result?.message || "Error al crear el currículum.");
         }
       });
     });

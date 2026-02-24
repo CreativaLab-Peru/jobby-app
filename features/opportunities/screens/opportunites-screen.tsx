@@ -26,7 +26,7 @@ interface Props {
       title: string;
     }
   }
-  )[];
+    )[];
   initialCvs: CvWithRelations[];
   hasMoreProp?: boolean;
   totalCount?: number;
@@ -34,12 +34,12 @@ interface Props {
 }
 
 export default function OpportunitiesScreen({
-                                               initialData,
-                                               initialCvs,
-                                               totalCount: initialTotal,
-                                               hasMoreProp,
-                                               currentFilterCvId
-                                             }: Props) {
+                                              initialData,
+                                              initialCvs,
+                                              totalCount: initialTotal,
+                                              hasMoreProp,
+                                              currentFilterCvId
+                                            }: Props) {
   const [opportunities, setOpportunities] = useState<(
     Opportunity & {
     match: number;
@@ -137,29 +137,29 @@ export default function OpportunitiesScreen({
     <main className="min-h-[90-vh] p-4 md:p-8">
       <div className="mx-auto max-w-7xl">
         <motion.div
-            initial={{opacity: 0, y: 10}}
-            animate={{opacity: 1, y: 0}}
-            className="space-y-8"
+          initial={{opacity: 0, y: 10}}
+          animate={{opacity: 1, y: 0}}
+          className="space-y-8"
         >
           <PageHeader
-              title="Oportunidades Match"
-              description="Postulaciones recomendadas por IA basadas en tus CVs analizados."
-              actions={actions}
+            title="Oportunidades Match"
+            description="Postulaciones recomendadas por IA basadas en tus CVs analizados."
+            actions={actions}
           />
 
           {/* Filtros */}
           <div
-              className="relative flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-lg border border-border bg-card/50 backdrop-blur-sm">
+            className="relative flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-lg border border-border bg-card/50 backdrop-blur-sm">
             <div className="flex items-center gap-4">
               <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                 <span className="text-xs font-black uppercase tracking-wider text-muted-foreground/80">
                   Filtrar por CV:
                 </span>
                 <SearchableSelect
-                    items={cvOptions}
-                    placeholder="Todos"
-                    selectedValue={filterCvId}
-                    onSelect={setFilterCvId}
+                  items={cvOptions}
+                  placeholder="Todos"
+                  selectedValue={filterCvId}
+                  onSelect={setFilterCvId}
                 />
               </div>
             </div>
@@ -168,12 +168,12 @@ export default function OpportunitiesScreen({
               {/* Buscador minimalista */}
               <div className="relative max-w-xs group">
                 <Search
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors"/>
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors"/>
                 <Input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Buscar puesto o empresa..."
-                    className="pl-10 border-border/40 bg-card/50 rounded-xl focus-visible:ring-primary h-10 text-sm"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Buscar puesto o empresa..."
+                  className="pl-10 border-border/40 bg-card/50 rounded-xl focus-visible:ring-primary h-10 text-sm"
                 />
               </div>
 
@@ -187,54 +187,54 @@ export default function OpportunitiesScreen({
             {/* Overlay de carga sutil */}
             <AnimatePresence>
               {isPending && opportunities.length > 0 && (
-                  <motion.div
-                      initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}
-                      className="absolute inset-0 bg-background/20 backdrop-blur-[2px] z-10 rounded-3xl flex items-center justify-center pt-20"
-                  >
-                    <div className="bg-card p-4 rounded-2xl shadow-xl border border-border">
-                      <p className="text-xs font-bold uppercase tracking-widest animate-pulse">Sincronizando...</p>
-                    </div>
-                  </motion.div>
+                <motion.div
+                  initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}
+                  className="absolute inset-0 bg-background/20 backdrop-blur-[2px] z-10 rounded-3xl flex items-center justify-center pt-20"
+                >
+                  <div className="bg-card p-4 rounded-2xl shadow-xl border border-border">
+                    <p className="text-xs font-bold uppercase tracking-widest animate-pulse">Sincronizando...</p>
+                  </div>
+                </motion.div>
               )}
             </AnimatePresence>
 
             {opportunities.length > 0 ? (
-                <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
-                    <AnimatePresence mode="popLayout">
-                      {opportunities.map((opt, index) => (
-                          <motion.div
-                              key={opt.id}
-                              initial={{opacity: 0, scale: 0.95}}
-                              animate={{opacity: 1, scale: 1}}
-                              transition={{duration: 0.3, delay: (index % 10) * 0.05}}
-                          >
-                            <OpportunityCard opportunity={opt}/>
-                          </motion.div>
-                      ))}
-                    </AnimatePresence>
-                  </div>
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
+                  <AnimatePresence mode="popLayout">
+                    {opportunities.map((opt, index) => (
+                      <motion.div
+                        key={opt.id + opt.cvId} // Asegura un key único incluso si el mismo puesto aparece con diferentes matches
+                        initial={{opacity: 0, scale: 0.95}}
+                        animate={{opacity: 1, scale: 1}}
+                        transition={{duration: 0.3, delay: (index % 10) * 0.05}}
+                      >
+                        <OpportunityCard opportunity={opt}/>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
 
-                  {/* Load More Button */}
-                  <LoadMoreButton
-                      handleLoadMore={handleLoadMore}
-                      hasMore={hasMore}
-                      isPending={isPending}
-                      currentCount={opportunities.length}
-                      totalCount={totalCount}
-                      label="Mostrar más oportunidades"
-                  />
-                </>
+                {/* Load More Button */}
+                <LoadMoreButton
+                  handleLoadMore={handleLoadMore}
+                  hasMore={hasMore}
+                  isPending={isPending}
+                  currentCount={opportunities.length}
+                  totalCount={totalCount}
+                  label="Mostrar más oportunidades"
+                />
+              </>
             ) : (
-                !isPending && (
-                    <div className="rounded-[2rem] border border-dashed border-border/60 bg-secondary/5 py-20">
-                      <EmptyPlaceholder
-                          icon={Briefcase}
-                          title={filterCvId || debouncedSearchQuery ? "Sin resultados para este filtro" : "No hay vacantes aún"}
-                          description={filterCvId || debouncedSearchQuery ? "Prueba con otro término o limpia el filtro." : "Analiza un CV para que la IA pueda encontrar oportunidades que encajen con tu perfil."}
-                      />
-                    </div>
-                )
+              !isPending && (
+                <div className="rounded-[2rem] border border-dashed border-border/60 bg-secondary/5 py-20">
+                  <EmptyPlaceholder
+                    icon={Briefcase}
+                    title={filterCvId || debouncedSearchQuery ? "Sin resultados para este filtro" : "No hay vacantes aún"}
+                    description={filterCvId || debouncedSearchQuery ? "Prueba con otro término o limpia el filtro." : "Analiza un CV para que la IA pueda encontrar oportunidades que encajen con tu perfil."}
+                  />
+                </div>
+              )
             )}
           </div>
         </motion.div>

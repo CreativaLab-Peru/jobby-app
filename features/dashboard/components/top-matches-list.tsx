@@ -4,9 +4,11 @@ import { ArrowRight, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
+import {OPPORTUNITY_CONFIG} from "@/const";
 
 interface TopOpportunity {
   id: string;
+  cvId: string;
   match: number;
   title: string;
   type: string;
@@ -29,11 +31,11 @@ export function TopMatchesList({ topOpportunities }: { topOpportunities: TopOppo
 
       <div className="space-y-3">
         {topOpportunities && topOpportunities.length > 0 ? (
-          topOpportunities.map((opt) => (
+          topOpportunities.map((opt, index) => (
             <div
-              key={opt.id}
+              key={`${opt.id}-${index}`}
               className="group flex items-center justify-between gap-4 p-4 rounded-2xl border border-border/50 hover:border-primary/30 transition-all duration-300 hover:cursor-pointer"
-              onClick={() => route.push(`/opportunities/${opt.id}/details`)}
+              onClick={() => route.push(`/opportunities/${opt.id}/cv/${opt.cvId}/details`)}
             >
               <div className="flex items-center gap-4">
                 {/* Porcentaje con estilo Squircle */}
@@ -47,7 +49,7 @@ export function TopMatchesList({ topOpportunities }: { topOpportunities: TopOppo
                   </h4>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-muted-foreground font-bold">
-                      {opt.type.replace("_", " ")}
+                      {OPPORTUNITY_CONFIG[opt.type as keyof typeof OPPORTUNITY_CONFIG] || "Tipo Desconocido"}
                     </span>
                   </div>
                 </div>

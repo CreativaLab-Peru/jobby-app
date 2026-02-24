@@ -134,8 +134,6 @@ export function QuickMatchCvModal({
 
     setIsMatching(true);
 
-    const startTime = Date.now();
-
     try {
       const response = await fetch("/api/opportunities/quick-match", {
         method: "POST",
@@ -154,15 +152,10 @@ export function QuickMatchCvModal({
       // Refresh credits after match
       await refreshCredits();
 
-      const elapsedTime = Date.now() - startTime;
-      const remainingTime = Math.max(0, 15000 - elapsedTime);
-
-      setTimeout(() => {
-        toast.success("¡Match finalizado!");
-        router.push(`/opportunities/cv/${selectedCvId}`);
-        onClose();
-        setIsMatching(false);
-      }, remainingTime);
+      toast.success("¡Match procesando!");
+      router.push(`/opportunities/cv/${selectedCvId}/analysis`);
+      onClose();
+      setIsMatching(false);
 
     } catch (error) {
       console.error("Error al hacer match:", error);

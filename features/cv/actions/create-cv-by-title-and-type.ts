@@ -11,7 +11,7 @@ import {JsonObject} from "@prisma/client/runtime/library";
 export const createCVByTitleAndType = async (
   title: string,
   cvType: CvType,
-  opportunityType: OpportunityType
+  opportunityType?: OpportunityType
 ) => {
   try {
     const currentUser = await getCurrentUser();
@@ -34,9 +34,9 @@ export const createCVByTitleAndType = async (
     }
 
     // Validate opportunityType is correct
-    if (!Object.values(OpportunityType).includes(opportunityType)) {
-      return {success: false, message: "Invalid opportunity type."};
-    }
+    // if (!Object.values(OpportunityType).includes(opportunityType)) {
+    //   return {success: false, message: "Invalid opportunity type."};
+    // }
 
     // Default sections with minimal structured contentJson
     const defaultSections = [

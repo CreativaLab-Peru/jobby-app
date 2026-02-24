@@ -177,7 +177,7 @@ export const CVSectionForm = forwardRef<CVSectionFormRef, CVSectionFormProps>(({
                   variant="ghost"
                   size="sm"
                   onClick={() => removeItem(index)}
-                  className="dark:text-levely-green text-destructive hover:text-destructive-foreground hover:bg-destructive transition-all"
+                  className="text-destructive hover:text-destructive-foreground hover:bg-destructive transition-all"
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
                   Eliminar
@@ -207,7 +207,7 @@ export const CVSectionForm = forwardRef<CVSectionFormRef, CVSectionFormProps>(({
           type="button"
           variant="outline"
           onClick={addItem}
-          className="w-full py-8 border-2 border-dashed border-border hover:border-levely-blue hover:bg-levely-blue/5 text-muted-foreground hover:text-levely-blue dark:hover:border-levely-green dark:hover:bg-levely-green/20 transition-all rounded-xl group"
+          className="w-full py-8 border-2 border-dashed border-border text-muted-foreground transition-all rounded-xl group"
         >
           <div className="flex flex-col items-center gap-2">
             <Plus className="w-6 h-6 transition-transform group-hover:scale-110" />

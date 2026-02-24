@@ -90,8 +90,8 @@ const opportunityTypeIcons: Record<OpportunityType, {
 
 const getScoreTextColor = (score: number) => {
   if (score >= 80) return "text-primary";
-  if (score >= 60) return "text-primary/50";
-  return "text-accent";
+  if (score >= 60) return "text-primary/60";
+  return "text-primary/30";
 };
 
 const getScoreBadgeColor = (score: number) => {

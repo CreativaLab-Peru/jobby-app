@@ -1,12 +1,24 @@
 "use client";
 
-import {Card} from "@/components/ui/card";
-import {RegisterForm} from "@/features/authentication/components/register-form";
-import {redirect} from "next/navigation";
+import {redirect, useRouter} from "next/navigation";
+import {Loader2} from "lucide-react";
+import * as React from "react";
+import {useEffect} from "react";
 
 export default function RegisterPage() {
 
-  return redirect('/onboarding/talents')
+  const router = useRouter();
+  useEffect(() => {
+    router.push('/onboarding/talents');
+  }, []);
+  return (
+    <div className="flex items-center justify-center h-[90vh] bg-muted/30 rounded-lg">
+      <div className="flex flex-col items-center gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <p className="text-muted-foreground">Generando vista previa...</p>
+      </div>
+    </div>
+  )
 
   // TODO: Commented for onboarding purposes
   // return (

@@ -47,8 +47,8 @@ export function NavigationButtons({
           "h-12 px-8 font-black uppercase tracking-widest text-xs rounded-xl transition-all duration-300",
           "border-none text-white shadow-glow",
           isLastStep
-            ? "text-white dark:text-levely-dark bg-levely-blue hover:bg-levely-blue/80 dark:bg-levely-green dark:hover:bg-levely-green/60" // Verde lima para finalizar
-            : "text-white dark:text-levely-dark bg-levely-blue hover:bg-levely-blue/90 dark:bg-levely-green dark:hover:bg-levely-green/60"   // Azul para avanzar
+            ? "text-white" // Verde lima para finalizar
+            : "text-white"   // Azul para avanzar
         )}
       >
         <span className="flex items-center gap-2">

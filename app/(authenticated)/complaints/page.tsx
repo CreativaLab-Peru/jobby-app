@@ -58,7 +58,7 @@ export default function ComplaintsPage() {
 
             <CardContent className="space-y-6 px-8 pb-10">
               <div className="bg-muted/50 border border-border p-4 rounded-xl flex items-center gap-3">
-                <ShieldCheck className="w-5 h-5 text-secondary shrink-0" />
+                <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
                 <p className="text-muted-foreground text-xs leading-relaxed">
                   Tu satisfacción es nuestra prioridad. Valoramos tus comentarios para seguir mejorando nuestro servicio de inteligencia artificial.
                 </p>

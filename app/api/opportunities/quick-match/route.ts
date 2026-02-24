@@ -37,7 +37,7 @@ export async function POST(request: Request) {
         { success: false, message: "CV no encontrado." },
         { status: 404 }
       );
-    }
+    };
 
     // Verify credit limits for SEARCH_OPPORTUNITIES
     const creditLimits = await getCurrentCreditLimits();

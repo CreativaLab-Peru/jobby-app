@@ -4,6 +4,7 @@ import { ArrowRight, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
+import {OPPORTUNITY_CONFIG} from "@/const";
 
 interface TopOpportunity {
   id: string;
@@ -48,7 +49,7 @@ export function TopMatchesList({ topOpportunities }: { topOpportunities: TopOppo
                   </h4>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-muted-foreground font-bold">
-                      {opt.type.replace("_", " ")}
+                      {OPPORTUNITY_CONFIG[opt.type as keyof typeof OPPORTUNITY_CONFIG] || "Tipo Desconocido"}
                     </span>
                   </div>
                 </div>

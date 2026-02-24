@@ -42,3 +42,11 @@ export const cvTypes = [
     area_ref: "HEALTH_BIOTECH"
   },
 ];
+
+
+export const OPPORTUNITY_CONFIG: Record<string, string> = {
+  INTERNSHIP: "Pasantía",
+  SCHOLARSHIP: "Beca",
+  EXCHANGE_PROGRAM: "Intercambio",
+  EMPLOYMENT: "Empleo",
+};

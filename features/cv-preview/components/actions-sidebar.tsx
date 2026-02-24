@@ -128,7 +128,7 @@ export function ActionsSidebar({
       await refreshCredits()
 
       // Redirect to opportunities page for this CV
-      router.push(`/cv/${cvId}/opportunities`)
+      router.push(`/opportunities/cv/${cvId}/analysis`)
     } catch (error) {
       console.error("Error al hacer match:", error)
       toast.error("Error al iniciar el match de oportunidades")

@@ -8,7 +8,6 @@ import { ArrowLeft, Home, Download, Loader2, Sparkles, Rocket } from "lucide-rea
 import { CVData, CVSection } from "@/types/cv"
 import { toast } from "sonner"
 import { useCreditsStore } from "@/store/use-credits-store"
-import { QuickMatchLoading } from "@/features/opportunities/components/quick-match-loading"
 
 interface ActionsSidebarProps {
   cvData: CVData
@@ -36,7 +35,6 @@ export function ActionsSidebar({
   const [downloading, setDownloading] = useState(false)
   const [analyzing, setAnalyzing] = useState(false)
   const [matching, setMatching] = useState(false)
-  const [showLoadingModal, setShowLoadingModal] = useState(false)
   const router = useRouter()
   const { refreshCredits } = useCreditsStore()
 
@@ -110,10 +108,6 @@ export function ActionsSidebar({
     }
 
     setMatching(true)
-    setShowLoadingModal(true)
-
-    const startTime = Date.now()
-
     try {
       const response = await fetch("/api/opportunities/quick-match", {
         method: "POST",
@@ -125,30 +119,20 @@ export function ActionsSidebar({
 
       if (!response.ok) {
         toast.error(data.message || "Error al iniciar el match de oportunidades")
-        setShowLoadingModal(false)
-        setMatching(false)
         return
       }
+
+      toast.success("¡Match iniciado! Redirigiendo...")
 
       // Refresh credits after match
       await refreshCredits()
 
-      // Ensure at least 15 seconds of loading animation to allow Inngest to complete saving
-      // (Inngest processes asynchronously, and we need to wait for DB writes to complete)
-      const elapsedTime = Date.now() - startTime
-      const remainingTime = Math.max(0, 15000 - elapsedTime)
-
-      setTimeout(() => {
-        toast.success("¡Match finalizado!")
-        router.push(`/opportunities?cvId=${cvId}`)
-        setShowLoadingModal(false)
-        setMatching(false)
-      }, remainingTime)
-
+      // Redirect to opportunities page for this CV
+      router.push(`/cv/${cvId}/opportunities`)
     } catch (error) {
       console.error("Error al hacer match:", error)
       toast.error("Error al iniciar el match de oportunidades")
-      setShowLoadingModal(false)
+    } finally {
       setMatching(false)
     }
   }
@@ -158,80 +142,76 @@ export function ActionsSidebar({
   const showMatchButton = opportunitiesActionTokens > 0
 
   return (
-    <>
-      <Card className="shadow-card border-0 bg-card/90 backdrop-blur-sm">
-        <CardContent className="p-6 space-y-4 text-card-foreground">
-          <h3 className="text-xl font-semibold mb-2">
-            Acciones
-          </h3>
+    <Card className="shadow-card border-0 bg-card/90 backdrop-blur-sm">
+      <CardContent className="p-6 space-y-4 text-card-foreground">
+        <h3 className="text-xl font-semibold mb-2">
+          Acciones
+        </h3>
 
+        <Button
+          disabled={isDisabled || downloading}
+          className="w-full"
+          onClick={handleDownloadPdf}
+        >
+          {downloading ? (
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          ) : (
+            <Download className="w-4 h-4 mr-2" />
+          )}
+          {downloading ? "Descargando..." : "Descargar PDF"}
+        </Button>
+
+        {showMatchButton && (
           <Button
-            disabled={isDisabled || downloading}
-            variant="accent"
+            disabled={isDisabled || matching}
             className="w-full"
-            onClick={handleDownloadPdf}
+            onClick={handleQuickMatch}
           >
-            {downloading ? (
+            {matching ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
             ) : (
-              <Download className="w-4 h-4 mr-2" />
+              <Rocket className="w-4 h-4 mr-2" />
             )}
-            {downloading ? "Descargando..." : "Descargar PDF"}
+            {matching ? "Buscando..." : "Hacer Match"}
           </Button>
+        )}
 
-          {showAnalyzeButton && (
-            <Button
-              disabled={isDisabled || analyzing || !canAnalyze}
-              variant='accent'
-              className="w-full"
-              onClick={handleAnalyzeCv}
-            >
-              {analyzing ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Sparkles className="w-4 h-4 mr-2" />
-              )}
-              {analyzing ? "Analizando..." : "Analizar CV"}
-            </Button>
-          )}
-
-          {showMatchButton && (
-            <Button
-              disabled={isDisabled || matching}
-              variant='accent'
-              className="w-full"
-              onClick={handleQuickMatch}
-            >
-              {matching ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Rocket className="w-4 h-4 mr-2" />
-              )}
-              {matching ? "Buscando..." : "Hacer Match"}
-            </Button>
-          )}
-
+        {showAnalyzeButton && (
           <Button
-            disabled={isDisabled}
-            variant="outline"
-            className="w-full bg-transparent border-border text-foreground hover:bg-muted"
-            onClick={onHome}
+            disabled={isDisabled || analyzing || !canAnalyze}
+            className="w-full"
+            variant={'secondary'}
+            onClick={handleAnalyzeCv}
           >
-            <Home className="w-4 h-4 mr-2" />
-            Home
+            {analyzing ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Sparkles className="w-4 h-4 mr-2" />
+            )}
+            {analyzing ? "Analizando..." : "Analizar CV"}
           </Button>
+        )}
 
-          <Button
-            disabled={isDisabled}
-            variant="outline"
-            className="w-full bg-transparent border-border text-foreground hover:bg-muted"
-            onClick={onEditCV}
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Editar CV
-          </Button>
-        </CardContent>
-      </Card>
-    </>
+        <Button
+          disabled={isDisabled}
+          variant={'secondary'}
+          className="w-full"
+          onClick={onHome}
+        >
+          <Home className="w-4 h-4 mr-2" />
+          Home
+        </Button>
+
+        <Button
+          disabled={isDisabled}
+          variant={'secondary'}
+          className="w-full"
+          onClick={onEditCV}
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Editar CV
+        </Button>
+      </CardContent>
+    </Card>
   )
 }

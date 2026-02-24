@@ -47,11 +47,11 @@ export function NavigationButtons({
           "h-12 px-8 font-black uppercase tracking-widest text-xs rounded-xl transition-all duration-300",
           "border-none text-white shadow-glow",
           isLastStep
-            ? "text-primary bg-primary hover:bg-primary/80" // Verde lima para finalizar
-            : "text-primary bg-primary hover:bg-primary/90"   // Azul para avanzar
+            ? "text-white" // Verde lima para finalizar
+            : "text-white"   // Azul para avanzar
         )}
       >
-        <span className="flex items-center gap-2 text-secondary">
+        <span className="flex items-center gap-2">
           {isLastStep ? (
             <>
               <CheckCircle2 className="w-4 h-4 fill-current" />

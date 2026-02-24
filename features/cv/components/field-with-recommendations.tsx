@@ -60,18 +60,18 @@ export function FieldWithRecommendations({
               <PopoverTrigger asChild>
                 <button
                   type="button"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all duration-300 border text-xs font-medium shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5  rounded-lg transition-all duration-300 border text-xs font-medium shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2"
                 >
-                  <Lightbulb className="w-3.5 h-3.5" />
+                  <Lightbulb className=" w-3.5 h-3.5" />
                   <span>Consejo</span>
                 </button>
               </PopoverTrigger>
               <PopoverContent className="bg-card w-80 text-card-foreground" side="top">
                 <div className="space-y-3">
                   <div className="flex items-start gap-2">
-                    <Lightbulb className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                    <Lightbulb className="w-5 h-5  mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
-                      <p className="text-xs font-medium mb-1">Consejo:</p>
+                      <p className="text-xs font-medium mb-1">💡 Consejo:</p>
                       <p className="text-sm leading-relaxed">{field.tip}</p>
                     </div>
                   </div>
@@ -80,7 +80,6 @@ export function FieldWithRecommendations({
                       type="button"
                       size="sm"
                       onClick={() => setTipPopoverOpen(false)}
-                      className="text-primary border-primary/50 hover:bg-primary/20 text-xs bg-transparent"
                       variant="outline"
                     >
                       Entendido
@@ -98,7 +97,7 @@ export function FieldWithRecommendations({
                 <button
                   type="button"
                   aria-label="Ver ejemplo"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all duration-300 border text-xs font-medium shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5  rounded-lg transition-all duration-300 border text-xs font-medium shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2"
                 >
                   <Info className="w-3.5 h-3.5" />
                   <span>Ejemplo</span>
@@ -107,7 +106,7 @@ export function FieldWithRecommendations({
               <PopoverContent className="border-border bg-card w-80 text-card-foreground" side="top">
                 <div className="space-y-3">
                   <div className="flex items-start gap-2">
-                    <Info className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                    <Info className="w-5 h-5  mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
                       <p className="text-xs font-medium mb-1 text-secondary-foreground/80">📝 Ejemplo:</p>
                       <p className="text-sm italic leading-relaxed">{field.example}</p>
@@ -118,7 +117,7 @@ export function FieldWithRecommendations({
                       type="button"
                       size="sm"
                       onClick={useExample}
-                      className="flex-1 border-levely-blue/50 text-xs bg-transparent"
+                      className="flex-1 text-xs bg-transparent"
                       variant="outline"
                     >
                       <CheckCircle className="w-3 h-3 mr-1" />
@@ -128,7 +127,7 @@ export function FieldWithRecommendations({
                       type="button"
                       size="sm"
                       onClick={() => setExamplePopoverOpen(false)}
-                      className="border-border hover:bg-muted text-xs bg-transparent"
+                      className=" border-border hover:bg-muted text-xs bg-transparent"
                       variant="outline"
                     >
                       Cerrar
@@ -174,7 +173,6 @@ export function FieldWithRecommendations({
           value={fieldValue}
           onChange={(e) => onChange(e.target.value)}
           placeholder={`Ingresa ${field.label.toLowerCase()}`}
-          className="bg-input text-foreground border-border focus:ring-ring focus:ring-2 focus:ring-offset-2"
         />
       )}
     </div>

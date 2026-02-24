@@ -204,7 +204,7 @@ export default function OpportunitiesScreen({
                     <AnimatePresence mode="popLayout">
                       {opportunities.map((opt, index) => (
                           <motion.div
-                              key={opt.id}
+                              key={`${opt.id}-${opt.cvId}`}
                               initial={{opacity: 0, scale: 0.95}}
                               animate={{opacity: 1, scale: 1}}
                               transition={{duration: 0.3, delay: (index % 10) * 0.05}}

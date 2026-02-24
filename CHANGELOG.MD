@@ -1,4 +1,4 @@
-# WIP
+# v1.1.18 - 2026-02-24
 
 ## Enhancements
 - Improve styles and colors for dark and light mode.

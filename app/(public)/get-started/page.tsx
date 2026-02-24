@@ -45,7 +45,8 @@ export default function UploadHomePage() {
         const userId = result.user.id;
         setFileData(url, uploadedFile.name, userId!)
       })
-      router.push("/get-started/analysis");
+      // router.push("/get-started/analysis");
+      router.push('/login')
     }
   };
 

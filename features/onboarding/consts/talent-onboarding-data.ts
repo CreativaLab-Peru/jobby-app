@@ -1,133 +1,98 @@
-export const AREAS_AND_ROLES = {
-  data_analytics: {
-    label: "Datos y Analítica",
-    roles: {
-      data_analyst: "Analista de Datos",
-      business_analyst: "Business Analyst",
-      bi_analyst: "Analista de BI / Reporting",
-    },
+export const AREAS = {
+  ARTIFICIAL_INTELLIGENCE: {
+    label: "Inteligencia Artificial"
   },
 
-  engineering_operations: {
-    label: "Ingeniería / Operaciones / Mineria",
-    roles: {
-      digital_operations_engineer: "Ingeniero/a de Operaciones Digitales",
-      process_analyst: "Analista de Procesos / Operaciones Digitales",
-      project_coordinator_eng: "Project Coordinator (Ingeniería / Operaciones)",
-    },
+  DATA_SCIENCE_QUANT: {
+    label: "Ciencia de Datos & Quantitative Finance"
   },
 
-  tech_systems: {
-    label: "Tecnología y Sistemas",
-    roles: {
-      systems_analyst: "Analista de Sistemas",
-      it_support: "IT Support / Soporte Técnico",
-      systems_operations_analyst: "Systems Operations Analyst",
-    },
+  INNOVATION_ENTREPRENEURSHIP: {
+    label: "Innovación & Emprendimiento"
   },
 
-  project_pmo: {
-    label: "Gestión de Proyectos",
-    roles: {
-      project_coordinator: "Project Coordinator",
-      pmo_analyst: "PMO Analyst",
-      project_control_assistant: "Project Control Assistant",
-    },
+  PUBLIC_POLICY: {
+    label: "Políticas Públicas",
   },
 
-  finance_costs: {
-    label: "Finanzas y Costos",
-    roles: {
-      cost_analyst: "Analista de Costos",
-      junior_financial_analyst: "Analista Financiero Junior",
-      junior_controller: "Controller Junior",
-    },
+  SUSTAINABILITY_CLIMATE_TECH: {
+    label: "Sostenibilidad & Economía Circular",
   },
 
-  marketing_growth: {
-    label: "Marketing y crecimiento digital",
-    roles: {
-      digital_marketing_analyst: "Analista de Marketing Digital (Data-Driven)",
-      growth_analyst: "Growth Analyst",
-      performance_marketing_analyst: "Performance Marketing Analyst",
-    },
+  CREATIVE_TECH: {
+    label: "Creatividad Digital & Multimedia",
   },
 
-  sales_revenue_ops: {
-    label: "Ventas",
-    roles: {
-      sales_operations_analyst: "Analista de Ventas / Sales Operations",
-      revenue_operations_analyst: "Revenue Operations Analyst",
-      sales_analyst: "Sales Analyst",
-    },
+  ENGINEERING_SYSTEMS: {
+    label: "Ingeniería, Infraestructura y Sistemas",
   },
-  public_policy_development: {
-    label: "Política Pública y Desarrollo",
-    roles: {
-      policy_analyst: "Analista de Políticas",
-      research_assistant: "Asistente de Investigación",
-      program_coordinator: "Coordinador de Programas",
-    },
+  HEALTH_BIOTECH: {
+    label: "Salud, BioTech & Bienestar",
   },
 };
 
-export const SKILLS_BY_AREA = {
-  data_analytics: {
-    excel_sheets: "Microsoft Excel / Google Sheets",
-    sql: "SQL (MySQL, PostgreSQL, SQL Server)",
-    power_bi: "Power BI",
-    tableau: "Tableau",
-    python: "Python (Pandas, NumPy, Jupyter)",
+export const SKILLS = {
+  ARTIFICIAL_INTELLIGENCE: {
+    ml_frameworks: "Machine Learning (PyTorch, TensorFlow, Scikit-Learn)",
+    llm_ops: "LLMs & Prompt Engineering (OpenAI API, LangChain)",
+    computer_vision: "Visión Artificial (OpenCV, YOLO)",
+    nlp: "Procesamiento de Lenguaje Natural (NLTK, Spacy)",
+    deployment: "Model Deployment (FastAPI, Docker, Hugging Face)",
   },
 
-  engineering_operations: {
-    sap: "SAP (MM, PM, FI, CO)",
-    ms_project: "MS Project",
-    autocad: "AutoCAD",
-    power_platform: "Power Apps / Power Automate",
-    cmms: "CMMS (SAP PM, IBM Maximo, otros)",
+  DATA_SCIENCE_QUANT: {
+    python_data: "Python Avanzado (Pandas, NumPy, SciPy)",
+    stats_prob: "Estadística y Probabilidad (R, Stata, SPSS)",
+    quant_finance: "Quantitative Analysis (Risk Management, Bloomberg)",
+    viz_tools: "Visualización de Datos (Power BI, Tableau, Matplotlib)",
+    sql_advanced: "SQL Avanzado & Data Warehouse (Snowflake, BigQuery)",
   },
 
-  tech_systems: {
-    git: "Git / GitHub",
-    cloud: "AWS o Google Cloud",
-    servers: "Linux / Windows Server",
-    databases: "Herramientas de bases de datos",
+  INNOVATION_ENTREPRENEURSHIP: {
+    agile_lean: "Metodologías Ágiles (Scrum, Lean Startup)",
+    no_code: "No-Code Development (Bubble, Webflow, Glide)",
+    product_management: "Product Management (Jira, Productboard)",
+    business_modeling: "Modelado de Negocio (Canvas, Value Proposition)",
+    growth_hacking: "Growth Hacking & Experimentación",
   },
 
-  project_pmo: {
-    notion: "Notion",
-    asana: "Asana",
-    clickup: "ClickUp",
-    trello: "Trello",
+  PUBLIC_POLICY: {
+    econometrics: "Econometría & Evaluación de Impacto (Stata, R)",
+    gis_analysis: "Sistemas de Información Geográfica (ArcGIS, QGIS)",
+    qualitative_tools: "Análisis Cualitativo (NVivo, ATLAS.ti)",
+    m_e_systems: "Monitoreo y Evaluación (M&E Frameworks)",
+    data_viz_policy: "Storytelling de Datos & Dashboards Públicos",
   },
 
-  finance_costs: {
-    concar: "CONCAR",
-    siscont: "SISCONT",
-    quickbooks: "QuickBooks",
+  SUSTAINABILITY_CLIMATE_TECH: {
+    carbon_accounting: "Contabilidad de Carbono & Huella de Carbono",
+    circular_economy: "Diseño de Economía Circular y Ciclo de Vida",
+    esg_reporting: "Reportes ESG (GRI, SASB, TCFD)",
+    env_modeling: "Modelado Ambiental & Simulación",
+    renewable_energy: "Sistemas de Energía Renovable & Eficiencia",
   },
 
-  marketing_growth: {
-    google_analytics: "Google Analytics",
-    meta_business: "Meta Business Suite",
-    google_ads: "Google Ads",
-    figma: "Figma",
-    canva: "Canva",
+  CREATIVE_TECH: {
+    adobe_creative: "Adobe Creative Cloud (Photoshop, Illustrator, Premiere)",
+    ux_ui_design: "Diseño UX/UI (Figma, Adobe XD)",
+    motion_graphics: "Motion Graphics (After Effects, Blender)",
+    web_design: "Frontend Básico (HTML, CSS, Tailwind)",
+    content_automation: "Automatización de Contenido (Canva Bulk, AI Creative)",
   },
 
-  sales_revenue_ops: {
-    hubspot: "HubSpot",
-    salesforce: "Salesforce",
-    zoho_crm: "Zoho CRM",
-    whatsapp_business: "WhatsApp Business",
+  ENGINEERING_SYSTEMS: {
+    cloud_infra: "Cloud Computing (AWS, Google Cloud, Azure)",
+    devops_tools: "DevOps & CI/CD (Git, Docker, Kubernetes)",
+    networks_security: "Redes y Ciberseguridad Básica",
+    sysadmin: "Administración de Sistemas (Linux / Windows Server)",
+    automation_iot: "Automatización Industrial & IoT",
   },
-  
-  public_policy_development: {
-    stata_spss: "Análisis Estadístico (Stata, SPSS o R)",
-    arcgis_qgis: "Sistemas de Información Geográfica (ArcGIS / QGIS)",
-    nvivo: "Análisis Cualitativo (NVivo / ATLAS.ti)",
-    office_advanced: "Microsoft Office Avanzado (Excel y Word)",
-    monitoring_tools: "Herramientas de Monitoreo y Evaluación (M&E)",
+
+  HEALTH_BIOTECH: {
+    bioinformatics: "Bioinformática & Análisis de Secuencias",
+    health_tech: "Sistemas de Información de Salud (HIS / EHR)",
+    data_health: "Análisis de Datos Clínicos (MedCalc, R for Health)",
+    lab_management: "Gestión de Laboratorio (LIMS)",
+    wellness_apps: "Desarrollo de Soluciones Digital Health",
   },
 };

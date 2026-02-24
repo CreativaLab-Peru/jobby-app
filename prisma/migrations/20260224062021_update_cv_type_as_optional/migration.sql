@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "cv" ALTER COLUMN "cvType" DROP NOT NULL;

@@ -1,9 +1,9 @@
 "use client";
 
 import { useOnboardingStore } from "@/features/onboarding/store/talent-onboarding-store";
-import { SKILLS_BY_AREA } from "@/features/onboarding/consts/talent-onboarding-data";
 import { Check, Info, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {SKILLS} from "@/features/onboarding/consts/talent-onboarding-data";
 
 export function SkillsStep() {
   const { formData, updateFormData, errors } = useOnboardingStore();
@@ -14,7 +14,7 @@ export function SkillsStep() {
   // 1. Obtener lista de skills basada en las áreas seleccionadas
   // Extraemos [key, label] de cada área seleccionada
   const availableSkills = selectedIndustries.flatMap((areaKey) => {
-    const areaSkills = SKILLS_BY_AREA[areaKey as keyof typeof SKILLS_BY_AREA];
+    const areaSkills = SKILLS[areaKey as keyof typeof SKILLS];
     if (!areaSkills) return [];
     return Object.entries(areaSkills).map(([key, label]) => ({
       id: key,

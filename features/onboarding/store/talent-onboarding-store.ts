@@ -63,7 +63,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
         }
         const stepSchemas: Record<number, any> = {
           2: talentOnboardingBaseSchema.pick({ name: true, country: true }),
-          3: talentOnboardingBaseSchema.pick({ targetIndustries: true, preferredRoles: true }),
+          3: talentOnboardingBaseSchema.pick({ targetIndustries: true }),
           4: talentOnboardingBaseSchema.pick({ skills: true }),
           5: talentOnboardingBaseSchema.pick({ workModality: true, relocation: true }),
           6: talentOnboardingBaseSchema.pick({ availability: true }),

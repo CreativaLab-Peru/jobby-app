@@ -7,6 +7,7 @@ import {useRouter} from "next/navigation";
 
 interface TopOpportunity {
   id: string;
+  cvId: string;
   match: number;
   title: string;
   type: string;
@@ -29,11 +30,11 @@ export function TopMatchesList({ topOpportunities }: { topOpportunities: TopOppo
 
       <div className="space-y-3">
         {topOpportunities && topOpportunities.length > 0 ? (
-          topOpportunities.map((opt) => (
+          topOpportunities.map((opt, index) => (
             <div
-              key={opt.id}
+              key={`${opt.id}-${index}`}
               className="group flex items-center justify-between gap-4 p-4 rounded-2xl border border-border/50 hover:border-primary/30 transition-all duration-300 hover:cursor-pointer"
-              onClick={() => route.push(`/opportunities/${opt.id}/details`)}
+              onClick={() => route.push(`/opportunities/${opt.id}/cv/${opt.cvId}/details`)}
             >
               <div className="flex items-center gap-4">
                 {/* Porcentaje con estilo Squircle */}

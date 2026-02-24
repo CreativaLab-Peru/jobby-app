@@ -78,38 +78,40 @@ export default function AnalysisScore({
           >
             <AnalysisHeader />
 
-            <Tabs defaultValue="score" className="space-y-10">
-              {/* REFACTOR: TabsList con arquitectura de Dashboard Técnico */}
-              <TabsList className="grid w-full grid-cols-2 h-14 p-1.5 bg-secondary/50 backdrop-blur-md rounded-2xl border border-border/60">
-                <TabsTrigger
-                  value="score"
-                  className="flex items-center justify-center gap-3 h-full rounded-xl text-xs font-black uppercase tracking-[0.15em] transition-all duration-300
-                    data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border-border/10"
-                >
-                  <Target className="w-4 h-4" />
-                  <span>Score e Insights</span>
-                </TabsTrigger>
+            {/*<Tabs defaultValue="score" className="space-y-10">*/}
+            {/*  /!* REFACTOR: TabsList con arquitectura de Dashboard Técnico *!/*/}
+            {/*  <TabsList className="grid w-full grid-cols-2 h-14 p-1.5 bg-secondary/50 backdrop-blur-md rounded-2xl border border-border/60">*/}
+            {/*    <TabsTrigger*/}
+            {/*      value="score"*/}
+            {/*      className="flex items-center justify-center gap-3 h-full rounded-xl text-xs font-black uppercase tracking-[0.15em] transition-all duration-300*/}
+            {/*        data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border-border/10"*/}
+            {/*    >*/}
+            {/*      <Target className="w-4 h-4" />*/}
+            {/*      <span>Score e Insights</span>*/}
+            {/*    </TabsTrigger>*/}
 
-                <TabsTrigger
-                  value="opportunities"
-                  className="flex items-center justify-center gap-3 h-full rounded-xl text-xs font-black uppercase tracking-[0.15em] transition-all duration-300
-                    data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border-border/10"
-                >
-                  <Award className="w-4 h-4" />
-                  <span>Oportunidades</span>
-                </TabsTrigger>
-              </TabsList>
+            {/*    <TabsTrigger*/}
+            {/*      value="opportunities"*/}
+            {/*      className="flex items-center justify-center gap-3 h-full rounded-xl text-xs font-black uppercase tracking-[0.15em] transition-all duration-300*/}
+            {/*        data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border-border/10"*/}
+            {/*    >*/}
+            {/*      <Award className="w-4 h-4" />*/}
+            {/*      <span>Oportunidades</span>*/}
+            {/*    </TabsTrigger>*/}
+            {/*  </TabsList>*/}
 
-              {/* Contenidos con espaciado consistente */}
-              <TabsContent value="score" className="space-y-10 outline-none">
-                <CVScoreCard score={cvScore} onShowBreakdown={() => setShowScoreBreakdown(true)} />
-                <RecommendationsSection recommendations={recommendations} />
-              </TabsContent>
+            {/*  /!* Contenidos con espaciado consistente *!/*/}
+            {/*  <TabsContent value="score" className="space-y-10 outline-none">*/}
+            {/*    */}
+            {/*  </TabsContent>*/}
 
-              <TabsContent value="opportunities" className="space-y-10 outline-none">
-                <OpportunitiesSection opportunities={opportunities} />
-              </TabsContent>
-            </Tabs>
+            {/*  <TabsContent value="opportunities" className="space-y-10 outline-none">*/}
+            {/*    <OpportunitiesSection opportunities={opportunities} />*/}
+            {/*  </TabsContent>*/}
+            {/*</Tabs>*/}
+
+            <CVScoreCard score={cvScore} onShowBreakdown={() => setShowScoreBreakdown(true)} />
+            <RecommendationsSection recommendations={recommendations} />
 
             <div className="h-32" />
           </motion.div>

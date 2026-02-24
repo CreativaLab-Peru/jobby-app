@@ -35,7 +35,7 @@ export function CVScoreCard({ score, onShowBreakdown }: CVScoreCardProps) {
             <div className="p-2 bg-primary/10 rounded-lg">
               <Star className="w-5 h-5 text-primary fill-primary/20" />
             </div>
-            Global Performance Index
+            Indice de empleabilidad CV
           </CardTitle>
 
           <Button

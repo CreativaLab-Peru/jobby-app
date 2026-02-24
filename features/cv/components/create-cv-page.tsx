@@ -125,15 +125,9 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
                         <div className="flex items-center flex-1">
                           {(() => {
                             const Icon = currentSection.icon
-<<<<<<< HEAD
-                            return <Icon className="w-8 h-8 mr-3 text-primary" />
+                            return <Icon className="w-8 h-8 mr-3 text-levely-blue dark:text-levely-green" />
                           })()}
-                          <span className="font-bold text-primary">{currentSection.title}</span>
-=======
-                            return <Icon className="w-8 h-8 mr-3" />
-                          })()}
-                          <span className="font-bold">{currentSection.title}</span>
->>>>>>> 4014875cb66e3287bb85f4ee6dae857582222b36
+                          <span className="font-bold text-levely-blue dark:text-levely-green">{currentSection.title}</span>
                         </div>
                         <NavigationButtons
                           currentStep={activeSection}
@@ -169,31 +163,18 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
                   {/* CAMBIO: Card de Preview más limpia con el sistema de marca */}
                   <Card className="shadow-card border-border bg-card overflow-hidden">
                     <CardHeader className="bg-muted/30 border-b border-border">
-<<<<<<< HEAD
-                      <CardTitle className="flex items-center text-lg text-primary">
-                        <Eye className="w-5 h-5 mr-2 text-primary" />
-=======
-                      <CardTitle className="flex items-center text-lg">
-                        <Eye className="w-5 h-5 mr-2" />
->>>>>>> 4014875cb66e3287bb85f4ee6dae857582222b36
+                      <CardTitle className="flex items-center text-lg text-levely-blue dark:text-levely-green">
+                        <Eye className="w-5 h-5 mr-2 text-levely-blue dark:text-levely-green" />
                         Vista Previa
 
                         <div className="ml-auto">
                           {isSaving ? (
-<<<<<<< HEAD
-                            <div className="flex items-center gap-2 text-xs font-medium text-primary animate-pulse">
-=======
-                            <div className="flex items-center gap-2 text-xs font-medium animate-pulse">
->>>>>>> 4014875cb66e3287bb85f4ee6dae857582222b36
+                            <div className="flex items-center gap-2 text-xs font-medium text-levely-blue dark:text-levely-green animate-pulse">
                               <CloudUpload className="w-4 h-4" />
                               Sincronizando...
                             </div>
                           ) : (
-<<<<<<< HEAD
-                            <div className="flex items-center gap-2 text-xs font-medium text-primary">
-=======
-                            <div className="flex items-center gap-2 text-xs font-medium">
->>>>>>> 4014875cb66e3287bb85f4ee6dae857582222b36
+                            <div className="flex items-center gap-2 text-xs font-medium text-levely-blue dark:text-levely-green">
                               <CloudCheck className="w-4 h-4" />
                               Cambios guardados
                             </div>

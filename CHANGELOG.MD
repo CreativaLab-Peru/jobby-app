@@ -1,3 +1,12 @@
+# WIP
+
+## Enhancements
+- Improve styles and colors for dark and light mode.
+- The roles are commented in the code for the moment.
+
+## Technical
+- New types of opportunities added
+
 # v1.1.17 - 2026-02-17
 
 ## Features
@@ -8,7 +17,7 @@
 - Fix colors for dark and light mode
 - Fixed a bug where multiple CVs with the same name would all be highlighted simultaneously in the selection menus by integrating unique IDs into the selection logic.
 
-# v1.1.16 - 2026-02-20
+# v1.1.16 - 2026-01-20
 
 ## Features
 - **Advanced Opportunity Filtering**: Added a CV-specific filter in the Opportunities section to match profiles more accurately.

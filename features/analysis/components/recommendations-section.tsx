@@ -57,7 +57,7 @@ export function RecommendationsSection({ recommendations }: { recommendations: R
         )}
       </div>
       <div className="mt-10">
-        <StickyActionButtons show={true} />
+        <StickyActionButtons />
       </div>
     </div>
   )

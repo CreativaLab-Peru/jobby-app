@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Lightbulb, AlertTriangle, Sparkles, Zap, CheckCircle2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { Recommendation } from "@/types/analysis"
+import {StickyActionButtons} from "@/features/analysis/components/sticky-action-buttons";
 
 const SEVERITY = {
   critical: { icon: AlertTriangle, color: "text-destructive", bg: "bg-destructive/5", label: "Crítico" },
@@ -54,6 +55,9 @@ export function RecommendationsSection({ recommendations }: { recommendations: R
             <p className="text-sm font-medium text-muted-foreground">¡Todo se ve excelente!</p>
           </Card>
         )}
+      </div>
+      <div className="mt-10">
+        <StickyActionButtons show={true} />
       </div>
     </div>
   )

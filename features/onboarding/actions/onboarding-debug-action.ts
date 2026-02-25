@@ -33,6 +33,7 @@ export async function completeOnboardingDebugAction(id: string, body: TalentOnbo
           portfolioUrl: data.portfolioUrl,
           skills: data.skills,
           relocation: data.relocation,
+          opportunityTypes: data.opportunityTypes,
         },
         create: {
           userId: user.id,
@@ -46,6 +47,7 @@ export async function completeOnboardingDebugAction(id: string, body: TalentOnbo
           portfolioUrl: data.portfolioUrl,
           skills: data.skills,
           relocation: data.relocation,
+          opportunityTypes: data.opportunityTypes,
         },
       });
       await tx.user.update({

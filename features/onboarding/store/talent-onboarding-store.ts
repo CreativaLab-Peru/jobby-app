@@ -3,7 +3,6 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import {
   talentOnboardingBaseSchema,
   TalentOnboardingFormData,
-  talentOnboardingSchema
 } from "@/features/onboarding/schemas";
 
 // 1. Definimos la estructura del Store usando el tipo inferido de Zod
@@ -37,6 +36,7 @@ const initialFormData: TalentOnboardingFormData = {
   email: "",
   password: "",
   acceptedTerms: false,
+  opportunityTypes: [],
 };
 
 export const useOnboardingStore = create<OnboardingStore>()(
@@ -64,12 +64,13 @@ export const useOnboardingStore = create<OnboardingStore>()(
         const stepSchemas: Record<number, any> = {
           2: talentOnboardingBaseSchema.pick({ name: true, country: true }),
           3: talentOnboardingBaseSchema.pick({ targetIndustries: true }),
-          4: talentOnboardingBaseSchema.pick({ skills: true }),
-          5: talentOnboardingBaseSchema.pick({ workModality: true, relocation: true }),
-          6: talentOnboardingBaseSchema.pick({ availability: true }),
-          7: talentOnboardingBaseSchema.pick({ expLevel: true }),
-          8: talentOnboardingBaseSchema.pick({ portfolioUrl: true }),
-          9: talentOnboardingBaseSchema.pick({ email: true, password: true, acceptedTerms: true }),
+          4: talentOnboardingBaseSchema.pick({ opportunityTypes: true }),
+          5: talentOnboardingBaseSchema.pick({ skills: true }),
+          6: talentOnboardingBaseSchema.pick({ workModality: true, relocation: true }),
+          7: talentOnboardingBaseSchema.pick({ availability: true }),
+          8: talentOnboardingBaseSchema.pick({ expLevel: true }),
+          9: talentOnboardingBaseSchema.pick({ portfolioUrl: true }),
+          10: talentOnboardingBaseSchema.pick({ email: true, password: true, acceptedTerms: true }),
         };
 
         const currentSchema = stepSchemas[step];

@@ -3,7 +3,6 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { TalentOnboardingFormData } from "@/features/onboarding/schemas";
-import { inngest } from "@/inngest/functions/client";
 import { generateNumericCode } from "@/utils/digicts";
 import {createBasicCredits} from "@/features/credits/actions/create-basic-credits";
 
@@ -37,6 +36,7 @@ export async function completeOnboardingAction(id: string, body: TalentOnboardin
           portfolioUrl: data.portfolioUrl,
           skills: data.skills,
           relocation: data.relocation,
+          opportunityTypes: data.opportunityTypes,
         },
         create: {
           userId: user.id,
@@ -50,19 +50,12 @@ export async function completeOnboardingAction(id: string, body: TalentOnboardin
           portfolioUrl: data.portfolioUrl,
           skills: data.skills,
           relocation: data.relocation,
+          opportunityTypes: data.opportunityTypes,
         },
       });
 
-      // 2. Crear el código de verificación
-      // await tx.verificationCode.create({
-      //   data: {
-      //     userId: user.id,
-      //     code: codeSixDigits,
-      //     expiresAt: new Date(Date.now() + 3600000), // Expira en 1 hora
-      //   },
-      // });
 
-      // 3. Update user birthday (solo si existe y es válida)
+      // 2. Update user birthday (solo si existe y es válida)
       const updateData: any = {
         name: data.name,
       };

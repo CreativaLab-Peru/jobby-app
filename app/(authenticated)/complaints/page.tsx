@@ -107,7 +107,7 @@ export default function ComplaintsPage() {
                     <Input
                       id="phone"
                       name="phone"
-                      type="tel"
+                      type="number"
                       value={form.phone}
                       onChange={handleChange}
                       placeholder="+51 999 999 999"

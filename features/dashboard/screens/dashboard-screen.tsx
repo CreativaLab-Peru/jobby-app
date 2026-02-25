@@ -8,6 +8,7 @@ import {EmployabilityCard} from "@/features/dashboard/components/employability-c
 import {TopMatchesList} from "@/features/dashboard/components/top-matches-list";
 import {ResourcesCard} from "@/features/dashboard/components/resources-card";
 import {RecommendationsList} from "@/features/dashboard/components/recommendations-list";
+import {useMemo} from "react";
 
 interface DashboardScreenProps {
   score: number;
@@ -17,18 +18,6 @@ interface DashboardScreenProps {
   limits?: CreditLimits;
 }
 
-const resources = [
-  {
-    label: "Evaluaciones",
-    count: 10,
-    colorClass: "text-primary",
-  },
-  {
-    label: "CVs Creados",
-    count: 20,
-    colorClass: "text-levely-orange",
-  },
-];
 
 
 export default function DashboardScreen({
@@ -36,9 +25,30 @@ export default function DashboardScreen({
                                           stats,
                                           recommendations,
                                           subscription,
+                                          limits,
                                         }: DashboardScreenProps) {
 
   const opportunities = stats?.topOpportunities || [];
+
+  const resources = useMemo(()=> {
+    return [
+      {
+        label: "Evaluaciones",
+        count: limits.aiActionsLimit,
+        colorClass: "text-primary",
+      },
+      {
+        label: "CVs Creados",
+        count: limits.manageCvsLimit,
+        colorClass: "text-primary",
+      },
+      {
+        label: "Opportunidades",
+        count: limits.opportunitiesActionsLimit,
+        colorClass: "text-primary",
+      },
+    ]
+  }, [limits]);
 
   return (
     <main className="min-h-[80vh] p-4 md:p-8 bg-background/30 ">

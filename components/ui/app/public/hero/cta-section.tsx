@@ -29,7 +29,7 @@ export function CTASection() {
                 Únete a la comunidad de profesionales que están transformando su carrera con inteligencia artificial.
               </p>
 
-              <Link href="/register">
+                <Link href="/onboarding/talents">
                 <Button
                   className="cursor-pointer bg-lime-300 text-gray-900 hover:bg-lime-400 font-semibold"
                   size="xl">

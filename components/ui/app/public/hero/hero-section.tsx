@@ -56,7 +56,7 @@ export function HeroSection() {
             className="mt-10 animate-fade-up"
             style={{ animationDelay: "0.3s" }}
           >
-            <Link href="/register">
+            <Link href="/onboarding/talents">
               <Button variant="hero" size="xl" className="cursor-pointer">
                 Empezar
                 <ArrowRight className="w-5 h-5 ml-1" />

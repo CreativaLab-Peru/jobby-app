@@ -45,7 +45,7 @@ export function LoginForm() {
       // Ocultar el aviso después de 5 segundos
       const timer = setTimeout(() => {
         setShowOnboardingSuccess(false);
-      }, 5000);
+      }, 10000);
       return () => clearTimeout(timer);
     }
   }, [searchParams]);

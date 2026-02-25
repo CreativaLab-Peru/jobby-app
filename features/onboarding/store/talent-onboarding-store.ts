@@ -3,7 +3,6 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import {
   talentOnboardingBaseSchema,
   TalentOnboardingFormData,
-  talentOnboardingSchema
 } from "@/features/onboarding/schemas";
 
 // 1. Definimos la estructura del Store usando el tipo inferido de Zod

@@ -30,7 +30,7 @@ import {getUserByEmail} from "@/features/authentication/actions/get-user-by-emai
 import {verifyOAuthUser} from "@/features/authentication/actions/verify-oauth-user";
 import {OpportunityTypeStep} from "@/features/onboarding/components/opportunity-type-step";
 
-const TOTAL_STEPS = 9;
+const TOTAL_STEPS = 10;
 
 export function OnboardingForm() {
   const {

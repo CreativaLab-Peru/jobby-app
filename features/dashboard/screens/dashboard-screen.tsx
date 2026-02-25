@@ -43,7 +43,7 @@ export default function DashboardScreen({
         colorClass: "text-primary",
       },
       {
-        label: "Opportunidades",
+        label: "Oportunidades",
         count: limits.opportunitiesActionsLimit,
         colorClass: "text-primary",
       },

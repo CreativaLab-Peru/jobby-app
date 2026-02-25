@@ -7,7 +7,7 @@ import {OPPORTUNITY_CONFIG} from "@/const";
 
 export function OpportunityTypeStep() {
   const { formData, updateFormData, errors } = useOnboardingStore();
-  const selectedTypes = formData.opportunityType || [];
+  const selectedTypes = formData.opportunityTypes || [];
 
   const toggleType = (key: string) => {
     const isSelected = selectedTypes.includes(key);
@@ -15,7 +15,7 @@ export function OpportunityTypeStep() {
       ? selectedTypes.filter((t) => t !== key)
       : [...selectedTypes, key];
 
-    updateFormData({ opportunityType: nextTypes });
+    updateFormData({ opportunityTypes: nextTypes });
   };
 
   return (

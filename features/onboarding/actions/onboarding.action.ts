@@ -36,7 +36,7 @@ export async function completeOnboardingAction(id: string, body: TalentOnboardin
           portfolioUrl: data.portfolioUrl,
           skills: data.skills,
           relocation: data.relocation,
-          opportunityTypes: data.opportunityType,
+          opportunityTypes: data.opportunityTypes,
         },
         create: {
           userId: user.id,
@@ -50,7 +50,7 @@ export async function completeOnboardingAction(id: string, body: TalentOnboardin
           portfolioUrl: data.portfolioUrl,
           skills: data.skills,
           relocation: data.relocation,
-          opportunityTypes: data.opportunityType,
+          opportunityTypes: data.opportunityTypes,
         },
       });
 

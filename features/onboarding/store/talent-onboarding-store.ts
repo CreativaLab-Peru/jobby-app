@@ -36,7 +36,7 @@ const initialFormData: TalentOnboardingFormData = {
   email: "",
   password: "",
   acceptedTerms: false,
-  opportunityType: [],
+  opportunityTypes: [],
 };
 
 export const useOnboardingStore = create<OnboardingStore>()(
@@ -64,7 +64,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
         const stepSchemas: Record<number, any> = {
           2: talentOnboardingBaseSchema.pick({ name: true, country: true }),
           3: talentOnboardingBaseSchema.pick({ targetIndustries: true }),
-          4: talentOnboardingBaseSchema.pick({ opportunityType: true }),
+          4: talentOnboardingBaseSchema.pick({ opportunityTypes: true }),
           5: talentOnboardingBaseSchema.pick({ skills: true }),
           6: talentOnboardingBaseSchema.pick({ workModality: true, relocation: true }),
           7: talentOnboardingBaseSchema.pick({ availability: true }),

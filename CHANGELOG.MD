@@ -1,3 +1,11 @@
+# WIP
+
+## Fixes
+- Opportunity type added on onboarding
+- I can't see the current resources as a user
+- Style issues on analyzing progress
+- Mapped title of recommendation on analysis summary
+
 # v1.1.18 - 2026-02-24
 
 ## Enhancements

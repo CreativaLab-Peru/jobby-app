@@ -1,3 +1,10 @@
+# WIP
+
+# BEFORE DEPLOYMENT
+- Opportunity type added on preference user
+- Cv type on cv table is optional
+- Delete some types of opportunities types on CV table
+
 # 1.1.2 - 2025-01-30
 
 # BEFORE DEPLOYMENT

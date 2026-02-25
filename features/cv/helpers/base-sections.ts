@@ -36,7 +36,7 @@ export const personalSection: CVSection = {
     {
       name: "phone",
       label: "Teléfono",
-      type: "tel",
+      type: "number",
       required: true,
       tip: "Incluye código de tu país si buscas oportunidades internacionales",
       example: "+51 912345678",

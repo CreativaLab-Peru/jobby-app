@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useMemo } from "react"
+import React, {useEffect, useMemo, useState} from "react"
 import useSWR from "swr"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
@@ -67,6 +67,7 @@ const variants = {
 
 export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
   const router = useRouter()
+  const [isRendering, setIsRendering] = useState(false)
   const { data: status } = useSWR<CvStatus | null>(`/api/cv/${cvId}/status`, fetcher, {
     refreshInterval: 3000,
   })
@@ -86,6 +87,10 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
   }, [status, STATUS_TO_INDEX])
 
   useEffect(() => {
+    setIsRendering(true)
+  }, []);
+
+  useEffect(() => {
     if (status?.status === "CV_EVALUATION_FINISHED" || status?.status === "CV_EVALUATION_SUCCEEDED") {
       const evaluateId = (status as any).evaluateId
       setTimeout(() => {
@@ -94,11 +99,22 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
     }
   }, [status, router])
 
+  if (!isRendering) {
+    return (
+      <div className="flex items-center justify-center h-[90vh] rounded-lg">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Cargando</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="w-full h-full flex flex-col items-center justify-center px-4 bg-background/50">
       <div className="max-w-2xl w-full">
         {/* Header con gradiente del sistema */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-16 mt-10">
           <h1 className="text-3xl sm:text-4xl font-black tracking-tighter text-foreground mb-3">
             Analizando tu potencial
           </h1>

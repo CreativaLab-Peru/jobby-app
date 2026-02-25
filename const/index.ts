@@ -50,3 +50,16 @@ export const OPPORTUNITY_CONFIG: Record<string, string> = {
   EXCHANGE_PROGRAM: "Intercambio",
   EMPLOYMENT: "Empleo",
 };
+
+export const SECTION_LABELS: Record<string, string> = {
+  SUMMARY: "Resumen Profesional",
+  EXPERIENCE: "Experiencia Laboral",
+  EDUCATION: "Formación Académica",
+  SKILLS: "Habilidades Técnicas",
+  PROJECTS: "Proyectos Destacados",
+  VOLUNTEERING: "Voluntariado",
+  CERTIFICATIONS: "Certificaciones",
+  COMPLEMENTS: "Información Complementaria",
+  ACHIEVEMENTS: "Logros",
+  CONTACT: "Información de Contacto",
+};

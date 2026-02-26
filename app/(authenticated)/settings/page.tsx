@@ -12,6 +12,7 @@ export default async function SettingsPage() {
   if (!currentUser) {
     return redirect('/');
   }
+
   return (
     <SettingsScreen user={currentUser} isOAuth={isOAuth} />
   );

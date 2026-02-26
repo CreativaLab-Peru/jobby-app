@@ -1,6 +1,23 @@
 # WIP
 
+## Features
+- **Settings — Update username**: Users can now update their display name from the Settings page. The change propagates instantly to the navbar and profile button without requiring a page reload (via SWR cache invalidation).
+- **Settings — Change password**: Users registered with email/password can now change their password from Settings. Requires current password for confirmation. Google (OAuth) users see an informational message instead.
+- **Settings — Theme preference (global)**: The dark/light mode preference is now saved per user in the database. It syncs automatically across all devices and browsers on login via `ThemeSync`. Both the navbar toggle and the settings switch persist the preference.
+- **Register — Confirm password**: Added a "Confirm password" field to both the simple register form and the onboarding account step, with Zod validation to ensure both passwords match.
+- **Onboarding — Terms gate**: The "Continue / Create account" button and the "Sign up with Google" button on the account step are now disabled until the user accepts the Terms and Conditions checkbox.
+
+## Technical
+- New server actions: `updateUsernameAction`, `changePasswordAction`, `updateThemeAction`.
+- New `ThemeSync` client component that fetches user theme preference on mount and applies it via `next-themes`.
+- New `GET /api/theme` route handler to read theme from DB and set cookie (allowed in Route Handlers).
+- New migration: `add_theme_to_user_preference` — adds `theme TEXT NOT NULL DEFAULT 'light'` to `user_preference` table.
+- `GoogleOAuthButton` now accepts an external `disabled` prop.
+- Navbar uses SWR (`useSWR("session")`) to reactively update the username without F5.
+
 ## Fixes
+- Fixed broken `update-password.ts` action that had a hardcoded password.
+- Fixed onboarding store step 10 validation not checking `confirmPassword`.
 - Opportunity type added on onboarding
 - I can't see the current resources as a user
 - Style issues on analyzing progress

@@ -12,7 +12,9 @@ import { Loader2, Shield, Bell, User, Sun, Moon, Settings, CheckCircle2, AlertCi
 import { User as UserType } from ".prisma/client";
 import { updateUsernameAction } from "@/features/settings/actions/update-username";
 import { changePasswordAction } from "@/features/settings/actions/change-password";
+import { updateThemeAction } from "@/features/settings/actions/update-theme";
 import { useSWRConfig } from "swr";
+import { useTheme } from "next-themes";
 
 interface SettingsScreenProps {
   user: UserType;
@@ -23,6 +25,14 @@ type FeedbackState = { type: "success" | "error"; message: string } | null;
 
 export default function SettingsScreen({ user, isOAuth }: SettingsScreenProps) {
   const { mutate } = useSWRConfig();
+  const { theme, setTheme } = useTheme();
+
+  const handleThemeChange = async (checked: boolean) => {
+    const newTheme = checked ? "dark" : "light";
+    setTheme(newTheme); // aplica al instante en el cliente
+    await updateThemeAction(newTheme); // persiste en BD
+  };
+
   // --- Nombre ---
   const [name, setName] = useState(user.name || "");
   const [nameFeedback, setNameFeedback] = useState<FeedbackState>(null);
@@ -38,9 +48,7 @@ export default function SettingsScreen({ user, isOAuth }: SettingsScreenProps) {
   const [passwordFieldErrors, setPasswordFieldErrors] = useState<Record<string, string>>({});
   const [passwordLoading, setPasswordLoading] = useState(false);
 
-  // --- Preferencias (UI solamente por ahora) ---
-  const [notifications, setNotifications] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
+  // --- Contraseña ---
 
   const handleSaveName = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -284,40 +292,40 @@ export default function SettingsScreen({ user, isOAuth }: SettingsScreenProps) {
                 </div>
                 <Separator />
                 <div className="space-y-1 pt-2">
-                  {/* Switch Notificaciones */}
-                  <div className="flex items-center justify-between p-4 rounded-xl hover:bg-muted/30 transition-colors">
-                    <div className="space-y-0.5">
-                      <span className="text-sm font-bold text-foreground">Notificaciones</span>
-                      <p className="text-xs text-muted-foreground">Recibe alertas sobre el estado de tus análisis</p>
-                    </div>
-                    <Switch
-                      disabled={true}
-                      checked={notifications}
-                      onCheckedChange={() => setNotifications((v) => !v)}
-                    />
-                  </div>
 
-                  {/* Switch Dark Mode */}
+                  {/* Switch Dark Mode — funcional */}
                   <div className="flex items-center justify-between p-4 rounded-xl hover:bg-muted/30 transition-colors">
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-muted rounded-lg">
-                        {darkMode ? (
+                        {theme === "dark" ? (
                           <Moon className="w-4 h-4 text-primary" />
                         ) : (
                           <Sun className="w-4 h-4 text-orange-500" />
                         )}
                       </div>
                       <div className="space-y-0.5">
-                        <span className="text-sm font-bold text-foreground">Modo visual</span>
-                        <p className="text-xs text-muted-foreground">Alternar entre tema claro y oscuro</p>
+                        <span className="text-sm font-bold text-foreground">Modo oscuro</span>
+                        <p className="text-xs text-muted-foreground">Alterna entre tema claro y oscuro</p>
                       </div>
                     </div>
                     <Switch
-                      disabled={true}
-                      checked={darkMode}
-                      onCheckedChange={() => setDarkMode((v) => !v)}
+                      checked={theme === "dark"}
+                      onCheckedChange={handleThemeChange}
                     />
                   </div>
+
+                  {/* Switch Notificaciones — próximamente */}
+                  <div className="flex items-center justify-between p-4 rounded-xl opacity-60">
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-bold text-foreground">Notificaciones por email</span>
+                        <span className="text-[10px] font-semibold uppercase tracking-wide bg-primary/10 text-primary px-2 py-0.5 rounded-full">Próximamente</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">Recibe alertas sobre el estado de tus análisis</p>
+                    </div>
+                    <Switch disabled checked={false} />
+                  </div>
+
                 </div>
               </section>
 

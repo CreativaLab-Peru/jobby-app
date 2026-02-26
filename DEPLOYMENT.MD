@@ -1,6 +1,9 @@
 # WIP
 
-# BEFORE DEPLOYMENT
+### BEFORE DEPLOYMENT
+- Run migration `add_theme_to_user_preference` — adds `theme` column to `user_preference` table (`migrate deploy` handles this automatically in the build script).
+- No new environment variables required.
+- Verify that existing users with a `UserPreference` record get `theme = 'light'` by default (handled by the migration default value).
 - Opportunity type added on preference user
 - Cv type on cv table is optional
 - Delete some types of opportunities types on CV table

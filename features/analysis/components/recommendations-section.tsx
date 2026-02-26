@@ -5,6 +5,7 @@ import { Lightbulb, AlertTriangle, Sparkles, Zap, CheckCircle2 } from "lucide-re
 import { cn } from "@/lib/utils"
 import type { Recommendation } from "@/types/analysis"
 import {StickyActionButtons} from "@/features/analysis/components/sticky-action-buttons";
+import {SECTION_LABELS} from "@/const";
 
 const SEVERITY = {
   critical: { icon: AlertTriangle, color: "text-destructive", bg: "bg-destructive/5", label: "Crítico" },
@@ -26,6 +27,7 @@ export function RecommendationsSection({ recommendations }: { recommendations: R
         {recommendations.length > 0 ? (
           recommendations.map((rec, i) => {
             const config = SEVERITY[rec.type as keyof typeof SEVERITY] || SEVERITY.suggestion;
+            const titleMapped = SECTION_LABELS[rec.title] || rec.title;
             return (
               <div
                 key={i}
@@ -37,7 +39,7 @@ export function RecommendationsSection({ recommendations }: { recommendations: R
                 <config.icon className={cn("w-5 h-5 mt-1 shrink-0", config.color)} />
                 <div className="space-y-1">
                   <div className="flex items-center gap-3">
-                    <h3 className="font-bold text-sm">{rec.title}</h3>
+                    <h3 className="font-bold text-sm">{titleMapped}</h3>
                     <span className={cn("text-[10px] font-black uppercase tracking-tighter px-2 py-0.5 rounded-md bg-background border", config.color)}>
                       {config.label}
                     </span>

@@ -46,16 +46,6 @@ export function ResourcesCard({
             </span>
           </div>
         ))}
-
-        {/* Oportunidades (Destacado sutil) */}
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground/90">
-            Oportunidades
-          </span>
-          <span className="text-sm font-black tracking-tight text-accent">
-            {opportunitiesCount}
-          </span>
-        </div>
       </div>
 
       {/* Footer / CTA */}

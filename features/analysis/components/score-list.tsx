@@ -24,6 +24,7 @@ import {analyzeCvById} from "@/features/analysis/actions/analyze-cv-by-id";
 import {
   reAnalyzeCvByEvaluationId
 } from "@/features/analysis/actions/re-analyze-cv-by-evaluation-id";
+import {useCreditsStore} from "@/store/use-credits-store";
 
 export type ScoresListPageProps = {
   initialEvaluations: EvaluationWithRelations[];
@@ -56,6 +57,8 @@ export function ScoresListPage({
 
   const { onOpen, onClose, selectedCvId, setIsAnalyzing } = useEvaluationModalStore();
   const router = useRouter();
+
+  const { refreshCredits } = useCreditsStore()
 
   const cvOptions = initialCvs.map(cv => ({
     value: cv.id,
@@ -112,6 +115,7 @@ export function ScoresListPage({
         toast.success('Análisis iniciado');
         onClose();
         router.push(`/process/${id}`);
+        refreshCredits();
       } else {
         console.error("Error response from API:", response);
         toast.error("Error al procesar el CV");
@@ -131,6 +135,7 @@ export function ScoresListPage({
       if (response.success) {
         toast.success('Reanálisis iniciado');
         router.push(`/process/${cvId}`);
+        refreshCredits();
       } else {
         toast.error("Error al reanalizar");
       }

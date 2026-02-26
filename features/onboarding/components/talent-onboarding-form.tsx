@@ -1,38 +1,47 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react"; // Añadimos useState
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import {useEffect, useState, useTransition} from "react"; // Añadimos useState
+import {useRouter} from "next/navigation";
+import {toast} from "sonner";
 
-import { useOnboardingStore } from "@/features/onboarding/store/talent-onboarding-store";
-import { completeOnboardingAction } from "@/features/onboarding/actions/onboarding.action";
+import {useOnboardingStore} from "@/features/onboarding/store/talent-onboarding-store";
+import {completeOnboardingAction} from "@/features/onboarding/actions/onboarding.action";
 
-import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
-import { Loader2, ArrowRight, ArrowLeft } from "lucide-react";
+import {Progress} from "@/components/ui/progress";
+import {Button} from "@/components/ui/button";
+import {Loader2, ArrowRight, ArrowLeft} from "lucide-react";
 
 // Componentes de los pasos
-import { WelcomeStep } from "@/features/onboarding/components/welcome-step";
-import { BasicDataStep } from "@/features/onboarding/components/basic-data-step";
-import { AreaAndRoleStep } from "@/features/onboarding/components/area-and-role-step";
-import { ExperienceLevelStep } from "@/features/onboarding/components/experience-level-step";
-import { ModalityStep } from "@/features/onboarding/components/modality-step";
-import { AvailabilityStep } from "@/features/onboarding/components/availability-step";
-import { SkillsStep } from "@/features/onboarding/components/skills-step";
-import { PortfolioStep } from "@/features/onboarding/components/portfolio-step";
-import { AccountStep } from "@/features/onboarding/components/account-step";
-import { authClient } from "@/lib/auth-client";
-import { useDebug } from "@/hooks/use-debug";
-import { completeOnboardingDebugAction } from "@/features/onboarding/actions/onboarding-debug-action";
-import { timeout } from "d3-timer";
-import { checkExistingUser } from "@/features/authentication/actions/existing-user";
-import { getUserByEmail } from "@/features/authentication/actions/get-user-by-email";
-import { verifyOAuthUser } from "@/features/authentication/actions/verify-oauth-user";
+import {WelcomeStep} from "@/features/onboarding/components/welcome-step";
+import {BasicDataStep} from "@/features/onboarding/components/basic-data-step";
+import {AreaAndRoleStep} from "@/features/onboarding/components/area-and-role-step";
+import {ExperienceLevelStep} from "@/features/onboarding/components/experience-level-step";
+import {ModalityStep} from "@/features/onboarding/components/modality-step";
+import {AvailabilityStep} from "@/features/onboarding/components/availability-step";
+import {SkillsStep} from "@/features/onboarding/components/skills-step";
+import {PortfolioStep} from "@/features/onboarding/components/portfolio-step";
+import {AccountStep} from "@/features/onboarding/components/account-step";
+import {authClient} from "@/lib/auth-client";
+import {useDebug} from "@/hooks/use-debug";
+import {completeOnboardingDebugAction} from "@/features/onboarding/actions/onboarding-debug-action";
+import {timeout} from "d3-timer";
+import {checkExistingUser} from "@/features/authentication/actions/existing-user";
+import {getUserByEmail} from "@/features/authentication/actions/get-user-by-email";
+import {verifyOAuthUser} from "@/features/authentication/actions/verify-oauth-user";
+import {OpportunityTypeStep} from "@/features/onboarding/components/opportunity-type-step";
 
-const TOTAL_STEPS = 9;
+const TOTAL_STEPS = 10;
 
 export function OnboardingForm() {
-  const { step, setStep, formData, reset, validateCurrentStep, setErrors, updateFormData } = useOnboardingStore();
+  const {
+    step,
+    setStep,
+    formData,
+    reset,
+    validateCurrentStep,
+    setErrors,
+    updateFormData
+  } = useOnboardingStore();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -155,8 +164,9 @@ export function OnboardingForm() {
   // 2. RENDER DE CARGA INICIAL
   if (isInitializing) {
     return (
-      <div className="max-w-2xl mx-auto min-h-[60vh] flex flex-col items-center justify-center space-y-4">
-        <Loader2 className="h-10 w-10 animate-spin text-primary/60" />
+      <div
+        className="max-w-2xl mx-auto min-h-[60vh] flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="h-10 w-10 animate-spin text-primary/60"/>
         <p className="text-muted-foreground animate-pulse text-sm">Cargando tu progreso...</p>
       </div>
     );
@@ -168,7 +178,8 @@ export function OnboardingForm() {
       <div className="mb-10 space-y-2">
         {step !== 1 && (
           <>
-            <div className="flex justify-between text-xs font-bold uppercase tracking-wider text-muted-foreground/60">
+            <div
+              className="flex justify-between text-xs font-bold uppercase tracking-wider text-muted-foreground/60">
               <span>{step === 0 ? "Comenzando" : `Paso ${step - 1}`}</span>
               <span>{Math.round(((step - 1) / TOTAL_STEPS) * 100)}%</span>
             </div>
@@ -182,12 +193,13 @@ export function OnboardingForm() {
         {step === 1 && <WelcomeStep/>}
         {step === 2 && <BasicDataStep/>}
         {step === 3 && <AreaAndRoleStep/>}
-        {step === 4 && <SkillsStep/>}
-        {step === 5 && <ModalityStep/>}
-        {step === 6 && <AvailabilityStep/>}
-        {step === 7 && <ExperienceLevelStep/>}
-        {step === 8 && <PortfolioStep/>}
-        {step === 9 && <AccountStep/>}
+        {step === 4 && <OpportunityTypeStep/>}
+        {step === 5 && <SkillsStep/>}
+        {step === 6 && <ModalityStep/>}
+        {step === 7 && <AvailabilityStep/>}
+        {step === 8 && <ExperienceLevelStep/>}
+        {step === 9 && <PortfolioStep/>}
+        {step === 10 && <AccountStep/>}
       </div>
 
       {/* Controles */}

@@ -1,4 +1,4 @@
-# WIP
+# v1.1.18 - 2026-02-26
 
 ## Fixes
 - Opportunity type added on onboarding

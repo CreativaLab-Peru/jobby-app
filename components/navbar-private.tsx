@@ -23,8 +23,19 @@ interface NavbarProps {
   creditLimits: CreditLimits;
 }
 
-const sessionFetcher = () =>
-  authClient.getSession().then((res) => res?.data?.user ?? null);
+type NavbarUser = {
+  id: string;
+  name: string;
+  email: string;
+  image?: string | null;
+} | null;
+
+const sessionFetcher = (): Promise<NavbarUser> =>
+  authClient.getSession().then((res) => {
+    const u = res?.data?.user;
+    if (!u) return null;
+    return { id: u.id, name: u.name, email: u.email ?? "", image: u.image };
+  });
 
 export function NavbarPrivate({ creditLimits, user: initialUser }: NavbarProps) {
   const [mounted, setMounted] = useState(false);

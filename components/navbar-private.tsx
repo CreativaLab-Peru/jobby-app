@@ -10,6 +10,8 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Briefcase, FileText, Zap } from "lucide-react";
+import useSWR from "swr";
+import { authClient } from "@/lib/auth-client";
 
 interface NavbarProps {
   user: {
@@ -21,12 +23,24 @@ interface NavbarProps {
   creditLimits: CreditLimits;
 }
 
-export function NavbarPrivate({ creditLimits, user }: NavbarProps) {
+const sessionFetcher = () =>
+  authClient.getSession().then((res) => res?.data?.user ?? null);
+
+export function NavbarPrivate({ creditLimits, user: initialUser }: NavbarProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const { data: sessionUser } = useSWR("session", sessionFetcher, {
+    fallbackData: initialUser,
+    revalidateOnFocus: true,
+    revalidateOnReconnect: true,
+    refreshInterval: 0,
+  });
+
+  const user = sessionUser ?? initialUser;
 
   if (!mounted) return null;
 

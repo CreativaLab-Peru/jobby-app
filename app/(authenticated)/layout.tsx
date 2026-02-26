@@ -4,6 +4,7 @@ import {getUser} from "@/features/authentication/actions/get-user";
 import {getCurrentCreditLimits} from "@/features/credits/actions/get-current-credits-limits";
 import {SidebarProvider} from "@/components/ui/sidebar";
 import AppSidebar from "@/components/app-sidebar";
+import {ThemeSync} from "@/components/theme-sync";
 
 export const dynamic = "force-dynamic";
 
@@ -15,10 +16,12 @@ export default async function RootLayout({
     return redirect("/logout");
   }
 
+
   const creditsLimits = await getCurrentCreditLimits();
 
   return (
   <SidebarProvider>
+    <ThemeSync />
     {/* Sidebar lateral */}
     <AppSidebar/>
 

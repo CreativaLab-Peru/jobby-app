@@ -6,6 +6,7 @@ import { Suspense } from 'react'
 import {TooltipProvider} from "@/components/ui/tooltip";
 import {ThemeProvider} from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner"
+import { cookies } from 'next/headers'
 
 // Configura la fuente Poppins
 const poppins = Poppins({
@@ -53,12 +54,16 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode,
 }>) {
+  const cookieStore = await cookies();
+  const themeCookie = cookieStore.get("theme")?.value;
+  const defaultTheme = themeCookie === "dark" ? "dark" : "light";
+
   return (
     <html lang="es" className={poppins.variable} suppressHydrationWarning>
       <body className="font-poppins" suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme={defaultTheme}
           enableSystem={false}
           disableTransitionOnChange
         >

@@ -87,10 +87,10 @@ model UserPreference {
   preferredRoles   String[] // Ej: ["Senior Backend", "Tech Lead"] roles preferidos
 
   // Nivel y Modalidad
-  expLevel     String? // Ej: "JUNIOR", "MID_LEVEL", "SENIOR", "LEAD", "DIRECTOR", "EXECUTIVE"
-  workModality String[] // Ej: ["REMOTE_ONLY", "HYBRID", "ONSITE_ONLY", "NO_PREFERENCE"]
-  relocation   Boolean  @default(false)
-  availability String[] // Ej: ["IMMEDIATE", "ONE_MONTH", "TWO_MONTHS", "LISTENING_OFFERS"]
+  expLevel         String? // Ej: "JUNIOR", "MID_LEVEL", "SENIOR", "LEAD", "DIRECTOR", "EXECUTIVE"
+  workModality     String[] // Ej: ["REMOTE_ONLY", "HYBRID", "ONSITE_ONLY", "NO_PREFERENCE"]
+  relocation       Boolean  @default(false)
+  availability     String[] // Ej: ["IMMEDIATE", "ONE_MONTH", "TWO_MONTHS", "LISTENING_OFFERS"]
   opportunityTypes String[] // Ej: ["INTERNSHIP", "SCHOLARSHIP", "EXCHANGE_PROGRAM", "EMPLOYMENT"]
 
   // Skills y Tecnologías
@@ -105,6 +105,9 @@ model UserPreference {
   currency  String   @default("USD")
 
   updatedAt DateTime @updatedAt
+
+  // Preferencias de UI
+  theme String @default("light") // "light" | "dark"
 
   @@map("user_preference")
 }

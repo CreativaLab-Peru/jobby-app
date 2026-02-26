@@ -217,7 +217,7 @@ export function OnboardingForm() {
 
           <Button
             size="lg"
-            disabled={isPending}
+            disabled={isPending || (step === TOTAL_STEPS && !formData.acceptedTerms)}
             onClick={handleNext}
             className={step === TOTAL_STEPS ? "px-8 bg-primary hover:bg-primary/90" : "px-8"}
           >

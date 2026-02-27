@@ -10,7 +10,6 @@ Esta documentación técnica describe la arquitectura de datos del sistema de ge
 Es el núcleo del sistema. Almacena el estado de autenticación, cumplimiento legal y flags de seguridad.
 - **Campos Críticos:** `isBlocked` (Seguridad), `acceptedTermsAt` (Legal), `happensAfterPayment` (Flujo de negocio).
 - **Relaciones:** Implementa relaciones en cascada para cumplir con normativas de privacidad (GDPR).
-[DATABASE_DOC.md](DATABASE_DOC.md)
 ### `session` & `account`
 - **`account`**: Almacena vinculaciones OAuth (Google, etc.) o credenciales.
 - **`session`**: Control de estado de sesión con persistencia de metadatos del cliente (`ipAddress`, `userAgent`).

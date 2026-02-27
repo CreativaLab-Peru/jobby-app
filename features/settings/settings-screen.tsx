@@ -28,9 +28,24 @@ export default function SettingsScreen({ user, isOAuth }: SettingsScreenProps) {
   const { theme, setTheme } = useTheme();
 
   const handleThemeChange = async (checked: boolean) => {
+    const previousTheme = theme;
     const newTheme = checked ? "dark" : "light";
     setTheme(newTheme); // aplica al instante en el cliente
-    await updateThemeAction(newTheme); // persiste en BD
+    try {
+      const result = await updateThemeAction(newTheme); // persiste en BD
+      if (!result || result.success !== true) {
+        // Revertir el cambio en el cliente si la persistencia falla
+        if (previousTheme) {
+          setTheme(previousTheme);
+        }
+      }
+    } catch (error) {
+      // En caso de error de red/servidor, revertir el tema y registrar el error
+      if (previousTheme) {
+        setTheme(previousTheme);
+      }
+      console.error("Error al actualizar el tema:", error);
+    }
   };
 
   // --- Nombre ---

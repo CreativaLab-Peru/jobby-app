@@ -21,6 +21,7 @@ interface ChangePasswordProps {
 export default function ChangePassword({ user }: ChangePasswordProps) {
   const router = useRouter()
   const [email, setEmail] = useState(user.email || "")
+  const [currentPassword, setCurrentPassword] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
@@ -31,7 +32,7 @@ export default function ChangePassword({ user }: ChangePasswordProps) {
   const handleChangePassword = async () => {
     setError("")
     setSuccess("")
-    if (!email || !newPassword || !confirmPassword) {
+    if (!email || !currentPassword || !newPassword || !confirmPassword) {
       setError("Todos los campos son requeridos.")
       return
     }
@@ -46,10 +47,11 @@ export default function ChangePassword({ user }: ChangePasswordProps) {
   const onSubmit = () => {
     if (isPending) return
     startTransition(() => {
-      updatePassword(newPassword).then((result) => {
+      updatePassword(currentPassword, newPassword).then((result) => {
         if (result?.success) {
           setSuccess("Contraseña actualizada exitosamente ✅")
           setEmail("")
+          setCurrentPassword("")
           setNewPassword("")
           setConfirmPassword("")
           setLoading(false)
@@ -92,6 +94,17 @@ export default function ChangePassword({ user }: ChangePasswordProps) {
                 onChange={(e) => setEmail(e.target.value)}
                 className="mt-1"
                 placeholder="user@gmail.com"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-foreground">Contraseña Actual</label>
+              <Input
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                className="mt-1"
+                placeholder="••••••••"
               />
             </div>
 

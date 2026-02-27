@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 
-export const updatePassword = async (password: string) => {
+export const updatePassword = async (currentPassword: string, password: string) => {
   try {
     const currentUser = await getCurrentUser()
     if (!currentUser) {
@@ -13,7 +13,7 @@ export const updatePassword = async (password: string) => {
 
     await auth.api.changePassword({
       body: {
-        currentPassword: "ASDJKBAasd@asdni123",
+        currentPassword,
         newPassword: password
       }
     });

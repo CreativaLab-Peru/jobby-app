@@ -5,6 +5,13 @@ import {TemporalUser} from "@prisma/client";
 
 export const createTmpUser = async (email: string) => {
   try {
+    const existingUser = await prisma.user.findFirst({where: {email}});
+    if (existingUser) {
+      return {
+        success: false,
+        error: 'El usuario ya existe. Por favor, inicia sesión para continuar.',
+      }
+    }
     let user: TemporalUser | null;
     user = await prisma.temporalUser.findFirst({
       where: {

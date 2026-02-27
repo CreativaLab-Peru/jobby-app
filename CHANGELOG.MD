@@ -1,3 +1,8 @@
+# WIP
+
+## Fixes
+- Fix fast use and texts of cv builder on public page
+
 # v1.1.18 - 2026-02-26
 
 ## Fixes

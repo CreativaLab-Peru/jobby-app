@@ -30,7 +30,7 @@ export function HeroCards() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                   <TrendingUp className="w-4 h-4 text-lime-600" />
-                  Employability Score
+                  Score de empleabilidad
                 </div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-5xl font-bold bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
@@ -111,7 +111,7 @@ export function HeroCards() {
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-sm font-medium text-orange-600 dark:text-orange-400 mb-4">
               <Rocket className="w-4 h-4" />
-              Career Roadmap
+              Roadmap de Carrera
             </div>
             <div className="flex items-center justify-between">
               {/* Step 1 */}

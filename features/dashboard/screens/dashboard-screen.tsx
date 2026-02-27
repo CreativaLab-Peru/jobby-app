@@ -33,17 +33,17 @@ export default function DashboardScreen({
   const resources = useMemo(()=> {
     return [
       {
-        label: "Evaluaciones",
+        label: "Acciones IA",
         count: limits.aiActionsLimit,
         colorClass: "text-primary",
       },
       {
-        label: "CVs Creados",
+        label: "CVs Manuales",
         count: limits.manageCvsLimit,
         colorClass: "text-primary",
       },
       {
-        label: "Oportunidades",
+        label: "Match de Oportunidades",
         count: limits.opportunitiesActionsLimit,
         colorClass: "text-primary",
       },

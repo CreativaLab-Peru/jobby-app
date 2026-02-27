@@ -16,7 +16,7 @@
 - Navbar uses SWR (`useSWR("session")`) to reactively update the username without F5.
 
 ## Fixes
-- Fixed broken `update-password.ts` action that had a hardcoded password.
+- Fixed theme flash on reload for unauthenticated users: `updateThemeAction` now always writes the `theme` cookie regardless of session state, and only persists to `userPreference` when a session exists.
 - Fixed onboarding store step 10 validation not checking `confirmPassword`.
 - Opportunity type added on onboarding
 - I can't see the current resources as a user

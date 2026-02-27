@@ -19,9 +19,18 @@ export function ThemeToggle({ className }: { className?: string }) {
   }
 
   const handleToggle = async () => {
+    const previousTheme = theme;
     const newTheme = theme === "dark" ? "light" : "dark";
     setTheme(newTheme);
-    await updateThemeAction(newTheme);
+    try {
+      const result = await updateThemeAction(newTheme);
+      if (result && "success" in result && !result.success) {
+        setTheme(previousTheme as "light" | "dark");
+      }
+    } catch (error) {
+      console.error("[THEME_TOGGLE_ERROR]", error);
+      setTheme(previousTheme as "light" | "dark");
+    }
   };
 
   return (

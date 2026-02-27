@@ -2,7 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { detectOAuthUser } from "@/utils/oauth-utils";
+import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
 const changePasswordSchema = z
@@ -24,9 +24,24 @@ const changePasswordSchema = z
   });
 
 export async function changePasswordAction(formData: unknown) {
-  // Verificar que no es usuario OAuth
-  const { isOAuth } = await detectOAuthUser();
-  if (isOAuth) {
+  // Verificar sesión una sola vez y reutilizarla
+  const reqHeaders = await headers();
+  const session = await auth.api.getSession({ headers: reqHeaders });
+
+  if (!session?.user) {
+    return { success: false, error: "No autenticado." };
+  }
+
+  // Verificar si el usuario tiene una cuenta OAuth (Google, etc.) usando el cliente prisma compartido
+  const oauthAccount = await prisma.account.findFirst({
+    where: {
+      userId: session.user.id,
+      NOT: { providerId: "credential" },
+    },
+    select: { id: true },
+  });
+
+  if (oauthAccount) {
     return {
       success: false,
       error: "Los usuarios con cuenta de Google no pueden cambiar la contraseña.",
@@ -48,7 +63,7 @@ export async function changePasswordAction(formData: unknown) {
 
   try {
     await auth.api.changePassword({
-      headers: await headers(),
+      headers: reqHeaders,
       body: {
         currentPassword: parsed.data.currentPassword,
         newPassword: parsed.data.newPassword,

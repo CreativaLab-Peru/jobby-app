@@ -16,7 +16,7 @@ export async function GET() {
       select: { theme: true },
     });
 
-    const theme = (preference?.theme ?? "light") as "light" | "dark";
+    const theme: "light" | "dark" = preference?.theme === "dark" ? "dark" : "light";
 
     const cookieStore = await cookies();
     cookieStore.set("theme", theme, { path: "/", sameSite: "lax" });

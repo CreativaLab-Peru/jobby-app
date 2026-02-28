@@ -79,7 +79,7 @@ export function HowItWorksSection() {
                     </div>
                     <div>
                       <p className="font-bold text-lg text-card-foreground">Subir CV</p>
-                      <p className="text-sm text-muted-foreground">PDF, DOCX aceptados</p>
+                      <p className="text-sm text-muted-foreground">PDF aceptados</p>
                     </div>
                   </div>
 
@@ -142,7 +142,7 @@ export function HowItWorksSection() {
                           </span>
                         </div>
                         <span className="text-[11px] font-bold text-levely-blue-foreground bg-levely-blue px-3 py-1 rounded-full">
-                          Perfect Match
+                          98% Match
                         </span>
                       </div>
                       <p className="text-sm text-muted-foreground">Empresa Tech • Lima, Perú</p>
@@ -155,7 +155,7 @@ export function HowItWorksSection() {
                           <span className="font-semibold text-card-foreground">Beca Santander</span>
                         </div>
                         <span className="text-[11px] font-bold text-levely-dark bg-levely-green px-3 py-1 rounded-full">
-                          Recommended
+                          77% Match
                         </span>
                       </div>
                       <p className="text-sm text-muted-foreground">100% cubierto • España</p>
@@ -170,7 +170,7 @@ export function HowItWorksSection() {
                           </span>
                         </div>
                         <span className="text-[11px] font-bold text-levely-orange-foreground bg-levely-orange px-3 py-1 rounded-full">
-                          High Potential
+                          90% Match
                         </span>
                       </div>
                       <p className="text-sm text-muted-foreground">Startup FinTech • Remoto</p>

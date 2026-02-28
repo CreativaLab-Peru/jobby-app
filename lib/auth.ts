@@ -33,6 +33,7 @@ export const auth = betterAuth({
     },
   },
 
+  // Password reset configuration
   passwordReset: {
     sendResetPasswordEmail: async ({user, url}) => {
       const html = await render(
@@ -68,7 +69,9 @@ export const auth = betterAuth({
     },
   },
 
-  plugins: [nextCookies()],
+  plugins: [
+    nextCookies(),
+  ],
 
   trustedOrigins: [
     process.env.BETTER_AUTH_URL!

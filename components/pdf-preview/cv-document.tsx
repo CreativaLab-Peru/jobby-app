@@ -4,6 +4,7 @@ import React from "react";
 import { Document, Page, View, Text, StyleSheet, Font } from "@react-pdf/renderer";
 import path from "path";
 import type { CVData, CVSection } from "@/types/cv";
+import { linkedinDisplay } from "@/lib/utils";
 
 // OPTIONAL: register a custom font if you host one in /public/fonts
 // Font.register({
@@ -380,7 +381,7 @@ export function CvDocument({ data, sections }: { data: CVData; sections: CVSecti
             {data.personal?.linkedin ? (
               <Text>
                 <Text style={styles.contactLink}>
-                  {`linkedin.com/in/${data.personal.linkedin}`}
+                  {linkedinDisplay(data.personal.linkedin)}
                 </Text>
                 {data.personal?.phone || data.personal?.email ? " • " : ""}
               </Text>

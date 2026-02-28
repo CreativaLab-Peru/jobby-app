@@ -8,40 +8,40 @@ import { FileText, CheckCircle, Target, Sparkles, TrendingUp } from "lucide-reac
 export function Analyzing() {
   const [currentStep, setCurrentStep] = useState(0)
   const [progress, setProgress] = useState(0)
-  
+
   const steps = [
     {
-      text: "Procesando documento...",
+      text: "Analizando tu CV...",
       icon: FileText,
-      description: "Analizando la estructura y contenido de tu CV",
+      description: "Revisamos la estructura, formato y contenido general.",
     },
     {
-      text: "Evaluando competencias...",
+      text: "Evaluando tu perfil profesional...",
       icon: Target,
-      description: "Identificando fortalezas y áreas de mejora",
+      description: "Identificamos tus competencias clave y oportunidades de mejora.",
     },
     {
-      text: "Generando recomendaciones...",
+      text: "Optimizando tus experiencias...",
       icon: Sparkles,
-      description: "Creando sugerencias personalizadas para ti",
+      description: "Redactamos descripciones más claras, impactantes y orientadas a resultados.",
     },
     {
-      text: "Buscando oportunidades...",
+      text: "Estructurando la información...",
       icon: TrendingUp,
-      description: "Encontrando las mejores opciones disponibles",
+      description: "Priorizamos lo más relevante para maximizar tu impacto.",
     },
     {
       text: "Finalizando análisis...",
       icon: CheckCircle,
-      description: "Preparando tu reporte completo",
+      description: "Preparando tu CV completo",
     },
   ]
-  
+
   useEffect(() => {
     const stepInterval = setInterval(() => {
       setCurrentStep((prev) => (prev + 1) % steps.length)
     }, 1000)
-    
+
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -52,15 +52,15 @@ export function Analyzing() {
         return prev + 2
       })
     }, 300)
-    
+
     return () => {
       clearInterval(stepInterval)
       clearInterval(progressInterval)
     }
   }, [steps.length])
-  
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 flex items-center justify-center">
+    <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -72,7 +72,7 @@ export function Analyzing() {
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-              className="w-32 h-32 border-4 border-purple-200 border-t-purple-600 rounded-full mx-auto mb-8"
+              className="w-32 h-32 border-4 border-accent/20 border-t-accent rounded-full mx-auto mb-8"
             />
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div
@@ -80,28 +80,28 @@ export function Analyzing() {
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 200 }}
-                className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center shadow-lg"
+                className="w-16 h-16 bg-accent rounded-full flex items-center justify-center shadow-lg"
               >
                 {React.createElement(steps[currentStep].icon, {
-                  className: "w-8 h-8 text-white",
+                  className: "w-8 h-8 text-accent-foreground",
                 })}
               </motion.div>
             </div>
           </div>
-          
+
           {/* Progress Bar */}
           <div className="mb-8">
-            <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
+            <div className="w-full bg-secondary rounded-full h-3 mb-4">
               <motion.div
-                className="bg-gradient-to-r from-purple-500 to-pink-600 h-3 rounded-full"
+                className="bg-accent h-3 rounded-full"
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
               />
             </div>
-            <p className="text-sm text-gray-500 font-medium">{progress}% completado</p>
+            <p className="text-sm text-muted-foreground font-medium">{progress}% completado</p>
           </div>
-          
+
           {/* Current Step */}
           <motion.div
             key={currentStep}
@@ -110,10 +110,10 @@ export function Analyzing() {
             transition={{ duration: 0.5 }}
             className="mb-8"
           >
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">{steps[currentStep].text}</h2>
-            <p className="text-lg text-gray-600 mb-8">{steps[currentStep].description}</p>
+            <h2 className="text-3xl font-bold text-foreground mb-4">{steps[currentStep].text}</h2>
+            <p className="text-lg text-muted-foreground mb-8">{steps[currentStep].description}</p>
           </motion.div>
-          
+
           {/* Animated Dots */}
           <div className="flex justify-center space-x-2 mb-8">
             {[...Array(5)].map((_, i) => (
@@ -128,7 +128,7 @@ export function Analyzing() {
                   repeat: Number.POSITIVE_INFINITY,
                   delay: i * 0.2,
                 }}
-                className="w-3 h-3 bg-purple-400 rounded-full"
+                className="w-3 h-3 bg-accent/40 rounded-full"
               />
             ))}
           </div>

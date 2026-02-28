@@ -2,6 +2,7 @@
 
 import { Eye } from "lucide-react"
 import { CVData, CVSection } from "@/types/cv"
+import { linkedinHref, linkedinDisplay } from "@/lib/utils"
 
 interface CVPreviewProps {
   data: CVData
@@ -218,12 +219,12 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
             {data.personal.linkedin && (
               <>
                 <a
-                  href={`https://linkedin.com/in/${data.personal.linkedin}`}
+                  href={linkedinHref(data.personal.linkedin)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[#0b66c3] underline"
                 >
-                  linkedin.com/in/{data.personal.linkedin}
+                  {linkedinDisplay(data.personal.linkedin)}
                 </a>
                 {(data.personal.phone || data.personal.email) && <span> • </span>}
               </>

@@ -5,7 +5,7 @@ const footerLinks = {
   Producto: [
     { name: "CV Builder", href: "/cv-builder" },
     { name: "Career Accelerator", href: "/career-accelerator" },
-    { name: "Resources", href: "/resources" },
+    //{ name: "Resources", href: "/resources" },
   ],
   Empresa: [
     { name: "Partners", href: "/partners" },

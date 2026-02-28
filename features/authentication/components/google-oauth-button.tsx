@@ -10,10 +10,11 @@ interface GoogleOAuthButtonProps {
   text?: string;
   callbackURL?: string;
   mode: "signIn" | "signUp";
+  disabled?: boolean;
 }
 
 // Sub-componente para usar searchParams de forma segura en Next.js
-function GoogleOAuthButtonContent({ text, callbackURL, mode }: GoogleOAuthButtonProps) {
+function GoogleOAuthButtonContent({ text, callbackURL, mode, disabled: externalDisabled }: GoogleOAuthButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const searchParams = useSearchParams();
@@ -61,7 +62,7 @@ function GoogleOAuthButtonContent({ text, callbackURL, mode }: GoogleOAuthButton
         variant="outline"
         className="w-full h-12 font-medium"
         onClick={handleGoogleSignIn}
-        disabled={isLoading}
+        disabled={isLoading || externalDisabled}
       >
         {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon />}
         {buttonText}

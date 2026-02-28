@@ -35,6 +35,7 @@ const initialFormData: TalentOnboardingFormData = {
   work: "Remoto",
   email: "",
   password: "",
+  confirmPassword: "",
   acceptedTerms: false,
   opportunityTypes: [],
 };
@@ -70,7 +71,13 @@ export const useOnboardingStore = create<OnboardingStore>()(
           7: talentOnboardingBaseSchema.pick({ availability: true }),
           8: talentOnboardingBaseSchema.pick({ expLevel: true }),
           9: talentOnboardingBaseSchema.pick({ portfolioUrl: true }),
-          10: talentOnboardingBaseSchema.pick({ email: true, password: true, acceptedTerms: true }),
+          10: talentOnboardingBaseSchema
+            .pick({ email: true, password: true, confirmPassword: true, acceptedTerms: true })
+            .superRefine((data, ctx) => {
+              if (data.password && data.password.length > 0 && data.password !== data.confirmPassword) {
+                ctx.addIssue({ path: ["confirmPassword"], message: "Las contraseñas no coinciden", code: "custom" });
+              }
+            }),
         };
 
         const currentSchema = stepSchemas[step];

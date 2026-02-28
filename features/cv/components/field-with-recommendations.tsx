@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -155,18 +156,18 @@ export function FieldWithRecommendations({
           placeholder={`Agrega ${field.label.toLowerCase()}`}
         />
       ) : field.type === "select" ? (
-        <select
-          value={fieldValue}
-          onChange={(e) => onSelectChange?.(e.target.value)}
-          className="flex h-10 w-full rounded-md border border-border bg-input px-3 py-2 text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <option value="">Selecciona una opción</option>
-          {field.options?.map((option: string) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
+        <Select value={fieldValue} onValueChange={(val) => onSelectChange?.(val)}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Selecciona una opción" />
+          </SelectTrigger>
+          <SelectContent>
+            {field.options?.map((option: string) => (
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       ) : (
         <Input
           type={field.type}

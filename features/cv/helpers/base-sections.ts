@@ -25,13 +25,13 @@ export const personalSection: CVSection = {
     },
     {
       name: "linkedin",
-      label: "Usuario de LinkedIn (opcional, recomendado)",
+      label: "LinkedIn (opcional, recomendado)",
       type: "text",
       required: false,
-      tip: "Solo ingresa tu usuario, por ejemplo: si tu perfil es linkedin.com/in/john-doe, solo escribe 'john-doe'. Debe tener entre 5 y 30 caracteres, solo letras, números o guiones.",
-      example: "john-doe",
-      pattern: "^[a-zA-Z0-9-]{5,30}$",
-      patternError: "El usuario de LinkedIn debe tener entre 5 y 30 caracteres y solo puede contener letras, números o guiones.",
+      tip: "Ingresa la URL de tu perfil de LinkedIn sin el https://",
+      example: "linkedin.com/in/john-doe",
+      pattern: "^(https?://)?(www\\.)?linkedin\\.com/in/[a-zA-Z0-9\\-]+/?$",
+      patternError: "Ingresa una URL válida de LinkedIn, por ejemplo: linkedin.com/in/john-doe",
     },
     {
       name: "phone",

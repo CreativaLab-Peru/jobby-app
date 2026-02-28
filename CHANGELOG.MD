@@ -1,4 +1,4 @@
-# WIP
+# v1.1.18 and v1.1.19 - 2026-02-28
 
 ## Features
 - **Settings — Update username**: Users can now update their display name from the Settings page.

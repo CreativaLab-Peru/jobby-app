@@ -1,10 +1,28 @@
-# v1.1.18 - 2026-02-26
+# v1.1.19 and v1.1.20 - 2026-02-28
+
+## Features
+- **Settings — Update username**: Users can now update their display name from the Settings page.
+- **Settings — Change password**: Users registered with email/password can now change their password from Settings.
+- **Settings — Theme preference (global)**: The dark/light mode preference is now saved per user in the database.
+- **Register — Confirm password**: Added a "Confirm password" field to both the simple register form and the onboarding account step.
+- **Onboarding — Terms gate**: The "Continue / Create account" button and the "Sign up with Google"
+
+## Technical
+- New server actions: `updateUsernameAction`, `changePasswordAction`, `updateThemeAction`.
+- New `ThemeSync` client component that fetches user theme preference on mount and applies it via `next-themes`.
+- New `GET /api/theme` route handler to read theme from DB and set cookie (allowed in Route Handlers).
+- New migration: `add_theme_to_user_preference` — adds `theme TEXT NOT NULL DEFAULT 'light'` to `user_preference` table.
+- `GoogleOAuthButton` now accepts an external `disabled` prop.
+- Navbar uses SWR (`useSWR("session")`) to reactively update the username without F5.
 
 ## Fixes
+- Fixed theme flash on reload for unauthenticated users: `updateThemeAction` now always writes the `theme` cookie regardless of session state, and only persists to `userPreference` when a session exists.
+- Fixed onboarding store step 10 validation not checking `confirmPassword`.
 - Opportunity type added on onboarding
 - I can't see the current resources as a user
 - Style issues on analyzing progress
 - Mapped title of recommendation on analysis summary
+- Fix faster use and texts of cv builder on public page
 
 # v1.1.18 - 2026-02-24
 

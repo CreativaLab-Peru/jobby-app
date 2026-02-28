@@ -47,6 +47,7 @@ export function CvListScreen({
     <>
       <Button
         variant="secondary" // Usamos el token secondary para acciones complementarias
+        disabled={!canCreate}
         onClick={onOpenUpload}
         className="rounded-lg font-bold text-xs h-9 border border-border/40"
       >

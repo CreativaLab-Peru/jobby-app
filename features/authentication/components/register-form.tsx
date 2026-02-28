@@ -12,6 +12,8 @@ import {
   registerSchema,
 } from "@/features/authentication/schemas/register-schema";
 import { routes } from "@/lib/routes";
+import Link from "next/link";
+import { Loader2 } from "lucide-react";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -19,11 +21,14 @@ export function RegisterForm() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
     setError,
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
   });
+
+  const acceptedTerms = watch("acceptedTerms");
 
   const onSubmit = async (data: RegisterFormData) => {
     const result = await registerAction(data);
@@ -76,9 +81,17 @@ export function RegisterForm() {
         error={errors.confirmPassword?.message}
       />
 
-      <label className="flex gap-2 text-sm">
+      <label className="flex gap-2 text-sm cursor-pointer">
         <input type="checkbox" {...register("acceptedTerms")} />
-        Acepto los términos y condiciones
+        <span>
+          Acepto los{" "}
+          <Link
+            href="/terminos-y-condiciones"
+            className="text-primary hover:underline"
+          >
+            términos y condiciones
+          </Link>
+        </span>
       </label>
 
       {errors.acceptedTerms && (
@@ -87,8 +100,15 @@ export function RegisterForm() {
         </p>
       )}
 
-      <Button disabled={isSubmitting} className="w-full">
-        Crear cuenta
+      <Button
+        disabled={isSubmitting || !acceptedTerms}
+        className="w-full h-14 font-bold"
+      >
+        {isSubmitting ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          "Crear cuenta"
+        )}
       </Button>
     </form>
   );

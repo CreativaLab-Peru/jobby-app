@@ -1,3 +1,5 @@
+import { linkedinHref, linkedinDisplay } from "@/lib/utils";
+
 function escapeHtml(text: string): string {
   if (!text) return "";
   return text
@@ -25,13 +27,7 @@ export function generatePDFContent(data, type: string) {
     const contactParts = [
       data.personal.address ? escapeHtml(data.personal.address) : null,
       data.personal.linkedin
-        ? `<a href="${escapeHtml(
-            data.personal.linkedin.startsWith("http")
-              ? data.personal.linkedin
-              : "https://" + data.personal.linkedin
-          )}" target="_blank" rel="noopener noreferrer" style="color: #2563eb; text-decoration: none;">${escapeHtml(
-            data.personal.linkedin
-          )}</a>`
+        ? `<a href="${escapeHtml(linkedinHref(data.personal.linkedin))}" target="_blank" rel="noopener noreferrer" style="color: #2563eb; text-decoration: none;">${escapeHtml(linkedinDisplay(data.personal.linkedin))}</a>`
         : null,
       data.personal.phone ? escapeHtml(data.personal.phone) : null,
       data.personal.email ? escapeHtml(data.personal.email) : null,

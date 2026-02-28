@@ -11,6 +11,8 @@ import {useAnalysisStore} from "@/hooks/use-analysis-store";
 import {createTmpUser} from "@/features/home/actions/create-tmp-user";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
+import {toast} from "sonner";
+import {getCurrentUser} from "@/features/share/actions/get-current-user";
 
 export const dynamic = 'force-dynamic'
 
@@ -37,16 +39,27 @@ export default function UploadHomePage() {
       const url = URL.createObjectURL(uploadedFile);
 
       startTransition(async ()=> {
+        // If user is already logged in, redirect to dashboard
+        const currentUser = await getCurrentUser();
+        if (currentUser) {
+          router.push('/dashboard')
+          toast.success("Ya estas logueado, redirigiendo...");
+          return;
+        }
+
+        // If not, create a temporary user and save the file data
         const result = await createTmpUser(email)
         if (!result.success) {
-          alert("Error al crear usuario temporal. Intenta nuevamente.")
+          toast.error(result?.error || "Error al subir tu cv.");
           return;
         }
         const userId = result.user.id;
         setFileData(url, uploadedFile.name, userId!)
+        toast.success("Correo enviado correctamente!");
+        router.push("/get-started/analysis");
       })
-      // router.push("/get-started/analysis");
-      router.push('/login')
+
+      // router.push('/login')
     }
   };
 

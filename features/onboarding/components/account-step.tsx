@@ -103,6 +103,15 @@ export function AccountStep() {
             error={errors.password}
             type={'password'}
           />
+          <FormField
+            label="Confirmar contraseña"
+            placeholder="••••••••"
+            icon={Lock}
+            value={formData.confirmPassword ?? ""}
+            onChange={(e) => updateFormData({confirmPassword: e.target.value})}
+            error={errors.confirmPassword}
+            type={'password'}
+          />
           <div className="relative my-6 text-center text-xs uppercase text-muted-foreground">
             <span className="bg-background px-2 relative z-10">O continuar con</span>
             <div className="absolute inset-0 flex items-center"><span className="w-full border-t"/>
@@ -112,30 +121,49 @@ export function AccountStep() {
             text="Registrarse con Google"
             callbackURL="/onboarding/talents"
             mode={'signUp'}
+            disabled={!formData.acceptedTerms}
           />
         </div>
       )}
 
-      {/* Términos (Mismo código) */}
       <div className="flex flex-col gap-3 pt-2">
-        <label className="flex items-center gap-2 text-sm cursor-pointer">
-          <input
-            type="checkbox"
-            className="w-4 h-4 accent-primary"
-            checked={formData.acceptedTerms}
-            onChange={(e) => updateFormData({acceptedTerms: e.target.checked})}
-          />
-          <span>Acepto los términos y condiciones</span>
-          <a
-            href="/terminos-y-condiciones"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500 hover:underline text-xs"
-          >Ver</a>
+        <div className="flex flex-col gap-1">
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              className="w-4 h-4 accent-primary"
+              checked={formData.acceptedTerms}
+              onChange={(e) =>
+                updateFormData({acceptedTerms: e.target.checked})
+              }
+            />
+            <span>
+            Acepto los{" "}
+              <a
+                href="/terminos-y-condiciones"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline text-xs"
+              >
+                términos y condiciones
+              </a>{" "}
+              y las{" "}
+              <a
+                href="/politica-de-privacidad"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline text-xs"
+              >
+                políticas de privacidad.
+              </a>
+            </span>
+          </label>
           {errors.acceptedTerms && (
-            <span className="text-red-600 text-xs mt-1">{errors.acceptedTerms}</span>
+            <span className="text-red-600 text-xs">
+            {errors.acceptedTerms}
+          </span>
           )}
-        </label>
+        </div>
       </div>
     </div>
   );

@@ -5,7 +5,6 @@ import {nextCookies} from "better-auth/next-js";
 import {render} from "@react-email/render";
 import {LevelyEmail} from "@/features/authentication/templates/verification-email-v2";
 import {resend} from "@/lib/resend";
-import {magicLink} from "better-auth/plugins";
 
 const prisma = new PrismaClient();
 
@@ -72,19 +71,6 @@ export const auth = betterAuth({
 
   plugins: [
     nextCookies(),
-    magicLink({
-      sendMagicLink: async ({ email, url, token }, request) => {
-        // Aquí conectas con tu servicio de mailing (Resend, SendGrid, etc.)
-        // Ejemplo con Resend:
-        // await resend.emails.send({
-        //   from: "onboarding@tu-app.com",
-        //   to: email,
-        //   subject: "Tu enlace de acceso",
-        //   html: `<a href="${url}">Haz clic aquí para entrar</a>`
-        // });
-        console.log(`Enlace enviado a ${email}: ${url}`);
-      },
-    }),
   ],
 
   trustedOrigins: [

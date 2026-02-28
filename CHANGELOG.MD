@@ -22,7 +22,7 @@
 - I can't see the current resources as a user
 - Style issues on analyzing progress
 - Mapped title of recommendation on analysis summary
-- Fix fast use and texts of cv builder on public page
+- Fix faster use and texts of cv builder on public page
 
 # v1.1.18 - 2026-02-24
 

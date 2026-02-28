@@ -10,7 +10,7 @@ import { FileText } from "lucide-react";
 import { SimpleUploadZone } from "@/components/upload/simple-upload-zone"; // El que creamos antes
 import { useAnalysisStore } from "@/hooks/use-analysis-store";
 import { useRouter } from "next/navigation";
-import {AuthInterceptionModal} from "@/components/auth-tnterception-modal";
+import {AuthInterceptionModal} from "@/components/auth-interception-modal";
 import {CREDIT_PACKS} from "@/features/credits/consts";
 import {CreditPackCard} from "@/features/credits/components/credit-pack-card";
 import {User} from "@prisma/client";

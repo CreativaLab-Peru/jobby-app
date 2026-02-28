@@ -12,6 +12,7 @@ export const SimpleUploadZone = ({ onFileSelected, isPending }: Props) => {
     onDrop: (files) => files[0] && onFileSelected(files[0]),
     accept: { "application/pdf": [".pdf"] },
     maxFiles: 1,
+    maxSize: 5 * 1024 * 1024, // 5MB
     disabled: isPending
   });
 

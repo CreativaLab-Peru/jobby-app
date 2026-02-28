@@ -1,4 +1,4 @@
-# v1.1.18 and v1.1.19 - 2026-02-28
+# v1.1.19 and v1.1.20 - 2026-02-28
 
 ### BEFORE DEPLOYMENT
 - Run migration `add_theme_to_user_preference` — adds `theme` column to `user_preference` table (`migrate deploy` handles this automatically in the build script).

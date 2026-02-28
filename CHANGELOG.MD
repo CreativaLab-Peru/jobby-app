@@ -1,16 +1,11 @@
 # WIP
 
-## Fixes
-- Fix fast use and texts of cv builder on public page
-
-# v1.1.18 - 2026-02-26
-
 ## Features
-- **Settings — Update username**: Users can now update their display name from the Settings page. The change propagates instantly to the navbar and profile button without requiring a page reload (via SWR cache invalidation).
-- **Settings — Change password**: Users registered with email/password can now change their password from Settings. Requires current password for confirmation. Google (OAuth) users see an informational message instead.
-- **Settings — Theme preference (global)**: The dark/light mode preference is now saved per user in the database. It syncs automatically across all devices and browsers on login via `ThemeSync`. Both the navbar toggle and the settings switch persist the preference.
-- **Register — Confirm password**: Added a "Confirm password" field to both the simple register form and the onboarding account step, with Zod validation to ensure both passwords match.
-- **Onboarding — Terms gate**: The "Continue / Create account" button and the "Sign up with Google" button on the account step are now disabled until the user accepts the Terms and Conditions checkbox.
+- **Settings — Update username**: Users can now update their display name from the Settings page.
+- **Settings — Change password**: Users registered with email/password can now change their password from Settings.
+- **Settings — Theme preference (global)**: The dark/light mode preference is now saved per user in the database.
+- **Register — Confirm password**: Added a "Confirm password" field to both the simple register form and the onboarding account step.
+- **Onboarding — Terms gate**: The "Continue / Create account" button and the "Sign up with Google"
 
 ## Technical
 - New server actions: `updateUsernameAction`, `changePasswordAction`, `updateThemeAction`.
@@ -27,6 +22,7 @@
 - I can't see the current resources as a user
 - Style issues on analyzing progress
 - Mapped title of recommendation on analysis summary
+- Fix fast use and texts of cv builder on public page
 
 # v1.1.18 - 2026-02-24
 

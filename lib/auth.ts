@@ -25,7 +25,7 @@ export const auth = betterAuth({
       );
 
       await resend.emails.send({
-        from: "Levely <contacto@joinlevely.com>",
+        from: "Levely <215422@unsaac.edu.pe>",
         to: user.email,
         subject: "Verifica tu cuenta en Levely",
         html: html,
@@ -41,7 +41,7 @@ export const auth = betterAuth({
       );
 
       await resend.emails.send({
-        from: "Levely <contacto@joinlevely.com>",
+        from: "Levely <215422@unsaac.edu.pe>",
         to: user.email,
         subject: "Restablece tu contraseña de Levely",
         html: html,

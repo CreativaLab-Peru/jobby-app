@@ -41,7 +41,7 @@ export async function submitComplaintAction(formData: unknown) {
       from: "Levely AI <contacto@joinlevely.com>",
       to: [COMPLAINTS_EMAIL],
       replyTo: email,
-      subject: `⚠️ Nuevo reclamo de ${name} — Levely`,
+      subject: `[RECLAMO] Nuevo reclamo de ${name} — Levely`,
       html,
     });
 

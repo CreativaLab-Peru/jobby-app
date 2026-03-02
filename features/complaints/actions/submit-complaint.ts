@@ -12,7 +12,7 @@ const complaintSchema = z.object({
   complaint: z.string().min(10, "El reclamo debe tener al menos 10 caracteres"),
 });
 
-const COMPLAINTS_EMAIL = "215422@unsaac.edu.pe";
+const COMPLAINTS_EMAIL = "contacto@joinlevely.com";
 
 export async function submitComplaintAction(formData: unknown) {
   const parsed = complaintSchema.safeParse(formData);

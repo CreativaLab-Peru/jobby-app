@@ -1,5 +1,14 @@
 # v1.1.22 - 2026-03-04
 
+## Features
+- **Complaints Book**: Added a fully functional Libro de Reclamaciones page (`/complaints`). Users can submit complaints with their name, email, phone (optional), and a detailed description.
+
+## Technical
+- New server action `submitComplaintAction` with Zod validation that sends complaints via Resend to the compliance inbox.
+- New React Email template `ComplaintEmail` using inline SVG icons (no emoji) and Levely's visual design system.
+- Complaints are sent from `contacto@joinlevely.com` with `replyTo` set to the user's email for easy follow-up.
+- Success/error feedback displayed inline in the form without page reload.
+
 ## Fixes
 - Move sections on cv builder page
 - Update the metadata for SEO on public pages

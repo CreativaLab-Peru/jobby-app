@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Loader2, MessageSquareWarning, ShieldCheck } from "lucide-react";
+import { Loader2, MessageSquareWarning, ShieldCheck, CheckCircle2, AlertCircle } from "lucide-react";
+import { submitComplaintAction } from "@/features/complaints/actions/submit-complaint";
 
 export default function ComplaintsPage() {
   const [form, setForm] = useState({
@@ -17,19 +18,34 @@ export default function ComplaintsPage() {
     complaint: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    if (status) setStatus(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    setStatus(null);
 
     try {
-      await new Promise((r) => setTimeout(r, 1000));
-      alert("Tu reclamo ha sido enviado exitosamente.");
-      setForm({ name: "", email: "", phone: "", complaint: "" });
+      const result = await submitComplaintAction({
+        name: form.name,
+        email: form.email,
+        phone: form.phone || undefined,
+        complaint: form.complaint,
+      });
+
+      if (result.success) {
+        setStatus({ type: "success", message: "Tu reclamo ha sido enviado exitosamente. Nos pondremos en contacto contigo a la brevedad posible." });
+        setForm({ name: "", email: "", phone: "", complaint: "" });
+      } else {
+        setStatus({ type: "error", message: result.error ?? "No se pudo enviar el reclamo. Intenta nuevamente." });
+      }
+    } catch {
+      setStatus({ type: "error", message: "Ocurrió un error inesperado. Intenta nuevamente." });
     } finally {
       setSubmitting(false);
     }
@@ -132,7 +148,25 @@ export default function ComplaintsPage() {
                   />
                 </div>
 
-                {/* Submit Button - REFACTOR: ai-gradient */}
+                {/* Feedback */}
+                {status && (
+                  <div
+                    className={`flex items-start gap-3 rounded-xl border p-4 text-sm ${
+                      status.type === "success"
+                        ? "border-green-500/30 bg-green-500/10 text-green-400"
+                        : "border-red-500/30 bg-red-500/10 text-red-400"
+                    }`}
+                  >
+                    {status.type === "success" ? (
+                      <CheckCircle2 className="mt-0.5 w-4 h-4 shrink-0" />
+                    ) : (
+                      <AlertCircle className="mt-0.5 w-4 h-4 shrink-0" />
+                    )}
+                    <p>{status.message}</p>
+                  </div>
+                )}
+
+                {/* Submit Button */}
                 <Button
                   type="submit"
                   disabled={submitting}

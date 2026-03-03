@@ -1,4 +1,4 @@
-# WIP
+# v1.1.21 - 2026-03-03
 
 ## Fixes
 - Delete some step of onboarding to make it faster

@@ -61,7 +61,7 @@ export function OpportunityTypeStep() {
                   ? "bg-primary border-primary"
                   : "border-muted-foreground/30 group-hover:border-primary/50"
               )}>
-                {isSelected && <Check className="w-3.5 h-3.5 text-black dark:text-secondary" strokeWidth={4} />}
+                {isSelected && <Check className="w-3.5 h-3.5 text-secondary" strokeWidth={4} />}
               </div>
             </button>
           );

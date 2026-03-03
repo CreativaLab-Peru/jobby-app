@@ -80,9 +80,9 @@ export function ModalityStep() {
       {/* Nuevo campo: Relocation (según tu esquema de Zod) */}
       {showRelocation && (
         <div className="space-y-4 animate-in slide-in-from-top-4 duration-500">
-          <div className="pt-6 border-t flex items-center justify-between p-4 bg-secondary/20 rounded-2xl border border-secondary gap-4">
+          <div className="pt-6 border-t flex items-center justify-between p-4 rounded-2xl border border-primary gap-4">
             <div className="flex items-center gap-4">
-              <div className="bg-background p-2 rounded-full shadow-sm">
+              <div className="p-2 rounded-full shadow-sm">
                 <PlaneTakeoff className="w-5 h-5 text-primary" />
               </div>
               <div className="space-y-0.5">

@@ -244,7 +244,10 @@ export function ScoresListPage({
         </motion.div>
       </div>
 
-      <SelectCvModal cvs={initialCvs} onConfirm={() => selectedCvId && handleAnalyze(selectedCvId)} />
+      <SelectCvModal
+        cvs={initialCvs}
+        onConfirm={() => selectedCvId && handleAnalyze(selectedCvId)}
+      />
     </main>
   );
 }

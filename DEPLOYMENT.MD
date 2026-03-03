@@ -1,3 +1,12 @@
+# v1.1.21 - 2026-03-02
+
+### BEFORE DEPLOYMENT
+- Run migration `20260303030454_add_complaint_table` — creates the `complaint` table (`migrate deploy` handles this automatically in the build script).
+- No new environment variables required.
+- Existing users are not affected; the table starts empty.
+
+---
+
 # v1.1.19 and v1.1.20 - 2026-02-28
 
 ### BEFORE DEPLOYMENT

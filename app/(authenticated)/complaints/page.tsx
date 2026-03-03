@@ -178,10 +178,6 @@ export default function ComplaintsPage() {
                     "Registrar Reclamo"
                   )}
                 </Button>
-
-                <p className="text-[10px] text-center text-muted-foreground uppercase tracking-widest font-bold">
-                  Levely Compliance System v1.0
-                </p>
               </form>
             </CardContent>
           </Card>

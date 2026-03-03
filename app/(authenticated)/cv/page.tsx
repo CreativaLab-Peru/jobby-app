@@ -1,10 +1,11 @@
 import { CvListScreen } from "@/features/cv/components/cv-list-screen";
 import { getCvForCurrentUser } from "@/features/cv/actions/get-cv-for-current-user";
 import { getCurrentCreditLimits } from "@/features/credits/actions/get-current-credits-limits";
+import {getAllCvForCurrentUser} from "@/features/cv/actions/get-all-cv-for-current-user";
 
 export default async function CVPage() {
   const [cvData, creditLimits] = await Promise.all([
-    getCvForCurrentUser(0, 6),
+    getAllCvForCurrentUser(0, 6),
     getCurrentCreditLimits()
   ]);
 

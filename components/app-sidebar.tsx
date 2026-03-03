@@ -25,14 +25,13 @@ import {
   Users,
   Sparkles,
 } from "lucide-react";
-import { Progress } from "./ui/progress";
-// import { Progress } from "@/components/ui/progress";
 
 const mainNavItems = [
   { title: "Mi Panel", href: "/dashboard", icon: LayoutDashboard },
   { title: "Mis CVs", href: "/cv", icon: FileText },
   { title: "Mis Evaluaciones", href: "/evaluations", icon: MessageSquare },
   { title: "Oportunidades", href: "/opportunities", icon: Briefcase },
+  // { title: "Simulador de entrevistas", href: "/interviews-simulator", icon: Sparkles },
 ];
 
 const communityItems = [{ title: "Networking", href: "/networking", icon: Users }];

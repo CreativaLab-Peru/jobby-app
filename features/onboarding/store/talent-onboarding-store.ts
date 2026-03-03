@@ -66,12 +66,10 @@ export const useOnboardingStore = create<OnboardingStore>()(
           2: talentOnboardingBaseSchema.pick({ name: true, country: true }),
           3: talentOnboardingBaseSchema.pick({ targetIndustries: true }),
           4: talentOnboardingBaseSchema.pick({ opportunityTypes: true }),
-          5: talentOnboardingBaseSchema.pick({ skills: true }),
-          6: talentOnboardingBaseSchema.pick({ workModality: true, relocation: true }),
-          7: talentOnboardingBaseSchema.pick({ availability: true }),
-          8: talentOnboardingBaseSchema.pick({ expLevel: true }),
-          9: talentOnboardingBaseSchema.pick({ portfolioUrl: true }),
-          10: talentOnboardingBaseSchema
+          5: talentOnboardingBaseSchema.pick({ workModality: true, relocation: true }),
+          6: talentOnboardingBaseSchema.pick({ availability: true }),
+          7: talentOnboardingBaseSchema.pick({ expLevel: true }),
+          8: talentOnboardingBaseSchema
             .pick({ email: true, password: true, confirmPassword: true, acceptedTerms: true })
             .superRefine((data, ctx) => {
               if (data.password && data.password.length > 0 && data.password !== data.confirmPassword) {

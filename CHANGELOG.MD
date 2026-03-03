@@ -1,3 +1,9 @@
+# v1.1.21 - 2026-03-03
+
+## Fixes
+- Delete some step of onboarding to make it faster
+- Get all the CVs for opportunities matching list
+
 # v1.1.19 and v1.1.20 - 2026-02-28
 
 ## Features

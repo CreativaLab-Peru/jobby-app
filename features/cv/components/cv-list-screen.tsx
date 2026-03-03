@@ -13,6 +13,7 @@ import {CVCard} from "@/features/cv/components/cv-card";
 import {CvWithRelations, getCvForCurrentUser} from "@/features/cv/actions/get-cv-for-current-user";
 import {useState, useTransition} from "react";
 import {LoadMoreButton} from "@/components/shared/load-more-button";
+import {getAllCvForCurrentUser} from "@/features/cv/actions/get-all-cv-for-current-user";
 
 interface CvListProps {
   initialCvs: CvWithRelations[];
@@ -35,7 +36,7 @@ export function CvListScreen({
 
   const handleLoadMore = () => {
     startTransition(async () => {
-      const result = await getCvForCurrentUser(cvs.length, 10);
+      const result = await getAllCvForCurrentUser(cvs.length, 10);
       if (result) {
         setCvs((prev) => [...prev, ...result.cvs]);
         setHasMore(result.hasMore);

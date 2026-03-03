@@ -16,6 +16,7 @@ import {CvWithRelations, getCvForCurrentUser} from "@/features/cv/actions/get-cv
 import {useCredits} from "@/features/credits/hooks/use-credits";
 import {SearchableSelect} from "@/components/shared/searchable-select";
 import {Opportunity} from ".prisma/client";
+import {getAllCvForCurrentUser} from "@/features/cv/actions/get-all-cv-for-current-user";
 
 interface Props {
   initialData: (
@@ -110,7 +111,7 @@ export default function OpportunitiesScreen({
   const handleQuickMatchClick = async () => {
     setIsCvsLoading(true);
     try {
-      const cvData = await getCvForCurrentUser(0, 1000);
+      const cvData = await getAllCvForCurrentUser(0, 100);
       if (cvData?.cvs) {
         setCvs(cvData.cvs);
         // Pre-select the currently filtered CV if one is active
@@ -239,7 +240,10 @@ export default function OpportunitiesScreen({
           </div>
         </motion.div>
       </div>
-      <QuickMatchCvModal cvs={cvs} credits={credits}/>
+      <QuickMatchCvModal
+        cvs={cvs}
+        credits={credits}
+      />
     </main>
   );
 }

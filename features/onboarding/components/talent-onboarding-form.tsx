@@ -30,7 +30,7 @@ import {getUserByEmail} from "@/features/authentication/actions/get-user-by-emai
 import {verifyOAuthUser} from "@/features/authentication/actions/verify-oauth-user";
 import {OpportunityTypeStep} from "@/features/onboarding/components/opportunity-type-step";
 
-const TOTAL_STEPS = 10;
+const TOTAL_STEPS = 8;
 
 export function OnboardingForm() {
   const {
@@ -194,12 +194,12 @@ export function OnboardingForm() {
         {step === 2 && <BasicDataStep/>}
         {step === 3 && <AreaAndRoleStep/>}
         {step === 4 && <OpportunityTypeStep/>}
-        {step === 5 && <SkillsStep/>}
-        {step === 6 && <ModalityStep/>}
-        {step === 7 && <AvailabilityStep/>}
-        {step === 8 && <ExperienceLevelStep/>}
-        {step === 9 && <PortfolioStep/>}
-        {step === 10 && <AccountStep/>}
+        {/*{step === 5 && <SkillsStep/>}*/}
+        {step === 5 && <ModalityStep/>}
+        {step === 6 && <AvailabilityStep/>}
+        {step === 7 && <ExperienceLevelStep/>}
+        {/*{step === 9 && <PortfolioStep/>}*/}
+        {step === 8 && <AccountStep/>}
       </div>
 
       {/* Controles */}

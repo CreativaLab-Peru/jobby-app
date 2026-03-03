@@ -18,17 +18,17 @@ interface PackProps {
 export function CreditPackCard({ pack, onPurchase }: PackProps) {
   return (
     <div className={`relative flex flex-col bg-card border rounded-3xl p-8 transition-all hover:shadow-md ${
-      pack.highlight ? "border-blue-500 shadow-sm ring-1 ring-blue-500/20" : "border-border"
+      pack.highlight ? "border-primary shadow-sm ring-1 ring-primary/20" : "border-border"
     }`}>
       {pack.highlight && (
-        <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 px-4 py-1 uppercase text-[10px] tracking-widest font-bold text-white">
+        <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary px-4 py-1 uppercase text-[10px] tracking-widest font-bold text-white">
           <Star className="w-3 h-3 mr-1 fill-current" /> Recomendado
         </Badge>
       )}
 
       <div className="text-center mb-8">
         <h3 className="text-xl font-bold mb-2 flex items-center justify-center gap-2 text-zinc-900 dark:text-gray-300">
-          {pack.name} {pack.highlight && <Sparkles className="h-5 w-5 text-blue-500" />}
+          {pack.name} {pack.highlight && <Sparkles className="h-5 w-5 text-primary" />}
         </h3>
         <span className="text-4xl font-black text-zinc-900 dark:text-gray-300">S/ {pack.price.toFixed(2)}</span>
         <p className="text-xs text-muted-foreground mt-2 uppercase font-semibold tracking-wider">Pago único</p>
@@ -52,7 +52,7 @@ export function CreditPackCard({ pack, onPurchase }: PackProps) {
       <ul className="space-y-4 mb-10 flex-grow">
         {pack.features.map((f, i) => (
           <li key={i} className="flex items-start gap-3 text-sm">
-            {f.included ? <Check className="h-4 w-4 text-blue-600 mt-0.5 shrink-0" /> : <div className="h-4 w-4 shrink-0" />}
+            {f.included ? <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" /> : <div className="h-4 w-4 shrink-0" />}
             <span className={f.included ? "text-zinc-700 font-medium dark:text-gray-300" : "text-zinc-400 line-through"}>{f.text}</span>
           </li>
         ))}
@@ -62,7 +62,7 @@ export function CreditPackCard({ pack, onPurchase }: PackProps) {
         variant={pack.variant}
         className={`w-full py-6 rounded-2xl font-bold
           ${pack.highlight
-            ? "bg-blue-600 hover:bg-blue-700 text-white"
+            ? "bg-primary/90 hover:bg-primary text-secondary"
             : ""}`}
         onClick={() => onPurchase(pack.id)}
       >

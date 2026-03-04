@@ -69,7 +69,6 @@ export default function ComplaintsPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     let value = e.target.value;
     if (e.target.name === "phone") {
-      // Solo permite dígitos, +, espacios, guiones, puntos y paréntesis
       value = value.replace(/[^\d\s+\-().]/g, "");
     }
     setForm({ ...form, [e.target.name]: value });
@@ -82,7 +81,6 @@ export default function ComplaintsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Marcar todos los campos como tocados para mostrar errores
     setTouched({ name: true, email: true, phone: true, complaint: true });
 
     if (hasErrors) return;

@@ -19,9 +19,14 @@ import { useCvModalStore } from "../hooks/use-cv-modal-store";
 import { CV_TYPE_OPTIONS } from "@/features/cv/consts";
 import { Analyzing } from "@/features/analysis/components/analyzing";
 
-const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-export function UploadCVModal() {
+interface UploadCVModalProps {
+  initialFile?: File | Blob | null;
+  reset: () => void;
+}
+
+export function UploadCVModal({ initialFile, reset }: UploadCVModalProps) {
   const { isUploadOpen, onCloseUpload } = useCvModalStore();
   const router = useRouter();
   const { refreshCredits, credits, isLoading: isLoadingCredits } = useCredits();
@@ -39,6 +44,15 @@ export function UploadCVModal() {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (initialFile && isUploadOpen) {
+      const fileToSet = initialFile instanceof File
+        ? initialFile
+        : new File([initialFile], "Mi_CV.pdf", { type: "application/pdf" });
+      setFile(fileToSet);
+    }
+  }, [initialFile, isUploadOpen]);
+
   const resetForm = () => {
     setFile(null);
     setTitle("");
@@ -47,6 +61,22 @@ export function UploadCVModal() {
 
   const handleUpload = async () => {
     if (!file || isUploading) return;
+
+    if (!file.type || (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf"))) {
+      toast.error("Archivo no válido. Por favor, selecciona un archivo PDF.");
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error("El archivo excede el tamaño máximo permitido (50MB).");
+      return;
+    }
+
+    if (!title.trim()) {
+      toast.error("El título no puede estar vacío.");
+      return;
+    }
+
 
     // Si todavía está cargando créditos del servidor, esperar o mostrar carga
     if (isLoadingCredits) {
@@ -82,6 +112,7 @@ export function UploadCVModal() {
         toast.success("CV analizado y cargado con éxito");
         onCloseUpload();
         refreshCredits();
+        reset();
         router.push(`/cv/${data.cvId}/edit`);
         return;
       }

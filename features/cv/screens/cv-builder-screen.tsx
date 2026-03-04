@@ -30,16 +30,16 @@ export default function CVBuilderScreen({ user }: CVBuilderScreenProps) {
   const [isPending, startTransition] = useTransition();
 
   const handleFileSelection = async (file: File) => {
-    // Si no hay usuario, disparamos el modal tipo Lovable
     if (!user) {
+      // Guardamos aunque no haya usuario (usamos un placeholder o null)
+      // Esto asegura que si abre otra pestaña tras loguearse, el archivo ESTÉ ahí.
+      await setFileData(file, "anonymous");
       setShowAuthModal(true);
       return;
     }
 
-    // Si hay usuario, preparamos la data y redirigimos al análisis
-    const url = URL.createObjectURL(file);
-    setFileData(url, file.name, user.id);
-    router.push("/cv");
+    await setFileData(file, user.id);
+    router.push("/cv?afterOnboarding=true");
   };
 
   const handlePurchase = (packId: string) => {

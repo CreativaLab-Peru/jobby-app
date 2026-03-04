@@ -1,4 +1,4 @@
-# WIP
+# v1.1.22 - 2026-03-04
 
 ## Fixes
 - Move sections on cv builder page

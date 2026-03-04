@@ -9,10 +9,29 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 
 const complaintSchema = z.object({
-  name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
-  email: z.string().email("Correo electrónico inválido"),
-  phone: z.string().optional(),
-  complaint: z.string().min(10, "El reclamo debe tener al menos 10 caracteres"),
+  name: z
+    .string()
+    .trim()
+    .min(2, "El nombre debe tener al menos 2 caracteres")
+    .max(100, "El nombre es demasiado largo")
+    .regex(/^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s'-]+$/, "El nombre solo puede contener letras"),
+  email: z
+    .string()
+    .trim()
+    .email("Correo electrónico inválido")
+    .max(200, "El correo es demasiado largo"),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^\+?[\d\s\-().]{7,20}$/, "Teléfono inválido (ej: +51 999 999 999)")
+    .optional()
+    .or(z.literal("")),
+  complaint: z
+    .string()
+    .trim()
+    .min(30, "El reclamo debe tener al menos 30 caracteres")
+    .max(2000, "El reclamo no puede superar los 2000 caracteres")
+    .refine((val) => val.trim().length >= 30, "El reclamo no puede estar vacío o ser solo espacios"),
 });
 
 const COMPLAINTS_EMAIL = "contacto@joinlevely.com";

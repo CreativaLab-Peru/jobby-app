@@ -24,7 +24,6 @@ const Index = () => {
   // 2. Reaccionar cuando los datos aparezcan en el store
   useEffect(() => {
     if (fileUrl && fileName) {
-      console.log("Archivo recuperado con éxito, redirigiendo...");
       router.push('/cv?afterOnboarding=true');
     }
   }, [fileUrl, fileName, router]);

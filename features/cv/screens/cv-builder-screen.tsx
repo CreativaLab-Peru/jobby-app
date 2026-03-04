@@ -30,16 +30,16 @@ export default function CVBuilderScreen({ user }: CVBuilderScreenProps) {
   const [isPending, startTransition] = useTransition();
 
   const handleFileSelection = async (file: File) => {
-    // Si no hay usuario, disparamos el modal tipo Lovable
     if (!user) {
+      // Guardamos aunque no haya usuario (usamos un placeholder o null)
+      // Esto asegura que si abre otra pestaña tras loguearse, el archivo ESTÉ ahí.
+      await setFileData(file, "anonymous");
       setShowAuthModal(true);
       return;
     }
 
-    // Si hay usuario, preparamos la data y redirigimos al análisis
-    const url = URL.createObjectURL(file);
-    setFileData(url, file.name, user.id);
-    router.push("/cv");
+    await setFileData(file, user.id);
+    router.push("/cv?afterOnboarding=true");
   };
 
   const handlePurchase = (packId: string) => {
@@ -64,16 +64,15 @@ export default function CVBuilderScreen({ user }: CVBuilderScreenProps) {
       {/* Hero */}
       <section className="relative section-padding overflow-hidden bg-gradient-to-br from-secondary/50 via-background to-purple-50/30 dark:from-background dark:via-slate-900 dark:to-slate-800">
         <div className="container-levely relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-
-            {/* Columna de Texto y Acción */}
-            <div className="flex flex-col">
+          <div className="flex justify-center lg:justify-center items-center flex-col lg:flex-row gap-12">
+            {/* Centered */}
+            <div className="flex flex-col items-center max-w-4xl">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-6 w-fit">
                 <FileText className="w-4 h-4"/>
                 Nuevo: CV Builder con IA
               </div>
 
-              <h1 className="headline-xl mb-6 tracking-tight">
+              <h1 className="mb-6 text-center text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
                 Optimiza tu perfil para el <span className="text-primary">mercado global</span>
               </h1>
 
@@ -88,26 +87,28 @@ export default function CVBuilderScreen({ user }: CVBuilderScreenProps) {
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-[2.5rem] blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
 
                 <div className="relative bg-card border border-border/50 shadow-2xl rounded-[2rem] overflow-hidden">
-                  <div className="p-2">
+                  <div className="p-4">
                     <SimpleUploadZone onFileSelected={handleFileSelection} />
                   </div>
                 </div>
 
                 {/* Micro-copy de confianza justo debajo */}
-                <p className="flex items-center justify-center gap-2 mt-4 text-sm text-muted-foreground font-medium">
+                <p className="flex items-center justify-center gap-2 mt-8 text-sm text-muted-foreground font-medium">
                   <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
-                  Más de 500 CVs analizados hoy
+                  Más de 500 CVs analizados
                 </p>
               </div>
             </div>
 
             {/* Interactive Hero Cards (Visible solo en desktop para no distraer en móvil) */}
-            <div className="relative lg:pl-8 hidden lg:block">
-              <HeroCards/>
-            </div>
+            {/*<div className="relative lg:pl-8 hidden lg:block">*/}
+            {/*  <HeroCards/>*/}
+            {/*</div>*/}
           </div>
         </div>
       </section>
+
+      <HowItWorksSection/>
 
       <section className="relative section-padding overflow-hidden bg-gradient-to-br from-secondary/50 via-background to-purple-50/30 dark:from-background dark:via-slate-900 dark:to-slate-800">
         <div className="max-w-7xl mx-auto">
@@ -158,8 +159,6 @@ export default function CVBuilderScreen({ user }: CVBuilderScreenProps) {
           </div>
         </div>
       </section>
-
-      <HowItWorksSection/>
       <TestimonialsSection/>
       <FAQSection/>
     </>

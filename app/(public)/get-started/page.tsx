@@ -54,7 +54,7 @@ export default function UploadHomePage() {
           return;
         }
         const userId = result.user.id;
-        setFileData(url, uploadedFile.name, userId!)
+        // setFileData(url, uploadedFile.name, userId!)
         toast.success("Correo enviado correctamente!");
         router.push("/get-started/analysis");
       })

@@ -17,7 +17,7 @@ export const SimpleUploadZone = ({ onFileSelected, isPending }: Props) => {
   });
 
   return (
-    <div className="space-y-6 w-full p-2">
+    <div className="space-y-6 w-full p-4">
       {/* Zona de Subida */}
       <div
         {...getRootProps()}

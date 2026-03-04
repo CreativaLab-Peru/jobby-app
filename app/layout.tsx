@@ -20,16 +20,16 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://joinlevely.com'),
 
   title: {
-    default: 'Levely - Tu talento merece ser visible',
+    default: 'Levely - Optimiza tu perfil para el mercado global',
     template: '%s | Levely',
   },
 
-  description: 'Levely es una plataforma potenciada con inteligencia artificial para hacer visible tu talento profesional y mejorar tus oportunidades laborales.',
+  description: 'Plataforma de empleabilidad con IA. Mejora tu perfil y haz match con oportunidades laborales en minutos.',
 
   openGraph: {
-    title: 'Levely - Tu talento merece ser visible',
+    title: 'Levely - Optimiza tu perfil para el mercado global',
     description:
-      'Plataforma con inteligencia artificial para potenciar tu perfil profesional y mejorar tus oportunidades laborales.',
+      'Plataforma de empleabilidad con IA. Mejora tu perfil y haz match con oportunidades laborales en minutos.',
     url: 'https://joinlevely.com',
     siteName: 'Levely',
     locale: 'es_ES',
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
 
   twitter: {
     card: 'summary_large_image',
-    title: 'Levely - Tu talento merece ser visible',
+    title: 'Levely - Optimiza tu perfil para el mercado global',
     description:
       'Haz visible tu talento profesional con ayuda de inteligencia artificial.',
   },

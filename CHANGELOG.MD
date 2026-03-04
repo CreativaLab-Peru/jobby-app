@@ -1,3 +1,9 @@
+# WIP
+
+## Fixes
+- Move sections on cv builder page
+- Update the metadata for SEO on public pages
+
 # v1.1.21 - 2026-03-03
 
 ## Fixes

@@ -18,7 +18,7 @@ export function HowItWorksSection() {
       <div className="container-levely relative">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-24">
-          <h2 className="headline-lg">Cómo funciona</h2>
+          <h2 className="text-4xl">Cómo funciona</h2>
           <p className="mt-4 text-lg text-muted-foreground">Tu camino hacia oportunidades reales</p>
         </div>
 

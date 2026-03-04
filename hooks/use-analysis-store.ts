@@ -37,8 +37,6 @@ export const useAnalysisStore = create<AnalysisState>((setStore) => ({
   loadPersistedFile: async () => {
     const file = await get<File>('pending_cv_file');
     const metadata = await get<{fileName: string, userId: string}>('pending_cv_metadata');
-    console.log('metadata', metadata);
-    console.log('file', file);
     if (file && metadata) {
       const url = URL.createObjectURL(file);
       setStore({

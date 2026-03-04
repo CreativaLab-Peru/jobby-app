@@ -68,7 +68,7 @@ export function UploadCVModal({ initialFile, reset }: UploadCVModalProps) {
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      toast.error("El archivo excede el tamaño máximo permitido (50MB).");
+      toast.error("El archivo excede el tamaño máximo permitido (5MB).");
       return;
     }
 
@@ -127,7 +127,7 @@ export function UploadCVModal({ initialFile, reset }: UploadCVModalProps) {
     const f = e.target.files?.[0];
     if (f) {
       if (f.size > MAX_FILE_SIZE) {
-        toast.error("El archivo excede el tamaño máximo permitido (50MB).");
+        toast.error("El archivo excede el tamaño máximo permitido (5MB).");
         return;
       }
       // Validación básica de tipo de archivo

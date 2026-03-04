@@ -1,3 +1,5 @@
+"use client";
+
 import { TestimoniosCarousel } from "@/components/testimonios";
 import { LogosSection } from "@/components/ui/app/public/partners/logos-section";
 import { CVBuilderPreview } from "@/components/ui/app/public/hero/cv-builder-preview";
@@ -5,8 +7,28 @@ import { CareerAcceleratorTeaser } from "@/components/ui/app/public/hero/career-
 import { TargetAudience } from "@/components/ui/app/public/hero/target-audience";
 import { CTASection } from "@/components/ui/app/public/hero/cta-section";
 import { HeroSection } from "@/components/ui/app/public/hero/hero-section";
+import {useEffect} from "react";
+import {useAnalysisStore} from "@/hooks/use-analysis-store";
+import {useRouter} from "next/navigation";
 
 const Index = () => {
+  const { fileName, fileUrl, loadPersistedFile } = useAnalysisStore();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!fileUrl) {
+      loadPersistedFile();
+    }
+  }, [fileUrl, loadPersistedFile]);
+
+  // 2. Reaccionar cuando los datos aparezcan en el store
+  useEffect(() => {
+    if (fileUrl && fileName) {
+      router.push('/cv?afterOnboarding=true');
+    }
+  }, [fileUrl, fileName, router]);
+
+
   return (
     <div>
       <HeroSection />

@@ -1,7 +1,7 @@
 "use client";
 
 import {AnimatePresence, motion} from "framer-motion";
-import {ChevronDown, FileText, Loader2, Plus, Upload} from "lucide-react";
+import {FileText, Plus, Upload} from "lucide-react";
 import {Button} from "@/components/ui/button";
 
 import {EmptyPlaceholder} from "@/components/shared/empty-placeholder";
@@ -10,10 +10,13 @@ import {PageHeader} from "@/components/shared/page-header";
 import {CreateCVModal} from "@/features/cv/components/create-cv-modal";
 import {UploadCVModal} from "@/features/cv/components/upload-cv-modal";
 import {CVCard} from "@/features/cv/components/cv-card";
-import {CvWithRelations, getCvForCurrentUser} from "@/features/cv/actions/get-cv-for-current-user";
-import {useState, useTransition} from "react";
+import {CvWithRelations} from "@/features/cv/actions/get-cv-for-current-user";
+import {useEffect, useState, useTransition} from "react";
 import {LoadMoreButton} from "@/components/shared/load-more-button";
 import {getAllCvForCurrentUser} from "@/features/cv/actions/get-all-cv-for-current-user";
+
+import { useAnalysisStore } from "@/hooks/use-analysis-store";
+import { useSearchParams } from "next/navigation"; // Usamos useSearchParams para query params (?key=value)
 
 interface CvListProps {
   initialCvs: CvWithRelations[];
@@ -32,7 +35,11 @@ export function CvListScreen({
 
   const [cvs, setCvs] = useState<CvWithRelations[]>(initialCvs);
   const [hasMore, setHasMore] = useState(hasMoreProp); // Asumiendo batch inicial de 10
+
   const [isPending, startTransition] = useTransition();
+  const { fileBlob, loadPersistedFile, reset } = useAnalysisStore();
+  const searchParams = useSearchParams();
+  const [isProcessingPersisted, setIsProcessingPersisted] = useState(false);
 
   const handleLoadMore = () => {
     startTransition(async () => {
@@ -42,6 +49,35 @@ export function CvListScreen({
         setHasMore(result.hasMore);
       }
     });
+  };
+
+  useEffect(() => {
+    const checkPersistedCV = async () => {
+      const isAfterOnboarding = searchParams.get("afterOnboarding") === "true";
+
+      if (isAfterOnboarding) {
+        setIsProcessingPersisted(true);
+
+        // 1. Intentamos recuperar el archivo de IndexedDB
+        await loadPersistedFile();
+
+        // El estado de Zustand se actualiza, pero para mayor seguridad
+        // podrías hacer que loadPersistedFile devuelva el archivo directamente
+      }
+    };
+
+    checkPersistedCV();
+  }, [searchParams, loadPersistedFile]);
+
+  // Este useEffect reacciona cuando el archivo ya está cargado en el store
+  useEffect(() => {
+    if (isProcessingPersisted && fileBlob) {
+      handleAutoUpload();
+    }
+  }, [fileBlob, isProcessingPersisted]);
+
+  const handleAutoUpload = async () => {
+    onOpenUpload();
   };
 
   const actions = (
@@ -68,7 +104,10 @@ export function CvListScreen({
 
       {/* Modales para crear y subir CV */}
       <CreateCVModal/>
-      <UploadCVModal/>
+      <UploadCVModal
+        initialFile={fileBlob}
+        reset={reset}
+      />
     </>
   );
 

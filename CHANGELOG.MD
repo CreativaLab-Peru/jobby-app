@@ -1,3 +1,10 @@
+# v1.1.22 - 2026-03-04
+
+## Fixes
+- Move sections on cv builder page
+- Update the metadata for SEO on public pages
+- Save tmp cv on db to avoid losing data when user refreshes the page
+
 # v1.1.21 - 2026-03-03
 
 ## Fixes

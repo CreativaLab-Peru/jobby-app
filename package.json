@@ -68,6 +68,7 @@
     "file-saver": "^2.0.5",
     "formidable": "^3.5.4",
     "framer-motion": "^12.23.0",
+    "idb-keyval": "^6.2.2",
     "inngest": "^3.44.3",
     "input-otp": "^1.4.2",
     "json5": "^2.2.3",

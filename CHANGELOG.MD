@@ -6,6 +6,13 @@
 ## Technical
 - Implemented a complaint submission flow with Zod validation, email delivery via Resend (using a custom React Email template), inline success/error feedback, and authenticated session checks with a daily complaint limit.
 - Added a Complaint Prisma model and migration, storing submissions in the database and ensuring complaints are preserved even if email delivery fails (returning a warning instead of failing).
+
+## Fixes
+- Move sections on cv builder page
+- Update the metadata for SEO on public pages
+- Save tmp cv on db to avoid losing data when user refreshes the page
+
+
 # v1.1.21 - 2026-03-03
 
 ## Fixes

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,105 +10,43 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Loader2, MessageSquareWarning, ShieldCheck, CheckCircle2, AlertCircle } from "lucide-react";
+import { complaintSchema, type ComplaintFormValues } from "@/features/complaints/schemas/complaint.schema";
 import { submitComplaintAction } from "@/features/complaints/actions/submit-complaint";
 
 const MAX_COMPLAINT = 2000;
-const MIN_COMPLAINT = 30;
-
-function validateForm(form: { name: string; email: string; phone: string; complaint: string }) {
-  const errors: Partial<Record<keyof typeof form, string>> = {};
-
-  const name = form.name.trim();
-  if (!name) {
-    errors.name = "El nombre es obligatorio";
-  } else if (name.length < 2) {
-    errors.name = "El nombre debe tener al menos 2 caracteres";
-  } else if (name.length > 100) {
-    errors.name = "El nombre es demasiado largo";
-  } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s'-]+$/.test(name)) {
-    errors.name = "El nombre solo puede contener letras";
-  }
-
-  const email = form.email.trim();
-  if (!email) {
-    errors.email = "El correo es obligatorio";
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    errors.email = "Correo electrónico inválido";
-  }
-
-  const phone = form.phone.trim();
-  if (phone && !/^\+?[\d\s\-().]{7,20}$/.test(phone)) {
-    errors.phone = "Teléfono inválido (ej: +51 999 999 999)";
-  }
-
-  const complaint = form.complaint.trim();
-  if (!complaint) {
-    errors.complaint = "El reclamo es obligatorio";
-  } else if (complaint.length < MIN_COMPLAINT) {
-    errors.complaint = `El reclamo debe tener al menos ${MIN_COMPLAINT} caracteres`;
-  } else if (complaint.length > MAX_COMPLAINT) {
-    errors.complaint = `El reclamo no puede superar los ${MAX_COMPLAINT} caracteres`;
-  }
-
-  return errors;
-}
+const MIN_COMPLAINT = 100;
 
 export default function ComplaintsPage() {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    complaint: "",
-  });
-  const [touched, setTouched] = useState<Partial<Record<keyof typeof form, boolean>>>({});
-  const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
-  const errors = validateForm(form);
-  const hasErrors = Object.keys(errors).length > 0;
-  const complaintTrimmedLen = form.complaint.trim().length;
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ComplaintFormValues>({
+    resolver: zodResolver(complaintSchema),
+    defaultValues: { name: "", email: "", phone: "", complaint: "" },
+  });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    let value = e.target.value;
-    if (e.target.name === "phone") {
-      value = value.replace(/[^\d\s+\-().]/g, "");
-    }
-    setForm({ ...form, [e.target.name]: value });
-    if (status) setStatus(null);
-  };
+  const complaintTrimmedLen = (watch("complaint") ?? "").trim().length;
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setTouched((prev) => ({ ...prev, [e.target.name]: true }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setTouched({ name: true, email: true, phone: true, complaint: true });
-
-    if (hasErrors) return;
-
-    setSubmitting(true);
+  const onSubmit = async (data: ComplaintFormValues) => {
     setStatus(null);
-
     try {
-      const result = await submitComplaintAction({
-        name: form.name,
-        email: form.email,
-        phone: form.phone || undefined,
-        complaint: form.complaint,
-      });
-
+      const result = await submitComplaintAction(data);
       if (result.success) {
-        setStatus({ type: "success", message: "Tu reclamo ha sido enviado exitosamente. Nos pondremos en contacto contigo a la brevedad posible." });
-        setForm({ name: "", email: "", phone: "", complaint: "" });
-        setTouched({});
+        setStatus({
+          type: "success",
+          message: "Tu reclamo ha sido enviado exitosamente. Nos pondremos en contacto contigo a la brevedad posible.",
+        });
+        reset();
       } else {
         setStatus({ type: "error", message: result.error ?? "No se pudo enviar el reclamo. Intenta nuevamente." });
       }
     } catch {
       setStatus({ type: "error", message: "Ocurrió un error inesperado. Intenta nuevamente." });
-    } finally {
-      setSubmitting(false);
     }
   };
 
@@ -138,7 +78,7 @@ export default function ComplaintsPage() {
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
                 {/* Name */}
                 <div className="space-y-1.5">
                   <Label htmlFor="name" className="text-sm font-bold text-foreground">
@@ -146,17 +86,14 @@ export default function ComplaintsPage() {
                   </Label>
                   <Input
                     id="name"
-                    name="name"
-                    value={form.name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                     placeholder="John Doe"
-                    className={`bg-background border-border focus-visible:ring-primary h-11 ${touched.name && errors.name ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                    {...register("name")}
+                    className={`bg-background border-border focus-visible:ring-primary h-11 ${errors.name ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                   />
-                  {touched.name && errors.name && (
+                  {errors.name && (
                     <p className="text-xs text-red-400 flex items-center gap-1">
                       <AlertCircle className="w-3 h-3 shrink-0" />
-                      {errors.name}
+                      {errors.name.message}
                     </p>
                   )}
                 </div>
@@ -169,18 +106,15 @@ export default function ComplaintsPage() {
                     </Label>
                     <Input
                       id="email"
-                      name="email"
                       type="email"
-                      value={form.email}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
                       placeholder="johndoe@example.com"
-                      className={`bg-background border-border focus-visible:ring-primary h-11 ${touched.email && errors.email ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                      {...register("email")}
+                      className={`bg-background border-border focus-visible:ring-primary h-11 ${errors.email ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                     />
-                    {touched.email && errors.email && (
+                    {errors.email && (
                       <p className="text-xs text-red-400 flex items-center gap-1">
                         <AlertCircle className="w-3 h-3 shrink-0" />
-                        {errors.email}
+                        {errors.email.message}
                       </p>
                     )}
                   </div>
@@ -192,18 +126,19 @@ export default function ComplaintsPage() {
                     </Label>
                     <Input
                       id="phone"
-                      name="phone"
                       type="tel"
-                      value={form.phone}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      placeholder="+51 999 999 999"
-                      className={`bg-background border-border focus-visible:ring-primary h-11 ${touched.phone && errors.phone ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                      placeholder="+51 987654321"
+                      {...register("phone")}
+                      onInput={(e) => {
+                        const input = e.currentTarget;
+                        input.value = input.value.replace(/[^\d\s+\-().]/g, "");
+                      }}
+                      className={`bg-background border-border focus-visible:ring-primary h-11 ${errors.phone ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                     />
-                    {touched.phone && errors.phone && (
+                    {errors.phone && (
                       <p className="text-xs text-red-400 flex items-center gap-1">
                         <AlertCircle className="w-3 h-3 shrink-0" />
-                        {errors.phone}
+                        {errors.phone.message}
                       </p>
                     )}
                   </div>
@@ -221,18 +156,15 @@ export default function ComplaintsPage() {
                   </div>
                   <Textarea
                     id="complaint"
-                    name="complaint"
-                    value={form.complaint}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder="Describe tu situación con detalle (mínimo 30 caracteres)..."
-                    className={`bg-background border-border focus-visible:ring-primary min-h-[140px] resize-none ${touched.complaint && errors.complaint ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                    placeholder="Describe tu situación con detalle (mínimo 100 caracteres)..."
+                    {...register("complaint")}
+                    className={`bg-background border-border focus-visible:ring-primary min-h-[140px] resize-none ${errors.complaint ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                     maxLength={MAX_COMPLAINT + 50}
                   />
-                  {touched.complaint && errors.complaint && (
+                  {errors.complaint && (
                     <p className="text-xs text-red-400 flex items-center gap-1">
                       <AlertCircle className="w-3 h-3 shrink-0" />
-                      {errors.complaint}
+                      {errors.complaint.message}
                     </p>
                   )}
                 </div>
@@ -258,10 +190,10 @@ export default function ComplaintsPage() {
                 {/* Submit Button */}
                 <Button
                   type="submit"
-                  disabled={submitting}
+                  disabled={isSubmitting}
                   className="w-full h-12 ai-gradient text-primary-foreground font-bold text-base shadow-glow hover:opacity-90 transition-all rounded-xl mt-4"
                 >
-                  {submitting ? (
+                  {isSubmitting ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
                   ) : (
                     "Registrar Reclamo"

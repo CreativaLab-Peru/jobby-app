@@ -3,10 +3,10 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { getSession } from "@/features/authentication/actions/get-session";
 import { updateUsernameSchema, type UpdateUsernameValues } from "@/features/settings/schemas/update-username.schema";
 
 export async function updateUsernameAction(formData: UpdateUsernameValues) {
-  // Validar
   const parsed = updateUsernameSchema.safeParse(formData);
   if (!parsed.success) {
     return {
@@ -16,16 +16,13 @@ export async function updateUsernameAction(formData: UpdateUsernameValues) {
   }
 
   try {
-    // Verificar sesión
-    const reqHeaders = await headers();
-    const session = await auth.api.getSession({ headers: reqHeaders });
-    if (!session?.user) {
+    const session = await getSession();
+    if (!session.success || !session.user) {
       return { success: false, error: "No autenticado." };
     }
 
-    // Actualizar nombre
     const response = await auth.api.updateUser({
-      headers: reqHeaders,
+      headers: await headers(),
       body: { name: parsed.data.name },
     });
 
@@ -40,3 +37,5 @@ export async function updateUsernameAction(formData: UpdateUsernameValues) {
     return { success: false, error: "Ocurrió un error al actualizar el nombre." };
   }
 }
+
+

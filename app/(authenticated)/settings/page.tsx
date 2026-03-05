@@ -1,17 +1,16 @@
 import SettingsScreen from "@/features/settings/settings-screen";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
-import { redirect } from "next/navigation";
+import { getSession } from "@/features/authentication/actions/get-session";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 export default async function SettingsPage() {
-  const [currentUser, session] = await Promise.all([
+  const [user, session] = await Promise.all([
     getCurrentUser(),
-    auth.api.getSession({ headers: await headers() }),
+    getSession(),
   ]);
 
-  if (!currentUser || !session?.user) {
+  if (!user || !session.success || !session.user) {
     return redirect("/");
   }
 
@@ -23,5 +22,5 @@ export default async function SettingsPage() {
     select: { id: true },
   });
 
-  return <SettingsScreen user={currentUser} isOAuth={!!oauthAccount} />;
+  return <SettingsScreen user={user} isOAuth={!!oauthAccount} />;
 }

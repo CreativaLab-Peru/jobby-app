@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { getSession } from "@/features/authentication/actions/get-session";
 import { changePasswordSchema, type ChangePasswordValues } from "@/features/settings/schemas/change-password.schema";
 
 // Mensajes de error de Better Auth (better-call APIError) traducidos al español
@@ -29,7 +30,6 @@ function extractBetterAuthMessage(error: unknown): string | null {
 }
 
 export async function changePasswordAction(formData: ChangePasswordValues) {
-  // 1. Validar datos
   const parsed = changePasswordSchema.safeParse(formData);
   if (!parsed.success) {
     const fieldErrors = parsed.error.flatten().fieldErrors;
@@ -42,14 +42,11 @@ export async function changePasswordAction(formData: ChangePasswordValues) {
   }
 
   try {
-    // 2. Verificar sesión
-    const reqHeaders = await headers();
-    const session = await auth.api.getSession({ headers: reqHeaders });
-    if (!session?.user) {
+    const session = await getSession();
+    if (!session.success || !session.user) {
       return { success: false, error: "No autenticado." };
     }
 
-    // 3. Verificar que no sea cuenta OAuth
     const oauthAccount = await prisma.account.findFirst({
       where: {
         userId: session.user.id,
@@ -65,9 +62,8 @@ export async function changePasswordAction(formData: ChangePasswordValues) {
       };
     }
 
-    // 4. Cambiar contraseña
     await auth.api.changePassword({
-      headers: reqHeaders,
+      headers: await headers(),
       body: {
         currentPassword: parsed.data.currentPassword,
         newPassword: parsed.data.newPassword,

@@ -1,11 +1,13 @@
-# v1.1.22 - 2026-03-04 (WIP)
+# WIP
 
 ## Features
-- **Complaints Book**: Users can submit complaints with their name, email, phone number and a detailed description once a day, and they are saved in a new table.
+- Implemented a complaint with email delivery.
 
-## Technical
-- Implemented a complaint submission flow with Zod validation, email delivery via Resend (using a custom React Email template), inline success/error feedback, and authenticated session checks with a daily complaint limit.
-- Added a Complaint Prisma model and migration, storing submissions in the database and ensuring complaints are preserved even if email delivery fails (returning a warning instead of failing).
+## Fixes
+- Recover the cv when we use Google after onboarding and cv builder fast step.
+- Add STARTUP opp type to the onboarding and create new cv modal.
+
+# v1.1.22 - 2026-03-04
 
 ## Fixes
 - Move sections on cv builder page

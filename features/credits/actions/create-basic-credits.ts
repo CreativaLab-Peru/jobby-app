@@ -11,12 +11,14 @@ export const createBasicCredits = async (userId: string) => {
       description: "Créditos básicos iniciales al registrarse",
       type: CreditBalanceType.MANAGE_CVS
     }
+
     const bodyAIActions: RechargeCreditsBody = {
       userId,
       amount: 1,
       description: "Créditos básicos iniciales al registrarse",
       type: CreditBalanceType.AI_ACTIONS
     }
+
     const result = await rechargeCredits(bodyManageCvs);
     if (!result) throw new Error("Failed to create basic credits");
 

@@ -501,6 +501,7 @@ enum OpportunityType {
   SCHOLARSHIP
   EXCHANGE_PROGRAM
   EMPLOYMENT
+  STARTUP
 }
 
 enum CvType {

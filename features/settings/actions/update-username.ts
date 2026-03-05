@@ -3,15 +3,11 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
+import { getSession } from "@/features/authentication/actions/get-session";
+import { updateUsernameSchema, type UpdateUsernameValues } from "@/features/settings/schemas/update-username.schema";
 
-const updateUsernameSchema = z.object({
-  name: z.string().trim().min(2, "El nombre debe tener al menos 2 caracteres").max(100, "El nombre es demasiado largo"),
-});
-
-export async function updateUsernameAction(formData: unknown) {
+export async function updateUsernameAction(formData: UpdateUsernameValues) {
   const parsed = updateUsernameSchema.safeParse(formData);
-
   if (!parsed.success) {
     return {
       success: false,
@@ -20,11 +16,14 @@ export async function updateUsernameAction(formData: unknown) {
   }
 
   try {
+    const session = await getSession();
+    if (!session.success || !session.user) {
+      return { success: false, error: "No autenticado." };
+    }
+
     const response = await auth.api.updateUser({
       headers: await headers(),
-      body: {
-        name: parsed.data.name,
-      },
+      body: { name: parsed.data.name },
     });
 
     if (!response) {
@@ -32,11 +31,11 @@ export async function updateUsernameAction(formData: unknown) {
     }
 
     revalidatePath("/", "layout");
-
     return { success: true };
   } catch (error) {
     console.error("[UPDATE_USERNAME_ERROR]", error);
     return { success: false, error: "Ocurrió un error al actualizar el nombre." };
   }
 }
+
 

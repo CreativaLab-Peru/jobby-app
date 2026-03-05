@@ -68,6 +68,18 @@ Registro de auditoría inmutable para debugging y seguridad.
 
 ---
 
+## 📋 6. Dominio de Cumplimiento (Compliance)
+
+### `complaint` (Mapeado como `complaint`)
+Almacena los reclamos enviados por usuarios a través del Libro de Reclamaciones (`/complaints`).
+- **Campos:** `id`, `userId`, `name`, `email`, `phone?`, `complaint`, `createdAt`.
+- **Restricción de negocio:** Solo se permite un reclamo por usuario por día (validado en la server action antes de insertar).
+- **Relación:** Cascada con `user` — si el usuario se elimina, sus reclamos también se eliminan.
+- **Índice:** `[userId, createdAt]` optimizado para la consulta de límite diario.
+- **Flujo:** Al enviar un reclamo, primero se persiste en esta tabla y luego se envía un email a `contacto@joinlevely.com`. Si el email falla, el reclamo queda igualmente registrado en BD.
+
+---
+
 ## 🚦 Diccionario de Tipos (Enums Clave)
 
 | Enum | Propósito |

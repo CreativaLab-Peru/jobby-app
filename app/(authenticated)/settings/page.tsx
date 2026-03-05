@@ -1,19 +1,26 @@
 import SettingsScreen from "@/features/settings/settings-screen";
-import {getCurrentUser} from "@/features/share/actions/get-current-user";
-import {redirect} from "next/navigation";
-import {detectOAuthUser} from "@/utils/oauth-utils";
+import { getCurrentUser } from "@/features/share/actions/get-current-user";
+import { getSession } from "@/features/authentication/actions/get-session";
+import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
 
 export default async function SettingsPage() {
-  const [currentUser, { isOAuth }] = await Promise.all([
+  const [user, session] = await Promise.all([
     getCurrentUser(),
-    detectOAuthUser(),
+    getSession(),
   ]);
 
-  if (!currentUser) {
-    return redirect('/');
+  if (!user || !session.success || !session.user) {
+    return redirect("/");
   }
 
-  return (
-    <SettingsScreen user={currentUser} isOAuth={isOAuth} />
-  );
+  const oauthAccount = await prisma.account.findFirst({
+    where: {
+      userId: session.user.id,
+      NOT: { providerId: "credential" },
+    },
+    select: { id: true },
+  });
+
+  return <SettingsScreen user={user} isOAuth={!!oauthAccount} />;
 }

@@ -46,6 +46,7 @@ model User {
   userPreference             UserPreference[]
   userCreditBalance          UserCreditBalance[]
   Invoice                    Invoice[]
+  complaints                 Complaint[]
 
   @@map("user")
 }
@@ -445,6 +446,21 @@ enum PaymentStatus {
   PAID
   FAILED
   REFUNDED
+}
+
+// Complaints Book
+model Complaint {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String
+  email     String
+  phone     String?
+  complaint String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("complaint")
 }
 
 model LogEntry {

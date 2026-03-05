@@ -3,56 +3,36 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
-import { z } from "zod";
+import { getSession } from "@/features/authentication/actions/get-session";
+import { changePasswordSchema, type ChangePasswordValues } from "@/features/settings/schemas/change-password.schema";
 
-const changePasswordSchema = z
-  .object({
-    currentPassword: z.string().min(1, "La contraseña actual es requerida"),
-    newPassword: z
-      .string()
-      .min(8, "La nueva contraseña debe tener al menos 8 caracteres"),
-    confirmPassword: z.string().min(1, "Debes confirmar la nueva contraseña"),
-  })
-  .superRefine((data, ctx) => {
-    if (data.newPassword !== data.confirmPassword) {
-      ctx.addIssue({
-        path: ["confirmPassword"],
-        message: "Las contraseñas no coinciden",
-        code: "custom",
-      });
-    }
-  });
+// Mensajes de error de Better Auth (better-call APIError) traducidos al español
+const BETTER_AUTH_ERROR_MESSAGES: Record<string, string> = {
+  "Invalid password": "La contraseña actual es incorrecta.",
+  "Password too short": "La nueva contraseña es demasiado corta.",
+  "Password too long": "La nueva contraseña es demasiado larga.",
+  "User not found": "Usuario no encontrado.",
+  "Failed to get session": "No se pudo obtener la sesión. Vuelve a iniciar sesión.",
+};
 
-export async function changePasswordAction(formData: unknown) {
-  // Verificar sesión una sola vez y reutilizarla
-  const reqHeaders = await headers();
-  const session = await auth.api.getSession({ headers: reqHeaders });
-
-  if (!session?.user) {
-    return { success: false, error: "No autenticado." };
+function extractBetterAuthMessage(error: unknown): string | null {
+  if (
+    error != null &&
+    typeof error === "object" &&
+    "body" in error &&
+    error.body != null &&
+    typeof error.body === "object" &&
+    "message" in error.body
+  ) {
+    return String(error.body.message);
   }
+  return null;
+}
 
-  // Verificar si el usuario tiene una cuenta OAuth (Google, etc.) usando el cliente prisma compartido
-  const oauthAccount = await prisma.account.findFirst({
-    where: {
-      userId: session.user.id,
-      NOT: { providerId: "credential" },
-    },
-    select: { id: true },
-  });
-
-  if (oauthAccount) {
-    return {
-      success: false,
-      error: "Los usuarios con cuenta de Google no pueden cambiar la contraseña.",
-    };
-  }
-
+export async function changePasswordAction(formData: ChangePasswordValues) {
   const parsed = changePasswordSchema.safeParse(formData);
-
   if (!parsed.success) {
     const fieldErrors = parsed.error.flatten().fieldErrors;
-    // Devolver el primer error encontrado
     const firstError =
       fieldErrors.currentPassword?.[0] ||
       fieldErrors.newPassword?.[0] ||
@@ -62,8 +42,28 @@ export async function changePasswordAction(formData: unknown) {
   }
 
   try {
+    const session = await getSession();
+    if (!session.success || !session.user) {
+      return { success: false, error: "No autenticado." };
+    }
+
+    const oauthAccount = await prisma.account.findFirst({
+      where: {
+        userId: session.user.id,
+        NOT: { providerId: "credential" },
+      },
+      select: { id: true },
+    });
+
+    if (oauthAccount) {
+      return {
+        success: false,
+        error: "Los usuarios con cuenta de Google no pueden cambiar la contraseña.",
+      };
+    }
+
     await auth.api.changePassword({
-      headers: reqHeaders,
+      headers: await headers(),
       body: {
         currentPassword: parsed.data.currentPassword,
         newPassword: parsed.data.newPassword,
@@ -72,16 +72,13 @@ export async function changePasswordAction(formData: unknown) {
     });
 
     return { success: true };
-  } catch (error: any) {
-    console.error("[CHANGE_PASSWORD_ERROR]", error);
-
-    // Better Auth devuelve mensajes específicos en algunos errores
+  } catch (error) {
+    const apiMessage = extractBetterAuthMessage(error);
     const message =
-      error?.body?.message ||
-      error?.message ||
-      "No se pudo actualizar la contraseña. Verifica que la contraseña actual sea correcta.";
+      (apiMessage && BETTER_AUTH_ERROR_MESSAGES[apiMessage]) ||
+      apiMessage ||
+      "No se pudo actualizar la contraseña. Intenta nuevamente.";
 
     return { success: false, error: message };
   }
 }
-

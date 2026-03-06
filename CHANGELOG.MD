@@ -1,4 +1,4 @@
-# WIP
+# v1.1.23 - 2026-03-06
 
 ## Features
 - Implemented a complaint with email delivery.

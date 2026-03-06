@@ -2,6 +2,7 @@
 
 ## Features
 - Implemented a complaint with email delivery.
+- Pay first and go added with onboarding password step.
 
 ## Fixes
 - Recover the cv when we use Google after onboarding and cv builder fast step.

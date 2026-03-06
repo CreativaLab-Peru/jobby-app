@@ -4,7 +4,6 @@ import {prisma} from "@/lib/prisma";
 
 import {Preference} from "mercadopago";
 import {PreferenceCreateData} from "mercadopago/dist/clients/preference/create/types";
-import {PAYMENT_PRO_ID} from "@/features/billing/consts/payment-plant-ids";
 import {BASE_URL, mercadopago} from "@/features/billing/domain/mercado-preference";
 
 const PREFERENCE_PLAN = "starter"

@@ -28,6 +28,7 @@ export const sendMagicLinkToEmail = inngest.createFunction(
         level: LogLevel.ERROR,
         message: "Validation failed for sending magic link",
         metadata: { error: err?.message, data: event.data },
+        email,
       });
       return;
     }
@@ -51,10 +52,6 @@ export const sendMagicLinkToEmail = inngest.createFunction(
     try {
       const UrlWithMagicLink = PUBLIC_APP_URL + `/magic-link?token=${magicLink}`;
       await sendMagicLinkEmail(email, UrlWithMagicLink);
-
-
-      // await addToMailerLite(email, { name, magiclink: UrlWithMagicLink }, "magicLink");
-
 
       await prisma.queueJob.update({
         where: { id: job.id },

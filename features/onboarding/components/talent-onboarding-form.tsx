@@ -168,8 +168,11 @@ export function OnboardingForm() {
 
   useEffect(() => {
     const checkPersistedCV = async () => {
-        setIsProcessingPersisted(true);
+      try {
         await loadPersistedFile();
+      } finally {
+        setIsProcessingPersisted(true);
+      }
     };
     checkPersistedCV();
   }, [loadPersistedFile]);

@@ -1,4 +1,4 @@
-# v1.1.21 - 2026-03-02
+# v1.1.21 - 2026-03-04
 
 ### BEFORE DEPLOYMENT
 - Run migration `20260303030454_add_complaint_table` — creates the `complaint` table (`migrate deploy` handles this automatically in the build script).

@@ -16,6 +16,7 @@ import {
   createPreferenceForNewUser
 } from "@/features/billing/actions/create-preference-for-new-user";
 import {useAnalysisStore} from "@/hooks/use-analysis-store";
+import { PaymentMethod } from "@/features/credits/components/payment-method-modal";
 
 export function CreditPackModal() {
   const { isOpen, onClose } = useCreditModal()
@@ -24,15 +25,18 @@ export function CreditPackModal() {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState(null);
 
-  const handlePurchase = () => {
+  const handlePurchase = (_packId: string, method: PaymentMethod) => {
     if (isPending) return;
 
     startTransition(async () => {
-      const result = await createPreferenceForNewUser(userId);
-      if (result.success) {
-        window.location.href = result.redirect;
-      } else {
-        setError(result.error);
+      // TODO: Agregar lógica para Paddle cuando esté disponible
+      if (method === "mercadopago") {
+        const result = await createPreferenceForNewUser(userId);
+        if (result.success) {
+          window.location.href = result.redirect;
+        } else {
+          setError(result.error);
+        }
       }
     });
   }
@@ -62,7 +66,7 @@ export function CreditPackModal() {
                 <CreditPackCard
                   key={pack.id}
                   pack={pack}
-                  onPurchase={() => handlePurchase()}
+                  onPurchase={(id, method) => handlePurchase(id, method)}
                 />
               ))}
             </div>

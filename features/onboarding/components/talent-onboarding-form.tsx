@@ -61,7 +61,7 @@ export function OnboardingForm() {
           const user = session.data.user;
           updateFormData({
             email: user.email,
-            name: user.name,
+            // name: user.name,
           });
         }
       } catch (e) {
@@ -241,7 +241,7 @@ export function OnboardingForm() {
                 Procesando...
               </>
             ) : step === TOTAL_STEPS ? (
-              "Crear cuenta y Finalizar"
+              "Finalizar"
             ) : (
               "Continuar"
             )}

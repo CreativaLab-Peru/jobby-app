@@ -69,8 +69,6 @@ export const getStatisticsForUser = async (): Promise<DashboardStats | null> => 
       }
     });
 
-    console.log("[PREFERENCE]", preference);
-
     // IMPORTANTE: Estructuramos el retorno explícitamente
     // para asegurar que todo sea serializable.
     return JSON.parse(JSON.stringify({

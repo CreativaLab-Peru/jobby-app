@@ -3,7 +3,7 @@
 import { resend } from "@/lib/resend";
 import { logsService } from "@/features/share/services/logs-service";
 import { LogAction, LogLevel } from "@prisma/client";
-import {MagicLinkEmail} from "@/features/emails/templates/magic-link-email";
+import SuccessPaymentEmail from "@/features/emails/templates/success-payment-email";
 
 /**
  * Envía el enlace de acceso rápido (Magic Link) usando Resend.
@@ -15,9 +15,12 @@ export async function sendMagicLinkEmail(email: string, url: string) {
     const { data, error } = await resend.emails.send({
       from: 'Levely <contact@joinlevely.com>', // Tu dominio verificado
       to: [email.trim().toLowerCase()],
-      subject: '✨ Tu enlace de acceso a Levely',
+      subject: 'Pago confirmado: Accede a tu cuenta con este enlace',
       // Usamos el template que creamos con tus tokens de color
-      react: MagicLinkEmail({ url }),
+      react: SuccessPaymentEmail({
+        email: email, // Puedes personalizar esto si tienes el nombre del usuario
+        magicLink: url
+      }),
     });
 
     if (error) {

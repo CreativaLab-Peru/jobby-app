@@ -2,10 +2,16 @@
 
 import { prisma } from "@/lib/prisma";
 import {hashMagicLinkToken} from "@/utils/magic-links";
-import {OnboardingData} from "@/features/onboarding/components/onboarding-flow";
 import {inngest} from "@/inngest/functions/client";
 
-export async function finishOnboarding(data: OnboardingData): Promise<{success: boolean; error?: string, data?: {email: string; password: string} | null}> {
+interface FinishOnboardingData {
+  email: string;
+  name: string;
+  token: string;
+  acceptedTerms: boolean;
+}
+
+export async function finishOnboarding(data: FinishOnboardingData): Promise<{success: boolean; error?: string, data?: {email: string; password: string} | null}> {
   try {
     const {token, acceptedTerms} = data;
     if (!token) {

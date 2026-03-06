@@ -46,6 +46,7 @@ model User {
   userPreference             UserPreference[]
   userCreditBalance          UserCreditBalance[]
   Invoice                    Invoice[]
+  complaints                 Complaint[]
 
   @@map("user")
 }
@@ -447,6 +448,21 @@ enum PaymentStatus {
   REFUNDED
 }
 
+// Complaints Book
+model Complaint {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String
+  email     String
+  phone     String?
+  complaint String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("complaint")
+}
+
 model LogEntry {
   id        String    @id @default(uuid())
   userId    String?
@@ -501,6 +517,7 @@ enum OpportunityType {
   SCHOLARSHIP
   EXCHANGE_PROGRAM
   EMPLOYMENT
+  STARTUP
 }
 
 enum CvType {

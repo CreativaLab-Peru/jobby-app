@@ -1,4 +1,4 @@
-import {OnboardingFlow} from "@/features/onboarding/components/onboarding-flow";
+import {OnboardingAfterPayment} from "@/features/onboarding/components/onboarding-after-payment";
 import {verifyTokenAndReturnUser} from "@/features/onboarding/actions/verify-token-and-return-user";
 import {redirect} from "next/navigation";
 
@@ -15,7 +15,7 @@ export default async function MagicLinkPage({
 
   return (
     <div className="py-0">
-      <OnboardingFlow
+      <OnboardingAfterPayment
         user={user}
         token={token}
       />

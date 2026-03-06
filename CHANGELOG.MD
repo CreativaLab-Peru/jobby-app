@@ -1,9 +1,20 @@
+# v1.1.23 - 2026-03-06
+
+## Features
+- Implemented a complaint with email delivery.
+- Pay first and go added with onboarding password step.
+
+## Fixes
+- Recover the cv when we use Google after onboarding and cv builder fast step.
+- Add STARTUP opp type to the onboarding and create new cv modal.
+
 # v1.1.22 - 2026-03-04
 
 ## Fixes
 - Move sections on cv builder page
 - Update the metadata for SEO on public pages
 - Save tmp cv on db to avoid losing data when user refreshes the page
+
 
 # v1.1.21 - 2026-03-03
 
@@ -14,11 +25,8 @@
 # v1.1.19 and v1.1.20 - 2026-02-28
 
 ## Features
-- **Settings — Update username**: Users can now update their display name from the Settings page.
-- **Settings — Change password**: Users registered with email/password can now change their password from Settings.
-- **Settings — Theme preference (global)**: The dark/light mode preference is now saved per user in the database.
-- **Register — Confirm password**: Added a "Confirm password" field to both the simple register form and the onboarding account step.
-- **Onboarding — Terms gate**: The "Continue / Create account" button and the "Sign up with Google"
+* **Settings & preferences**: Users can now update their username, change their password (for email/password accounts), and have their dark/light theme preference saved per user in the database.
+* **Registration & onboarding improvements**: Added a confirm password field to registration flows and implemented a terms acceptance gate before continuing or signing up with Google.
 
 ## Technical
 - New server actions: `updateUsernameAction`, `changePasswordAction`, `updateThemeAction`.
@@ -29,13 +37,8 @@
 - Navbar uses SWR (`useSWR("session")`) to reactively update the username without F5.
 
 ## Fixes
-- Fixed theme flash on reload for unauthenticated users: `updateThemeAction` now always writes the `theme` cookie regardless of session state, and only persists to `userPreference` when a session exists.
-- Fixed onboarding store step 10 validation not checking `confirmPassword`.
-- Opportunity type added on onboarding
-- I can't see the current resources as a user
-- Style issues on analyzing progress
-- Mapped title of recommendation on analysis summary
-- Fix faster use and texts of cv builder on public page
+* **Bug fixes (theme & onboarding)**: Fixed theme flash for unauthenticated users by always writing the `theme` cookie, corrected onboarding step 10 validation to include `confirmPassword`, and added the opportunity type field in onboarding.
+* **UX & visibility fixes**: Restored visibility of current resources for users, fixed styling issues in the progress analysis view, mapped recommendation titles in the analysis summary, and improved performance and text on the public CV builder page.
 
 # v1.1.18 - 2026-02-24
 

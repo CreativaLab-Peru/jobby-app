@@ -28,8 +28,8 @@ export const opportunityTypes = [
   { key: OpportunityType.SCHOLARSHIP, value: "Beca" },
   { key: OpportunityType.EXCHANGE_PROGRAM, value: "Intercambio" },
   { key: OpportunityType.EMPLOYMENT, value: "Empleo" },
+  { key: OpportunityType.STARTUP, value: "Aceleradora" },
 ]
-
 
 export function CVForm({ formData, onFormDataChange }: CVFormProps) {
   const updateFormData = (updates: Partial<CVFormData>) => {

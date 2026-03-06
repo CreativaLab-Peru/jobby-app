@@ -100,6 +100,11 @@ const opportunityTypeIcons: Record<OpportunityType, {
     label: "Intercambio",
     color: "text-purple-500"
   },
+  [OpportunityType.STARTUP]: {
+    icon: <Users className="w-4 h-4"/>,
+    label: "Aceleradora",
+    color: "text-pink-500"
+  },
 };
 
 interface QuickMatchCvModalProps {

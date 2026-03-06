@@ -108,6 +108,26 @@ export default function CVBuilderScreen({ user }: CVBuilderScreenProps) {
         </div>
       </section>
 
+      {/* ... Resto de tus secciones (Video, HowItWorks, etc.) */}
+      <section className="container-levely section-padding">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
+              Ve cómo funciona en acción
+            </h2>
+            <p className="mt-4 text-base sm:text-lg text-muted-foreground">
+              Descubre lo fácil que es crear tu perfil profesional con nuestra plataforma.
+            </p>
+          </div>
+
+          <div id="video-demo" className="max-w-4xl mx-auto">
+            <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-primary/20 to-levely-green/20 border border-shadow-2xl">
+              <AutoPlayVideo src="/videos/videoejemplo-cv.mp4"/>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <HowItWorksSection/>
 
       <section className="relative section-padding overflow-hidden bg-gradient-to-br from-secondary/50 via-background to-purple-50/30 dark:from-background dark:via-slate-900 dark:to-slate-800">
@@ -140,25 +160,7 @@ export default function CVBuilderScreen({ user }: CVBuilderScreenProps) {
 
       {/*<HotSaleSection/>*/}
 
-      {/* ... Resto de tus secciones (Video, HowItWorks, etc.) */}
-      <section className="container-levely section-padding">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
-              Ve cómo funciona en acción
-            </h2>
-            <p className="mt-4 text-base sm:text-lg text-muted-foreground">
-              Descubre lo fácil que es crear tu perfil profesional con nuestra plataforma.
-            </p>
-          </div>
 
-          <div id="video-demo" className="max-w-4xl mx-auto">
-            <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-primary/20 to-levely-green/20 border border-shadow-2xl">
-              <AutoPlayVideo src="/videos/videoejemplo-cv.mp4"/>
-            </div>
-          </div>
-        </div>
-      </section>
       <TestimonialsSection/>
       <FAQSection/>
     </>

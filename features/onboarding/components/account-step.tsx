@@ -48,7 +48,7 @@ export function AccountStep() {
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="space-y-2 text-center">
         <h2 className="text-2xl font-bold">
-          {user ? `¡Hola de nuevo, ${user?.name?.split(" ")?.[0]}!` : "Crea tu cuenta"}
+          {formData?.name ? `¡Hola de nuevo, ${formData?.name?.split(" ")?.[0]}!` : "Crea tu cuenta"}
         </h2>
         <p className="text-muted-foreground">
           {user
@@ -63,11 +63,11 @@ export function AccountStep() {
             className="bg-secondary/50 border rounded-xl p-6 flex flex-col items-center text-center gap-4">
             <UserAvatar
               image={user?.image}
-              name={user?.name}
+              name={formData?.name}
               className="h-20 w-20 text-xl border-2 border-background shadow-sm"
             />
             <div>
-              <p className="font-semibold text-lg leading-tight">{user?.name}</p>
+              <p className="font-semibold text-lg leading-tight">{formData?.name}</p>
               <p className="text-sm text-muted-foreground">{user?.email}</p>
             </div>
             <div

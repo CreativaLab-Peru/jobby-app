@@ -18,8 +18,6 @@ import {AreaAndRoleStep} from "@/features/onboarding/components/area-and-role-st
 import {ExperienceLevelStep} from "@/features/onboarding/components/experience-level-step";
 import {ModalityStep} from "@/features/onboarding/components/modality-step";
 import {AvailabilityStep} from "@/features/onboarding/components/availability-step";
-import {SkillsStep} from "@/features/onboarding/components/skills-step";
-import {PortfolioStep} from "@/features/onboarding/components/portfolio-step";
 import {AccountStep} from "@/features/onboarding/components/account-step";
 import {authClient} from "@/lib/auth-client";
 import {useDebug} from "@/hooks/use-debug";
@@ -29,6 +27,7 @@ import {checkExistingUser} from "@/features/authentication/actions/existing-user
 import {getUserByEmail} from "@/features/authentication/actions/get-user-by-email";
 import {verifyOAuthUser} from "@/features/authentication/actions/verify-oauth-user";
 import {OpportunityTypeStep} from "@/features/onboarding/components/opportunity-type-step";
+import {useAnalysisStore} from "@/hooks/use-analysis-store";
 
 const TOTAL_STEPS = 8;
 
@@ -50,6 +49,8 @@ export function OnboardingForm() {
 
   // Debug
   const debug = useDebug();
+  const [isProcessingPersisted, setIsProcessingPersisted] = useState(false);
+  const { fileBlob, loadPersistedFile } = useAnalysisStore();
 
   // 1. Verificación inicial de sesión para evitar parpadeos en AccountStep
   useEffect(() => {
@@ -60,7 +61,7 @@ export function OnboardingForm() {
           const user = session.data.user;
           updateFormData({
             email: user.email,
-            name: user.name,
+            // name: user.name,
           });
         }
       } catch (e) {
@@ -131,7 +132,11 @@ export function OnboardingForm() {
         toast.success("¡Bienvenido/a! Tu perfil está listo.");
 
         if (isOAuthUser) {
-          router.push("/dashboard");
+          if (isProcessingPersisted && fileBlob) {
+            router.push("/cv?afterOnboarding=true");
+          } else {
+            router.push("/dashboard");
+          }
         } else {
           router.push("/login?onboarding=completed");
         }
@@ -160,6 +165,18 @@ export function OnboardingForm() {
       setStep(step + 1);
     }
   };
+
+  useEffect(() => {
+    const checkPersistedCV = async () => {
+      try {
+        await loadPersistedFile();
+      } finally {
+        setIsProcessingPersisted(true);
+      }
+    };
+    checkPersistedCV();
+  }, [loadPersistedFile]);
+
 
   // 2. RENDER DE CARGA INICIAL
   if (isInitializing) {
@@ -227,7 +244,7 @@ export function OnboardingForm() {
                 Procesando...
               </>
             ) : step === TOTAL_STEPS ? (
-              "Crear cuenta y Finalizar"
+              "Finalizar"
             ) : (
               "Continuar"
             )}

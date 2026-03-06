@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,10 +11,12 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Loader2, Shield, Bell, User, Sun, Moon, Settings, CheckCircle2, AlertCircle, Lock } from "lucide-react";
-import { User as UserType } from ".prisma/client";
+import { User as UserType } from "@prisma/client";
 import { updateUsernameAction } from "@/features/settings/actions/update-username";
 import { changePasswordAction } from "@/features/settings/actions/change-password";
 import { updateThemeAction } from "@/features/settings/actions/update-theme";
+import { updateUsernameSchema, type UpdateUsernameValues } from "@/features/settings/schemas/update-username.schema";
+import { changePasswordSchema, type ChangePasswordValues } from "@/features/settings/schemas/change-password.schema";
 import { useSWRConfig } from "swr";
 import { useTheme } from "next-themes";
 
@@ -27,83 +31,73 @@ export default function SettingsScreen({ user, isOAuth }: SettingsScreenProps) {
   const { mutate } = useSWRConfig();
   const { theme, setTheme } = useTheme();
 
+  // --- Tema ---
   const handleThemeChange = async (checked: boolean) => {
     const previousTheme = theme;
     const newTheme = checked ? "dark" : "light";
-    setTheme(newTheme); // aplica al instante en el cliente
+    setTheme(newTheme);
     try {
-      const result = await updateThemeAction(newTheme); // persiste en BD
-      if (!result || result.success !== true) {
-        // Revertir el cambio en el cliente si la persistencia falla
-        if (previousTheme) {
-          setTheme(previousTheme);
-        }
+      const result = await updateThemeAction(newTheme);
+      if (!result.success) {
+        setTheme(previousTheme ?? "light");
       }
     } catch (error) {
-      // En caso de error de red/servidor, revertir el tema y registrar el error
-      if (previousTheme) {
-        setTheme(previousTheme);
-      }
-      console.error("Error al actualizar el tema:", error);
+      console.error("[THEME_TOGGLE_ERROR]", error);
+      setTheme(previousTheme ?? "light");
     }
   };
 
   // --- Nombre ---
-  const [name, setName] = useState(user.name || "");
   const [nameFeedback, setNameFeedback] = useState<FeedbackState>(null);
-  const [nameLoading, setNameLoading] = useState(false);
-
-  // --- Contraseña ---
-  const [passwordForm, setPasswordForm] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
+  const {
+    register: registerName,
+    handleSubmit: handleSubmitName,
+    formState: { errors: nameErrors, isSubmitting: nameSubmitting },
+  } = useForm<UpdateUsernameValues>({
+    resolver: zodResolver(updateUsernameSchema),
+    defaultValues: { name: user.name ?? "" },
   });
-  const [passwordFeedback, setPasswordFeedback] = useState<FeedbackState>(null);
-  const [passwordFieldErrors, setPasswordFieldErrors] = useState<Record<string, string>>({});
-  const [passwordLoading, setPasswordLoading] = useState(false);
+
+  const onSubmitName = async (data: UpdateUsernameValues) => {
+    setNameFeedback(null);
+    try {
+      const result = await updateUsernameAction(data);
+      if (result.success) {
+        setNameFeedback({ type: "success", message: "Nombre actualizado correctamente." });
+        mutate("session");
+      } else {
+        setNameFeedback({ type: "error", message: result.error ?? "Error desconocido." });
+      }
+    } catch {
+      setNameFeedback({ type: "error", message: "Ocurrió un error inesperado. Intenta nuevamente." });
+    }
+  };
 
   // --- Contraseña ---
+  const [passwordFeedback, setPasswordFeedback] = useState<FeedbackState>(null);
+  const {
+    register: registerPassword,
+    handleSubmit: handleSubmitPassword,
+    reset: resetPassword,
+    formState: { errors: passwordErrors, isSubmitting: passwordSubmitting },
+  } = useForm<ChangePasswordValues>({
+    resolver: zodResolver(changePasswordSchema),
+    defaultValues: { currentPassword: "", newPassword: "", confirmPassword: "" },
+  });
 
-  const handleSaveName = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setNameLoading(true);
-    setNameFeedback(null);
-    const result = await updateUsernameAction({ name });
-    if (result.success) {
-      setNameFeedback({ type: "success", message: "Nombre actualizado correctamente." });
-      mutate("session"); // actualiza el navbar en tiempo real
-    } else {
-      setNameFeedback({ type: "error", message: result.error ?? "Error desconocido." });
-    }
-    setNameLoading(false);
-  };
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPasswordForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    setPasswordFieldErrors((prev) => ({ ...prev, [e.target.name]: "" }));
-  };
-
-  const handleSavePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setPasswordLoading(true);
+  const onSubmitPassword = async (data: ChangePasswordValues) => {
     setPasswordFeedback(null);
-    setPasswordFieldErrors({});
-    const result = await changePasswordAction(passwordForm);
-    if (result.success) {
-      setPasswordFeedback({ type: "success", message: "Contraseña actualizada correctamente." });
-      setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
-    } else {
-      if (result.fieldErrors) {
-        const mapped: Record<string, string> = {};
-        for (const [key, val] of Object.entries(result.fieldErrors as Record<string, string[]>)) {
-          mapped[key] = val?.[0] ?? "";
-        }
-        setPasswordFieldErrors(mapped);
+    try {
+      const result = await changePasswordAction(data);
+      if (result.success) {
+        setPasswordFeedback({ type: "success", message: "Contraseña actualizada correctamente." });
+        resetPassword();
+      } else {
+        setPasswordFeedback({ type: "error", message: result.error ?? "Error desconocido." });
       }
-      setPasswordFeedback({ type: "error", message: result.error ?? "Error desconocido." });
+    } catch {
+      setPasswordFeedback({ type: "error", message: "Ocurrió un error inesperado. Intenta nuevamente." });
     }
-    setPasswordLoading(false);
   };
 
   return (
@@ -142,7 +136,7 @@ export default function SettingsScreen({ user, isOAuth }: SettingsScreenProps) {
                 </div>
                 <Separator />
 
-                <form onSubmit={handleSaveName} className="space-y-4 pt-2">
+                <form onSubmit={handleSubmitName(onSubmitName)} className="space-y-4 pt-2" noValidate>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Nombre */}
                     <div className="space-y-2">
@@ -151,15 +145,18 @@ export default function SettingsScreen({ user, isOAuth }: SettingsScreenProps) {
                       </Label>
                       <Input
                         id="name"
-                        name="name"
-                        value={name}
-                        onChange={(e) => {
-                          setName(e.target.value);
-                          setNameFeedback(null);
-                        }}
                         placeholder="Juan Pérez"
-                        className="bg-background focus-visible:ring-primary"
+                        {...registerName("name", {
+                          onChange: () => setNameFeedback(null),
+                        })}
+                        className={`bg-background focus-visible:ring-primary ${nameErrors.name ? "border-destructive focus-visible:ring-destructive" : ""}`}
                       />
+                      {nameErrors.name && (
+                        <p className="text-xs text-destructive flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3 shrink-0" />
+                          {nameErrors.name.message}
+                        </p>
+                      )}
                     </div>
 
                     {/* Email — siempre deshabilitado */}
@@ -170,9 +167,8 @@ export default function SettingsScreen({ user, isOAuth }: SettingsScreenProps) {
                       </Label>
                       <Input
                         id="email"
-                        name="email"
                         type="email"
-                        value={user.email || ""}
+                        value={user.email ?? ""}
                         readOnly
                         disabled
                         className="bg-muted/40 cursor-not-allowed"
@@ -180,7 +176,6 @@ export default function SettingsScreen({ user, isOAuth }: SettingsScreenProps) {
                     </div>
                   </div>
 
-                  {/* Feedback nombre */}
                   {nameFeedback && (
                     <div className={`flex items-center gap-2 text-sm rounded-lg px-3 py-2 ${nameFeedback.type === "success" ? "bg-green-500/10 text-green-600" : "bg-destructive/10 text-destructive"}`}>
                       {nameFeedback.type === "success"
@@ -192,10 +187,10 @@ export default function SettingsScreen({ user, isOAuth }: SettingsScreenProps) {
 
                   <Button
                     type="submit"
-                    disabled={nameLoading || name.trim() === (user.name || "")}
+                    disabled={nameSubmitting}
                     className="h-10 px-6 font-semibold rounded-xl"
                   >
-                    {nameLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Guardar nombre"}
+                    {nameSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Guardar nombre"}
                   </Button>
                 </form>
               </section>
@@ -216,7 +211,7 @@ export default function SettingsScreen({ user, isOAuth }: SettingsScreenProps) {
                     Tu cuenta está vinculada con Google. El inicio de sesión se gestiona a través de Google, por lo que no es posible cambiar la contraseña desde aquí.
                   </div>
                 ) : (
-                  <form onSubmit={handleSavePassword} className="space-y-4 pt-2">
+                  <form onSubmit={handleSubmitPassword(onSubmitPassword)} className="space-y-4 pt-2" noValidate>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* Contraseña actual */}
                       <div className="space-y-2 md:col-span-2">
@@ -225,15 +220,16 @@ export default function SettingsScreen({ user, isOAuth }: SettingsScreenProps) {
                         </Label>
                         <Input
                           id="currentPassword"
-                          name="currentPassword"
                           type="password"
-                          value={passwordForm.currentPassword}
-                          onChange={handlePasswordChange}
                           placeholder="••••••••"
-                          className="bg-background focus-visible:ring-primary max-w-md"
+                          {...registerPassword("currentPassword")}
+                          className={`bg-background focus-visible:ring-primary max-w-md ${passwordErrors.currentPassword ? "border-destructive focus-visible:ring-destructive" : ""}`}
                         />
-                        {passwordFieldErrors.currentPassword && (
-                          <p className="text-xs text-destructive">{passwordFieldErrors.currentPassword}</p>
+                        {passwordErrors.currentPassword && (
+                          <p className="text-xs text-destructive flex items-center gap-1">
+                            <AlertCircle className="w-3 h-3 shrink-0" />
+                            {passwordErrors.currentPassword.message}
+                          </p>
                         )}
                       </div>
 
@@ -244,15 +240,16 @@ export default function SettingsScreen({ user, isOAuth }: SettingsScreenProps) {
                         </Label>
                         <Input
                           id="newPassword"
-                          name="newPassword"
                           type="password"
-                          value={passwordForm.newPassword}
-                          onChange={handlePasswordChange}
                           placeholder="••••••••"
-                          className="bg-background focus-visible:ring-primary"
+                          {...registerPassword("newPassword")}
+                          className={`bg-background focus-visible:ring-primary ${passwordErrors.newPassword ? "border-destructive focus-visible:ring-destructive" : ""}`}
                         />
-                        {passwordFieldErrors.newPassword && (
-                          <p className="text-xs text-destructive">{passwordFieldErrors.newPassword}</p>
+                        {passwordErrors.newPassword && (
+                          <p className="text-xs text-destructive flex items-center gap-1">
+                            <AlertCircle className="w-3 h-3 shrink-0" />
+                            {passwordErrors.newPassword.message}
+                          </p>
                         )}
                       </div>
 
@@ -263,20 +260,20 @@ export default function SettingsScreen({ user, isOAuth }: SettingsScreenProps) {
                         </Label>
                         <Input
                           id="confirmPassword"
-                          name="confirmPassword"
                           type="password"
-                          value={passwordForm.confirmPassword}
-                          onChange={handlePasswordChange}
                           placeholder="••••••••"
-                          className="bg-background focus-visible:ring-primary"
+                          {...registerPassword("confirmPassword")}
+                          className={`bg-background focus-visible:ring-primary ${passwordErrors.confirmPassword ? "border-destructive focus-visible:ring-destructive" : ""}`}
                         />
-                        {passwordFieldErrors.confirmPassword && (
-                          <p className="text-xs text-destructive">{passwordFieldErrors.confirmPassword}</p>
+                        {passwordErrors.confirmPassword && (
+                          <p className="text-xs text-destructive flex items-center gap-1">
+                            <AlertCircle className="w-3 h-3 shrink-0" />
+                            {passwordErrors.confirmPassword.message}
+                          </p>
                         )}
                       </div>
                     </div>
 
-                    {/* Feedback contraseña */}
                     {passwordFeedback && (
                       <div className={`flex items-center gap-2 text-sm rounded-lg px-3 py-2 ${passwordFeedback.type === "success" ? "bg-green-500/10 text-green-600" : "bg-destructive/10 text-destructive"}`}>
                         {passwordFeedback.type === "success"
@@ -288,10 +285,10 @@ export default function SettingsScreen({ user, isOAuth }: SettingsScreenProps) {
 
                     <Button
                       type="submit"
-                      disabled={passwordLoading || !passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword}
+                      disabled={passwordSubmitting}
                       className="h-10 px-6 font-semibold rounded-xl"
                     >
-                      {passwordLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Cambiar contraseña"}
+                      {passwordSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Cambiar contraseña"}
                     </Button>
                   </form>
                 )}
@@ -308,25 +305,20 @@ export default function SettingsScreen({ user, isOAuth }: SettingsScreenProps) {
                 <Separator />
                 <div className="space-y-1 pt-2">
 
-                  {/* Switch Dark Mode — funcional */}
+                  {/* Switch Dark Mode */}
                   <div className="flex items-center justify-between p-4 rounded-xl hover:bg-muted/30 transition-colors">
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-muted rounded-lg">
-                        {theme === "dark" ? (
-                          <Moon className="w-4 h-4 text-primary" />
-                        ) : (
-                          <Sun className="w-4 h-4 text-orange-500" />
-                        )}
+                        {theme === "dark"
+                          ? <Moon className="w-4 h-4 text-primary" />
+                          : <Sun className="w-4 h-4 text-orange-500" />}
                       </div>
                       <div className="space-y-0.5">
                         <span className="text-sm font-bold text-foreground">Modo oscuro</span>
                         <p className="text-xs text-muted-foreground">Alterna entre tema claro y oscuro</p>
                       </div>
                     </div>
-                    <Switch
-                      checked={theme === "dark"}
-                      onCheckedChange={handleThemeChange}
-                    />
+                    <Switch checked={theme === "dark"} onCheckedChange={handleThemeChange} />
                   </div>
 
                   {/* Switch Notificaciones — próximamente */}

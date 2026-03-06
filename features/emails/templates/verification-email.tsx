@@ -30,7 +30,7 @@ const colors = {
   border: "#334155",
 };
 
-export const LevelyEmail = ({ name, url, isPasswordReset }: EmailProps) => (
+export const VerificationAndResetPasswordEmail = ({ name, url, isPasswordReset }: EmailProps) => (
   <Html>
     <Head>
       <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet" />

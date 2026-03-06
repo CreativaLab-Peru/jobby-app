@@ -3,8 +3,8 @@ import {prismaAdapter} from "better-auth/adapters/prisma";
 import {PrismaClient} from "@prisma/client";
 import {nextCookies} from "better-auth/next-js";
 import {render} from "@react-email/render";
-import {LevelyEmail} from "@/features/authentication/templates/verification-email-v2";
 import {resend} from "@/lib/resend";
+import {VerificationAndResetPasswordEmail} from "@/features/emails/templates/verification-email";
 
 const prisma = new PrismaClient();
 
@@ -21,7 +21,7 @@ export const auth = betterAuth({
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({user, url}) => {
       const html = await render(
-        LevelyEmail({name: user.name, url: url, isPasswordReset: false})
+        VerificationAndResetPasswordEmail({name: user.name, url: url, isPasswordReset: false})
       );
 
       await resend.emails.send({
@@ -37,7 +37,7 @@ export const auth = betterAuth({
   passwordReset: {
     sendResetPasswordEmail: async ({user, url}) => {
       const html = await render(
-        LevelyEmail({name: user.name, url: url, isPasswordReset: true})
+        VerificationAndResetPasswordEmail({name: user.name, url: url, isPasswordReset: true})
       );
 
       await resend.emails.send({

@@ -49,6 +49,7 @@ export const OPPORTUNITY_CONFIG: Record<string, string> = {
   SCHOLARSHIP: "Beca",
   EXCHANGE_PROGRAM: "Intercambio",
   EMPLOYMENT: "Empleo",
+  STARTUP: "Aceleradora",
 };
 
 export const SECTION_LABELS: Record<string, string> = {

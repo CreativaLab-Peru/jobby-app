@@ -1,7 +1,7 @@
 "use server";
 
 import { resend } from "@/lib/resend";
-import WelcomeMasterEmail from "@/features/authentication/templates/welcome-master";
+import WelcomeMasterEmail from "@/features/emails/templates/welcome-master";
 
 export async function sendWelcomeEmailResent(email: string, name: string) {
   try {

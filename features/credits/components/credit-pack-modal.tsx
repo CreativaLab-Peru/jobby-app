@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { CreditPackCard } from "./credit-pack-card" // Tu componente existente
+import { CreditPackCard } from "./credit-pack-card"
 import { Zap } from "lucide-react"
 import {useCreditModal} from "@/features/credits/hooks/use-credit-modal";
 import {CREDIT_PACKS} from "@/features/credits/consts";

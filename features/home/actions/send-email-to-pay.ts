@@ -8,6 +8,17 @@ import {
 
 export const sendEmailToPay = async (email: string) => {
   try {
+    const existingEmail = await prisma.user.findFirst({
+      where: {
+        email,
+      }
+    })
+    if (existingEmail) {
+      return {
+        success: false,
+        error: 'Ya existe un usuario con este correo.',
+      }
+    }
     let user: TemporalUser | null;
     user = await prisma.temporalUser.findFirst({
       where: {

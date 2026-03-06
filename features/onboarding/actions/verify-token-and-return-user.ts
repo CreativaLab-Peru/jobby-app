@@ -11,8 +11,6 @@ export async function verifyTokenAndReturnUser(token: string | undefined): Promi
     }
 
     const hashedToken = hashMagicLinkToken(token);
-    console.info("[token]:", token);
-    console.info("[hashedToken]:", hashedToken);
     const magicLink = await prisma.magicLinkToken.findFirst({
       where: {
         tokenHash: hashedToken,
@@ -36,6 +34,14 @@ export async function verifyTokenAndReturnUser(token: string | undefined): Promi
       console.info("[USER_NOT_FOUND_FOR_MAGIC_LINK]");
       return null;
     }
+
+    // update to verify email
+    await prisma.user.update({
+      where: {id: user.id},
+      data: {
+        emailVerified: true,
+      },
+    });
 
     return user;
   } catch (error) {

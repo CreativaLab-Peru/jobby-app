@@ -4,9 +4,9 @@ import {prisma} from "@/lib/prisma";
 
 import {Preference} from "mercadopago";
 import {PreferenceCreateData} from "mercadopago/dist/clients/preference/create/types";
-import {PAYMENT_PRO_ID} from "@/features/billing/consts/payment-plant-ids";
 import {BASE_URL, mercadopago} from "@/features/billing/domain/mercado-preference";
 
+const PREFERENCE_PLAN = "starter"
 export const createPreferenceForNewUser = async (id: string) => {
   try {
     const currentUser = await prisma.temporalUser.findFirst({
@@ -23,7 +23,7 @@ export const createPreferenceForNewUser = async (id: string) => {
 
     const directPayment = await prisma.paymentPlan.findFirst({
       where: {
-        id: PAYMENT_PRO_ID,
+        slug: PREFERENCE_PLAN
       },
     })
     if (!directPayment) {
@@ -40,7 +40,7 @@ export const createPreferenceForNewUser = async (id: string) => {
             id: directPayment.id,
             unit_price: Number(directPayment.priceCents) || 9.90,
             quantity: 1,
-            title: 'Levely pro',
+            title: directPayment.name,
             currency_id: 'PEN',
           },
         ],

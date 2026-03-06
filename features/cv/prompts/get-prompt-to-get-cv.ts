@@ -23,7 +23,7 @@ ${cvText}
 You must return **only one valid JSON object** following this structure:
 
 {
-  "opportunityType": "one of: INTERNSHIP | SCHOLARSHIP | EXCHANGE_PROGRAM | EMPLOYMENT",
+  "opportunityType": "one of: INTERNSHIP | SCHOLARSHIP | EXCHANGE_PROGRAM | EMPLOYMENT | STARTUP",
   "cvType": "one of: TECHNOLOGY_ENGINEERING | DESIGN_CREATIVITY | MARKETING_STRATEGY | MANAGEMENT_BUSINESS | FINANCE_PROJECTS | SOCIAL_MEDIA | EDUCATION | SCIENCE",
   "sections": [
     {

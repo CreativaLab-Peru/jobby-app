@@ -10,8 +10,6 @@ export async function completeOnboardingAction(id: string, body: TalentOnboardin
   const data = body;
 
   try {
-    const codeSixDigits = generateNumericCode();
-
     const user = await prisma.user.findUnique({
       where: { id },
     });

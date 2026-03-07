@@ -31,7 +31,7 @@ import {
   Coins,
   Wallet,
   Mic,
-  Shield,
+  Shield, Receipt,
 } from "lucide-react";
 
 const mainNavItems = [
@@ -40,6 +40,8 @@ const mainNavItems = [
   { title: "Mis Evaluaciones", href: "/evaluations", icon: MessageSquare },
   { title: "Oportunidades", href: "/opportunities", icon: Briefcase },
   { title: "Simulador de entrevistas", href: "/interviews", icon: Sparkles },
+  { title: "Créditos", href: "/credits", icon: CreditCard },
+  { title: "Transacciones", href: "/transactions", icon: Receipt },
 ];
 
 const adminNavItems = [
@@ -59,7 +61,6 @@ const adminNavItems = [
 const communityItems = [{ title: "Networking", href: "/networking", icon: Users }];
 
 const bottomItems = [
-  { title: "Créditos", href: "/credits", icon: CreditCard },
   { title: "Configuración", href: "/settings", icon: Settings },
 ];
 

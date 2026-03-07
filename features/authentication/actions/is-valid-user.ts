@@ -8,7 +8,7 @@ import {generateNumericCode} from "@/utils/digicts";
 export const isValidUser = async () => {
   try {
     const session = await getSession();
-    if (!session || !session.user) {
+    if (!session.success) {
       return {
         error: "No authenticated user found.",
         success: false,

@@ -2,16 +2,11 @@
 
 import {prisma} from "@/lib/prisma";
 import {TemporalUser} from "@prisma/client";
-import {
-  createPreferenceForNewUser
-} from "@/features/billing/actions/create-preference-for-new-user";
 
 export const sendEmailToPay = async (email: string) => {
   try {
     const existingEmail = await prisma.user.findFirst({
-      where: {
-        email,
-      }
+      where: { email }
     })
     if (existingEmail) {
       return {
@@ -19,31 +14,20 @@ export const sendEmailToPay = async (email: string) => {
         error: 'Ya existe un usuario con este correo.',
       }
     }
+
     let user: TemporalUser | null;
     user = await prisma.temporalUser.findFirst({
-      where: {
-        email,
-      }
+      where: { email }
     })
     if (!user) {
       user = await prisma.temporalUser.create({
-        data: {
-          email,
-        }
+        data: { email }
       })
-    }
-
-    const response = await createPreferenceForNewUser(user.id);
-    if (!response.success) {
-      return {
-        success: false,
-        error: 'Error creating payment preference',
-      }
     }
 
     return {
       success: true,
-      redirect: response.redirect,
+      temporalUserId: user.id,
     }
   } catch (error) {
     console.error("[ERROR_SEND_EMAIL_TO_PAY]", error);

@@ -9,6 +9,7 @@ import {TopMatchesList} from "@/features/dashboard/components/top-matches-list";
 import {ResourcesCard} from "@/features/dashboard/components/resources-card";
 import {RecommendationsList} from "@/features/dashboard/components/recommendations-list";
 import {useMemo} from "react";
+import { usePaymentSuccess } from "@/hooks/use-payment-success";
 
 interface DashboardScreenProps {
   score: number;
@@ -27,6 +28,7 @@ export default function DashboardScreen({
                                           subscription,
                                           limits,
                                         }: DashboardScreenProps) {
+  usePaymentSuccess();
 
   const opportunities = stats?.topOpportunities || [];
 

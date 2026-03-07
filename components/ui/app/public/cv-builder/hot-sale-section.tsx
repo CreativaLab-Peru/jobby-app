@@ -1,9 +1,22 @@
 "use client";
 
 import {Button} from "@/components/ui/button";
-import {Check, ArrowRight, Sparkles} from "lucide-react";
-import {useState} from "react";
+import {Check, ArrowRight, Sparkles, UserCheck, UserPlus} from "lucide-react";
+import {useState, useTransition} from "react";
 import {EmailModal} from "@/components/email-modal";
+import { PaymentMethodModal, PaymentMethod } from "@/features/credits/components/payment-method-modal";
+import { createPreferenceForNewUser } from "@/features/billing/actions/create-preference-for-new-user";
+import { createCheckoutForNewUserPaddle } from "@/features/billing/actions/create-checkout-for-new-user-paddle";
+import { createPreferenceForAuthenticatedUser } from "@/features/billing/actions/create-preference-for-authenticated-user";
+import { createCheckoutForAuthenticatedUserPaddle } from "@/features/billing/actions/create-checkout-for-authenticated-user-paddle";
+import { usePaddle } from "@/features/billing/components/paddle-provider";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 const features = [
   "Análisis personalizado de tu perfil profesional",
@@ -15,8 +28,75 @@ const features = [
   "3 créditos IA",
 ];
 
-export function HotSaleSection() {
+interface HotSaleSectionProps {
+  sessionUser?: { id: string; email: string; name: string; image: string | null } | null;
+}
+
+export function HotSaleSection({ sessionUser = null }: HotSaleSectionProps) {
   const [openModal, setOpenModal] = useState(false);
+  const [temporalUserId, setTemporalUserId] = useState<string | null>(null);
+  const [showMethodModal, setShowMethodModal] = useState(false);
+  const [showAccountChoice, setShowAccountChoice] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!sessionUser);
+  const [sessionEmail, setSessionEmail] = useState<string | null>(sessionUser?.email ?? null);
+  const [checkoutEmail, setCheckoutEmail] = useState<string | null>(sessionUser?.email ?? null);
+  const [isPending, startTransition] = useTransition();
+  const { openCheckout } = usePaddle();
+
+  const handleCtaClick = () => {
+    if (isAuthenticated) {
+      setShowAccountChoice(true);
+    } else {
+      setOpenModal(true);
+    }
+  };
+
+  const handleEmailSuccess = (id: string, email: string) => {
+    setTemporalUserId(id);
+    setCheckoutEmail(email);
+    setIsAuthenticated(false);
+    setShowMethodModal(true);
+  };
+
+  const handleChooseCurrentAccount = () => {
+    setShowAccountChoice(false);
+    setShowMethodModal(true);
+  };
+
+  const handleChooseNewAccount = () => {
+    setShowAccountChoice(false);
+    setIsAuthenticated(false);
+    setOpenModal(true);
+  };
+
+  const handleMethodSelected = (method: PaymentMethod) => {
+    setShowMethodModal(false);
+    startTransition(async () => {
+      if (isAuthenticated) {
+        // Usuario con sesión activa — usar flujo autenticado
+        if (method === PaymentMethod.PADDLE) {
+          const result = await createCheckoutForAuthenticatedUserPaddle("STARTER");
+          if (result.success) openCheckout(result.transactionId, sessionEmail ?? undefined);
+        } else {
+          const result = await createPreferenceForAuthenticatedUser("STARTER");
+          if (result.success) window.location.href = result.redirect;
+        }
+      } else {
+        // Usuario nuevo — usar flujo con temporalUserId
+        if (!temporalUserId) return;
+        if (method === PaymentMethod.PADDLE) {
+          const result = await createCheckoutForNewUserPaddle(temporalUserId);
+          if (result.success) {
+            sessionStorage.setItem("paddle_new_user_checkout", "1");
+            openCheckout(result.transactionId, checkoutEmail ?? undefined);
+          }
+        } else {
+          const result = await createPreferenceForNewUser(temporalUserId);
+          if (result.success) window.location.href = result.redirect;
+        }
+      }
+    });
+  };
   return (
     <>
       <section
@@ -93,7 +173,7 @@ export function HotSaleSection() {
                     <Button variant="lime"
                             size="xl"
                             className="cursor-pointer w-full text-lg py-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
-                            onClick={() => setOpenModal(true)}
+                            onClick={handleCtaClick}
                     >
                       Analizar mi CV
                       <ArrowRight className="w-5 h-5 ml-2"/>
@@ -112,7 +192,50 @@ export function HotSaleSection() {
       <EmailModal
         isOpen={openModal}
         closeModal={()=>setOpenModal(false)}
+        onSuccess={handleEmailSuccess}
       />
+      <PaymentMethodModal
+        isOpen={showMethodModal}
+        onClose={() => setShowMethodModal(false)}
+        onSelectMethod={handleMethodSelected}
+        packName="Levely Starter"
+        price={9.90}
+      />
+      <Dialog open={showAccountChoice} onOpenChange={setShowAccountChoice}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Ya tienes una cuenta activa</DialogTitle>
+            <DialogDescription className="text-sm">
+              Estás iniciado sesión como{" "}
+              <span className="font-semibold text-foreground">{sessionEmail}</span>.
+              ¿Deseas comprar para esta cuenta o crear una nueva?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-3 mt-2">
+            <Button
+              className="w-full justify-start gap-3 h-14 rounded-xl"
+              onClick={handleChooseCurrentAccount}
+            >
+              <UserCheck className="w-5 h-5 shrink-0" />
+              <div className="text-left">
+                <p className="font-bold text-sm">Usar mi cuenta actual</p>
+                <p className="text-xs opacity-75">{sessionEmail}</p>
+              </div>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-3 h-14 rounded-xl"
+              onClick={handleChooseNewAccount}
+            >
+              <UserPlus className="w-5 h-5 shrink-0" />
+              <div className="text-left">
+                <p className="font-bold text-sm">Crear cuenta nueva</p>
+                <p className="text-xs text-muted-foreground">Ingresa otro correo electrónico</p>
+              </div>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

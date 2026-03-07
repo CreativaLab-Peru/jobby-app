@@ -2,10 +2,11 @@
 
 import { createContext, useContext, useEffect, useState } from "react"
 import { type Paddle, initializePaddle, type Environments } from "@paddle/paddle-js"
+import { authClient } from "@/lib/auth-client"
 
 interface PaddleContextValue {
   paddle: Paddle | undefined
-  openCheckout: (transactionId: string) => void
+  openCheckout: (transactionId: string, customerEmail?: string) => void
 }
 
 const PaddleContext = createContext<PaddleContextValue>({
@@ -25,9 +26,24 @@ export function PaddleProvider({ children }: { children: React.ReactNode }) {
     initializePaddle({
       token,
       environment: (isLiveToken ? "production" : "sandbox") as Environments,
-      eventCallback(event) {
+      async eventCallback(event) {
         if (event.name === "checkout.completed") {
-          window.location.href = `${window.location.origin}/dashboard?payment=success`
+          const isNewUserCheckout = sessionStorage.getItem("paddle_new_user_checkout") === "1";
+          sessionStorage.removeItem("paddle_new_user_checkout");
+
+          if (isNewUserCheckout) {
+            // Pago de cuenta nueva — cerrar sesión actual (si la hay) y pedir login
+            await authClient.signOut();
+            window.location.href = `${window.location.origin}/login?source=new_payment`;
+            return;
+          }
+
+          const { data: session } = await authClient.getSession()
+          if (session) {
+            window.location.href = `${window.location.origin}/dashboard?payment=success`
+          } else {
+            window.location.href = `${window.location.origin}/login?source=new_payment`
+          }
         }
       },
     }).then((paddleInstance) => {
@@ -35,8 +51,11 @@ export function PaddleProvider({ children }: { children: React.ReactNode }) {
     })
   }, [])
 
-  const openCheckout = (transactionId: string) => {
-    paddle?.Checkout.open({ transactionId })
+  const openCheckout = (transactionId: string, customerEmail?: string) => {
+    paddle?.Checkout.open({
+      transactionId,
+      ...(customerEmail ? { customer: { email: customerEmail } } : {}),
+    })
   }
 
   return (

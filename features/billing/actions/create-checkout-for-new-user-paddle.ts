@@ -49,7 +49,7 @@ export const createCheckoutForNewUserPaddle = async (temporalUserId: string) => 
       return { success: false, error: "No se pudo crear la transacción en Paddle" };
     }
 
-    return { success: true, transactionId: transaction.id };
+    return { success: true, transactionId: transaction.id, email: temporalUser.email };
   } catch (error) {
     console.error("[ERROR_CREATE_CHECKOUT_PADDLE_NEW_USER]", error);
     return { success: false, error: "Ha ocurrido un error al procesar tu solicitud" };

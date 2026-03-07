@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 export const getUser = async () => {
   try {
     const session = await getSession()
-    if (!session || !session.user) {
+    if (!session.success) {
       return null;
     }
     const user = await prisma.user.findUnique({

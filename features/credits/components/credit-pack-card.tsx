@@ -72,7 +72,7 @@ export function CreditPackCard({ pack, onPurchase, isAuthenticated = true }: Pac
               : ""}`}
           onClick={() => {
             if (!isAuthenticated) {
-              onPurchase(pack.id, PaymentMethod.MERCADOPAGO); // método ignorado, solo dispara el auth modal
+              onPurchase(pack.id, PaymentMethod.MERCADOPAGO);
               return;
             }
             setIsMethodModalOpen(true);

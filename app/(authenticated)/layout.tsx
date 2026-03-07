@@ -5,6 +5,7 @@ import {getCurrentCreditLimits} from "@/features/credits/actions/get-current-cre
 import {SidebarProvider} from "@/components/ui/sidebar";
 import AppSidebar from "@/components/app-sidebar";
 import {ThemeSync} from "@/components/theme-sync";
+import {PaddleProvider} from "@/features/billing/components/paddle-provider";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,7 @@ export default async function RootLayout({
   return (
   <SidebarProvider>
     <ThemeSync />
+    <PaddleProvider>
     {/* Sidebar lateral */}
     <AppSidebar/>
 
@@ -35,6 +37,7 @@ export default async function RootLayout({
         </div>
       </div>
     </main>
+    </PaddleProvider>
     {/*<TermsModal isOpen={!isTermsAccepted} userId={user?.id}/>*/}
   </SidebarProvider>
   );

@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { useAnalysisStore } from "@/hooks/use-analysis-store";
 import { Badge } from "@/components/ui/badge";
 import { useCreditModal } from "@/features/credits/hooks/use-credit-modal";
-import { CreditPackModal } from "@/features/credits/components/credit-pack-modal";
 
 export default function AnalysisPage() {
   const { fileName, userId } = useAnalysisStore();
@@ -209,7 +208,6 @@ export default function AnalysisPage() {
           )}
         </AnimatePresence>
       </div>
-      <CreditPackModal />
     </>
   );
 }

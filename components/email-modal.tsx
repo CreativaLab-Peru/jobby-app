@@ -18,9 +18,10 @@ const emailSchema = z.string()
 interface EmailModalProps {
   isOpen: boolean;
   closeModal: () => void;
+  onSuccess?: (temporalUserId: string, email: string) => void;
 }
 
-export function EmailModal({ isOpen, closeModal }: EmailModalProps) {
+export function EmailModal({ isOpen, closeModal, onSuccess }: EmailModalProps) {
   const [isPending, startTransition] = useTransition();
   const [emailValue, setEmailValue] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -51,9 +52,8 @@ export function EmailModal({ isOpen, closeModal }: EmailModalProps) {
           return;
         }
 
-        if (response.redirect) {
-          window.location.href = response.redirect;
-        }
+        closeModal();
+        if (onSuccess) onSuccess(response.temporalUserId, result.data.trim());
       } catch (error) {
         setErrorMessage("Error de conexión. Revisa tu internet.");
       }

@@ -8,6 +8,9 @@ import {
   createPreferenceForAuthenticatedUser
 } from "@/features/billing/actions/create-preference-for-authenticated-user";
 import {CREDIT_PACKS} from "@/features/credits/consts";
+import { PaymentMethod } from "@/features/credits/components/payment-method-modal";
+import { createCheckoutForAuthenticatedUserPaddle } from "@/features/billing/actions/create-checkout-for-authenticated-user-paddle";
+import { usePaddle } from "@/features/billing/components/paddle-provider";
 
 interface CreditLimits {
   manageCvsLimit: number;
@@ -21,18 +24,28 @@ interface MyCreditsScreenProps {
 
 export function MyCreditsScreen({ currentCredit }: MyCreditsScreenProps) {
 
+  const { openCheckout } = usePaddle();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState(null);
 
-  const handlePurchase = (packId: string) => {
+  const handlePurchase = (packId: string, method: PaymentMethod) => {
     if (isPending) return;
 
     startTransition(async () => {
-      const result = await createPreferenceForAuthenticatedUser(packId);
-      if (result.success) {
-        window.location.href = result.redirect;
+      if (method === PaymentMethod.PADDLE) {
+        const result = await createCheckoutForAuthenticatedUserPaddle(packId);
+        if (result.success) {
+          openCheckout(result.transactionId);
+        } else {
+          setError(result.error);
+        }
       } else {
-        setError(result.error);
+        const result = await createPreferenceForAuthenticatedUser(packId);
+        if (result.success) {
+          window.location.href = result.redirect;
+        } else {
+          setError(result.error);
+        }
       }
     });
   }
@@ -55,7 +68,7 @@ export function MyCreditsScreen({ currentCredit }: MyCreditsScreenProps) {
           <CreditPackCard
             key={pack.id}
             pack={pack}
-            onPurchase={() => handlePurchase(pack.id)}
+            onPurchase={(id, method) => handlePurchase(id, method)}
           />
         ))}
       </div>

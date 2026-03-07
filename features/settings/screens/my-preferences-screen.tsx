@@ -258,30 +258,30 @@ export function MyPreferencesScreen({ preference }: MyPreferencesScreenProps) {
           </section>
 
           {/* ── Expectativa salarial ── */}
-          <section className="space-y-4">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Expectativa salarial</h2>
-            <Separator />
+            {/*<section className="space-y-4">*/}
+            {/*  <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Expectativa salarial</h2>*/}
+            {/*  <Separator />*/}
 
-            <div className="grid grid-cols-3 gap-3">
-              <div className="space-y-2">
-                <Label className="text-xs font-semibold text-muted-foreground">Mínimo</Label>
-                <Input type="number" value={minSalary} onChange={(e) => setMinSalary(e.target.value)} placeholder="0" className="h-9 text-sm" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-xs font-semibold text-muted-foreground">Máximo</Label>
-                <Input type="number" value={maxSalary} onChange={(e) => setMaxSalary(e.target.value)} placeholder="0" className="h-9 text-sm" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-xs font-semibold text-muted-foreground">Moneda</Label>
-                <Select value={currency} onValueChange={setCurrency}>
-                  <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {CURRENCIES.map((c) => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </section>
+            {/*  <div className="grid grid-cols-3 gap-3">*/}
+            {/*    <div className="space-y-2">*/}
+            {/*      <Label className="text-xs font-semibold text-muted-foreground">Mínimo</Label>*/}
+            {/*      <Input type="number" value={minSalary} onChange={(e) => setMinSalary(e.target.value)} placeholder="0" className="h-9 text-sm" />*/}
+            {/*    </div>*/}
+            {/*    <div className="space-y-2">*/}
+            {/*      <Label className="text-xs font-semibold text-muted-foreground">Máximo</Label>*/}
+            {/*      <Input type="number" value={maxSalary} onChange={(e) => setMaxSalary(e.target.value)} placeholder="0" className="h-9 text-sm" />*/}
+            {/*    </div>*/}
+            {/*    <div className="space-y-2">*/}
+            {/*      <Label className="text-xs font-semibold text-muted-foreground">Moneda</Label>*/}
+            {/*      <Select value={currency} onValueChange={setCurrency}>*/}
+            {/*        <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>*/}
+            {/*        <SelectContent>*/}
+            {/*          {CURRENCIES.map((c) => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}*/}
+            {/*        </SelectContent>*/}
+            {/*      </Select>*/}
+            {/*    </div>*/}
+            {/*  </div>*/}
+            {/*</section>*/}
 
           {/* ── Feedback + Save ── */}
           {feedback && (

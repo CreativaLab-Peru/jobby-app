@@ -86,7 +86,7 @@ export function MyTransactionsScreen({
       <div className="mx-auto max-w-7xl">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
           <PageHeader
-            title="Mis Transacciones"
+            title="Mis Transacciones de credito"
             description="Revisa el detalle de tus movimientos de créditos: recargas, consumos y reembolsos."
           />
 

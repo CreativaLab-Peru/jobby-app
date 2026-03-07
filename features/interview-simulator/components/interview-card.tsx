@@ -1,15 +1,16 @@
 "use client";
 
-import { Mic2, Calendar, Target, Award, Zap, ChevronRight, BarChart3 } from "lucide-react";
+import { Calendar, Target, Award, Zap, BarChart3 } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress"; // Asumiendo que tienes shadcn progress
+import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/utils/format-date";
+import {InterviewWithRelations} from "@/features/interview-simulator/actions/get-interviews";
 
 interface Props {
-  session: any; // Tipar con InterviewSession de Prisma + relations
+  session: InterviewWithRelations;
 }
 
 export default function InterviewCard({ session }: Props) {

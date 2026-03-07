@@ -9,15 +9,16 @@ import { SearchableSelect } from "@/components/shared/searchable-select";
 import { LoadMoreButton } from "@/components/shared/load-more-button";
 import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
 import InterviewCard from "../components/interview-card"; // Lo crearemos luego
-import { getInterviews } from "../actions/get-interviews";
+import {getInterviews, InterviewWithRelations} from "../actions/get-interviews";
 import {useVapi} from "@/features/interview-simulator/hooks/use-vapi";
 import {NewInterviewModal} from "@/features/interview-simulator/components/new-interview-modal";
+import {OpportunityWithCV} from "@/features/opportunities/get-opportunities";
 
 interface Props {
-  initialData: any[];
+  initialData: InterviewWithRelations[];
   initialTotal: number;
   initialHasMore: boolean;
-  opportunities: any[];
+  opportunities: OpportunityWithCV[];
 }
 
 export default function InterviewsScreen({
@@ -31,7 +32,6 @@ export default function InterviewsScreen({
   const [hasMore, setHasMore] = useState(initialHasMore);
   const [filterOppId, setFilterOppId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { startCall, isConnecting } = useVapi();
@@ -68,19 +68,12 @@ export default function InterviewsScreen({
   };
 
   const handleStartInterview = async (opp: any) => {
-    const context = {
-      role: opp.title,
-      company: opp.company || "Empresa",
-      candidateName: "Usuario", // Debería venir de tu sesión de Clerk/BetterAuth
-      technicalTopics: opp.requirements.split(',').slice(0, 3) // Ejemplo de split rápido
-    };
-
     setIsModalOpen(false); // Cerramos el modal
-    await startCall(context); // El hook maneja el estado isConnected y abre el audio
+    await startCall(opp.id, opp.cvId); // El hook maneja el estado isConnected y abre el audio
   };
 
   const actions = (
-    <Button onClick={() => {/* Aquí abriremos el modal en el siguiente paso */}}>
+    <Button onClick={() => setIsModalOpen(true)} disabled={isConnecting}>
       <Plus className="mr-2 h-4 w-4" /> Nueva Simulación
     </Button>
   );

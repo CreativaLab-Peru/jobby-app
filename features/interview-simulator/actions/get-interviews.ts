@@ -2,6 +2,16 @@
 
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import { prisma } from "@/lib/prisma";
+import {InterviewSession, Opportunity} from "@prisma/client";
+
+export type InterviewWithRelations = InterviewSession & {
+  opportunity: Opportunity & {
+    match: number;
+  }
+  cv: {
+    title: string | null;
+  };
+};
 
 export interface PaginationParams {
   skip?: number;
@@ -33,8 +43,11 @@ export const getInterviews = async (params?: PaginationParams) => {
       prisma.interviewSession.count({ where: whereClause })
     ]);
 
+    // Serialización segura para Next.js Server Components
+    const formattedData = JSON.parse(JSON.stringify(data)) as InterviewWithRelations[];
+
     return {
-      interviews: JSON.parse(JSON.stringify(data)),
+      interviews: formattedData,
       hasMore: skip + take < count,
       totalCount: count
     };

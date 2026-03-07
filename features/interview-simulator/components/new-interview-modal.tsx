@@ -1,16 +1,17 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Mic2, Target, Building2, Rocket, AlertCircle } from "lucide-react";
+import { X, Rocket, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import {cn} from "@/lib/utils";
+import {OpportunityWithCV} from "@/features/opportunities/get-opportunities";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  opportunities: any[];
-  onStart: (opp: any) => void;
+  opportunities: OpportunityWithCV[];
+  onStart: (opp: OpportunityWithCV) => void;
   isConnecting: boolean;
 }
 

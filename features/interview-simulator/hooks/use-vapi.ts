@@ -1,5 +1,9 @@
 import Vapi from "@vapi-ai/web";
 import { useEffect, useState, useCallback } from "react";
+import {
+  prepareInterviewSession
+} from "@/features/interview-simulator/actions/prepare-interview-session";
+import {linkVapiCallId} from "@/features/interview-simulator/actions/link-vapi-call-id-action";
 
 // 1. Interfaz para el contexto dinámico
 export interface InterviewContext {
@@ -59,7 +63,7 @@ export const useVapi = () => {
   }, []);
 
   // 2. startCall ahora acepta el contexto
-  const startCall = useCallback(async (context: InterviewContext) => {
+  const startCall = useCallback(async (opportunityId: string, cvId: string) => {
     if (!vapi) return;
 
     setIsConnecting(true);
@@ -68,7 +72,10 @@ export const useVapi = () => {
     const ASSISTANT_ID = "54fc6087-27cf-42c7-933f-4fc410535174";
 
     try {
-      await vapi.start(ASSISTANT_ID, {
+      // 1. LLAMADA AL SERVER: Crear sesión y obtener contexto
+      const context = await prepareInterviewSession(opportunityId, cvId);
+
+      const call = await vapi.start(ASSISTANT_ID, {
         // 3. Sobrescribimos la configuración para esta llamada específica
         variableValues: {
           // Si usas {{role}} en el prompt del dashboard, esto lo rellena
@@ -97,10 +104,10 @@ export const useVapi = () => {
         // Opcional: Personalizar el primer mensaje dinámicamente
         firstMessage: `Hola ${context.candidateName}, gracias por venir. Soy tu entrevistador de ${context.company}. Comencemos hablando sobre tu experiencia en ${context.role}.`
       });
-
-      // 3. (Opcional) Guardar el vapiCallId en nuestra DB vía Server Action
-      // Esto se puede hacer asíncronamente
-      await updateVapiCallIdAction(context.sessionId, call.id);
+      // 3. LLAMADA AL SERVER: Vincular el ID que nos dio Vapi
+      if (call?.id) {
+        await linkVapiCallId(context.sessionId, call.id);
+      }
     } catch (error) {
       console.error("Falló el inicio de la llamada:", error);
       setIsConnecting(false);

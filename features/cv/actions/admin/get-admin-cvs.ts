@@ -23,6 +23,11 @@ export type AdminCvListResult =
         cvs: AdminCvWithRelations[];
         hasMore: boolean;
         totalCount: number;
+        stats: {
+          total: number;
+          active: number;
+          deleted: number;
+        };
       };
     }
   | { success: false, error: string };
@@ -33,6 +38,7 @@ export interface GetAdminCvsOptions {
   cvType?: string | null;
   opportunityType?: string | null;
   status?: "active" | "deleted" | null;
+  hasEvaluation?: "yes" | "no" | null;
   dateFrom?: string | null;
   dateTo?: string | null;
   sortBy?: "createdAt" | "updatedAt" | "title";
@@ -75,6 +81,13 @@ export const getAdminCvs = async (
       where.opportunityType = options.opportunityType as never;
     }
 
+    // hasEvaluation filter
+    if (options?.hasEvaluation === "yes") {
+      where.evaluations = { some: {} };
+    } else if (options?.hasEvaluation === "no") {
+      where.evaluations = { none: {} };
+    }
+
     if (options?.dateFrom || options?.dateTo) {
       where.createdAt = {};
       if (options?.dateFrom) {
@@ -90,7 +103,7 @@ export const getAdminCvs = async (
     const sortBy = options?.sortBy || "createdAt";
     const sortOrder = options?.sortOrder || "desc";
 
-    const [cvs, totalCount] = await Promise.all([
+    const [cvs, totalCount, activeCount, deletedCount] = await Promise.all([
       prisma.cv.findMany({
         where,
         skip,
@@ -109,6 +122,8 @@ export const getAdminCvs = async (
         orderBy: { [sortBy]: sortOrder },
       }),
       prisma.cv.count({ where }),
+      prisma.cv.count({ where: { deletedAt: null } }),
+      prisma.cv.count({ where: { deletedAt: { not: null } } }),
     ]);
 
     return {
@@ -117,6 +132,11 @@ export const getAdminCvs = async (
         cvs,
         hasMore: skip + take < totalCount,
         totalCount,
+        stats: {
+          total: activeCount + deletedCount,
+          active: activeCount,
+          deleted: deletedCount,
+        },
       },
     };
   } catch (error) {

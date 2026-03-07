@@ -17,6 +17,15 @@ export type AdminBalanceListResult =
         balances: AdminBalanceItem[];
         hasMore: boolean;
         totalCount: number;
+        stats: {
+          total: number;
+          aiActions: number;
+          uploads: number;
+          manageCvs: number;
+          searchOpportunities: number;
+          zeroBalance: number;
+          totalCredits: number;
+        };
       };
     }
   | { success: false; error: string };
@@ -24,6 +33,10 @@ export type AdminBalanceListResult =
 export interface GetAdminBalancesOptions {
   query?: string;
   type?: CreditBalanceType | null;
+  balanceStatus?: "zero" | "positive" | null;
+  hasTransactions?: "yes" | "no" | null;
+  dateFrom?: string | null;
+  dateTo?: string | null;
   amountMin?: number | null;
   amountMax?: number | null;
   sortBy?: "updatedAt" | "amount" | "type";
@@ -63,10 +76,37 @@ export const getAdminBalances = async (
       where.amount = { ...(where.amount as Prisma.IntFilter || {}), lte: options.amountMax };
     }
 
+    // Balance status filter
+    if (options?.balanceStatus === "zero") {
+      where.amount = { ...(where.amount as Prisma.IntFilter || {}), equals: 0 };
+    } else if (options?.balanceStatus === "positive") {
+      where.amount = { ...(where.amount as Prisma.IntFilter || {}), gt: 0 };
+    }
+
+    // Has transactions filter
+    if (options?.hasTransactions === "yes") {
+      where.creditTransaction = { some: {} };
+    } else if (options?.hasTransactions === "no") {
+      where.creditTransaction = { none: {} };
+    }
+
+    // Date range
+    if (options?.dateFrom || options?.dateTo) {
+      where.updatedAt = {};
+      if (options?.dateFrom) {
+        (where.updatedAt as Prisma.DateTimeFilter).gte = new Date(options.dateFrom);
+      }
+      if (options?.dateTo) {
+        const endDate = new Date(options.dateTo);
+        endDate.setHours(23, 59, 59, 999);
+        (where.updatedAt as Prisma.DateTimeFilter).lte = endDate;
+      }
+    }
+
     const sortBy = options?.sortBy || "updatedAt";
     const sortOrder = options?.sortOrder || "desc";
 
-    const [balances, totalCount] = await Promise.all([
+    const [balances, totalCount, aiActionsCount, uploadsCount, manageCvsCount, searchOppCount, zeroBalanceCount, creditsAgg] = await Promise.all([
       prisma.userCreditBalance.findMany({
         where,
         skip,
@@ -78,7 +118,15 @@ export const getAdminBalances = async (
         orderBy: { [sortBy]: sortOrder },
       }),
       prisma.userCreditBalance.count({ where }),
+      prisma.userCreditBalance.count({ where: { type: "AI_ACTIONS" } }),
+      prisma.userCreditBalance.count({ where: { type: "UPLOADS" } }),
+      prisma.userCreditBalance.count({ where: { type: "MANAGE_CVS" } }),
+      prisma.userCreditBalance.count({ where: { type: "SEARCH_OPPORTUNITIES" } }),
+      prisma.userCreditBalance.count({ where: { amount: 0 } }),
+      prisma.userCreditBalance.aggregate({ _sum: { amount: true } }),
     ]);
+
+    const total = aiActionsCount + uploadsCount + manageCvsCount + searchOppCount;
 
     return {
       success: true,
@@ -86,6 +134,15 @@ export const getAdminBalances = async (
         balances: balances as AdminBalanceItem[],
         hasMore: skip + take < totalCount,
         totalCount,
+        stats: {
+          total,
+          aiActions: aiActionsCount,
+          uploads: uploadsCount,
+          manageCvs: manageCvsCount,
+          searchOpportunities: searchOppCount,
+          zeroBalance: zeroBalanceCount,
+          totalCredits: creditsAgg._sum.amount ?? 0,
+        },
       },
     };
   } catch (error) {

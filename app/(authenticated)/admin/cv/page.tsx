@@ -12,6 +12,9 @@ interface AdminCvPageProps {
     cvType?: string;
     opportunityType?: string;
     status?: string;
+    hasEvaluation?: string;
+    dateFrom?: string;
+    dateTo?: string;
     view?: string;
   }>;
 }
@@ -30,6 +33,9 @@ export default async function AdminCvPage({ searchParams }: AdminCvPageProps) {
   const cvType = params.cvType || undefined;
   const opportunityType = params.opportunityType || undefined;
   const status = params.status as "active" | "deleted" | undefined;
+  const hasEvaluation = params.hasEvaluation as "yes" | "no" | undefined;
+  const dateFrom = params.dateFrom || undefined;
+  const dateTo = params.dateTo || undefined;
   const view = (params.view === "card" ? "card" : "list") as "card" | "list";
 
   const result = await getAdminCvs(skip, pageSize, {
@@ -37,10 +43,14 @@ export default async function AdminCvPage({ searchParams }: AdminCvPageProps) {
     cvType: cvType || null,
     opportunityType: opportunityType || null,
     status: status || null,
+    hasEvaluation: hasEvaluation || null,
+    dateFrom: dateFrom || null,
+    dateTo: dateTo || null,
   });
 
   const cvs = result.success ? result.data.cvs : [];
   const totalCount = result.success ? result.data.totalCount : 0;
+  const stats = result.success ? result.data.stats : { total: 0, active: 0, deleted: 0 };
   const error = result.success ? null : (result as { error: string }).error;
 
   return (
@@ -49,10 +59,14 @@ export default async function AdminCvPage({ searchParams }: AdminCvPageProps) {
       totalCount={totalCount}
       currentPage={page}
       pageSize={pageSize}
+      stats={stats}
       initialQuery={query}
       initialCvType={cvType || ""}
       initialOpportunityType={opportunityType || ""}
       initialStatus={status || ""}
+      initialHasEvaluation={hasEvaluation || ""}
+      initialDateFrom={dateFrom || ""}
+      initialDateTo={dateTo || ""}
       initialView={view}
       initialError={error}
     />

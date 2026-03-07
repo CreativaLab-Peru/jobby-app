@@ -12,6 +12,10 @@ interface AdminUsersPageProps {
     role?: string;
     status?: string;
     emailVerified?: string;
+    hasCvs?: string;
+    hasPayments?: string;
+    dateFrom?: string;
+    dateTo?: string;
     view?: string;
   }>;
 }
@@ -30,6 +34,10 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
   const role = params.role as "USER" | "ADMIN" | undefined;
   const status = params.status as "active" | "blocked" | undefined;
   const emailVerified = params.emailVerified as "verified" | "unverified" | undefined;
+  const hasCvs = params.hasCvs as "yes" | "no" | undefined;
+  const hasPayments = params.hasPayments as "yes" | "no" | undefined;
+  const dateFrom = params.dateFrom || undefined;
+  const dateTo = params.dateTo || undefined;
   const view = (params.view === "card" ? "card" : "list") as "card" | "list";
 
   const result = await getAdminUsers(skip, pageSize, {
@@ -37,10 +45,17 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
     role: role || null,
     status: status || null,
     emailVerified: emailVerified || null,
+    hasCvs: hasCvs || null,
+    hasPayments: hasPayments || null,
+    dateFrom: dateFrom || null,
+    dateTo: dateTo || null,
   });
 
   const users = result.success ? result.data.users : [];
   const totalCount = result.success ? result.data.totalCount : 0;
+  const stats = result.success
+    ? result.data.stats
+    : { total: 0, active: 0, blocked: 0, admins: 0, verified: 0, unverified: 0 };
   const error = result.success ? null : (result as { error: string }).error;
 
   return (
@@ -49,13 +64,17 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
       totalCount={totalCount}
       currentPage={page}
       pageSize={pageSize}
+      stats={stats}
       initialQuery={query}
       initialRole={role || ""}
       initialStatus={status || ""}
       initialEmailVerified={emailVerified || ""}
+      initialHasCvs={hasCvs || ""}
+      initialHasPayments={hasPayments || ""}
+      initialDateFrom={dateFrom || ""}
+      initialDateTo={dateTo || ""}
       initialView={view}
       initialError={error}
     />
   );
 }
-

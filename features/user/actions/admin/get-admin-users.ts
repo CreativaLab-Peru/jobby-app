@@ -31,6 +31,14 @@ export type AdminUserListResult =
         users: AdminUserItem[];
         hasMore: boolean;
         totalCount: number;
+        stats: {
+          total: number;
+          active: number;
+          blocked: number;
+          admins: number;
+          verified: number;
+          unverified: number;
+        };
       };
     }
   | { success: false; error: string };
@@ -40,6 +48,8 @@ export interface GetAdminUsersOptions {
   role?: "USER" | "ADMIN" | null;
   status?: "active" | "blocked" | null;
   emailVerified?: "verified" | "unverified" | null;
+  hasCvs?: "yes" | "no" | null;
+  hasPayments?: "yes" | "no" | null;
   dateFrom?: string | null;
   dateTo?: string | null;
   sortBy?: "createdAt" | "name" | "email" | "lastLoginAt";
@@ -82,6 +92,20 @@ export const getAdminUsers = async (
       where.emailVerified = false;
     }
 
+    // hasCvs filter
+    if (options?.hasCvs === "yes") {
+      where.cvs = { some: {} };
+    } else if (options?.hasCvs === "no") {
+      where.cvs = { none: {} };
+    }
+
+    // hasPayments filter
+    if (options?.hasPayments === "yes") {
+      where.payments = { some: {} };
+    } else if (options?.hasPayments === "no") {
+      where.payments = { none: {} };
+    }
+
     if (options?.dateFrom || options?.dateTo) {
       where.createdAt = {};
       if (options?.dateFrom) {
@@ -97,7 +121,7 @@ export const getAdminUsers = async (
     const sortBy = options?.sortBy || "createdAt";
     const sortOrder = options?.sortOrder || "desc";
 
-    const [users, totalCount] = await Promise.all([
+    const [users, totalCount, activeCount, blockedCount, adminCount, verifiedCount, unverifiedCount] = await Promise.all([
       prisma.user.findMany({
         where,
         skip,
@@ -124,6 +148,11 @@ export const getAdminUsers = async (
         orderBy: { [sortBy]: sortOrder },
       }),
       prisma.user.count({ where }),
+      prisma.user.count({ where: { isBlocked: false } }),
+      prisma.user.count({ where: { isBlocked: true } }),
+      prisma.user.count({ where: { role: "ADMIN" } }),
+      prisma.user.count({ where: { emailVerified: true } }),
+      prisma.user.count({ where: { emailVerified: false } }),
     ]);
 
     return {
@@ -132,6 +161,14 @@ export const getAdminUsers = async (
         users,
         hasMore: skip + take < totalCount,
         totalCount,
+        stats: {
+          total: activeCount + blockedCount,
+          active: activeCount,
+          blocked: blockedCount,
+          admins: adminCount,
+          verified: verifiedCount,
+          unverified: unverifiedCount,
+        },
       },
     };
   } catch (error) {

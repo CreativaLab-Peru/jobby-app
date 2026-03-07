@@ -31,6 +31,7 @@ import {
   Coins,
   Wallet,
   Mic,
+  Shield,
 } from "lucide-react";
 
 const mainNavItems = [
@@ -131,8 +132,26 @@ export default function AppSidebar({ userRole }: { userRole?: string }) {
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
-            {isAdmin &&
-              adminNavItems.map((item) => (
+          </SidebarMenu>
+        </SidebarGroup>
+
+        {/* Admin Navigation */}
+        {isAdmin && (
+          <SidebarGroup className="border-0">
+            <SidebarGroupLabel
+              className={cn(
+                "px-4 py-2 text-xs font-semibold uppercase tracking-wider flex items-center gap-2",
+                collapsed ? "sr-only" : "text-amber-600 dark:text-amber-400",
+              )}
+            >
+              <Shield className="h-3.5 w-3.5" />
+              Administración
+            </SidebarGroupLabel>
+            {!collapsed && (
+              <div className="mx-3 mb-1 h-px bg-amber-500/20 dark:bg-amber-400/20" />
+            )}
+            <SidebarMenu>
+              {adminNavItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <Link
@@ -140,8 +159,8 @@ export default function AppSidebar({ userRole }: { userRole?: string }) {
                       className={cn(
                         "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200",
                         isActive(item.href)
-                          ? "bg-primary text-secondary font-semibold shadow-sm hover:bg-primary"
-                          : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground"
+                          ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 font-semibold shadow-sm border border-amber-500/20 hover:bg-amber-500/15"
+                          : "text-muted-foreground hover:bg-amber-500/10 hover:text-amber-700 dark:hover:text-amber-300"
                       )}
                     >
                       <item.icon className="h-5 w-5 shrink-0" />
@@ -150,8 +169,9 @@ export default function AppSidebar({ userRole }: { userRole?: string }) {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-          </SidebarMenu>
-        </SidebarGroup>
+            </SidebarMenu>
+          </SidebarGroup>
+        )}
 
         {/* Comunidad (placeholder, descomentar si hay lógica de plan) */}
         {/*<SidebarGroup>*/}

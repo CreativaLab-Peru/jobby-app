@@ -45,7 +45,7 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType, saveCv, 
       if (result?.success) {
         return true
       } else {
-        const errorMsg = result?.message || result?.error || "Error desconocido al guardar"
+        const errorMsg = result?.message || "Error desconocido al guardar"
         console.error("Failed to save CV:", errorMsg)
         toast.error(errorMsg)
         return false

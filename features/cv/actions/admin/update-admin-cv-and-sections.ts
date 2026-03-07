@@ -16,7 +16,10 @@ export const updateAdminCvAndSections = async (
   try {
     const admin = await requireAdmin();
     if (!admin.success) {
-      return admin;
+      return {
+        success: false,
+        error: "Unauthorized: Admin access required",
+      }
     }
 
     const existingCv = await prisma.cv.findFirst({

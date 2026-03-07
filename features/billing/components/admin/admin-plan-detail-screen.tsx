@@ -34,7 +34,7 @@ interface AdminPlanDetailScreenProps {
 
 function formatCurrency(cents: number | { toNumber?: () => number }, currency: string): string {
   const value = typeof cents === "number" ? cents : (cents?.toNumber?.() ?? Number(cents));
-  return `${currency} ${(value / 100).toFixed(2)}`;
+  return `S/ ${value}`;
 }
 
 const PAYMENT_TYPE_LABELS: Record<string, string> = {
@@ -135,21 +135,6 @@ export function AdminPlanDetailScreen({ plan }: AdminPlanDetailScreenProps) {
               </div>
             )}
           </Card>
-
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-4">
-            {stats.map((stat) => (
-              <Card key={stat.label} className="rounded-xl border border-border/60 p-4 text-center">
-                <div className="flex items-center justify-center mb-2">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-                    <stat.icon className="h-5 w-5 text-primary" />
-                  </div>
-                </div>
-                <div className="text-2xl font-black text-foreground">{stat.value}</div>
-                <div className="text-xs text-muted-foreground font-medium">{stat.label}</div>
-              </Card>
-            ))}
-          </div>
 
           {/* Features JSON */}
           {plan.features && (

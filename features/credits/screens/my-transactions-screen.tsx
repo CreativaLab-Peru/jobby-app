@@ -75,7 +75,7 @@ export function MyTransactionsScreen({
       if (!value) params.delete(key); else params.set(key, value);
     });
     const qs = params.toString();
-    startTransition(() => { router.push(qs ? `/credits/transactions?${qs}` : "/credits/transactions"); });
+    startTransition(() => { router.push(qs ? `/transactions?${qs}` : "/transactions"); });
   };
 
   const handleClearFilters = () => { updateQuery({ type: null, creditType: null, dateFrom: null, dateTo: null, page: "1" }); };
@@ -131,11 +131,11 @@ export function MyTransactionsScreen({
                   </SelectContent>
                 </Select>
 
-                <div className="flex items-center gap-1.5">
-                  <Input type="date" value={initialDateFrom} onChange={(e) => updateQuery({ dateFrom: e.target.value || null, page: "1" })} className="w-[140px] h-9 text-xs" />
-                  <span className="text-xs text-muted-foreground">—</span>
-                  <Input type="date" value={initialDateTo} onChange={(e) => updateQuery({ dateTo: e.target.value || null, page: "1" })} className="w-[140px] h-9 text-xs" />
-                </div>
+                {/*<div className="flex items-center gap-1.5">*/}
+                {/*  <Input type="date" value={initialDateFrom} onChange={(e) => updateQuery({ dateFrom: e.target.value || null, page: "1" })} className="w-[140px] h-9 text-xs" />*/}
+                {/*  <span className="text-xs text-muted-foreground">—</span>*/}
+                {/*  <Input type="date" value={initialDateTo} onChange={(e) => updateQuery({ dateTo: e.target.value || null, page: "1" })} className="w-[140px] h-9 text-xs" />*/}
+                {/*</div>*/}
               </div>
             </motion.div>
           )}

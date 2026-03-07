@@ -73,8 +73,6 @@ export function AdminPlanCard({ plan }: AdminPlanCardProps) {
         metadata={
           <>
             <span className="font-mono text-[10px]">{plan.slug}</span>
-            <div className="flex items-center gap-1.5"><FileText className="h-3.5 w-3.5" /><span>{plan.manualCvLimit} CVs manuales</span></div>
-            <div className="flex items-center gap-1.5"><Upload className="h-3.5 w-3.5" /><span>{plan.uploadCvLimit} CVs upload</span></div>
             <div className="flex items-center gap-1.5"><Users className="h-3.5 w-3.5" /><span>{paymentsCount} suscriptores</span></div>
           </>
         }

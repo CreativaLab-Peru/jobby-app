@@ -21,7 +21,7 @@ interface AdminPlanRowProps {
 
 function formatCurrency(cents: number | { toNumber?: () => number }, currency: string): string {
   const value = typeof cents === "number" ? cents : (cents?.toNumber?.() ?? Number(cents));
-  return `${currency} ${(value / 100).toFixed(2)}`;
+  return `${value}`;
 }
 
 const PAYMENT_TYPE_LABELS: Record<string, string> = {
@@ -67,13 +67,11 @@ export function AdminPlanRow({ plan }: AdminPlanRowProps) {
               <span className="font-bold text-sm text-foreground truncate">{plan.name}</span>
               <StatusBadge variant="outline" className="text-[10px]">{typeLabel}</StatusBadge>
               <StatusBadge variant="outline" className={cn("text-[10px]", plan.paymentType === "FREE" ? "bg-green-500/10 text-green-600 border-green-500/20" : "bg-blue-500/10 text-blue-600 border-blue-500/20")}>
-                {price}
+                S/ {price}
               </StatusBadge>
             </div>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
               <span className="font-mono">{plan.slug}</span>
-              <div className="flex items-center gap-1"><FileText className="h-3 w-3" /><span>{plan.manualCvLimit} CVs manuales</span></div>
-              <div className="flex items-center gap-1"><Upload className="h-3 w-3" /><span>{plan.uploadCvLimit} CVs upload</span></div>
               <div className="flex items-center gap-1"><Users className="h-3 w-3" /><span>{paymentsCount} suscriptores</span></div>
               <div className="flex items-center gap-1"><Calendar className="h-3 w-3" /><span>{formatDate(plan.createdAt, "d MMM, yyyy")}</span></div>
             </div>

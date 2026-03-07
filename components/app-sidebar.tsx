@@ -31,7 +31,7 @@ const mainNavItems = [
   { title: "Mis CVs", href: "/cv", icon: FileText },
   { title: "Mis Evaluaciones", href: "/evaluations", icon: MessageSquare },
   { title: "Oportunidades", href: "/opportunities", icon: Briefcase },
-  // { title: "Simulador de entrevistas", href: "/interviews-simulator", icon: Sparkles },
+  { title: "Simulador de entrevistas", href: "/interviews", icon: Sparkles },
 ];
 
 const communityItems = [{ title: "Networking", href: "/networking", icon: Users }];

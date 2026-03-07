@@ -9,6 +9,8 @@ import {
 } from "@/features/billing/actions/create-preference-for-authenticated-user";
 import {CREDIT_PACKS} from "@/features/credits/consts";
 import { PaymentMethod } from "@/features/credits/components/payment-method-modal";
+import { createCheckoutForAuthenticatedUserPaddle } from "@/features/billing/actions/create-checkout-for-authenticated-user-paddle";
+import { usePaddle } from "@/features/billing/components/paddle-provider";
 
 interface CreditLimits {
   manageCvsLimit: number;
@@ -22,6 +24,7 @@ interface MyCreditsScreenProps {
 
 export function MyCreditsScreen({ currentCredit }: MyCreditsScreenProps) {
 
+  const { openCheckout } = usePaddle();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState(null);
 
@@ -29,8 +32,14 @@ export function MyCreditsScreen({ currentCredit }: MyCreditsScreenProps) {
     if (isPending) return;
 
     startTransition(async () => {
-      // TODO: Agregar lógica para Paddle cuando esté disponible
-      if (method === "mercadopago") {
+      if (method === PaymentMethod.PADDLE) {
+        const result = await createCheckoutForAuthenticatedUserPaddle(packId);
+        if (result.success) {
+          openCheckout(result.transactionId);
+        } else {
+          setError(result.error);
+        }
+      } else {
         const result = await createPreferenceForAuthenticatedUser(packId);
         if (result.success) {
           window.location.href = result.redirect;

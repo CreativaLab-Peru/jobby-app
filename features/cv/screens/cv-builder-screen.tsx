@@ -17,6 +17,9 @@ import {User} from "@prisma/client";
 import {
   createPreferenceForAuthenticatedUser
 } from "@/features/billing/actions/create-preference-for-authenticated-user";
+import { createCheckoutForAuthenticatedUserPaddle } from "@/features/billing/actions/create-checkout-for-authenticated-user-paddle";
+import { PaymentMethod } from "@/features/credits/components/payment-method-modal";
+import { usePaddle } from "@/features/billing/components/paddle-provider";
 
 interface CVBuilderScreenProps {
   user: User | null; // Recibimos el usuario desde el servidor
@@ -26,6 +29,7 @@ export default function CVBuilderScreen({ user }: CVBuilderScreenProps) {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { setFileData } = useAnalysisStore();
 
+  const { openCheckout } = usePaddle();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -42,7 +46,7 @@ export default function CVBuilderScreen({ user }: CVBuilderScreenProps) {
     router.push("/cv?afterOnboarding=true");
   };
 
-  const handlePurchase = (packId: string) => {
+  const handlePurchase = (packId: string, method: PaymentMethod) => {
     if (isPending) return;
     const userId = user?.id;
     if (!userId) {
@@ -50,11 +54,20 @@ export default function CVBuilderScreen({ user }: CVBuilderScreenProps) {
       return;
     }
     startTransition(async () => {
-      const result = await createPreferenceForAuthenticatedUser(packId);
-      if (result.success) {
-        window.location.href = result.redirect;
+      if (method === "paddle") {
+        const result = await createCheckoutForAuthenticatedUserPaddle(packId);
+        if (result.success) {
+          openCheckout(result.transactionId);
+        } else {
+          console.error("Error al crear checkout de Paddle:", result.error);
+        }
       } else {
-        console.error("Error al crear la preferencia de pago:", result.error);
+        const result = await createPreferenceForAuthenticatedUser(packId);
+        if (result.success) {
+          window.location.href = result.redirect;
+        } else {
+          console.error("Error al crear la preferencia de pago:", result.error);
+        }
       }
     });
   }

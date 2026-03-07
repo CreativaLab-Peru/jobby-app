@@ -10,7 +10,10 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { CreditCard, Wallet } from "lucide-react"
 
-export type PaymentMethod = "mercadopago" | "paddle"
+export enum PaymentMethod {
+    MERCADOPAGO = "mercadopago",
+    PADDLE = "paddle",
+}
 
 interface PaymentMethodOption {
   id: PaymentMethod
@@ -23,19 +26,18 @@ interface PaymentMethodOption {
 
 const PAYMENT_METHODS: PaymentMethodOption[] = [
   {
-    id: "mercadopago",
+    id: PaymentMethod.MERCADOPAGO,
     name: "Mercado Pago",
     description: "Tarjeta, transferencia bancaria o efectivo",
     icon: Wallet,
     available: true,
   },
   {
-    id: "paddle",
+    id: PaymentMethod.PADDLE,
     name: "Tarjeta Internacional",
     description: "Visa, Mastercard, American Express",
     icon: CreditCard,
-    available: false,
-    badge: "Próximamente",
+    available: true,
   },
 ]
 

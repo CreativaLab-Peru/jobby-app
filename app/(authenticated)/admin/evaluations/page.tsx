@@ -13,6 +13,10 @@ interface AdminEvaluationsPageProps {
     status?: string;
     cvType?: string;
     opportunityType?: string;
+    userId?: string;
+    hasScore?: string;
+    dateFrom?: string;
+    dateTo?: string;
     view?: string;
   }>;
 }
@@ -31,6 +35,10 @@ export default async function AdminEvaluationsPage({ searchParams }: AdminEvalua
   const status = params.status as JobStatus | undefined;
   const cvType = params.cvType || undefined;
   const opportunityType = params.opportunityType || undefined;
+  const userId = params.userId || undefined;
+  const hasScore = params.hasScore as "yes" | "no" | undefined;
+  const dateFrom = params.dateFrom || undefined;
+  const dateTo = params.dateTo || undefined;
   const view = (params.view === "card" ? "card" : "list") as "card" | "list";
 
   const result = await getAdminEvaluations(skip, pageSize, {
@@ -38,10 +46,17 @@ export default async function AdminEvaluationsPage({ searchParams }: AdminEvalua
     status: status || null,
     cvType: cvType || null,
     opportunityType: opportunityType || null,
+    userId: userId || null,
+    hasScore: hasScore || null,
+    dateFrom: dateFrom || null,
+    dateTo: dateTo || null,
   });
 
   const evaluations = result.success ? result.data.evaluations : [];
   const totalCount = result.success ? result.data.totalCount : 0;
+  const stats = result.success
+    ? result.data.stats
+    : { total: 0, succeeded: 0, pending: 0, inProgress: 0, failed: 0, cancelled: 0, avgScore: null };
   const error = result.success ? null : (result as { error: string }).error;
 
   return (
@@ -50,10 +65,15 @@ export default async function AdminEvaluationsPage({ searchParams }: AdminEvalua
       totalCount={totalCount}
       currentPage={page}
       pageSize={pageSize}
+      stats={stats}
       initialQuery={query}
       initialStatus={status || ""}
       initialCvType={cvType || ""}
       initialOpportunityType={opportunityType || ""}
+      initialUserId={userId || ""}
+      initialHasScore={hasScore || ""}
+      initialDateFrom={dateFrom || ""}
+      initialDateTo={dateTo || ""}
       initialView={view}
       initialError={error}
     />

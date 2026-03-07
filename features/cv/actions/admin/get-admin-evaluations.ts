@@ -27,6 +27,15 @@ export type AdminEvaluationListResult =
         evaluations: AdminEvaluationWithRelations[];
         hasMore: boolean;
         totalCount: number;
+        stats: {
+          total: number;
+          succeeded: number;
+          pending: number;
+          inProgress: number;
+          failed: number;
+          cancelled: number;
+          avgScore: number | null;
+        };
       };
     }
   | { success: false; error: string };
@@ -36,6 +45,8 @@ export interface GetAdminEvaluationsOptions {
   status?: JobStatus | null;
   cvType?: string | null;
   opportunityType?: string | null;
+  userId?: string | null;
+  hasScore?: "yes" | "no" | null;
   scoreMin?: number | null;
   scoreMax?: number | null;
   dateFrom?: string | null;
@@ -59,6 +70,18 @@ export const getAdminEvaluations = async (
 
     if (options?.status) {
       where.status = options.status;
+    }
+
+    // userId filter
+    if (options?.userId) {
+      where.cv = { ...((where.cv as Prisma.CvWhereInput) || {}), userId: options.userId };
+    }
+
+    // hasScore filter
+    if (options?.hasScore === "yes") {
+      where.overallScore = { not: null };
+    } else if (options?.hasScore === "no") {
+      where.overallScore = null;
     }
 
     if (options?.query) {
@@ -99,7 +122,7 @@ export const getAdminEvaluations = async (
     const sortBy = options?.sortBy || "createdAt";
     const sortOrder = options?.sortOrder || "desc";
 
-    const [evaluations, totalCount] = await Promise.all([
+    const [evaluations, totalCount, succeeded, pending, inProgress, failed, cancelled, scoreAgg] = await Promise.all([
       prisma.cvEvaluation.findMany({
         where,
         skip,
@@ -120,7 +143,15 @@ export const getAdminEvaluations = async (
         orderBy: { [sortBy]: sortOrder },
       }),
       prisma.cvEvaluation.count({ where }),
+      prisma.cvEvaluation.count({ where: { status: "SUCCEEDED" } }),
+      prisma.cvEvaluation.count({ where: { status: "PENDING" } }),
+      prisma.cvEvaluation.count({ where: { status: "IN_PROGRESS" } }),
+      prisma.cvEvaluation.count({ where: { status: "FAILED" } }),
+      prisma.cvEvaluation.count({ where: { status: "CANCELLED" } }),
+      prisma.cvEvaluation.aggregate({ _avg: { overallScore: true }, where: { status: "SUCCEEDED", overallScore: { not: null } } }),
     ]);
+
+    const total = succeeded + pending + inProgress + failed + cancelled;
 
     return {
       success: true,
@@ -128,6 +159,15 @@ export const getAdminEvaluations = async (
         evaluations: evaluations as AdminEvaluationWithRelations[],
         hasMore: skip + take < totalCount,
         totalCount,
+        stats: {
+          total,
+          succeeded,
+          pending,
+          inProgress,
+          failed,
+          cancelled,
+          avgScore: scoreAgg._avg.overallScore ?? null,
+        },
       },
     };
   } catch (error) {

@@ -1,3 +1,16 @@
+# v1.1.24 - 2026-03-07
+
+### BEFORE DEPLOYMENT
+- Add new environment variables (Paddle integration):
+  - `PADDLE_API_KEY` — server-side Paddle API key (sandbox: `test_...`, production: `live_...`)
+  - `NEXT_PUBLIC_PADDLE_CLIENT_TOKEN` — client-side Paddle token for the JS overlay (sandbox: `test_...`, production: `live_...`)
+  - `PADDLE_WEBHOOK_SECRET` — secret to validate incoming Paddle webhook signatures (from Paddle Dashboard → Notifications)
+  - `PADDLE_PRICE_ID_STARTER` — Paddle price ID for the Starter plan (from Paddle Dashboard → Catalog → Prices)
+- Run seed `prisma/seed/credit_package.js` to populate the `credit_package` table if not already done.
+- Register the webhook endpoint `https://<domain>/api/payments/paddle/confirm` in Paddle Dashboard → Notifications, with event `transaction.completed`.
+
+---
+
 # v1.1.21 - 2026-03-04
 
 ### BEFORE DEPLOYMENT

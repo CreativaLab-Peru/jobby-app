@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Mail, Lock, Loader2, CheckCircle } from "lucide-react";
+import { Mail, Lock, Loader2, CheckCircle, CreditCard } from "lucide-react";
 import Link from "next/link";
 import { FormField } from "@/components/form-field";
 import { loginSchema, LoginFormData } from "../schemas/login-schema";
@@ -28,6 +28,7 @@ export function LoginForm() {
   const searchParams = useSearchParams();
   const [formError, setFormError] = useState<string | null>(null);
   const [showOnboardingSuccess, setShowOnboardingSuccess] = useState(false);
+  const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
 
   const {
     register,
@@ -42,11 +43,12 @@ export function LoginForm() {
     const onboarding = searchParams.get("onboarding");
     if (onboarding === "completed") {
       setShowOnboardingSuccess(true);
-      // Ocultar el aviso después de 5 segundos
-      const timer = setTimeout(() => {
-        setShowOnboardingSuccess(false);
-      }, 10000);
+      const timer = setTimeout(() => setShowOnboardingSuccess(false), 10000);
       return () => clearTimeout(timer);
+    }
+    const source = searchParams.get("source");
+    if (source === "new_payment") {
+      setShowPaymentSuccess(true);
     }
   }, [searchParams]);
 
@@ -97,6 +99,20 @@ export function LoginForm() {
               </h3>
               <p className="text-sm text-green-700 dark:text-green-400 mt-1">
                 Confirma tu cuenta con el enlace que enviamos a tu correo.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {showPaymentSuccess && (
+          <div className="mb-6 bg-primary/10 border border-primary/30 rounded-lg p-4 flex items-start gap-3">
+            <CreditCard className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+            <div>
+              <h3 className="font-semibold text-primary">
+                ¡Pago completado con éxito!
+              </h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                Te enviamos un enlace de acceso a tu correo. Revísalo para ingresar a tu cuenta y ver tus créditos.
               </p>
             </div>
           </div>

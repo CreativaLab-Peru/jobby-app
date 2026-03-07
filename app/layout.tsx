@@ -71,7 +71,7 @@ export default async function RootLayout({
             <AnimatedBackgroundWrapper />
           </Suspense>
           <TooltipProvider>
-            <div >{children}</div>
+            <Suspense fallback={null}>{children}</Suspense>
           </TooltipProvider>
           <Toaster />
         </ThemeProvider>

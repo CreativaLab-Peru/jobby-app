@@ -1,7 +1,18 @@
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 
-export const getSession = async () => {
+type SessionUser = {
+  id: string;
+  email: string;
+  name: string;
+  image: string | null;
+};
+
+type GetSessionResult =
+  | { success: true; user: SessionUser }
+  | { success: false; error: string };
+
+export const getSession = async (): Promise<GetSessionResult> => {
   const session = await auth.api.getSession({
     headers: await headers()
   })
@@ -15,10 +26,10 @@ export const getSession = async () => {
   return {
     success: true,
     user: {
-      id: session.user?.id || null,
-      email: session.user?.email || null,
-      name: session.user?.name || null,
-      image: session.user?.image || null
+      id: session.user.id,
+      email: session.user.email,
+      name: session.user.name,
+      image: session.user.image ?? null,
     }
   };
 }

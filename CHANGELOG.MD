@@ -1,3 +1,9 @@
+# v1.1.24 - 2026-03-07
+
+## Features
+- Paddle payment flow on `/cv-pay`: authenticated users see an account-choice dialog (use current or create new), new users go through email capture → payment method selection; after payment, the session is closed if it belonged to a different account and the customer email is pre-filled in the Paddle checkout for correct receipt delivery.
+- Improved session detection: replaced client-side `authClient.getSession()` with the `getSession` server action called at page level and passed as prop, adding explicit return types to eliminate `unknown` inferences.
+
 # v1.1.23 - 2026-03-06
 
 ## Features

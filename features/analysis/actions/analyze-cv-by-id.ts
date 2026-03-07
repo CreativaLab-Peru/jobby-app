@@ -3,7 +3,6 @@
 import { inngest } from "@/inngest/functions/client";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import { prisma } from "@/lib/prisma";
-import { CreditBalanceType } from "@prisma/client";
 import { getCurrentCreditLimits } from "@/features/credits/actions/get-current-credits-limits";
 
 export const analyzeCvById = async (cvId: string) => {
@@ -34,21 +33,6 @@ export const analyzeCvById = async (cvId: string) => {
         message: "No tienes intentos disponibles para subir CVs. Por favor, actualiza tu plan."
       };
     }
-
-    // 3. Actualizar balance de créditos del usuario
-    await prisma.userCreditBalance.update({
-      where: {
-        userId_type: {
-          userId: currentUser.id,
-          type: CreditBalanceType.AI_ACTIONS
-        },
-      },
-      data: {
-        amount: {
-          decrement: 1,
-        }
-      },
-    });
 
     // 4. Disparar el evento de Inngest
     await inngest.send({

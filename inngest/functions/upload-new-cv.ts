@@ -1,12 +1,20 @@
 import { inngest } from "./client";
 import { prisma } from "@/lib/prisma";
-import {CvType, JobStatus, LogAction, LogLevel, OpportunityType} from "@prisma/client";
+import {
+  CreditBalanceType,
+  CvType,
+  JobStatus,
+  LogAction,
+  LogLevel,
+  OpportunityType
+} from "@prisma/client";
 import { getTextFromPdfApi } from "@/utils/get-text-from-pdf-api";
 import { logsService } from "@/features/share/services/logs-service";
 import {getPromptToGetCv} from "@/features/cv/prompts/get-prompt-to-get-cv";
 import {queryGemini} from "@/features/cv/queries/query-gemini";
+import {consumeCredits} from "@/features/credits/actions/consume-credits";
 
-export const processUploadedCv = inngest.createFunction(
+export const uploadNewCv = inngest.createFunction(
   { id: "process-uploaded-cv" },
   { event: "cv/uploaded" },
   async ({ event, step }) => {
@@ -163,6 +171,13 @@ export const processUploadedCv = inngest.createFunction(
         },
       });
 
+      await consumeCredits({
+        userId,
+        type: CreditBalanceType.MANAGE_CVS,
+        amount: 1,
+        description: `Add new CV ${cvId}`,
+      });
+
       await logsService.createLog({
         userId,
         action: LogAction.CREATE,
@@ -171,16 +186,6 @@ export const processUploadedCv = inngest.createFunction(
         entityId: job.id,
         message: "CV uploaded and processed successfully",
         metadata: { cvId },
-      });
-
-      // ✅ Trigger evaluation
-      await inngest.send({
-        name: "cv/ready-for-evaluation",
-        data: { cvId, userId },
-      });
-      await inngest.send({
-        name: "get.and.save.opportunities",
-        data: { cvId, userId },
       });
 
       await logsService.createLog({

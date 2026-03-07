@@ -1,9 +1,10 @@
 import {inngest} from "./client";
 import {prisma} from "@/lib/prisma";
-import {CvSectionType, JobStatus, LogAction, LogLevel} from "@prisma/client";
+import {CreditBalanceType, CvSectionType, JobStatus, LogAction, LogLevel} from "@prisma/client";
 import {logsService} from "@/features/share/services/logs-service";
 import {getPromptToEvaluateCv} from "@/features/cv/prompts/get-prompt-to-evaluate-cv";
 import {queryGemini} from "@/features/cv/queries/query-gemini";
+import {consumeCredits} from "@/features/credits/actions/consume-credits";
 
 type EvaluateCvResponse = {
   overallScore: number;
@@ -264,6 +265,13 @@ export const evaluateCv = inngest.createFunction(
         }
       });
 
+      await consumeCredits({
+        userId,
+        type: CreditBalanceType.AI_ACTIONS,
+        amount: 1,
+        description: `Búsqueda para CV ${cvId}`,
+      });
+
       // ✅ Log: Evaluation completed successfully
       await logsService.createLog({
         userId,
@@ -304,10 +312,6 @@ export const evaluateCv = inngest.createFunction(
         },
       });
 
-      // ✅ Refund the analysis token since evaluation failed
-      await refundAnalysisToken(userId);
-
-      // ✅ Log failure
       await logsService.createLog({
         userId,
         action: LogAction.EVALUATION,

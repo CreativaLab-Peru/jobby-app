@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
+import { PageHeader } from "@/components/shared/page-header";
 import { formatDate } from "@/utils/format-date";
 import { cn } from "@/lib/utils";
 import { UserTransactionItem } from "@/features/credits/actions/get-user-transactions";
@@ -81,16 +82,17 @@ export function MyTransactionsScreen({
   const handlePageChange = (p: number) => { updateQuery({ page: String(Math.max(1, Math.min(totalPages, p))) }); };
 
   return (
-    <div className="max-w-3xl mx-auto p-4 md:p-6 space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-xl font-bold tracking-tight">Mis transacciones</h1>
-        <p className="text-sm text-muted-foreground">Revisa el detalle de tus movimientos de créditos: recargas, consumos y reembolsos.</p>
-      </div>
+    <main className="min-h-[90vh] p-4 md:p-8">
+      <div className="mx-auto max-w-7xl">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+          <PageHeader
+            title="Mis Transacciones"
+            description="Revisa el detalle de tus movimientos de créditos: recargas, consumos y reembolsos."
+          />
 
-      {/* Filters */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
+          {/* Filters */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
           <Button variant={showFilters ? "default" : "outline"} size="sm" className="h-9 gap-2 text-xs font-semibold" onClick={() => setShowFilters(!showFilters)}>
             <Filter className="h-3.5 w-3.5" /> Filtros
             {filterCount > 0 && <span className="ml-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary-foreground text-primary text-[10px] font-bold">{filterCount}</span>}
@@ -211,7 +213,9 @@ export function MyTransactionsScreen({
           }
         />
       )}
-    </div>
+        </motion.div>
+      </div>
+    </main>
   );
 }
 

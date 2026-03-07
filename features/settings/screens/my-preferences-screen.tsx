@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { PageHeader } from "@/components/shared/page-header";
 import { UserPreference } from "@prisma/client";
 import {
   updateUserPreference,
@@ -117,15 +118,13 @@ export function MyPreferencesScreen({ preference }: MyPreferencesScreenProps) {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4 md:p-6 space-y-8">
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-xl font-bold tracking-tight">Mis preferencias</h1>
-          <p className="text-sm text-muted-foreground">Ajusta tu perfil profesional para recibir mejores recomendaciones.</p>
-        </div>
-
-        <div className="space-y-8">
+    <main className="min-h-[90vh] p-4 md:p-8">
+      <div className="mx-auto max-w-7xl">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+          <PageHeader
+            title="Mis Preferencias"
+            description="Ajusta tu perfil profesional para recibir mejores recomendaciones."
+          />
 
           {/* ── Perfil profesional ── */}
           <section className="space-y-4">
@@ -296,9 +295,9 @@ export function MyPreferencesScreen({ preference }: MyPreferencesScreenProps) {
             {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
             Guardar preferencias
           </Button>
-        </div>
-      </motion.div>
-    </div>
+        </motion.div>
+      </div>
+    </main>
   );
 }
 

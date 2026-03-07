@@ -91,22 +91,6 @@ export async function POST(req: Request) {
         {status: 400}
       );
     }
-
-    // Consume MANAGE_CVS credits (creating CV)
-    await prisma.userCreditBalance.update({
-      where: {
-        userId_type: {
-          userId: currentUser.id,
-          type: CreditBalanceType.MANAGE_CVS
-        }
-      },
-      data: {
-        amount: {
-          decrement: 1,
-        }
-      },
-    });
-
     // Dispatch to inngest for async processing (extraction, sections, evaluation, opportunities)
     await inngest.send({
       name: "cv/uploaded",

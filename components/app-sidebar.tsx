@@ -40,11 +40,11 @@ const mainNavItems = [
   { title: "Mi Panel", href: "/dashboard", icon: LayoutDashboard },
   { title: "Mis CVs", href: "/cv", icon: FileText },
   { title: "Mis Evaluaciones", href: "/evaluations", icon: MessageSquare },
-  { title: "Oportunidades", href: "/opportunities", icon: Briefcase },
-  { title: "Simulador de entrevistas", href: "/interviews", icon: Sparkles },
-  { title: "Créditos", href: "/credits", icon: CreditCard },
-  { title: "Transacciones", href: "/transactions", icon: Receipt },
-  { title: "Preferencias", href: "/preferences", icon: Sliders },
+  { title: "Mis Oportunidades", href: "/opportunities", icon: Briefcase },
+  { title: "Mis Entrevistas", href: "/interviews", icon: Sparkles },
+  { title: "Mis Créditos", href: "/credits", icon: CreditCard },
+  { title: "Mis Transacciones", href: "/transactions", icon: Receipt },
+  { title: "Mis Preferencias", href: "/preferences", icon: Sliders },
 ];
 
 const adminNavItems = [

@@ -37,7 +37,7 @@ export default function InterviewsScreen({
   const { startCall, isConnecting } = useVapi();
 
   const oppOptions = opportunities.map(opt => ({
-    value: opt.id,
+    value:  `${opt.id}-${opt.cvId}`,
     label: `${opt.company} - ${opt.title}`
   }));
 

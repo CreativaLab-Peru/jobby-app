@@ -19,6 +19,7 @@ import {
   LayoutDashboard,
   FileText,
   MessageSquare,
+  MessageSquareWarning,
   Briefcase,
   CreditCard,
   Settings,
@@ -47,6 +48,7 @@ const adminNavItems = [
   { title: "Planes", href: "/admin/plans", icon: Tag },
   { title: "Paquetes", href: "/admin/credit-packages", icon: Coins },
   { title: "Balances", href: "/admin/balances", icon: Wallet },
+  { title: "Reclamos", href: "/admin/complaints", icon: MessageSquareWarning },
 ];
 
 const communityItems = [{ title: "Networking", href: "/networking", icon: Users }];

@@ -1,22 +1,21 @@
 import { redirect } from "next/navigation";
 
-import { AdminUserListScreen } from "@/features/user/components/admin/admin-user-list-screen";
-import { getAdminUsers } from "@/features/user/actions/admin/get-admin-users";
+import { AdminComplaintListScreen } from "@/features/complaints/components/admin/admin-complaint-list-screen";
+import { getAdminComplaints } from "@/features/complaints/actions/admin/get-admin-complaints";
 import { requireAdmin } from "@/features/share/actions/require-admin";
 import { routes } from "@/lib/routes";
 
-interface AdminUsersPageProps {
+interface AdminComplaintsPageProps {
   searchParams: Promise<{
     page?: string;
     q?: string;
-    role?: string;
-    status?: string;
-    emailVerified?: string;
+    dateFrom?: string;
+    dateTo?: string;
     view?: string;
   }>;
 }
 
-export default async function AdminUsersPage({ searchParams }: AdminUsersPageProps) {
+export default async function AdminComplaintsPage({ searchParams }: AdminComplaintsPageProps) {
   const admin = await requireAdmin();
   if (!admin.success) {
     redirect(routes.app.dashboard);
@@ -27,32 +26,29 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
   const pageSize = 10;
   const skip = (page - 1) * pageSize;
   const query = params.q || "";
-  const role = params.role as "USER" | "ADMIN" | undefined;
-  const status = params.status as "active" | "blocked" | undefined;
-  const emailVerified = params.emailVerified as "verified" | "unverified" | undefined;
+  const dateFrom = params.dateFrom || undefined;
+  const dateTo = params.dateTo || undefined;
   const view = (params.view === "card" ? "card" : "list") as "card" | "list";
 
-  const result = await getAdminUsers(skip, pageSize, {
+  const result = await getAdminComplaints(skip, pageSize, {
     query: query || undefined,
-    role: role || null,
-    status: status || null,
-    emailVerified: emailVerified || null,
+    dateFrom: dateFrom || null,
+    dateTo: dateTo || null,
   });
 
-  const users = result.success ? result.data.users : [];
+  const complaints = result.success ? result.data.complaints : [];
   const totalCount = result.success ? result.data.totalCount : 0;
   const error = result.success ? null : (result as { error: string }).error;
 
   return (
-    <AdminUserListScreen
-      initialUsers={users}
+    <AdminComplaintListScreen
+      initialComplaints={complaints}
       totalCount={totalCount}
       currentPage={page}
       pageSize={pageSize}
       initialQuery={query}
-      initialRole={role || ""}
-      initialStatus={status || ""}
-      initialEmailVerified={emailVerified || ""}
+      initialDateFrom={dateFrom || ""}
+      initialDateTo={dateTo || ""}
       initialView={view}
       initialError={error}
     />

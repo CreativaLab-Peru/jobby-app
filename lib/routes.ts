@@ -51,6 +51,10 @@ export const routes = {
         detail: (balanceId: string) => `/admin/balances/${balanceId}`,
         edit: (balanceId: string) => `/admin/balances/${balanceId}/edit`,
       },
+      complaints: {
+        root: "/admin/complaints",
+        detail: (complaintId: string) => `/admin/complaints/${complaintId}`,
+      },
     },
 
     evaluations: {

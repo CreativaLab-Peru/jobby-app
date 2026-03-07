@@ -47,6 +47,7 @@ model User {
   userCreditBalance          UserCreditBalance[]
   Invoice                    Invoice[]
   complaints                 Complaint[]
+  role                       UserRole           @default(USER)
 
   @@map("user")
 }
@@ -575,4 +576,9 @@ enum LogLevel {
   WARNING
   ERROR
   CRITICAL
+}
+
+enum UserRole {
+  USER
+  ADMIN
 }

@@ -20,9 +20,11 @@ interface CreateCVPageProps {
   id: string
   opportunityType: OpportunityType
   cvType: CvType
+  saveCv?: (id: string, cvData: CVData) => Promise<{ success: boolean; message?: string; error?: string } | null>
+  onCompletePath?: string
 }
 
-export default function CreateCVPage({ cv, id, opportunityType, cvType }: CreateCVPageProps) {
+export default function CreateCVPage({ cv, id, opportunityType, cvType, saveCv, onCompletePath }: CreateCVPageProps) {
   const [cvData, setCvData] = useState<CVData>(cv)
   const [activeSection, setActiveSection] = useState(0)
   const [showPreview, setShowPreview] = useState(true)
@@ -37,12 +39,13 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
 
     setIsSaving(true)
     try {
-      const result = await updateCvAndSections(id, cvData)
+      const saveAction = saveCv ?? updateCvAndSections
+      const result = await saveAction(id, cvData)
 
       if (result?.success) {
         return true
       } else {
-        const errorMsg = result?.message || "Error desconocido al guardar"
+        const errorMsg = result?.message || result?.error || "Error desconocido al guardar"
         console.error("Failed to save CV:", errorMsg)
         toast.error(errorMsg)
         return false
@@ -77,7 +80,11 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType }: Create
       // En la última sección, esperar guardado antes de ir a preview
       const saved = await submit()
       if (saved) {
-        router.push(routes.app.cv.preview(id))
+        if (onCompletePath) {
+          router.push(onCompletePath)
+        } else {
+          router.push(routes.app.cv.preview(id))
+        }
       }
     }
   }

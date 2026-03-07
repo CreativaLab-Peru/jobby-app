@@ -15,6 +15,13 @@ export const routes = {
       preview: (cvId: string) => `/cv/${cvId}/preview`,
     },
 
+    admin: {
+      cv: {
+        root: "/admin/cv",
+        edit: (cvId: string) => `/admin/cv/${cvId}/edit`,
+      },
+    },
+
     evaluations: {
       root: "/evaluations",
       detail: (id: string) => `/evaluations/${id}`,

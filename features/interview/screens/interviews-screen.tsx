@@ -10,8 +10,8 @@ import { LoadMoreButton } from "@/components/shared/load-more-button";
 import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
 import InterviewCard from "../components/interview-card"; // Lo crearemos luego
 import {getInterviews, InterviewWithRelations} from "../actions/get-interviews";
-import {useVapi} from "@/features/interview-simulator/hooks/use-vapi";
-import {NewInterviewModal} from "@/features/interview-simulator/components/new-interview-modal";
+import {useVapi} from "@/features/interview/hooks/use-vapi";
+import {NewInterviewModal} from "@/features/interview/components/new-interview-modal";
 import {OpportunityWithCV} from "@/features/opportunities/get-opportunities";
 
 interface Props {

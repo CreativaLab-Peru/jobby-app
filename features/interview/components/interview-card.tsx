@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/utils/format-date";
-import {InterviewWithRelations} from "@/features/interview-simulator/actions/get-interviews";
+import {InterviewWithRelations} from "@/features/interview/actions/get-interviews";
 
 interface Props {
   session: InterviewWithRelations;

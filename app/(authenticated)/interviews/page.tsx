@@ -1,6 +1,6 @@
-import { getInterviews } from "@/features/interview-simulator/actions/get-interviews";
+import { getInterviews } from "@/features/interview/actions/get-interviews";
 import { getOpportunities } from "@/features/opportunities/get-opportunities";
-import InterviewsScreen from "@/features/interview-simulator/screens/interviews-screen";
+import InterviewsScreen from "@/features/interview/screens/interviews-screen";
 
 export default async function InterviewsPage() {
   const [data, oppsData] = await Promise.all([

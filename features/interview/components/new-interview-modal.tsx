@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import {cn} from "@/lib/utils";
 import {OpportunityWithCV} from "@/features/opportunities/get-opportunities";
+import {useRouter} from "next/navigation";
 
 interface Props {
   isOpen: boolean;
@@ -16,9 +17,17 @@ interface Props {
 }
 
 export function NewInterviewModal({ isOpen, onClose, opportunities, onStart, isConnecting }: Props) {
+  const router = useRouter();
   const [selectedOppId, setSelectedOppId] = useState<string | null>(null);
 
   const selectedOpp = opportunities.find(o => o.id === selectedOppId);
+
+  const handleRedirection = () => {
+    if (!selectedOpp) return;
+
+    // Redirigimos pasando el oppId y el cvId por URL
+    router.push(`/interviews/session/${selectedOpp.id}?cvId=${selectedOpp.cvId}`);
+  };
 
   return (
     <AnimatePresence>
@@ -94,7 +103,7 @@ export function NewInterviewModal({ isOpen, onClose, opportunities, onStart, isC
                   Cancelar
                 </Button>
                 <Button
-                  onClick={() => onStart(selectedOpp)}
+                  onClick={handleRedirection}
                   disabled={!selectedOppId || isConnecting}
                   className="rounded-xl bg-primary font-black px-8 h-12 text-xs uppercase tracking-widest shadow-xl shadow-primary/20"
                 >

@@ -25,22 +25,37 @@ export type AdminCvListResult =
         totalCount: number;
       };
     }
-  | { success: false; error: string };
+  | { success: false, error: string };
+
+export interface GetAdminCvsOptions {
+  query?: string;
+  includeDeleted?: boolean;
+  cvType?: string | null;
+  opportunityType?: string | null;
+  status?: "active" | "deleted" | null;
+  dateFrom?: string | null;
+  dateTo?: string | null;
+  sortBy?: "createdAt" | "updatedAt" | "title";
+  sortOrder?: "asc" | "desc";
+}
 
 export const getAdminCvs = async (
   skip = 0,
   take = 10,
-  options?: { includeDeleted?: boolean; query?: string }
+  options?: GetAdminCvsOptions
 ): Promise<AdminCvListResult> => {
   try {
     const admin = await requireAdmin();
     if (!admin.success) {
-      return admin;
+      return { success: false, error: "Acceso denegado. Solo los administradores pueden ver CVs." };
     }
 
     const where: Prisma.CvWhereInput = {};
 
-    if (!options?.includeDeleted) {
+    // Status filter (active/deleted)
+    if (options?.status === "deleted") {
+      where.deletedAt = { not: null };
+    } else if (options?.status === "active" || !options?.includeDeleted) {
       where.deletedAt = null;
     }
 
@@ -52,25 +67,49 @@ export const getAdminCvs = async (
       ];
     }
 
-    const cvs = await prisma.cv.findMany({
-      where,
-      skip,
-      take,
-      include: {
-        user: { select: { id: true, email: true, name: true } },
-        evaluations: {
-          include: { scores: true, recommendations: true },
-          orderBy: { createdAt: "desc" },
-          take: 1,
-        },
-        sections: { orderBy: { order: "asc" } },
-        previews: { orderBy: { createdAt: "desc" }, take: 1 },
-        queueJobs: { orderBy: { createdAt: "desc" }, take: 1 },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    if (options?.cvType) {
+      where.cvType = options.cvType as never;
+    }
 
-    const totalCount = await prisma.cv.count({ where });
+    if (options?.opportunityType) {
+      where.opportunityType = options.opportunityType as never;
+    }
+
+    if (options?.dateFrom || options?.dateTo) {
+      where.createdAt = {};
+      if (options?.dateFrom) {
+        (where.createdAt as Prisma.DateTimeFilter).gte = new Date(options.dateFrom);
+      }
+      if (options?.dateTo) {
+        const endDate = new Date(options.dateTo);
+        endDate.setHours(23, 59, 59, 999);
+        (where.createdAt as Prisma.DateTimeFilter).lte = endDate;
+      }
+    }
+
+    const sortBy = options?.sortBy || "createdAt";
+    const sortOrder = options?.sortOrder || "desc";
+
+    const [cvs, totalCount] = await Promise.all([
+      prisma.cv.findMany({
+        where,
+        skip,
+        take,
+        include: {
+          user: { select: { id: true, email: true, name: true } },
+          evaluations: {
+            include: { scores: true, recommendations: true },
+            orderBy: { createdAt: "desc" },
+            take: 1,
+          },
+          sections: { orderBy: { order: "asc" } },
+          previews: { orderBy: { createdAt: "desc" }, take: 1 },
+          queueJobs: { orderBy: { createdAt: "desc" }, take: 1 },
+        },
+        orderBy: { [sortBy]: sortOrder },
+      }),
+      prisma.cv.count({ where }),
+    ]);
 
     return {
       success: true,
@@ -85,4 +124,3 @@ export const getAdminCvs = async (
     return { success: false, error: "Error obteniendo CVs" };
   }
 };
-

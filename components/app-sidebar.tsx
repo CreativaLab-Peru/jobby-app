@@ -24,6 +24,10 @@ import {
   Settings,
   Users,
   Sparkles,
+  BarChart3,
+  Tag,
+  Coins,
+  Wallet,
 } from "lucide-react";
 
 const mainNavItems = [
@@ -34,6 +38,17 @@ const mainNavItems = [
   { title: "Simulador de entrevistas", href: "/interviews", icon: Sparkles },
 ];
 
+const adminNavItems = [
+  { title: "Usuarios", href: "/admin/users", icon: Users },
+  { title: "CVs", href: "/admin/cv", icon: FileText },
+  { title: "Evaluaciones", href: "/admin/evaluations", icon: BarChart3 },
+  { title: "Oportunidades", href: "/admin/opportunities", icon: Briefcase },
+  { title: "Pagos", href: "/admin/payments", icon: CreditCard },
+  { title: "Planes", href: "/admin/plans", icon: Tag },
+  { title: "Paquetes", href: "/admin/credit-packages", icon: Coins },
+  { title: "Balances", href: "/admin/balances", icon: Wallet },
+];
+
 const communityItems = [{ title: "Networking", href: "/networking", icon: Users }];
 
 const bottomItems = [
@@ -41,10 +56,11 @@ const bottomItems = [
   { title: "Configuración", href: "/settings", icon: Settings },
 ];
 
-export default function AppSidebar() {
+export default function AppSidebar({ userRole }: { userRole?: string }) {
   const pathname = usePathname();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
+  const isAdmin = userRole === "ADMIN";
 
   const isActive = (path: string) => {
     if (path === "/dashboard") {
@@ -109,6 +125,25 @@ export default function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
+            {isAdmin &&
+              adminNavItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200",
+                        isActive(item.href)
+                          ? "bg-primary text-secondary font-semibold shadow-sm hover:bg-primary"
+                          : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground"
+                      )}
+                    >
+                      <item.icon className="h-5 w-5 shrink-0" />
+                      {!collapsed && <span>{item.title}</span>}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
           </SidebarMenu>
         </SidebarGroup>
 

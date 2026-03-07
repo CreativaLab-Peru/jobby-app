@@ -12,7 +12,10 @@ export const softDeleteAdminCv = async (cvId: string): Promise<AdminDeleteCvResu
   try {
     const admin = await requireAdmin();
     if (!admin.success) {
-      return admin;
+      return {
+        success: false,
+        error: "Acceso denegado. Solo los administradores pueden ocultar CVs.",
+      }
     }
 
     const cv = await prisma.cv.findUnique({

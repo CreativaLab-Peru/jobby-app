@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar, Edit, MoreVertical, Trash2, User as UserIcon } from "lucide-react";
+import { Calendar, Edit, Eye, MoreVertical, Trash2, User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ConfirmModal } from "@/components/shared/confirm-modal";
@@ -20,6 +21,7 @@ import { CV_TYPE_CONFIG, OPPORTUNITY_CONFIG } from "@/features/cv/consts";
 import { cn } from "@/lib/utils";
 import { AdminCvWithRelations } from "@/features/cv/actions/admin/get-admin-cvs";
 import { softDeleteAdminCv } from "@/features/cv/actions/admin/soft-delete-admin-cv";
+import { routes } from "@/lib/routes";
 
 interface AdminCvCardProps {
   cv: AdminCvWithRelations;
@@ -41,7 +43,8 @@ export function AdminCvCard({ cv }: AdminCvCardProps) {
       setShowDeleteDialog(false);
       router.refresh();
     } else {
-      toast.error(result.error || "Error al eliminar el CV");
+      const errorMsg = (result as { error: string }).error || "Error al eliminar el CV";
+      toast.error(errorMsg);
     }
     setIsDeleting(false);
   };
@@ -56,7 +59,12 @@ export function AdminCvCard({ cv }: AdminCvCardProps) {
             <Icon className="h-6 w-6" />
           </div>
         }
-        subtitle={<StatusBadge variant="outline">{config.label}</StatusBadge>}
+        subtitle={
+          <div className="flex items-center gap-2">
+            <StatusBadge variant="outline">{config.label}</StatusBadge>
+            <StatusBadge variant="outline">{opportunity}</StatusBadge>
+          </div>
+        }
         title={
           <span className="text-lg font-bold tracking-tight text-foreground">
             {cv.title || "Sin título"}
@@ -81,13 +89,20 @@ export function AdminCvCard({ cv }: AdminCvCardProps) {
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40 rounded-xl">
+            <DropdownMenuContent align="end" className="w-44 rounded-xl">
               <DropdownMenuItem
-                onClick={() => router.push(`/admin/cv/${cv.id}/edit`)}
+                onClick={() => router.push(routes.app.admin.cv.detail(cv.id))}
+                className="cursor-pointer font-medium"
+              >
+                <Eye className="mr-2 h-4 w-4" /> Ver detalle
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => router.push(routes.app.admin.cv.edit(cv.id))}
                 className="cursor-pointer font-medium"
               >
                 <Edit className="mr-2 h-4 w-4" /> Editar
               </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => setShowDeleteDialog(true)}
                 className="cursor-pointer text-destructive focus:text-destructive font-medium"
@@ -100,10 +115,10 @@ export function AdminCvCard({ cv }: AdminCvCardProps) {
         footerActions={
           <Button
             variant="accent"
-            onClick={() => router.push(`/admin/cv/${cv.id}/edit`)}
+            onClick={() => router.push(routes.app.admin.cv.detail(cv.id))}
             className="h-9 rounded-lg px-6 text-xs font-bold shadow-sm"
           >
-            Administrar CV
+            Ver CV
           </Button>
         }
       />

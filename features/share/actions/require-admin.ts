@@ -4,7 +4,7 @@ import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import { User } from "@prisma/client";
 
 export type RequireAdminResult =
-  | { success: true; user: User }
+  | { success: true; user: User, error: null }
   | { success: false; error: string };
 
 export const requireAdmin = async (): Promise<RequireAdminResult> => {
@@ -18,7 +18,7 @@ export const requireAdmin = async (): Promise<RequireAdminResult> => {
       return { success: false, error: "Acceso solo para administradores" };
     }
 
-    return { success: true, user };
+    return { success: true, user, error: null };
   } catch (error) {
     console.error("[REQUIRE_ADMIN_ERROR]", error);
     return { success: false, error: "Error validando permisos" };

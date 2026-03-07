@@ -19,7 +19,10 @@ export const createAdminCv = async (params: {
   try {
     const admin = await requireAdmin();
     if (!admin.success) {
-      return admin;
+      return {
+        success: false,
+        error: "Unauthorized: Admin access required",
+      }
     }
 
     const user = await prisma.user.findFirst({

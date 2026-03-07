@@ -20,6 +20,7 @@ import {
   FileText,
   MessageSquare,
   MessageSquareWarning,
+  Activity,
   Briefcase,
   CreditCard,
   Settings,
@@ -49,6 +50,7 @@ const adminNavItems = [
   { title: "Paquetes", href: "/admin/credit-packages", icon: Coins },
   { title: "Balances", href: "/admin/balances", icon: Wallet },
   { title: "Reclamos", href: "/admin/complaints", icon: MessageSquareWarning },
+  { title: "Jobs", href: "/admin/jobs", icon: Activity },
 ];
 
 const communityItems = [{ title: "Networking", href: "/networking", icon: Users }];

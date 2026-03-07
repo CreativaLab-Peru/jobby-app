@@ -47,8 +47,10 @@ model User {
   userCreditBalance          UserCreditBalance[]
   Invoice                    Invoice[]
   complaints                 Complaint[]
+  interviewSessions InterviewSession[]
 
   @@map("user")
+
 }
 
 // Códigos de verificación para acciones como registro o recuperación de contraseña
@@ -206,12 +208,14 @@ model Cv {
   sections        CvSection[]
   opportunities   Opportunity[]
   queueJobs       QueueJob[]
+  interviewSessions InterviewSession[]
 
   @@index([userId])
   @@index([language])
   @@index([opportunityType])
   @@index([cvType])
   @@map("cv")
+
 }
 
 model Opportunity {
@@ -232,9 +236,43 @@ model Opportunity {
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
   cv           Cv              @relation(fields: [cvId], references: [id], onDelete: Cascade)
+  interviewSessions InterviewSession[]
 
   @@id([id, cvId])
   @@map("opportunity")
+
+}
+
+model InterviewSession {
+  id            String   @id @default(uuid())
+  userId        String
+  cvId          String
+  opportunityId String
+
+  // Metadatos de la sesión de Vapi
+  vapiCallId    String?  @unique // Para vincular con el webhook
+  status        String   @default("COMPLETED") // PENDING, COMPLETED, FAILED
+
+  // KPIs / Resultados (Almacenados tras el webhook)
+  overallScore  Int?     // 0-100
+  confidence    Int?     // 0-100 (Nivel de seguridad al hablar)
+  clarity       Int?     // 0-100 (Claridad técnica/explicativa)
+  alignment     Int?     // 0-100 (Qué tanto encaja con el rol)
+
+  feedback      String?  @db.Text
+  transcript    Json?    // Guardamos la conversación final
+
+  createdAt     DateTime @default(now())
+
+  // Relaciones
+  user        User        @relation(fields: [userId], references: [id])
+  cv          Cv          @relation(fields: [cvId], references: [id])
+  // Nota: Dado que Opportunity tiene un ID compuesto en tu schema:
+  opportunity Opportunity @relation(fields: [opportunityId, cvId], references: [id, cvId])
+
+  @@index([userId])
+  @@index([opportunityId, cvId])
+  @@map("interview_session")
 }
 
 model CvSection {

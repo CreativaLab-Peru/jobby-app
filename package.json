@@ -52,6 +52,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/pdf-parse": "^1.1.5",
     "@types/pg": "^8.15.4",
+    "@vapi-ai/web": "^2.5.2",
     "@vercel/blob": "^1.1.1",
     "autoprefixer": "^10.4.20",
     "axios": "1.12.0",

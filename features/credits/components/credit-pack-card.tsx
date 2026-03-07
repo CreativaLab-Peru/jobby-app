@@ -15,9 +15,10 @@ interface PackProps {
     variant: "outline" | "default";
   };
   onPurchase: (packId: string, method: PaymentMethod) => void;
+  isAuthenticated?: boolean;
 }
 
-export function CreditPackCard({ pack, onPurchase }: PackProps) {
+export function CreditPackCard({ pack, onPurchase, isAuthenticated = true }: PackProps) {
   const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
 
   return (
@@ -69,7 +70,13 @@ export function CreditPackCard({ pack, onPurchase }: PackProps) {
             ${pack.highlight
               ? "bg-primary/90 hover:bg-primary text-secondary"
               : ""}`}
-          onClick={() => setIsMethodModalOpen(true)}
+          onClick={() => {
+            if (!isAuthenticated) {
+              onPurchase(pack.id, PaymentMethod.MERCADOPAGO); // método ignorado, solo dispara el auth modal
+              return;
+            }
+            setIsMethodModalOpen(true);
+          }}
         >
           Adquirir {pack.name} {pack.highlight && <ArrowRight className="ml-2 h-4 w-4" />}
         </Button>

@@ -160,6 +160,7 @@ export default function CVBuilderScreen({ user }: CVBuilderScreenProps) {
               key={pack.id}
               pack={pack}
               onPurchase={handlePurchase}
+              isAuthenticated={!!user}
             />
           ))}
         </div>

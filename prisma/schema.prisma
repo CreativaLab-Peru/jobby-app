@@ -240,7 +240,6 @@ model Opportunity {
 
   @@id([id, cvId])
   @@map("opportunity")
-
 }
 
 model InterviewSession {

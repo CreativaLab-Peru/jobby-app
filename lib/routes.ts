@@ -59,6 +59,10 @@ export const routes = {
         root: "/admin/jobs",
         detail: (jobId: string) => `/admin/jobs/${jobId}`,
       },
+      interviews: {
+        root: "/admin/interviews",
+        detail: (sessionId: string) => `/admin/interviews/${sessionId}`,
+      },
     },
 
     evaluations: {

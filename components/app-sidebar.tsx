@@ -30,6 +30,7 @@ import {
   Tag,
   Coins,
   Wallet,
+  Mic,
 } from "lucide-react";
 
 const mainNavItems = [
@@ -51,6 +52,7 @@ const adminNavItems = [
   { title: "Balances", href: "/admin/balances", icon: Wallet },
   { title: "Reclamos", href: "/admin/complaints", icon: MessageSquareWarning },
   { title: "Jobs", href: "/admin/jobs", icon: Activity },
+  { title: "Entrevistas", href: "/admin/interviews", icon: Mic },
 ];
 
 const communityItems = [{ title: "Networking", href: "/networking", icon: Users }];

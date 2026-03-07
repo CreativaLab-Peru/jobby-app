@@ -21,7 +21,7 @@ export const processUploadedCv = inngest.createFunction(
       },
       create: {
         jobId: event.id,
-        type: "CREATE_CV",
+        type: "UPLOAD_CV",
         payload: event.data,
         status: JobStatus.IN_PROGRESS,
         cvId,

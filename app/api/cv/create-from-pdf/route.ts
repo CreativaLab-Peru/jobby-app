@@ -6,8 +6,7 @@ import {NextResponse} from "next/server";
 import {getCurrentUser} from "@/features/share/actions/get-current-user";
 import {detectCv} from "@/features/cv/actions/verify-cv";
 import {getTextFromPdfApi} from "@/utils/get-text-from-pdf-api";
-import {getPromptToGetCv} from "@/features/cv/prompts/get-prompt-to-get-cv";
-import {queryGemini} from "@/features/cv/queries/query-gemini";
+import {inngest} from "@/inngest/functions/client";
 
 export async function POST(req: Request) {
   try {
@@ -57,7 +56,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // Extract text from PDF and verify if it's a CV
+    // Quick validation: extract text and verify it looks like a CV
     const textFromPdf = await getTextFromPdfApi(url);
     const result = detectCv(textFromPdf);
     if (!result.isCv) {
@@ -67,42 +66,14 @@ export async function POST(req: Request) {
       );
     }
 
-    // Use AI to extract and structure CV data
-    const prompt = getPromptToGetCv(textFromPdf);
-    const aiResult = await queryGemini({ prompt, type: "JSON" });
-
-    if (!aiResult.success) {
-      return NextResponse.json(
-        {success: false, message: "Error al procesar el contenido del CV"},
-        {status: 500}
-      );
-    }
-
-    const jsonData = aiResult.data;
-    const textCv = JSON.stringify(jsonData, null, 2);
-
-    // Validate and set opportunityType and cvType from AI extraction
-    let extractedOpportunityType = jsonData.opportunityType || opportunityType;
-    let extractedCvType = jsonData.cvType || cvType;
-
-    if (!Object.values(OpportunityType).includes(extractedOpportunityType as OpportunityType)) {
-      extractedOpportunityType = opportunityType;
-    }
-
-    if (!Object.values(CvType).includes(extractedCvType as CvType)) {
-      extractedCvType = cvType;
-    }
-
-    // Create CV with extracted data and sections
+    // Create CV shell (processing will happen in the background via inngest)
     const cv = await prisma.cv.create({
       data: {
         userId: currentUser.id,
-        language: Language.EN,
-        opportunityType: extractedOpportunityType,
-        cvType: extractedCvType,
+        language: Language.ES,
+        opportunityType,
+        cvType,
         title,
-        extractedJson: jsonData,
-        fullTextSearch: textCv,
         attachments: {
           create: {
             filename: file.name,
@@ -110,16 +81,6 @@ export async function POST(req: Request) {
             url,
             size: file.size,
           },
-        },
-        sections: {
-          create: Array.isArray(jsonData.sections) 
-            ? jsonData.sections.map((section: any, index: number) => ({
-                sectionType: section.sectionType,
-                title: section.title ?? null,
-                contentJson: section.contentJson ?? {},
-                order: index,
-              }))
-            : [],
         },
       },
     });
@@ -143,6 +104,16 @@ export async function POST(req: Request) {
         amount: {
           decrement: 1,
         }
+      },
+    });
+
+    // Dispatch to inngest for async processing (extraction, sections, evaluation, opportunities)
+    await inngest.send({
+      name: "cv/uploaded",
+      data: {
+        cvId: cv.id,
+        attachmentUrl: url,
+        userId: currentUser.id,
       },
     });
 

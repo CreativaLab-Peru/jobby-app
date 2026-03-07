@@ -52,7 +52,8 @@ export function AdminCreateCvModal({ isOpen, onClose, onCreated }: AdminCreateCv
           toast.success("CV creado para el usuario");
           onCreated(result.data.id);
         } else {
-          toast.error(result.error || "Error al crear el CV");
+          const errorMsg = (result as { error: string }).error || "Error creando CV para el usuario";
+          toast.error(errorMsg);
         }
       });
     });

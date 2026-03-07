@@ -31,7 +31,9 @@ import {
   Coins,
   Wallet,
   Mic,
-  Shield, Receipt,
+  Shield,
+  Receipt,
+  Sliders,
 } from "lucide-react";
 
 const mainNavItems = [
@@ -42,6 +44,7 @@ const mainNavItems = [
   { title: "Simulador de entrevistas", href: "/interviews", icon: Sparkles },
   { title: "Créditos", href: "/credits", icon: CreditCard },
   { title: "Transacciones", href: "/transactions", icon: Receipt },
+  { title: "Preferencias", href: "/preferences", icon: Sliders },
 ];
 
 const adminNavItems = [

@@ -99,6 +99,34 @@ export const evaluateCv = inngest.createFunction(
   async ({event}) => {
     const {cvId, userId, evaluationId} = event.data;
 
+    // ✅ Create and mark job as IN_PROGRESS
+    const job = await prisma.queueJob.upsert({
+      where: { jobId: event.id },
+      update: {
+        status: JobStatus.IN_PROGRESS,
+        startedAt: new Date(),
+      },
+      create: {
+        jobId: event.id,
+        type: "EVALUATE_CV",
+        payload: event.data,
+        status: JobStatus.IN_PROGRESS,
+        cvId,
+        startedAt: new Date(),
+      },
+    });
+
+    // ✅ Log: job started
+    await logsService.createLog({
+      userId,
+      action: LogAction.EVALUATION,
+      level: LogLevel.INFO,
+      entity: "QUEUE_JOB",
+      entityId: job.id,
+      message: "Started evaluate-cv job",
+      metadata: { cvId, evaluationId },
+    });
+
     // Fetch CV with sections for manual CVs support
     const cv = await prisma.cv.findUnique({
       where: {id: cvId},
@@ -250,11 +278,30 @@ export const evaluateCv = inngest.createFunction(
         },
       });
 
+      // ✅ Mark job as SUCCEEDED
+      await prisma.queueJob.update({
+        where: { id: job.id },
+        data: {
+          status: JobStatus.SUCCEEDED,
+          finishedAt: new Date(),
+        },
+      });
+
     } catch (error: any) {
       // ✅ Update evaluation record
       await prisma.cvEvaluation.update({
         where: {id: evaluation.id},
         data: {status: JobStatus.FAILED},
+      });
+
+      // ✅ Mark job as FAILED
+      await prisma.queueJob.update({
+        where: { id: job.id },
+        data: {
+          status: JobStatus.FAILED,
+          lastError: error?.message ?? "Unknown error",
+          finishedAt: new Date(),
+        },
       });
 
       // ✅ Refund the analysis token since evaluation failed

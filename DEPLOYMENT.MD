@@ -1,4 +1,4 @@
-# v1.1.24 - 2026-03-06 (WIP)
+# v1.1.24 - 2026-03-07
 
 ### BEFORE DEPLOYMENT
 - Add new environment variables (Paddle integration):

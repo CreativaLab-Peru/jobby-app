@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Upload, CheckCircle, ChevronRight, FileIcon, X } from "lucide-react";
 import { CvType, OpportunityType } from "@prisma/client";
@@ -17,7 +16,6 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useCredits } from "@/features/credits/hooks/use-credits";
 import { useCvModalStore } from "../hooks/use-cv-modal-store";
 import { CV_TYPE_OPTIONS } from "@/features/cv/consts";
-import { Analyzing } from "@/features/analysis/components/analyzing";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -38,11 +36,6 @@ export function UploadCVModal({ initialFile, reset }: UploadCVModalProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [step, setStep] = useState(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (initialFile && isUploadOpen) {
@@ -109,11 +102,13 @@ export function UploadCVModal({ initialFile, reset }: UploadCVModalProps) {
       }
 
       if (data.success) {
-        toast.success("CV analizado y cargado con éxito");
+        toast.success("CV subido correctamente. Procesando...");
         onCloseUpload();
         refreshCredits();
         reset();
-        router.push(`/cv/${data.cvId}/edit`);
+        resetForm();
+        setIsUploading(false);
+        router.push(`/cv/${data.cvId}/processing`);
         return;
       }
     } catch (error: any) {
@@ -142,12 +137,6 @@ export function UploadCVModal({ initialFile, reset }: UploadCVModalProps) {
 
   return (
     <>
-      {isUploading && mounted && createPortal(
-        <div className="fixed inset-0 z-[9999] bg-background">
-          <Analyzing />
-        </div>,
-        document.body
-      )}
 
       <Dialog open={isUploadOpen} onOpenChange={(open) => {
         if (isUploading) return;

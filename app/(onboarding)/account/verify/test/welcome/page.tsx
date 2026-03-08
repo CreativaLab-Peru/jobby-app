@@ -13,8 +13,6 @@ export default async function SendTestPage() {
     name: "Edward Melendez",
   }
 
-  console.log("[PASSWORD]", FIRST_PASSWORD);
-
   await authClient.signUp.email({
     email: userData.email,
     password: FIRST_PASSWORD,

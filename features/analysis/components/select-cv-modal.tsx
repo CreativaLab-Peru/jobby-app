@@ -138,8 +138,7 @@ export function SelectCvModal({
                 <div>
                   <h2 className="text-2xl font-bold text-foreground tracking-tight">Selecciona un
                     CV</h2>
-                  <p className="text-sm text-muted-foreground mt-1">Elige el CV que deseas
-                    analizar</p>
+                  <p className="text-sm text-muted-foreground mt-1">Elige el CV que deseas analizar</p>
                   <div
                     className="flex items-center gap-1.5 mt-2 text-xs font-medium text-muted-foreground">
                     <Sparkles className="w-3.5 h-3.5 text-primary"/>

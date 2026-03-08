@@ -35,21 +35,6 @@ export const reAnalyzeCvByEvaluationId = async (evaluationId: string) => {
       };
     }
 
-    // 3. Actualizar balance de créditos del usuario
-    await prisma.userCreditBalance.update({
-      where: {
-        userId_type: {
-          userId: currentUser.id,
-          type: CreditBalanceType.AI_ACTIONS
-        },
-      },
-      data: {
-        amount: {
-          decrement: 1,
-        }
-      },
-    });
-
     // 4. Disparar el evento de Inngest
     await inngest.send({
       name: "cv/ready-for-evaluation",

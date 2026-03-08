@@ -19,32 +19,59 @@ import {
   LayoutDashboard,
   FileText,
   MessageSquare,
+  MessageSquareWarning,
+  Activity,
   Briefcase,
   CreditCard,
   Settings,
   Users,
   Sparkles,
+  BarChart3,
+  Tag,
+  Coins,
+  Wallet,
+  Mic,
+  Shield,
+  Receipt,
+  Sliders,
 } from "lucide-react";
 
 const mainNavItems = [
   { title: "Mi Panel", href: "/dashboard", icon: LayoutDashboard },
-  { title: "Mis CVs", href: "/cv", icon: FileText },
-  { title: "Mis Evaluaciones", href: "/evaluations", icon: MessageSquare },
+  { title: "CVs", href: "/cv", icon: FileText },
+  { title: "Evaluaciones", href: "/evaluations", icon: MessageSquare },
   { title: "Oportunidades", href: "/opportunities", icon: Briefcase },
-  // { title: "Simulador de entrevistas", href: "/interviews-simulator", icon: Sparkles },
+  // { title: "Entrevistas", href: "/interviews", icon: Sparkles },
+  { title: "Créditos", href: "/credits", icon: CreditCard },
+  { title: "Transacciones", href: "/transactions", icon: Receipt },
+  { title: "Preferencias", href: "/preferences", icon: Sliders },
+];
+
+const adminNavItems = [
+  { title: "Usuarios", href: "/admin/users", icon: Users },
+  { title: "CVs", href: "/admin/cv", icon: FileText },
+  { title: "Evaluaciones", href: "/admin/evaluations", icon: BarChart3 },
+  { title: "Oportunidades", href: "/admin/opportunities", icon: Briefcase },
+  { title: "Pagos", href: "/admin/payments", icon: CreditCard },
+  { title: "Planes", href: "/admin/plans", icon: Tag },
+  { title: "Paquetes", href: "/admin/credit-packages", icon: Coins },
+  { title: "Balances", href: "/admin/balances", icon: Wallet },
+  { title: "Reclamos", href: "/admin/complaints", icon: MessageSquareWarning },
+  { title: "Jobs", href: "/admin/jobs", icon: Activity },
+  { title: "Entrevistas", href: "/admin/interviews", icon: Mic },
 ];
 
 const communityItems = [{ title: "Networking", href: "/networking", icon: Users }];
 
 const bottomItems = [
-  { title: "Créditos", href: "/credits", icon: CreditCard },
   { title: "Configuración", href: "/settings", icon: Settings },
 ];
 
-export default function AppSidebar() {
+export default function AppSidebar({ userRole }: { userRole?: string }) {
   const pathname = usePathname();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
+  const isAdmin = userRole === "ADMIN";
 
   const isActive = (path: string) => {
     if (path === "/dashboard") {
@@ -111,6 +138,44 @@ export default function AppSidebar() {
             ))}
           </SidebarMenu>
         </SidebarGroup>
+
+        {/* Admin Navigation */}
+        {isAdmin && (
+          <SidebarGroup className="border-0">
+            <SidebarGroupLabel
+              className={cn(
+                "px-4 py-2 text-xs font-semibold uppercase tracking-wider flex items-center gap-2",
+                collapsed ? "sr-only" : "text-amber-600 dark:text-amber-400",
+              )}
+            >
+              <Shield className="h-3.5 w-3.5" />
+              Administración
+            </SidebarGroupLabel>
+            {!collapsed && (
+              <div className="mx-3 mb-1 h-px bg-amber-500/20 dark:bg-amber-400/20" />
+            )}
+            <SidebarMenu>
+              {adminNavItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200",
+                        isActive(item.href)
+                          ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 font-semibold shadow-sm border border-amber-500/20 hover:bg-amber-500/15"
+                          : "text-muted-foreground hover:bg-amber-500/10 hover:text-amber-700 dark:hover:text-amber-300"
+                      )}
+                    >
+                      <item.icon className="h-5 w-5 shrink-0" />
+                      {!collapsed && <span>{item.title}</span>}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
+        )}
 
         {/* Comunidad (placeholder, descomentar si hay lógica de plan) */}
         {/*<SidebarGroup>*/}

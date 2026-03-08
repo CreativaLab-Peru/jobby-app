@@ -2,7 +2,15 @@
 
 import {getCurrentUser} from "@/features/share/actions/get-current-user";
 import {prisma} from "@/lib/prisma";
+import {Opportunity} from "@prisma/client";
 
+export type OpportunityWithCV = Opportunity & {
+  cv: {
+    id: string,
+    title: string
+  }
+  match: number
+}
 export interface paginationParams {
   skip?: number,
   take?: number,
@@ -58,7 +66,7 @@ export const getOpportunities = async (params?: paginationParams) => {
           title: opt.cv.title
         }
       }))
-    ));
+    )) as OpportunityWithCV[];
 
     return {
       opportunities: opportunitiesFormatted,

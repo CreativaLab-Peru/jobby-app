@@ -1,17 +1,17 @@
-import { serve } from "inngest/next";
-import { inngest } from "@/inngest/functions/client";
-import { evaluateCv } from "@/inngest/functions/evaluate-cv";
-import { processUploadedCv } from "@/inngest/functions/process-uploaded-cv";
-import { testOnProd } from "@/inngest/functions/test";
-import { sendMagicLinkToEmail } from "@/inngest/functions/send-magic-link-to-email";
+import {serve} from "inngest/next";
+import {inngest} from "@/inngest/functions/client";
+import {evaluateCv} from "@/inngest/functions/evaluate-cv";
+import {uploadNewCv} from "@/inngest/functions/upload-new-cv";
+import {testOnProd} from "@/inngest/functions/test";
+import {sendMagicLinkToEmail} from "@/inngest/functions/send-magic-link-to-email";
 import {getAndSaveOpportunities} from "@/inngest/functions/get-and-save-opportunities";
 
 // Create an API that serves zero functions
-export const { GET, POST, PUT } = serve({
+export const {GET, POST, PUT} = serve({
   client: inngest,
   functions: [
     evaluateCv,
-    processUploadedCv,
+    uploadNewCv,
     testOnProd,
     sendMagicLinkToEmail,
     getAndSaveOpportunities,

@@ -4,6 +4,7 @@ import {getCurrentUser} from "@/features/share/actions/get-current-user";
 import {prisma} from "@/lib/prisma";
 import {CvType, Language, OpportunityType, CvSectionType, CreditBalanceType} from "@prisma/client";
 import {JsonObject} from "@prisma/client/runtime/library";
+import {consumeCredits} from "@/features/credits/actions/consume-credits";
 
 /**
  * Create a CV and its default sections in one atomic operation.
@@ -121,18 +122,11 @@ export const createCVByTitleAndType = async (
       return {success: false, message: "Error creating CV."};
     }
 
-    await prisma.userCreditBalance.update({
-      where: {
-        userId_type: {
-          userId: currentUser.id,
-          type: CreditBalanceType.MANAGE_CVS
-        }
-      },
-      data: {
-        amount: {
-          decrement: 1,
-        },
-      },
+    await consumeCredits({
+      userId: currentUser.id,
+      type: CreditBalanceType.MANAGE_CVS,
+      amount: 1,
+      description: `Add new CV ${currentUser.id}`,
     });
 
     return {

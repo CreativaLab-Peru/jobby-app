@@ -10,7 +10,6 @@ interface Props {
 export function CreditBalance({ ai, opps, cvs }: Props) {
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Mis créditos</h1>
       <div className="flex flex-wrap gap-3">
         <Badge variant="secondary"
                className="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 px-3 py-1 border-none font-semibold">

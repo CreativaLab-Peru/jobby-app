@@ -1,3 +1,13 @@
+# v1.1.25 - 2026-03-07
+
+## Features
+- For admin users we added maintenances with AI (it missing make some tests to validate)
+
+## Fixes
+- use inngest functions in all the processes that we want to do in background, like sending emails, generating CVs, etc.
+
+---
+
 # v1.1.24 - 2026-03-07
 
 ## Features

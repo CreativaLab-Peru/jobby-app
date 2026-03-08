@@ -37,8 +37,6 @@ export default async function AdminPlansPage({ searchParams }: AdminPlansPagePro
   const totalCount = result.success ? result.data.totalCount : 0;
   const error = result.success ? null : (result as { error: string }).error;
 
-  console.log("[ADMIN_PLANS_PAGE]", { plans });
-
   return (
     <AdminPlanListScreen
       initialPlans={plans}

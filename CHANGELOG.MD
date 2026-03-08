@@ -1,3 +1,39 @@
+# WIP
+
+## Features
+
+### Admin Panel — Full CRUD with Stats & Filters
+- **Admin Balances list**: Added stats dashboard (7 cards: total, per-type counts, zero balance, total credits aggregate), new filters (balanceStatus zero/positive, hasTransactions, dateFrom/dateTo), clickable stat cards for quick filtering.
+- **Admin Users list**: Added stats dashboard (total, active, blocked, admins, verified, unverified), new filters (hasCvs, hasPayments, dateFrom/dateTo), clickable stat cards with smart filter toggle.
+- **Admin Credit Transactions CRUD**: New full admin page for managing credit transactions with list/card views, stats dashboard, and filters by transaction type, credit type, balance status, user, and date range.
+
+### Sidebar Improvements
+- **Visual separation between user and admin sections**: Admin sidebar items now render in their own group with a 🛡️ "Administración" label in amber/gold, amber-themed active/hover states, and a divider line — clearly distinct from the primary-colored user items.
+- **New user sidebar items**: Added Créditos, Transacciones, and Preferencias links to the bottom section.
+
+### User-Facing Pages
+- **User Transactions page** (`/credits/transactions`): New page for users to see their credit transaction history with filters (transaction type, credit type, date range) and pagination.
+- **User Preferences page** (`/preferences`): New single-page form to manage professional profile preferences (country, experience level, preferred roles, areas of interest from `talent-onboarding-data.ts`, skills as toggleable badges, work modality, availability, opportunity types, relocation, salary expectations). Uses AREAS and SKILLS constants from the onboarding data.
+- **CV Processing page** (`/cv/{id}/processing`): New KISS loading page shown while inngest processes an uploaded CV in the background. Polls status every 3s, shows rotating step messages with progress bar, auto-redirects to edit page on success, shows error state with retry on failure.
+
+### Credits Screen
+- Added "Ver historial de transacciones" link on the credits page.
+
+## Technical
+
+### Inngest Job Tracking
+- **evaluate-cv**: Added QueueJob creation (upsert IN_PROGRESS at start, SUCCEEDED on completion, FAILED with lastError in catch).
+- **get-and-save-opportunities**: Added QueueJob tracking with full try/catch lifecycle (IN_PROGRESS → SUCCEEDED/FAILED), proper logging at each stage.
+
+### CV Upload Flow Refactor
+- **`/api/cv/create-from-pdf`**: Now delegates AI extraction and section parsing to the `processUploadedCv` inngest function via the `cv/uploaded` event, instead of doing it inline. The route only validates, saves PDF, creates CV shell, consumes credits, and fires the event.
+- **Upload modal**: Redirects to `/cv/{id}/processing` instead of `/cv/{id}/edit`. Removed the full-screen `<Analyzing />` portal overlay.
+
+### Layout Consistency
+- Updated Credits, Transactions, and Preferences screens to use the standard layout pattern: `<main min-h-[90vh] p-4 md:p-8>` → `max-w-7xl` → `motion.div` + `<PageHeader />`, matching the interviews screen.
+
+---
+
 # v1.1.24 - 2026-03-07
 
 ## Features

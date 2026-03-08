@@ -25,7 +25,7 @@ export default async function RootLayout({
     <ThemeSync />
     <PaddleProvider>
     {/* Sidebar lateral */}
-    <AppSidebar/>
+    <AppSidebar userRole={user.role}/>
 
     {/* Contenido Principal */}
     <main className="flex flex-1 flex-col">

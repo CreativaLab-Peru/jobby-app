@@ -1,6 +1,6 @@
 "use server"
 
-import { getSession } from "@/features/authentication/actions/get-session";;
+import { getSession } from "@/features/authentication/actions/get-session";
 import { prisma } from "@/lib/prisma";
 
 export const getUser = async () => {
@@ -21,6 +21,7 @@ export const getUser = async () => {
         acceptedPrivacyPolicy: true,
         acceptedSecurityPolicy: true,
         acceptedTermsAndConditions: true,
+        role: true,
       },
     })
 
@@ -37,6 +38,7 @@ export const getUser = async () => {
       acceptedPrivacyPolicy: user?.acceptedPrivacyPolicy || false,
       acceptedSecurityPolicy: user?.acceptedSecurityPolicy || false,
       acceptedTermsAndConditions: user?.acceptedTermsAndConditions || false,
+      role: user.role,
     }
   } catch (error) {
     console.error("[ERROR_GET_USER]", error);

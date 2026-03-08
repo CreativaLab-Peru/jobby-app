@@ -1,3 +1,12 @@
+# v1.1.25 - 2026-03-07
+
+### BEFORE DEPLOYMENT
+- New migration for interview table
+- New migration with admin role for User table
+- New variable `NEXT_PUBLIC_VAPI_WEB_TOKEN` for VAPI integration
+
+---
+
 # v1.1.24 - 2026-03-07
 
 ### BEFORE DEPLOYMENT

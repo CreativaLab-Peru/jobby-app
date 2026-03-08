@@ -269,7 +269,7 @@ export const evaluateCv = inngest.createFunction(
         userId,
         type: CreditBalanceType.AI_ACTIONS,
         amount: 1,
-        description: `Búsqueda para CV ${cvId}`,
+        description: `Evaluación para CV ${cvId}`,
       });
 
       // ✅ Log: Evaluation completed successfully

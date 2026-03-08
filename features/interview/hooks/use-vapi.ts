@@ -4,6 +4,7 @@ import {
   prepareInterviewSession
 } from "@/features/interview/actions/prepare-interview-session";
 import {linkVapiCallId} from "@/features/interview/actions/link-vapi-call-id-action";
+import { VARS } from "@/config/variables";
 
 interface TranscriptMessage {
   role: "user" | "assistant";
@@ -18,8 +19,7 @@ export const useVapi = () => {
   const [transcript, setTranscript] = useState<TranscriptMessage[]>([]);
 
   useEffect(() => {
-    // Es buena práctica usar variables de entorno para la Key
-    const vapiInstance = new Vapi("d8f16ab8-1d1a-4574-86ac-5ec2b5079782");
+    const vapiInstance = new Vapi(VARS.VAPI_PUBLIC_KEY);
     setVapi(vapiInstance);
 
     vapiInstance.on("call-start", () => {
@@ -56,15 +56,12 @@ export const useVapi = () => {
 
   // 2. startCall ahora acepta el contexto
   const startCall = useCallback(async (opportunityId: string, cvId: string) => {
-    console.log("startCall", opportunityId, cvId);
     if (!vapi) return;
-
-    console.log("startCall", opportunityId, cvId);
 
     setIsConnecting(true);
     setTranscript([]);
 
-    const ASSISTANT_ID = "54fc6087-27cf-42c7-933f-4fc410535174";
+    const ASSISTANT_ID = VARS.VAPI_ASSISTANT_ID;
 
     try {
       // 1. LLAMADA AL SERVER: Crear sesión y obtener contexto

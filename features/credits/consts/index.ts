@@ -2,7 +2,7 @@ export const CREDIT_PACKS = [
   {
     id: "STARTER",
     name: "Starter",
-    price: 9.90,
+    price: 19.90,
     limits: { manageCvsLimit: 3, aiActionsLimit: 1, opportunitiesActionsLimit: 5 },
     features: [
       { text: "Hasta 3 CVs guardados", included: true },
@@ -17,7 +17,7 @@ export const CREDIT_PACKS = [
   {
     id: "PRO",
     name: "Pro",
-    price: 19.90,
+    price: 29.90,
     limits: { manageCvsLimit: 5, aiActionsLimit: 3, opportunitiesActionsLimit: 10 },
     features: [
       { text: "Hasta 10 CVs guardados", included: true },

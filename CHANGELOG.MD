@@ -1,4 +1,9 @@
 # WIP
+
+## Enhancements
+- Change the price from 9.90 to 19.90 and 19.90 to 29.90
+- Update the cv pay page with video and hero
+
 ## Fixes
 - Some functions of the admin dashboard were fixed, as well as adding a filter by packages.
 

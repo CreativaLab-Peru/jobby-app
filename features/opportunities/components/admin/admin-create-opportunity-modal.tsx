@@ -141,7 +141,7 @@ export function AdminCreateOpportunityModal({
         onCreated();
         router.refresh();
       } else {
-        toast.error(result.error);
+        toast.error((result as { success: false; error: string }).error);
       }
     });
   };

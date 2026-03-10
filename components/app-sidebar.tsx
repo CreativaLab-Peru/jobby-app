@@ -25,10 +25,8 @@ import {
   CreditCard,
   Settings,
   Users,
-  Sparkles,
   BarChart3,
   Tag,
-  Coins,
   Wallet,
   Mic,
   Shield,
@@ -53,8 +51,7 @@ const adminNavItems = [
   { title: "Evaluaciones", href: "/admin/evaluations", icon: BarChart3 },
   { title: "Oportunidades", href: "/admin/opportunities", icon: Briefcase },
   { title: "Pagos", href: "/admin/payments", icon: CreditCard },
-  { title: "Planes", href: "/admin/plans", icon: Tag },
-  { title: "Paquetes", href: "/admin/credit-packages", icon: Coins },
+  { title: "Monetización", href: "/admin/plans", icon: Tag },
   { title: "Balances", href: "/admin/balances", icon: Wallet },
   { title: "Reclamos", href: "/admin/complaints", icon: MessageSquareWarning },
   { title: "Jobs", href: "/admin/jobs", icon: Activity },
@@ -76,6 +73,9 @@ export default function AppSidebar({ userRole }: { userRole?: string }) {
   const isActive = (path: string) => {
     if (path === "/dashboard") {
       return pathname === "/dashboard";
+    }
+    if (path === "/admin/plans") {
+      return pathname.startsWith("/admin/plans") || pathname.startsWith("/admin/credit-packages");
     }
     return pathname.startsWith(path);
   };

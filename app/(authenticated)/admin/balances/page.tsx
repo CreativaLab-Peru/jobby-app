@@ -46,16 +46,16 @@ export default async function AdminBalancesPage({ searchParams }: AdminBalancesP
     dateTo: dateTo || null,
   });
 
-  const balances = result.success ? result.data.balances : [];
+  const userGroups = result.success ? result.data.userGroups : [];
   const totalCount = result.success ? result.data.totalCount : 0;
   const stats = result.success
     ? result.data.stats
-    : { total: 0, aiActions: 0, uploads: 0, manageCvs: 0, searchOpportunities: 0, zeroBalance: 0, totalCredits: 0 };
+    : { total: 0, aiActions: 0, manageCvs: 0, searchOpportunities: 0, zeroBalance: 0, totalCredits: 0 };
   const error = result.success ? null : (result as { error: string }).error;
 
   return (
     <AdminBalanceListScreen
-      initialBalances={balances}
+      initialUserGroups={userGroups}
       totalCount={totalCount}
       currentPage={page}
       pageSize={pageSize}

@@ -220,11 +220,11 @@ export function AdminOpportunityListScreen({
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">Todos los tipos</SelectItem>
-                          <SelectItem value="INTERNSHIP">Pasantia</SelectItem>
+                          <SelectItem value="EMPLOYMENT">Empleo</SelectItem>
+                          <SelectItem value="INTERNSHIP">Pasantía</SelectItem>
                           <SelectItem value="SCHOLARSHIP">Beca</SelectItem>
                           <SelectItem value="EXCHANGE_PROGRAM">Intercambio</SelectItem>
-                          <SelectItem value="EMPLOYMENT">Empleo</SelectItem>
-                          <SelectItem value="STARTUP">Startup</SelectItem>
+                          <SelectItem value="STARTUP">Aceleradora</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

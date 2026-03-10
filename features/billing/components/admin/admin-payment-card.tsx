@@ -24,6 +24,13 @@ function formatCurrency(cents: number | { toNumber?: () => number }, currency: s
   return `${currency} ${(value / 100).toFixed(2)}`;
 }
 
+const PAYMENT_TYPE_LABELS: Record<string, string> = {
+  SUBSCRIPTION: "Suscripción",
+  ONE_TIME: "Pago único",
+  REFUND: "Reembolso",
+  FREE: "Gratis",
+};
+
 export function AdminPaymentCard({ payment }: AdminPaymentCardProps) {
   const [showDeactivateDialog, setShowDeactivateDialog] = useState(false);
   const [isDeactivating, setIsDeactivating] = useState(false);
@@ -61,7 +68,7 @@ export function AdminPaymentCard({ payment }: AdminPaymentCardProps) {
         }
         subtitle={
           <div className="flex items-center gap-2">
-            <StatusBadge variant="outline">{payment.plan.paymentType}</StatusBadge>
+            <StatusBadge variant="outline">{PAYMENT_TYPE_LABELS[payment.plan.paymentType] || payment.plan.paymentType}</StatusBadge>
             {isActive ? (
               <StatusBadge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20 text-[10px]">Activo</StatusBadge>
             ) : (

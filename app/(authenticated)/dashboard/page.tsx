@@ -8,6 +8,8 @@ export default async function DashboardPage() {
   const recommendations = stats?.latestEvaluation?.recommendations || [];
   const subscription = stats?.subscription;
   const creditLimits = await getCurrentCreditLimits();
+  const sector = stats?.latestEvaluation?.cv?.cvType || null;
+  const cvTitle = stats?.latestEvaluation?.cv?.title || null;
 
   return (
     <DashboardScreen
@@ -16,6 +18,8 @@ export default async function DashboardPage() {
       recommendations={recommendations as any}
       subscription={subscription as any}
       limits={creditLimits}
+      sector={sector}
+      cvTitle={cvTitle}
     />
   );
 }

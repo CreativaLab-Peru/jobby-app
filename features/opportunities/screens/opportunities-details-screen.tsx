@@ -47,7 +47,7 @@ export function OpportunityDetailsScreen({
   const { required, optional } = requirements;
 
   return (
-    <main className="min-h-[90-vh] p-4 md:p-8">
+    <main className="min-h-[90vh] p-4 md:p-8">
       <div className="mx-auto max-w-4xl space-y-8">
 
         {/* Header de navegación */}

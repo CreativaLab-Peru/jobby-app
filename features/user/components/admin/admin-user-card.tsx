@@ -72,7 +72,9 @@ export function AdminUserCard({ user }: AdminUserCardProps) {
             )}
           </div>
         }
-        title={<span className="text-lg font-bold tracking-tight text-foreground">{user.name}</span>}
+        title={<span className="text-lg font-bold tracking-tight text-foreground">
+          {user.name?.startsWith("tmp_") || !user.name ? user.email : user.name}
+        </span>}
         metadata={
           <>
             <div className="flex items-center gap-1.5"><UserIcon className="h-3.5 w-3.5" /><span>{user.email}</span></div>

@@ -10,17 +10,23 @@ export type AdminBalanceItem = UserCreditBalance & {
   _count: { creditTransaction: number };
 };
 
+export type AdminUserBalanceGroup = {
+  userId: string;
+  user: Pick<User, "id" | "email" | "name">;
+  balances: AdminBalanceItem[];
+  totalCredits: number;
+};
+
 export type AdminBalanceListResult =
   | {
       success: true;
       data: {
-        balances: AdminBalanceItem[];
+        userGroups: AdminUserBalanceGroup[];
         hasMore: boolean;
         totalCount: number;
         stats: {
           total: number;
           aiActions: number;
-          uploads: number;
           manageCvs: number;
           searchOpportunities: number;
           zeroBalance: number;
@@ -54,90 +60,104 @@ export const getAdminBalances = async (
       return { success: false, error: "Acceso denegado." };
     }
 
-    const where: Prisma.UserCreditBalanceWhereInput = {};
+    const balanceWhere: Prisma.UserCreditBalanceWhereInput = {
+      type: { not: "UPLOADS" },
+    };
 
     if (options?.type) {
-      where.type = options.type;
-    }
-
-    if (options?.query) {
-      where.user = {
-        OR: [
-          { email: { contains: options.query, mode: "insensitive" } },
-          { name: { contains: options.query, mode: "insensitive" } },
-        ],
-      };
+      balanceWhere.type = options.type;
     }
 
     if (options?.amountMin !== undefined && options?.amountMin !== null) {
-      where.amount = { ...(where.amount as Prisma.IntFilter || {}), gte: options.amountMin };
+      balanceWhere.amount = { ...(balanceWhere.amount as Prisma.IntFilter || {}), gte: options.amountMin };
     }
     if (options?.amountMax !== undefined && options?.amountMax !== null) {
-      where.amount = { ...(where.amount as Prisma.IntFilter || {}), lte: options.amountMax };
+      balanceWhere.amount = { ...(balanceWhere.amount as Prisma.IntFilter || {}), lte: options.amountMax };
     }
 
-    // Balance status filter
     if (options?.balanceStatus === "zero") {
-      where.amount = { ...(where.amount as Prisma.IntFilter || {}), equals: 0 };
+      balanceWhere.amount = { ...(balanceWhere.amount as Prisma.IntFilter || {}), equals: 0 };
     } else if (options?.balanceStatus === "positive") {
-      where.amount = { ...(where.amount as Prisma.IntFilter || {}), gt: 0 };
+      balanceWhere.amount = { ...(balanceWhere.amount as Prisma.IntFilter || {}), gt: 0 };
     }
 
-    // Has transactions filter
     if (options?.hasTransactions === "yes") {
-      where.creditTransaction = { some: {} };
+      balanceWhere.creditTransaction = { some: {} };
     } else if (options?.hasTransactions === "no") {
-      where.creditTransaction = { none: {} };
+      balanceWhere.creditTransaction = { none: {} };
     }
 
-    // Date range
     if (options?.dateFrom || options?.dateTo) {
-      where.updatedAt = {};
+      balanceWhere.updatedAt = {};
       if (options?.dateFrom) {
-        (where.updatedAt as Prisma.DateTimeFilter).gte = new Date(options.dateFrom);
+        (balanceWhere.updatedAt as Prisma.DateTimeFilter).gte = new Date(options.dateFrom);
       }
       if (options?.dateTo) {
         const endDate = new Date(options.dateTo);
         endDate.setHours(23, 59, 59, 999);
-        (where.updatedAt as Prisma.DateTimeFilter).lte = endDate;
+        (balanceWhere.updatedAt as Prisma.DateTimeFilter).lte = endDate;
       }
     }
 
-    const sortBy = options?.sortBy || "updatedAt";
-    const sortOrder = options?.sortOrder || "desc";
+    const userWhere: Prisma.UserWhereInput = {
+      userCreditBalance: { some: balanceWhere },
+    };
 
-    const [balances, totalCount, aiActionsCount, uploadsCount, manageCvsCount, searchOppCount, zeroBalanceCount, creditsAgg] = await Promise.all([
-      prisma.userCreditBalance.findMany({
-        where,
+    if (options?.query) {
+      userWhere.OR = [
+        { email: { contains: options.query, mode: "insensitive" } },
+        { name: { contains: options.query, mode: "insensitive" } },
+      ];
+    }
+
+    const [users, totalCount, aiActionsCount, manageCvsCount, searchOppCount, zeroBalanceCount, creditsAgg] = await Promise.all([
+      prisma.user.findMany({
+        where: userWhere,
         skip,
         take,
         include: {
-          user: { select: { id: true, email: true, name: true } },
-          _count: { select: { creditTransaction: true } },
+          userCreditBalance: {
+            where: balanceWhere,
+            include: {
+              _count: { select: { creditTransaction: true } },
+            },
+            orderBy: { type: "asc" },
+          },
         },
-        orderBy: { [sortBy]: sortOrder },
+        orderBy: { name: "asc" },
       }),
-      prisma.userCreditBalance.count({ where }),
+      prisma.user.count({ where: userWhere }),
       prisma.userCreditBalance.count({ where: { type: "AI_ACTIONS" } }),
-      prisma.userCreditBalance.count({ where: { type: "UPLOADS" } }),
       prisma.userCreditBalance.count({ where: { type: "MANAGE_CVS" } }),
       prisma.userCreditBalance.count({ where: { type: "SEARCH_OPPORTUNITIES" } }),
       prisma.userCreditBalance.count({ where: { amount: 0 } }),
       prisma.userCreditBalance.aggregate({ _sum: { amount: true } }),
     ]);
 
-    const total = aiActionsCount + uploadsCount + manageCvsCount + searchOppCount;
+    const userGroups: AdminUserBalanceGroup[] = users.map((u) => {
+      const userInfo = { id: u.id, email: u.email ?? "", name: u.name ?? "" };
+      return {
+        userId: u.id,
+        user: userInfo,
+        balances: u.userCreditBalance.map((b) => ({
+          ...b,
+          user: userInfo,
+        })) as AdminBalanceItem[],
+        totalCredits: u.userCreditBalance.reduce((sum, b) => sum + b.amount, 0),
+      };
+    });
+
+    const total = aiActionsCount + manageCvsCount + searchOppCount;
 
     return {
       success: true,
       data: {
-        balances: balances as AdminBalanceItem[],
+        userGroups,
         hasMore: skip + take < totalCount,
         totalCount,
         stats: {
           total,
           aiActions: aiActionsCount,
-          uploads: uploadsCount,
           manageCvs: manageCvsCount,
           searchOpportunities: searchOppCount,
           zeroBalance: zeroBalanceCount,
@@ -150,4 +170,3 @@ export const getAdminBalances = async (
     return { success: false, error: "Error obteniendo balances" };
   }
 };
-

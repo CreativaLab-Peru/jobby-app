@@ -119,8 +119,8 @@ Sistema de créditos flexible.
 
 ### `credit_package` (Mapeado como `credit_package`)
 Paquetes de créditos disponibles para compra.
-- **Campos:** `id`, `code`, `name`, `credits`, `priceCents`, `currency`, `active`, `type` (`CreditBalanceType`).
-- **Relación:** Tiene muchos `Invoice`.
+- **Campos:** `id`, `code`, `name`, `credits`, `priceCents`, `currency`, `active`, `type` (`CreditBalanceType`), `planId?` (FK a `subscription_plan`).
+- **Relación:** Tiene muchos `Invoice`. Opcionalmente pertenece a un `PaymentPlan` — permite agrupar paquetes por plan en el panel de administración.
 
 ### `invoice` (Mapeado como `invoice`)
 Facturas de pagos realizados por usuarios.

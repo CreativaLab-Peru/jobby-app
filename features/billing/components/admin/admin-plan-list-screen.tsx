@@ -179,6 +179,10 @@ export function AdminPlanListScreen({
             </AnimatePresence>
           </div>
 
+          <p className="text-sm text-muted-foreground text-center px-4">
+            <span className="font-semibold">Nota:</span> No agregar o modificar los planes sin comunicar al equipo de desarrollo.
+          </p>
+
           {/* Plans List */}
           {initialPlans.length > 0 ? (
             <>

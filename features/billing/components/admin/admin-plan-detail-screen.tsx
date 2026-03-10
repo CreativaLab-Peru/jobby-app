@@ -34,12 +34,12 @@ interface AdminPlanDetailScreenProps {
 
 function formatCurrency(cents: number | { toNumber?: () => number }, currency: string): string {
   const value = typeof cents === "number" ? cents : (cents?.toNumber?.() ?? Number(cents));
-  return `S/ ${value}`;
+  return `S/ ${(value / 100).toFixed(2)}`;
 }
 
 const PAYMENT_TYPE_LABELS: Record<string, string> = {
-  SUBSCRIPTION: "Suscripcion",
-  ONE_TIME: "Pago unico",
+  SUBSCRIPTION: "Suscripción",
+  ONE_TIME: "Pago único",
   REFUND: "Reembolso",
   FREE: "Gratis",
 };

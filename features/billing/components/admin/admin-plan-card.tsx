@@ -24,8 +24,8 @@ function formatCurrency(cents: number | { toNumber?: () => number }, currency: s
 }
 
 const PAYMENT_TYPE_LABELS: Record<string, string> = {
-  SUBSCRIPTION: "Suscripcion",
-  ONE_TIME: "Unico",
+  SUBSCRIPTION: "Suscripción",
+  ONE_TIME: "Único",
   REFUND: "Reembolso",
   FREE: "Gratis",
 };

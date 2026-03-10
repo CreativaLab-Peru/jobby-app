@@ -61,7 +61,9 @@ export function AdminUserRow({ user }: AdminUserRowProps) {
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-0.5">
-              <span className="font-bold text-sm text-foreground truncate">{user.name}</span>
+              <span className="font-bold text-sm text-foreground truncate">
+                {user.name?.startsWith("tmp_") || !user.name ? user.email : user.name}
+              </span>
               <StatusBadge variant={user.role === "ADMIN" ? "primary" : "outline"}>
                 {user.role === "ADMIN" ? "Admin" : "Usuario"}
               </StatusBadge>

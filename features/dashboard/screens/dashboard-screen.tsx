@@ -17,6 +17,8 @@ interface DashboardScreenProps {
   recommendations: any[];
   subscription: DashboardStats["subscription"];
   limits?: CreditLimits;
+  sector?: string | null;
+  cvTitle?: string | null;
 }
 
 
@@ -27,6 +29,8 @@ export default function DashboardScreen({
                                           recommendations,
                                           subscription,
                                           limits,
+                                          sector,
+                                          cvTitle,
                                         }: DashboardScreenProps) {
   usePaymentSuccess();
 
@@ -69,7 +73,8 @@ export default function DashboardScreen({
             <div className="lg:col-span-7">
               <EmployabilityCard
                 score={score}
-                sector={stats?.userSector || "General"}
+                sector={sector || null}
+                cvTitle={cvTitle}
               />
             </div>
             <div className="lg:col-span-5">

@@ -11,7 +11,8 @@ import {
 // Definimos un tipo que transforme el Decimal de Prisma en un number para el cliente
 export type DashboardStats = {
   latestEvaluation: (CvEvaluation & {
-    recommendations: Recommendation[]
+    recommendations: Recommendation[];
+    cv: { title: string | null; cvType: string | null };
   }) | null;
   topOpportunities: (Omit<Opportunity, 'match'> & { match: number })[];
   subscription: (UserPayment & {
@@ -33,6 +34,9 @@ export const getStatisticsForUser = async (): Promise<DashboardStats | null> => 
         recommendations: {
           take: 3,
           orderBy: { createdAt: "desc" }
+        },
+        cv: {
+          select: { title: true, cvType: true }
         }
       }
     });
@@ -76,7 +80,7 @@ export const getStatisticsForUser = async (): Promise<DashboardStats | null> => 
       topOpportunities,
       subscription,
       totalCvs,
-      userSector: preference?.[0]?.cvType || null,
+      userSector: preference?.targetIndustries?.[0] || null,
     }));
 
   } catch (error) {

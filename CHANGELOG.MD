@@ -1,3 +1,7 @@
+# WIP
+## Fixes
+- Some functions of the admin dashboard were fixed, as well as adding a filter by packages.
+
 # v1.1.25 - 2026-03-07
 
 ## Features

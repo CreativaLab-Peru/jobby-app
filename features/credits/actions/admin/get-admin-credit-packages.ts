@@ -2,11 +2,12 @@
 
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/features/share/actions/require-admin";
-import { CreditPackage } from "@prisma/client";
+import { CreditPackage, PaymentPlan } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 
 export type AdminCreditPackageItem = CreditPackage & {
   _count: { invoice: number };
+  plan: Pick<PaymentPlan, "id" | "name" | "slug"> | null;
 };
 
 export type AdminCreditPackageListResult =
@@ -68,6 +69,7 @@ export const getAdminCreditPackages = async (
         take,
         include: {
           _count: { select: { invoice: true } },
+          plan: { select: { id: true, name: true, slug: true } },
         },
         orderBy: { [sortBy]: sortOrder },
       }),

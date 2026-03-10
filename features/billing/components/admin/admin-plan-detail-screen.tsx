@@ -34,7 +34,7 @@ interface AdminPlanDetailScreenProps {
 
 function formatCurrency(cents: number | { toNumber?: () => number }, currency: string): string {
   const value = typeof cents === "number" ? cents : (cents?.toNumber?.() ?? Number(cents));
-  return `S/ ${(value / 100).toFixed(2)}`;
+  return `S/ ${value.toFixed(2)}`;
 }
 
 const PAYMENT_TYPE_LABELS: Record<string, string> = {

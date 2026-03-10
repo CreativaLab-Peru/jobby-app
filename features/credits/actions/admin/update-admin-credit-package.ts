@@ -17,6 +17,7 @@ export interface UpdateAdminCreditPackageInput {
   currency?: string;
   active?: boolean;
   type?: CreditBalanceType;
+  planId?: string | null;
 }
 
 export const updateAdminCreditPackage = async (
@@ -47,6 +48,7 @@ export const updateAdminCreditPackage = async (
     if (input.currency !== undefined) data.currency = input.currency;
     if (input.active !== undefined) data.active = input.active;
     if (input.type !== undefined) data.type = input.type;
+    if ("planId" in input) data.planId = input.planId ?? null;
 
     await prisma.creditPackage.update({
       where: { id: packageId },

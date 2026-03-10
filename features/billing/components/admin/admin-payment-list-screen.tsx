@@ -38,6 +38,8 @@ interface AdminPaymentListScreenProps {
   initialQuery?: string;
   initialActive?: string;
   initialPlanId?: string;
+  initialDateFrom?: string;
+  initialDateTo?: string;
   initialView?: "card" | "list";
   initialError?: string | null;
   plans: AdminPlanOption[];
@@ -51,13 +53,15 @@ export function AdminPaymentListScreen({
   initialQuery = "",
   initialActive = "",
   initialPlanId = "",
+  initialDateFrom = "",
+  initialDateTo = "",
   initialView = "list",
   initialError = null,
   plans,
 }: AdminPaymentListScreenProps) {
   const [isPending, startTransition] = useTransition();
   const [searchText, setSearchText] = useState(initialQuery);
-  const [showFilters, setShowFilters] = useState(Boolean(initialActive || initialPlanId));
+  const [showFilters, setShowFilters] = useState(Boolean(initialActive || initialPlanId || initialDateFrom || initialDateTo));
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -75,7 +79,7 @@ export function AdminPaymentListScreen({
   const startItem = totalCount === 0 ? 0 : (currentPage - 1) * pageSize + 1;
   const endItem = Math.min(totalCount, currentPage * pageSize);
   const hasQuery = initialQuery.length > 0;
-  const hasFilters = Boolean(initialActive || initialPlanId);
+  const hasFilters = Boolean(initialActive || initialPlanId || initialDateFrom || initialDateTo);
 
   const updateQuery = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -106,7 +110,7 @@ export function AdminPaymentListScreen({
 
   const handleClearFilters = () => {
     setSearchText("");
-    updateQuery({ q: null, active: null, planId: null, page: "1" });
+    updateQuery({ q: null, active: null, planId: null, dateFrom: null, dateTo: null, page: "1" });
   };
 
   const handleViewChange = (value: string) => {
@@ -170,7 +174,7 @@ export function AdminPaymentListScreen({
                   Filtros
                   {hasFilters && (
                     <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary-foreground text-primary text-[10px] font-bold">
-                      {[initialActive, initialPlanId].filter(Boolean).length}
+                      {[initialActive, initialPlanId, initialDateFrom, initialDateTo].filter(Boolean).length}
                     </span>
                   )}
                 </Button>
@@ -200,7 +204,8 @@ export function AdminPaymentListScreen({
                   className="overflow-hidden"
                 >
                   <div className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-card/60 p-4 md:flex-row md:items-center">
-                    <div className="flex flex-1 flex-wrap items-center gap-3">
+                    <div className="flex flex-col gap-3 w-full">
+                    <div className="flex flex-wrap items-center gap-3">
                       <Select
                         value={initialActive || "all"}
                         onValueChange={(value) =>
@@ -235,17 +240,39 @@ export function AdminPaymentListScreen({
                       </Select>
                     </div>
 
-                    {hasFilters && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-10 gap-2 text-xs text-muted-foreground"
-                        onClick={handleClearFilters}
-                      >
-                        <X className="h-3.5 w-3.5" />
-                        Limpiar filtros
-                      </Button>
-                    )}
+                    <div className="flex flex-wrap items-center gap-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-semibold text-muted-foreground">Desde:</span>
+                        <Input
+                          type="date"
+                          value={initialDateFrom}
+                          onChange={(e) => updateQuery({ dateFrom: e.target.value || null, page: "1" })}
+                          className="w-[160px] h-10 text-xs"
+                        />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-semibold text-muted-foreground">Hasta:</span>
+                        <Input
+                          type="date"
+                          value={initialDateTo}
+                          onChange={(e) => updateQuery({ dateTo: e.target.value || null, page: "1" })}
+                          className="w-[160px] h-10 text-xs"
+                        />
+                      </div>
+
+                      {hasFilters && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-10 gap-2 text-xs text-muted-foreground ml-auto"
+                          onClick={handleClearFilters}
+                        >
+                          <X className="h-3.5 w-3.5" />
+                          Limpiar filtros
+                        </Button>
+                      )}
+                    </div>
+                  </div>
                   </div>
                 </motion.div>
               )}

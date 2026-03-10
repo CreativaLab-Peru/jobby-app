@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useState, useTransition } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  Ban, Coins, Filter, LayoutGrid, List, Search, Sparkles, Upload, Wallet, X, FileText, Briefcase,
+  Ban, Coins, Filter, Search, Sparkles, Wallet, X, FileText, Briefcase, ChevronDown,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -12,18 +12,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
 import { PageHeader } from "@/components/shared/page-header";
-import { AdminBalanceCard } from "@/features/credits/components/admin/admin-balance-card";
-import { AdminBalanceRow } from "@/features/credits/components/admin/admin-balance-row";
-import { AdminBalanceItem } from "@/features/credits/actions/admin/get-admin-balances";
+import { AdminBalanceItem, AdminUserBalanceGroup } from "@/features/credits/actions/admin/get-admin-balances";
 import { cn } from "@/lib/utils";
+import { routes } from "@/lib/routes";
 
 interface BalanceStats {
   total: number;
   aiActions: number;
-  uploads: number;
   manageCvs: number;
   searchOpportunities: number;
   zeroBalance: number;
@@ -31,7 +28,7 @@ interface BalanceStats {
 }
 
 interface AdminBalanceListScreenProps {
-  initialBalances: AdminBalanceItem[];
+  initialUserGroups: AdminUserBalanceGroup[];
   totalCount?: number;
   currentPage: number;
   pageSize: number;
@@ -46,17 +43,22 @@ interface AdminBalanceListScreenProps {
   initialError?: string | null;
 }
 
+const BALANCE_TYPE_LABELS: Record<string, string> = {
+  AI_ACTIONS: "Acciones IA",
+  MANAGE_CVS: "Gestion CVs",
+  SEARCH_OPPORTUNITIES: "Buscar Oportunidades",
+};
+
 const STAT_CARDS = [
   { key: "total", label: "Total", icon: Wallet, color: "text-primary bg-primary/10", typeFilter: null },
   { key: "aiActions", label: "IA", icon: Sparkles, color: "text-violet-600 bg-violet-500/10", typeFilter: "AI_ACTIONS" },
-  { key: "uploads", label: "Subidas", icon: Upload, color: "text-blue-600 bg-blue-500/10", typeFilter: "UPLOADS" },
   { key: "manageCvs", label: "CVs", icon: FileText, color: "text-emerald-600 bg-emerald-500/10", typeFilter: "MANAGE_CVS" },
   { key: "searchOpportunities", label: "Oportunidades", icon: Briefcase, color: "text-amber-600 bg-amber-500/10", typeFilter: "SEARCH_OPPORTUNITIES" },
   { key: "zeroBalance", label: "Sin creditos", icon: Ban, color: "text-red-600 bg-red-500/10", typeFilter: null },
 ] as const;
 
 export function AdminBalanceListScreen({
-  initialBalances,
+  initialUserGroups,
   totalCount = 0,
   currentPage,
   pageSize,
@@ -72,6 +74,7 @@ export function AdminBalanceListScreen({
 }: AdminBalanceListScreenProps) {
   const [isPending, startTransition] = useTransition();
   const [searchText, setSearchText] = useState(initialQuery);
+  const [expandedUsers, setExpandedUsers] = useState<Set<string>>(new Set());
   const [showFilters, setShowFilters] = useState(
     Boolean(initialType || initialBalanceStatus || initialHasTransactions || initialDateFrom || initialDateTo)
   );
@@ -103,8 +106,16 @@ export function AdminBalanceListScreen({
     setSearchText("");
     updateQuery({ q: null, type: null, balanceStatus: null, hasTransactions: null, dateFrom: null, dateTo: null, page: "1" });
   };
-  const handleViewChange = (v: string) => { if (v === "card" || v === "list") updateQuery({ view: v }); };
   const handlePageChange = (p: number) => { updateQuery({ page: String(Math.max(1, Math.min(totalPages, p))) }); };
+
+  const toggleUser = (userId: string) => {
+    setExpandedUsers((prev) => {
+      const next = new Set(prev);
+      if (next.has(userId)) next.delete(userId);
+      else next.add(userId);
+      return next;
+    });
+  };
 
   const handleStatClick = (typeFilter: string | null, key: string) => {
     if (key === "zeroBalance") {
@@ -179,18 +190,10 @@ export function AdminBalanceListScreen({
                 <Button type="submit" variant="secondary" className="h-10 px-4 text-xs font-semibold">Buscar</Button>
                 {searchText && <Button type="button" variant="ghost" className="h-10 px-3 text-xs" onClick={handleClearSearch}>Limpiar</Button>}
               </form>
-              <div className="flex items-center gap-2">
-                <Button variant={showFilters ? "default" : "outline"} size="sm" className="h-10 gap-2 text-xs font-semibold" onClick={() => setShowFilters(!showFilters)}>
+              <Button variant={showFilters ? "default" : "outline"} size="sm" className="h-10 gap-2 text-xs font-semibold" onClick={() => setShowFilters(!showFilters)}>
                   <Filter className="h-4 w-4" /> Filtros
                   {filterCount > 0 && <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary-foreground text-primary text-[10px] font-bold">{filterCount}</span>}
                 </Button>
-                <Tabs value={initialView} onValueChange={handleViewChange}>
-                  <TabsList className="h-10">
-                    <TabsTrigger value="list" className="gap-2"><List className="h-4 w-4" />Lista</TabsTrigger>
-                    <TabsTrigger value="card" className="gap-2"><LayoutGrid className="h-4 w-4" />Tarjetas</TabsTrigger>
-                  </TabsList>
-                </Tabs>
-              </div>
             </div>
 
             {/* Filters panel */}
@@ -205,7 +208,6 @@ export function AdminBalanceListScreen({
                         <SelectContent>
                           <SelectItem value="all">Todos los tipos</SelectItem>
                           <SelectItem value="AI_ACTIONS">Acciones IA</SelectItem>
-                          <SelectItem value="UPLOADS">Subidas</SelectItem>
                           <SelectItem value="MANAGE_CVS">Gestion CVs</SelectItem>
                           <SelectItem value="SEARCH_OPPORTUNITIES">Buscar Oportunidades</SelectItem>
                         </SelectContent>
@@ -253,34 +255,115 @@ export function AdminBalanceListScreen({
             </AnimatePresence>
           </div>
 
-          {/* Balances List */}
-          {initialBalances.length > 0 ? (
+          {/* Balances por usuarios agrupados */}
+          {initialUserGroups.length > 0 ? (
             <>
-              {initialView === "card" ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <AnimatePresence mode="popLayout">
-                    {initialBalances.map((balance, index) => (
-                      <motion.div key={balance.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: (index % 10) * 0.05 }}>
-                        <AdminBalanceCard balance={balance} />
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <AnimatePresence mode="popLayout">
-                    {initialBalances.map((balance, index) => (
-                      <motion.div key={balance.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, delay: (index % 10) * 0.03 }}>
-                        <AdminBalanceRow balance={balance} />
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
-              )}
+              <div className="space-y-4">
+                <AnimatePresence mode="popLayout">
+                  {initialUserGroups.map((group, index) => (
+                    <motion.div
+                      key={group.userId}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.25, delay: (index % 10) * 0.03 }}
+                    >
+                      <Card className="border border-border/60 bg-card shadow-sm rounded-2xl overflow-hidden">
+                        {/* User header */}
+                        <button
+                          type="button"
+                          onClick={() => toggleUser(group.userId)}
+                          className="w-full flex items-center justify-between gap-4 px-4 py-3 bg-secondary/30 border-b border-border/40 hover:bg-secondary/50 transition-colors text-left"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary font-black text-sm">
+                              {(group.user.name || group.user.email || "?")[0].toUpperCase()}
+                            </div>
+                            <div className="min-w-0">
+                              <div className="font-bold text-sm text-foreground truncate">{group.user.name || "(sin nombre)"}</div>
+                              <div className="text-xs text-muted-foreground truncate">{group.user.email}</div>
+                            </div>
+                          </div>
+                          <div className="shrink-0 flex items-center gap-2">
+                            <span className="text-xs font-bold text-muted-foreground bg-secondary rounded-lg px-2.5 py-1 border border-border/40">
+                              {group.totalCredits} cr. totales
+                            </span>
+                            <ChevronDown
+                              className={cn(
+                                "h-4 w-4 text-muted-foreground transition-transform duration-200",
+                                expandedUsers.has(group.userId) ? "rotate-180" : ""
+                              )}
+                            />
+                          </div>
+                        </button>
+
+                        {/* Balance items (collapsible) */}
+                        <AnimatePresence initial={false}>
+                          {expandedUsers.has(group.userId) && (
+                            <motion.div
+                              key="content"
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="overflow-hidden"
+                            >
+                        <div className="divide-y divide-border/30">
+                          {group.balances.length > 0 ? group.balances.map((balance) => {
+                            const typeLabel = BALANCE_TYPE_LABELS[balance.type] || balance.type;
+                            const txCount = balance._count.creditTransaction;
+                            return (
+                              <div key={balance.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-secondary/20 transition-colors">
+                                <div className={cn(
+                                  "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-black",
+                                  balance.amount > 0 ? "bg-green-500/10 text-green-600" : "bg-muted text-muted-foreground"
+                                )}>
+                                  {balance.amount}
+                                </div>
+                                <div className="flex-1 min-w-0 flex flex-wrap items-center gap-x-3 gap-y-0.5">
+                                  <span className="text-xs font-semibold text-foreground">{typeLabel}</span>
+                                  <span className="text-xs text-muted-foreground">{txCount} transacciones</span>
+                                </div>
+                                <div className="flex items-center gap-1 shrink-0">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-7 w-7 rounded-full"
+                                    onClick={() => router.push(routes.app.admin.balances.detail(balance.id))}
+                                    title="Ver detalle"
+                                  >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-7 w-7 rounded-full"
+                                    onClick={() => router.push(routes.app.admin.balances.edit(balance.id))}
+                                    title="Editar"
+                                  >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                  </Button>
+                                </div>
+                              </div>
+                            );
+                          }) : (
+                            <div className="px-4 py-3 text-xs text-muted-foreground">Sin registros de balance.</div>
+                          )}
+                        </div>                            </motion.div>
+                          )}
+                        </AnimatePresence>                      </Card>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
 
               {/* Pagination */}
               <div className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-card/50 p-4 md:flex-row md:items-center md:justify-between">
-                <div className="text-xs text-muted-foreground">Mostrando {startItem}-{endItem} de {totalCount} balances</div>
+                <div className="text-xs text-muted-foreground">Mostrando {startItem}-{endItem} de {totalCount} usuarios</div>
                 <div className="flex items-center gap-2">
                   <Button variant="secondary" className="h-9 px-3 text-xs" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage <= 1 || isPending}>Anterior</Button>
                   <span className="text-xs text-muted-foreground">Pagina {currentPage} de {totalPages}</span>

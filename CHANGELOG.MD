@@ -1,3 +1,9 @@
+# WIP
+
+## Enhancements
+- Change the price from 9.90 to 19.90
+- Update the cv pay page with video and hero
+
 # v1.1.25 - 2026-03-07
 
 ## Features

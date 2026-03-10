@@ -200,7 +200,7 @@ export function HotSaleSection({ user = null }: HotSaleSectionProps) {
         onClose={() => setShowMethodModal(false)}
         onSelectMethod={handleMethodSelected}
         packName="Levely Starter"
-        price={9.90}
+        price={19.90}
       />
       <Dialog open={showAccountChoice} onOpenChange={setShowAccountChoice}>
         <DialogContent className="sm:max-w-sm">

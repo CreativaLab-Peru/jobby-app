@@ -16,6 +16,7 @@ import { AdminPlanCard } from "@/features/billing/components/admin/admin-plan-ca
 import { AdminPlanRow } from "@/features/billing/components/admin/admin-plan-row";
 import { AdminCreatePlanModal } from "@/features/billing/components/admin/admin-create-plan-modal";
 import { AdminPlanItem } from "@/features/billing/actions/admin/get-admin-plans-list";
+import { AdminMonetizationTabs } from "@/components/shared/admin-monetization-tabs";
 import { routes } from "@/lib/routes";
 
 interface AdminPlanListScreenProps {
@@ -109,16 +110,19 @@ export function AdminPlanListScreen({
     <main className="min-h-[90vh] p-4 md:p-8">
       <div className="mx-auto max-w-7xl">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-          <PageHeader
-            title="Administracion de Planes"
-            description="Gestiona los planes de pago disponibles para los usuarios."
-            actions={
-              <Button variant="accent" onClick={() => setIsCreateOpen(true)} className="rounded-lg font-bold text-xs h-9 shadow-sm">
-                <Plus className="mr-2 h-4 w-4" />
-                Crear Plan
-              </Button>
-            }
-          />
+          <div className="space-y-4">
+            <AdminMonetizationTabs />
+            <PageHeader
+              title="Administración de Planes"
+              description="Gestiona los planes de pago disponibles para los usuarios."
+              actions={
+                <Button variant="accent" onClick={() => setIsCreateOpen(true)} className="rounded-lg font-bold text-xs h-9 shadow-sm">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Crear Plan
+                </Button>
+              }
+            />
+          </div>
 
           {/* Search & Filters */}
           <div className="space-y-3">
@@ -178,6 +182,10 @@ export function AdminPlanListScreen({
               )}
             </AnimatePresence>
           </div>
+
+          <p className="text-sm text-muted-foreground text-center px-4">
+            <span className="font-semibold">Nota:</span> No agregar o modificar los planes sin comunicar al equipo de desarrollo.
+          </p>
 
           {/* Plans List */}
           {initialPlans.length > 0 ? (

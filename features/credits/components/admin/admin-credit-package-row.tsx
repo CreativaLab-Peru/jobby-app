@@ -36,7 +36,6 @@ export function AdminCreditPackageRow({ pkg }: AdminCreditPackageRowProps) {
   const router = useRouter();
 
   const typeLabel = BALANCE_TYPE_LABELS[pkg.type] || pkg.type;
-  const price = formatCurrency(pkg.priceCents, pkg.currency);
   const invoiceCount = pkg._count.invoice;
 
   const handleDelete = async () => {
@@ -77,7 +76,6 @@ export function AdminCreditPackageRow({ pkg }: AdminCreditPackageRowProps) {
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
               <span className="font-mono">{pkg.code}</span>
               <span className="font-semibold">{pkg.credits} creditos</span>
-              <span>{price}</span>
               <span>{invoiceCount} facturas</span>
               <div className="flex items-center gap-1"><Calendar className="h-3 w-3" /><span>{formatDate(pkg.createdAt, "d MMM, yyyy")}</span></div>
             </div>

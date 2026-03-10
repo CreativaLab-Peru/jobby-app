@@ -20,6 +20,7 @@ export const OPPORTUNITY_CONFIG: Record<string, string> = {
   SCHOLARSHIP: "Beca",
   EXCHANGE_PROGRAM: "Intercambio",
   EMPLOYMENT: "Empleo",
+  STARTUP: "Aceleradora",
 };
 
 // Map value and label for select options

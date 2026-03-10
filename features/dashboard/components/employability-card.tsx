@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 interface Props {
   score: number;
   sector: string | null;
+  cvTitle?: string | null;
 }
 
 // Helper de Ingeniería: Mover fuera del componente para evitar re-cargas
@@ -27,7 +28,7 @@ const getStatus = (score: number) => {
   return "Iniciando";
 };
 
-export function EmployabilityCard({ score, sector }: Props) {
+export function EmployabilityCard({ score, sector, cvTitle }: Props) {
   const radius = 54; // Reducido un poco para dar aire
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference * (1 - score / 100);
@@ -98,6 +99,11 @@ export function EmployabilityCard({ score, sector }: Props) {
                 Levely AI Verified
               </div>
             </div>
+            {cvTitle && (
+              <p className="text-[10px] text-muted-foreground font-medium">
+                Último CV analizado: <span className="text-foreground font-bold">{cvTitle}</span>
+              </p>
+            )}
           </div>
         </div>
       </CardContent>

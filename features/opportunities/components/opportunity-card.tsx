@@ -6,15 +6,16 @@ import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardFooter, CardHeader} from "@/components/ui/card";
 import {cn} from "@/lib/utils";
 import Link from "next/link";
-import {Opportunity} from ".prisma/client";
+import {Opportunity} from "@prisma/client";
 import {useRouter} from "next/navigation";
 
-const opportunityMapped = {
+const opportunityMapped: Record<string, string> = {
   INTERNSHIP: "Pasantía",
   SCHOLARSHIP: "Beca",
   EXCHANGE_PROGRAM: "Intercambio",
   EMPLOYMENT: "Empleo",
-} as const;
+  STARTUP: "Aceleradora",
+};
 
 interface Props {
   opportunity: Opportunity & {

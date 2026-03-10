@@ -38,7 +38,6 @@ export function AdminCreditPackageDetailScreen({ pkg }: AdminCreditPackageDetail
   const router = useRouter();
 
   const typeLabel = BALANCE_TYPE_LABELS[pkg.type] || pkg.type;
-  const price = formatCurrency(pkg.priceCents, pkg.currency);
   const invoiceCount = pkg._count.invoice;
 
   const handleDelete = async () => {
@@ -57,7 +56,6 @@ export function AdminCreditPackageDetailScreen({ pkg }: AdminCreditPackageDetail
 
   const stats = [
     { label: "Creditos", value: pkg.credits, icon: Coins },
-    { label: "Precio", value: price, icon: CreditCard },
     { label: "Facturas", value: invoiceCount, icon: FileText },
   ];
 
@@ -102,10 +100,6 @@ export function AdminCreditPackageDetailScreen({ pkg }: AdminCreditPackageDetail
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Coins className="h-4 w-4 shrink-0" />
                 <span>Codigo: <span className="font-mono font-medium text-foreground">{pkg.code}</span></span>
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <CreditCard className="h-4 w-4 shrink-0" />
-                <span>Precio: <span className="font-medium text-foreground">{price}</span></span>
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Coins className="h-4 w-4 shrink-0" />

@@ -2,6 +2,7 @@ import { redirect, notFound } from "next/navigation";
 
 import { AdminCreditPackageEditForm } from "@/features/credits/components/admin/admin-credit-package-edit-form";
 import { getAdminCreditPackageById } from "@/features/credits/actions/admin/get-admin-credit-package-by-id";
+import { getAdminPlansList } from "@/features/billing/actions/admin/get-admin-plans-list";
 import { requireAdmin } from "@/features/share/actions/require-admin";
 import { routes } from "@/lib/routes";
 
@@ -16,12 +17,17 @@ export default async function AdminCreditPackageEditPage({ params }: AdminCredit
   }
 
   const { packageId } = await params;
-  const result = await getAdminCreditPackageById(packageId);
+  const [result, plansResult] = await Promise.all([
+    getAdminCreditPackageById(packageId),
+    getAdminPlansList(0, 100),
+  ]);
 
   if (!result.success) {
     notFound();
   }
 
-  return <AdminCreditPackageEditForm pkg={result.data} />;
+  const plans = plansResult.success ? plansResult.data.plans.map((p) => ({ id: p.id, name: p.name })) : [];
+
+  return <AdminCreditPackageEditForm pkg={result.data} plans={plans} />;
 }
 

@@ -5,7 +5,7 @@ import { requireAdmin } from "@/features/share/actions/require-admin";
 import { PaymentPlan, UserPayment, User } from "@prisma/client";
 
 export type AdminPaymentDetail = UserPayment & {
-  plan: PaymentPlan;
+  plan: Omit<PaymentPlan, "priceCents"> & { priceCents: number };
   user: Pick<User, "id" | "email" | "name" | "image" | "role" | "createdAt">;
 };
 
@@ -43,7 +43,13 @@ export const getAdminPaymentById = async (
       return { success: false, error: "Pago no encontrado" };
     }
 
-    return { success: true, data: payment as AdminPaymentDetail };
+    return {
+      success: true,
+      data: {
+        ...payment,
+        plan: { ...payment.plan, priceCents: Number(payment.plan.priceCents) },
+      } as AdminPaymentDetail,
+    };
   } catch (error) {
     console.error("[ADMIN_GET_PAYMENT_BY_ID_ERROR]", error);
     return { success: false, error: "Error obteniendo pago" };

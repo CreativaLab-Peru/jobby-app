@@ -196,6 +196,7 @@ model Cv {
   opportunityType OpportunityType
   cvType          CvType?
   title           String?
+  templateId      String          @default("harvard")
   extractedJson   Json?
   fullTextSearch  String?
   createdAt       DateTime        @default(now())

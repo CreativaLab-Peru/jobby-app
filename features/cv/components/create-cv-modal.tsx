@@ -30,10 +30,12 @@ export function CreateCVModal() {
     title: string;
     cvType: CvType;
     opportunityType: OpportunityType;
+    templateId?: string;
   }>({
     title: "",
     cvType: "TECHNOLOGY_ENGINEERING",
     opportunityType: "INTERNSHIP",
+    templateId: "harvard",
   });
 
   const handleCreateCV = () => {
@@ -43,7 +45,8 @@ export function CreateCVModal() {
       createCVByTitleAndType(
         formData.title,
         formData.cvType,
-        formData.opportunityType
+        formData.opportunityType,
+        formData.templateId || "harvard"
       ).then(async (result) => {
         if (result?.success) {
           onCloseCreate();

@@ -4,13 +4,22 @@ import { useState, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Eye, CloudCheck, CloudUpload } from "lucide-react"
 import {getSections} from "@/features/cv/helpers";
 import { NavigationButtons } from "@/features/cv/components/navigation-buttons"
 import { CVSectionForm, CVSectionFormRef } from "@/features/cv/components/cv-section-form"
 import { CVPreview } from "@/features/cv/components/cv-preview"
+import { CVPreviewEuropass } from "@/features/cv/components/cv-preview-europass"
 import { CVData } from "@/types/cv";
 import { updateCvAndSections } from "@/features/cv/actions/update-cv-and-sections";
+import { updateCvTemplate } from "@/features/cv/actions/update-cv-template";
 import { OpportunityType, CvType } from "@prisma/client"
 import {routes} from "@/lib/routes";
 import { toast } from "sonner";
@@ -20,12 +29,14 @@ interface CreateCVPageProps {
   id: string
   opportunityType: OpportunityType
   cvType: CvType
+  templateId?: string
   saveCv?: (id: string, cvData: CVData) => Promise<{ success: boolean; message?: string; error?: string } | null>
   onCompletePath?: string
 }
 
-export default function CreateCVPage({ cv, id, opportunityType, cvType, saveCv, onCompletePath }: CreateCVPageProps) {
+export default function CreateCVPage({ cv, id, opportunityType, cvType, templateId = "harvard", saveCv, onCompletePath }: CreateCVPageProps) {
   const [cvData, setCvData] = useState<CVData>(cv)
+  const [activeTemplateId, setActiveTemplateId] = useState<string>(templateId)
   const [activeSection, setActiveSection] = useState(0)
   const [showPreview, setShowPreview] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
@@ -95,6 +106,18 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType, saveCv, 
     }
   }
 
+  const handleTemplateChange = async (newTemplate: string) => {
+    setActiveTemplateId(newTemplate)
+    try {
+      const result = await updateCvTemplate(id, newTemplate)
+      if (!result.success) {
+        toast.error(result.message || "Error actualizando el template")
+      }
+    } catch (error) {
+      toast.error("Error al cambiar el template")
+    }
+  }
+
   const updateCVData = useCallback((sectionId: string, data: Record<string, unknown>) => {
     setCvData((prev) => ({
       ...prev,
@@ -112,6 +135,32 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType, saveCv, 
 
       <div className="container py-8 relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-7xl mx-auto">
+
+          {/* Template Selector - Visible always for editing */}
+          {(opportunityType === OpportunityType.INTERNSHIP || opportunityType === OpportunityType.SCHOLARSHIP) && (
+            <div className="mb-6 p-4 rounded-lg bg-card border border-border/50 backdrop-blur-sm">
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Diseño del CV
+              </label>
+              <Select value={activeTemplateId} onValueChange={handleTemplateChange}>
+                <SelectTrigger className="w-full sm:w-64 bg-background border-border focus:border-primary focus:ring-1 focus:ring-primary dark:bg-slate-900">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-background border-border">
+                  <SelectItem value="harvard">Harvard (Clásico)</SelectItem>
+                  <SelectItem value="europass">Europass Modern</SelectItem>
+                  <SelectItem value="stem">Investigador STEM</SelectItem>
+                  <SelectItem value="fullbright">Líder Global</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground mt-2">
+                {activeTemplateId === "europass" && "Diseño europeo estructurado, ideal para becas de movilidad."}
+                {activeTemplateId === "stem" && "Especializado para ingeniería, ciencias y proyectos técnicos."}
+                {activeTemplateId === "fullbright" && "Destaca liderazgo y voluntariado, para becas de prestigio."}
+                {activeTemplateId === "harvard" && "Diseño clásico y profesional reconocido internacionalmente."}
+              </p>
+            </div>
+          )}
 
           <div className={`grid gap-6 ${showPreview ? "lg:grid-cols-2" : "lg:grid-cols-1"}`}>
 
@@ -193,7 +242,11 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType, saveCv, 
                       {/* Nota: CVPreview suele requerir fondo blanco para simular papel A4,
                           pero el contenedor es el que respeta el modo oscuro */}
                       <div className="max-h-[75vh] overflow-y-auto custom-scrollbar">
-                        <CVPreview data={cvData} sections={sections} />
+                        {activeTemplateId === "europass" ? (
+                          <CVPreviewEuropass data={cvData} sections={sections} />
+                        ) : (
+                          <CVPreview data={cvData} sections={sections} />
+                        )}
                       </div>
                     </CardContent>
                   </Card>

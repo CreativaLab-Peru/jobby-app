@@ -37,6 +37,7 @@ export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
       opportunityType={cv.opportunityType}
       cvId={cv.id}
       cvType={cv.cvType}
+      templateId={cv.templateId}
       sectionIds={sectionIds}
       canAnalyze={hasCredits}
       analysisTokens={creditLimits.aiActionsLimit}

@@ -1,11 +1,10 @@
-"use client";
-
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { pdf } from "@react-pdf/renderer";
 import { Document, Page, pdfjs } from "react-pdf";
 import { CVData, CVSection } from "@/types/cv";
 import { CvDocument } from "./cv-document";
+import { CvDocumentEuropass } from "./cv-document-europass";
 import { Loader2 } from "lucide-react";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -15,10 +14,12 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/b
 
 export function ClientPDFPreview({ 
   cvData, 
-  sections 
+  sections,
+  templateId = "harvard"
 }: { 
   cvData: CVData;
   sections: CVSection[];
+  templateId?: string;
 }) {
   const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
   const [numPages, setNumPages] = useState<number>(0);
@@ -29,7 +30,11 @@ export function ClientPDFPreview({
   useEffect(() => {
     const generatePdf = async () => {
       try {
-        const blob = await pdf(<CvDocument data={cvData} sections={sections} />).toBlob();
+        const documentComponent = templateId === "europass"
+          ? <CvDocumentEuropass data={cvData} sections={sections} />
+          : <CvDocument data={cvData} sections={sections} />;
+        
+        const blob = await pdf(documentComponent).toBlob();
         setPdfBlob(blob);
       } catch (error) {
         console.error("Error generating PDF:", error);
@@ -39,7 +44,7 @@ export function ClientPDFPreview({
     };
 
     generatePdf();
-  }, [cvData, sections]);
+  }, [JSON.stringify(cvData), JSON.stringify(sections), templateId]);
 
   // Medición inicial y observación de cambios
   React.useLayoutEffect(() => {

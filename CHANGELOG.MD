@@ -1,4 +1,4 @@
-# WIP
+# v1.1.26 - 2026-03-11
 
 ## Enhancements
 - Change the price from 9.90 to 19.90 and 19.90 to 29.90

@@ -24,6 +24,13 @@ function formatCurrency(cents: number | { toNumber?: () => number }, currency: s
   return `${currency} ${(value / 100).toFixed(2)}`;
 }
 
+const PAYMENT_TYPE_LABELS: Record<string, string> = {
+  SUBSCRIPTION: "Suscripción",
+  ONE_TIME: "Pago único",
+  REFUND: "Reembolso",
+  FREE: "Gratis",
+};
+
 export function AdminPaymentRow({ payment }: AdminPaymentRowProps) {
   const [showDeactivateDialog, setShowDeactivateDialog] = useState(false);
   const [isDeactivating, setIsDeactivating] = useState(false);
@@ -62,7 +69,7 @@ export function AdminPaymentRow({ payment }: AdminPaymentRowProps) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-0.5">
               <span className="font-bold text-sm text-foreground truncate">{payment.plan.name}</span>
-              <StatusBadge variant="outline" className="text-[10px]">{payment.plan.paymentType}</StatusBadge>
+              <StatusBadge variant="outline" className="text-[10px]">{PAYMENT_TYPE_LABELS[payment.plan.paymentType] || payment.plan.paymentType}</StatusBadge>
               {isActive ? (
                 <StatusBadge variant="outline" className="text-[10px] bg-green-500/10 text-green-600 border-green-500/20">Activo</StatusBadge>
               ) : (

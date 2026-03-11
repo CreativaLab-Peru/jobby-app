@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState, useTransition } from "react";
+import { FormEvent, useEffect, useMemo, useState, useTransition } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Coins, Filter, LayoutGrid, List, Plus, Search, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -16,7 +16,16 @@ import { AdminCreditPackageCard } from "@/features/credits/components/admin/admi
 import { AdminCreditPackageRow } from "@/features/credits/components/admin/admin-credit-package-row";
 import { AdminCreateCreditPackageModal } from "@/features/credits/components/admin/admin-create-credit-package-modal";
 import { AdminCreditPackageItem } from "@/features/credits/actions/admin/get-admin-credit-packages";
+import { AdminMonetizationTabs } from "@/components/shared/admin-monetization-tabs";
 import { routes } from "@/lib/routes";
+
+const PLAN_COLORS = [
+  "bg-violet-500/10 text-violet-600 border-violet-500/20",
+  "bg-blue-500/10 text-blue-600 border-blue-500/20",
+  "bg-amber-500/10 text-amber-600 border-amber-500/20",
+  "bg-green-500/10 text-green-600 border-green-500/20",
+  "bg-rose-500/10 text-rose-600 border-rose-500/20",
+];
 
 interface AdminCreditPackageListScreenProps {
   initialPackages: AdminCreditPackageItem[];
@@ -42,7 +51,7 @@ export function AdminCreditPackageListScreen({
   initialError = null,
 }: AdminCreditPackageListScreenProps) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const [searchText, setSearchText] = useState(initialQuery);
   const [showFilters, setShowFilters] = useState(Boolean(initialActive || initialType));
   const router = useRouter();
@@ -58,11 +67,38 @@ export function AdminCreditPackageListScreen({
     }
   }, [initialError]);
 
-  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
-  const startItem = totalCount === 0 ? 0 : (currentPage - 1) * pageSize + 1;
-  const endItem = Math.min(totalCount, currentPage * pageSize);
   const hasQuery = initialQuery.length > 0;
   const hasFilters = Boolean(initialActive || initialType);
+
+  const groupedPackages = useMemo(() => {
+    // Agrupar por planId 
+    const map = new Map<string, { label: string; packages: AdminCreditPackageItem[] }>();
+
+    for (const pkg of initialPackages) {
+      const key = pkg.planId ?? "__no_plan__";
+      const label = pkg.plan?.name ?? "Sin plan asociado";
+      const existing = map.get(key);
+      if (existing) {
+        existing.packages.push(pkg);
+      } else {
+        map.set(key, { label, packages: [pkg] });
+      }
+    }
+
+    // Planes con nombre primero (orden alfabético), luego "Sin plan"
+    const entries = Array.from(map.entries()).sort(([a], [b]) => {
+      if (a === "__no_plan__") return 1;
+      if (b === "__no_plan__") return -1;
+      return (map.get(a)!.label).localeCompare(map.get(b)!.label);
+    });
+
+    return entries.map(([key, { label, packages }], i) => ({
+      key,
+      label,
+      packages,
+      colorClass: PLAN_COLORS[i % PLAN_COLORS.length],
+    }));
+  }, [initialPackages]);
 
   const updateQuery = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -102,25 +138,23 @@ export function AdminCreditPackageListScreen({
     }
   };
 
-  const handlePageChange = (nextPage: number) => {
-    const safePage = Math.max(1, Math.min(totalPages, nextPage));
-    updateQuery({ page: String(safePage) });
-  };
-
   return (
     <main className="min-h-[90vh] p-4 md:p-8">
       <div className="mx-auto max-w-7xl">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-          <PageHeader
-            title="Paquetes de Creditos"
-            description="Gestiona los paquetes de creditos disponibles para los usuarios."
-            actions={
-              <Button variant="accent" onClick={() => setIsCreateOpen(true)} className="rounded-lg font-bold text-xs h-9 shadow-sm">
-                <Plus className="mr-2 h-4 w-4" />
-                Crear Paquete
-              </Button>
-            }
-          />
+          <div className="space-y-4">
+            <AdminMonetizationTabs />
+            <PageHeader
+              title="Paquetes de Créditos"
+              description="Gestiona los paquetes de créditos disponibles para los usuarios."
+              actions={
+                <Button variant="accent" onClick={() => setIsCreateOpen(true)} className="rounded-lg font-bold text-xs h-9 shadow-sm">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Crear Paquete
+                </Button>
+              }
+            />
+          </div>
 
           {/* Search & Filters */}
           <div className="space-y-3">
@@ -193,47 +227,59 @@ export function AdminCreditPackageListScreen({
             </AnimatePresence>
           </div>
 
-          {/* Packages List */}
+          {/* Packages — agrupados por plan */}
           {initialPackages.length > 0 ? (
-            <>
-              {initialView === "card" ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <AnimatePresence mode="popLayout">
-                    {initialPackages.map((pkg, index) => (
-                      <motion.div key={pkg.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: (index % 10) * 0.05 }}>
-                        <AdminCreditPackageCard pkg={pkg} />
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <AnimatePresence mode="popLayout">
-                    {initialPackages.map((pkg, index) => (
-                      <motion.div key={pkg.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, delay: (index % 10) * 0.03 }}>
-                        <AdminCreditPackageRow pkg={pkg} />
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
-              )}
+            <div className="space-y-6">
+              <AnimatePresence mode="popLayout">
+                {groupedPackages.map(({ key, label, packages, colorClass }, groupIndex) => (
+                  <motion.div
+                    key={key}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: groupIndex * 0.06 }}
+                    className="space-y-3"
+                  >
+                    {/* Cabecera del grupo */}
+                    <div className="flex items-center gap-3">
+                      <div className={`flex h-7 w-7 items-center justify-center rounded-lg border ${colorClass}`}>
+                        <Coins className="h-4 w-4" />
+                      </div>
+                      <span className="text-sm font-semibold text-foreground">{label}</span>
+                      <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-muted px-1.5 text-[11px] font-bold text-muted-foreground">
+                        {packages.length}
+                      </span>
+                    </div>
 
-              {/* Pagination */}
-              <div className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-card/50 p-4 md:flex-row md:items-center md:justify-between">
-                <div className="text-xs text-muted-foreground">Mostrando {startItem}-{endItem} de {totalCount} paquetes</div>
-                <div className="flex items-center gap-2">
-                  <Button variant="secondary" className="h-9 px-3 text-xs" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage <= 1 || isPending}>Anterior</Button>
-                  <span className="text-xs text-muted-foreground">Pagina {currentPage} de {totalPages}</span>
-                  <Button variant="secondary" className="h-9 px-3 text-xs" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage >= totalPages || isPending}>Siguiente</Button>
-                </div>
-              </div>
-            </>
+                    {/* Paquetes del grupo */}
+                    {initialView === "card" ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {packages.map((pkg, i) => (
+                          <motion.div key={pkg.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.2, delay: i * 0.04 }}>
+                            <AdminCreditPackageCard pkg={pkg} />
+                          </motion.div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {packages.map((pkg, i) => (
+                          <motion.div key={pkg.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, delay: i * 0.03 }}>
+                            <AdminCreditPackageRow pkg={pkg} />
+                          </motion.div>
+                        ))}
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+
+              <div className="text-xs text-muted-foreground">{totalCount} paquete{totalCount !== 1 ? "s" : ""} en total</div>
+            </div>
           ) : (
             <div className="rounded-2xl border border-dashed border-border/60 bg-secondary/10 dark:bg-secondary/5">
               <EmptyPlaceholder
                 icon={Coins}
                 title={hasQuery || hasFilters ? "Sin resultados" : "No hay paquetes"}
-                description={hasQuery || hasFilters ? "No se encontraron paquetes con esos criterios." : "Crea el primer paquete de creditos."}
+                description={hasQuery || hasFilters ? "No se encontraron paquetes con esos criterios." : "Crea el primer paquete de créditos."}
                 action={
                   hasFilters ? (
                     <Button variant="default" onClick={handleClearFilters} className="rounded-lg font-bold shadow-sm"><X className="mr-2 h-4 w-4" />Limpiar filtros</Button>

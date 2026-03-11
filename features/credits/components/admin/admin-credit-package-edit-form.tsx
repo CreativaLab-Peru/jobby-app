@@ -27,16 +27,17 @@ const TYPE_OPTIONS: { value: CreditBalanceType; label: string }[] = [
 
 interface AdminCreditPackageEditFormProps {
   pkg: AdminCreditPackageDetail;
+  plans: { id: string; name: string }[];
 }
 
-export function AdminCreditPackageEditForm({ pkg }: AdminCreditPackageEditFormProps) {
+export function AdminCreditPackageEditForm({ pkg, plans }: AdminCreditPackageEditFormProps) {
   const [name, setName] = useState(pkg.name);
   const [code, setCode] = useState(pkg.code);
   const [credits, setCredits] = useState(pkg.credits);
-  const [priceCents, setPriceCents] = useState(pkg.priceCents);
   const [currency, setCurrency] = useState(pkg.currency);
   const [active, setActive] = useState(pkg.active);
   const [type, setType] = useState<CreditBalanceType>(pkg.type);
+  const [planId, setPlanId] = useState<string>(pkg.planId ?? "__none__");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -54,10 +55,10 @@ export function AdminCreditPackageEditForm({ pkg }: AdminCreditPackageEditFormPr
       name: name.trim(),
       code: code.trim(),
       credits,
-      priceCents,
       currency,
       active,
       type,
+      planId: planId === "__none__" ? null : planId,
     });
 
     if (result.success) {
@@ -119,6 +120,20 @@ export function AdminCreditPackageEditForm({ pkg }: AdminCreditPackageEditFormPr
                 </div>
 
                 <div className="space-y-2">
+                  <Label className="text-sm font-semibold">Plan asociado</Label>
+                  <Select value={planId} onValueChange={setPlanId} disabled={isLoading}>
+                    <SelectTrigger><SelectValue placeholder="Sin plan" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__">Sin plan asociado</SelectItem>
+                      {plans.map((p) => (
+                        <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">Agrupa el paquete bajo un plan en el panel admin.</p>
+                </div>
+
+                <div className="space-y-2">
                   <Label className="text-sm font-semibold">Moneda</Label>
                   <Select value={currency} onValueChange={setCurrency} disabled={isLoading}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
@@ -133,12 +148,6 @@ export function AdminCreditPackageEditForm({ pkg }: AdminCreditPackageEditFormPr
                 <div className="space-y-2">
                   <Label className="text-sm font-semibold">Creditos</Label>
                   <Input type="number" min={0} value={credits} onChange={(e) => setCredits(parseInt(e.target.value) || 0)} disabled={isLoading} />
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-sm font-semibold">Precio (centavos)</Label>
-                  <Input type="number" min={0} value={priceCents} onChange={(e) => setPriceCents(parseInt(e.target.value) || 0)} disabled={isLoading} />
-                  <p className="text-xs text-muted-foreground">= {currency} {(priceCents / 100).toFixed(2)}</p>
                 </div>
               </div>
 

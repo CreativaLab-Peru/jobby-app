@@ -162,6 +162,7 @@ model PaymentPlan {
   manualCvLimit Int           @default(0)
   uploadCvLimit Int           @default(0)
   payments      UserPayment[]
+  creditPackages CreditPackage[]
 
   @@map("subscription_plan")
 }
@@ -448,10 +449,13 @@ model CreditPackage {
   currency   String            @default("USD")
   active     Boolean           @default(true)
   type       CreditBalanceType // A qué tipo de saldo se aplica
+  planId     String? // Plan al que pertenece este paquete, null = sin plan asociado
   createdAt  DateTime          @default(now())
 
+  plan    PaymentPlan? @relation(fields: [planId], references: [id])
   invoice Invoice[]
 
+  @@index([planId])
   @@map("credit_package")
 }
 

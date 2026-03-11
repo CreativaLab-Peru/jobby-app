@@ -2,9 +2,10 @@
 
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/features/share/actions/require-admin";
-import { CreditPackage, Invoice, User } from "@prisma/client";
+import { CreditPackage, Invoice, PaymentPlan, User } from "@prisma/client";
 
 export type AdminCreditPackageDetail = CreditPackage & {
+  plan: Pick<PaymentPlan, "id" | "name" | "slug"> | null;
   invoice: (Pick<Invoice, "id" | "userId" | "amountTotal" | "currency" | "status" | "provider" | "createdAt"> & {
     user: Pick<User, "id" | "email" | "name">;
   })[];
@@ -27,6 +28,7 @@ export const getAdminCreditPackageById = async (
     const pkg = await prisma.creditPackage.findUnique({
       where: { id: packageId },
       include: {
+        plan: { select: { id: true, name: true, slug: true } },
         invoice: {
           select: {
             id: true,

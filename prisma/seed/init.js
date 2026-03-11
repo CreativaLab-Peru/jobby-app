@@ -36,7 +36,7 @@ async function main() {
         name: "Starter",
         description: "Acceso al plan starter",
         paymentType: PaymentType.ONE_TIME,
-        priceCents: 9.90,
+        priceCents: 19.90,
         currency: "PEN",
         features: {
           caracteristics: [
@@ -59,7 +59,7 @@ async function main() {
         name: "Pro",
         description: "Acceso al plan pro",
         paymentType: PaymentType.ONE_TIME,
-        priceCents: 19.90,
+        priceCents: 29.90,
         currency: "PEN",
         features: {
           caracteristics: [

@@ -1,3 +1,12 @@
+# WIP
+
+### BEFORE DEPLOYMENT
+- Run migration `20260310040541_credit_package_plan_relation` — adds `planId` column and relation to `credit_package` table, linking each package to a `PaymentPlan` (`migrate deploy` handles this automatically in the build script).
+- No new environment variables required.
+- Existing credit packages without a plan assigned will have `planId = null`; assign them from the admin panel at `/admin/credit-packages`.
+
+---
+
 # v1.1.25 - 2026-03-07
 
 ### BEFORE DEPLOYMENT

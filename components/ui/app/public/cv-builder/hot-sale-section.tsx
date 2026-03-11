@@ -17,6 +17,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {User} from "@prisma/client";
 
 const features = [
   "Análisis personalizado de tu perfil profesional",
@@ -29,17 +30,17 @@ const features = [
 ];
 
 interface HotSaleSectionProps {
-  sessionUser?: { id: string; email: string; name: string; image: string | null } | null;
+  user: User | null;
 }
 
-export function HotSaleSection({ sessionUser = null }: HotSaleSectionProps) {
+export function HotSaleSection({ user = null }: HotSaleSectionProps) {
   const [openModal, setOpenModal] = useState(false);
   const [temporalUserId, setTemporalUserId] = useState<string | null>(null);
   const [showMethodModal, setShowMethodModal] = useState(false);
   const [showAccountChoice, setShowAccountChoice] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(!!sessionUser);
-  const [sessionEmail, setSessionEmail] = useState<string | null>(sessionUser?.email ?? null);
-  const [checkoutEmail, setCheckoutEmail] = useState<string | null>(sessionUser?.email ?? null);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!user);
+  const [sessionEmail, setSessionEmail] = useState<string | null>(user?.email ?? null);
+  const [checkoutEmail, setCheckoutEmail] = useState<string | null>(user?.email ?? null);
   const [isPending, startTransition] = useTransition();
   const { openCheckout } = usePaddle();
 
@@ -163,7 +164,7 @@ export function HotSaleSection({ sessionUser = null }: HotSaleSectionProps) {
                       <div className="text-muted-foreground text-sm mb-3">Precio único</div>
                       <div className="flex items-baseline gap-2 justify-center md:justify-start">
                       <span
-                        className="text-6xl md:text-7xl font-black text-foreground">S/ 9.90</span>
+                        className="text-6xl md:text-7xl font-black text-foreground">S/ 19.90</span>
                       </div>
                       <p className="text-muted-foreground text-sm mt-2">
                         Pago único • Sin suscripciones • Sin cargos ocultos
@@ -199,7 +200,7 @@ export function HotSaleSection({ sessionUser = null }: HotSaleSectionProps) {
         onClose={() => setShowMethodModal(false)}
         onSelectMethod={handleMethodSelected}
         packName="Levely Starter"
-        price={9.90}
+        price={19.90}
       />
       <Dialog open={showAccountChoice} onOpenChange={setShowAccountChoice}>
         <DialogContent className="sm:max-w-sm">

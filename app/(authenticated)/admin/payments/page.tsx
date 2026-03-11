@@ -13,6 +13,8 @@ interface AdminPaymentsPageProps {
     active?: string;
     planId?: string;
     view?: string;
+    dateFrom?: string;
+    dateTo?: string;
   }>;
 }
 
@@ -30,12 +32,16 @@ export default async function AdminPaymentsPage({ searchParams }: AdminPaymentsP
   const active = params.active as "active" | "inactive" | undefined;
   const planId = params.planId || undefined;
   const view = (params.view === "card" ? "card" : "list") as "card" | "list";
+  const dateFrom = params.dateFrom || undefined;
+  const dateTo = params.dateTo || undefined;
 
   const [result, plans] = await Promise.all([
     getAdminPayments(skip, pageSize, {
       query: query || undefined,
       active: active || null,
       planId: planId || null,
+      dateFrom: dateFrom || null,
+      dateTo: dateTo || null,
     }),
     getAdminPlans(),
   ]);
@@ -53,6 +59,8 @@ export default async function AdminPaymentsPage({ searchParams }: AdminPaymentsP
       initialQuery={query}
       initialActive={active || ""}
       initialPlanId={planId || ""}
+      initialDateFrom={dateFrom || ""}
+      initialDateTo={dateTo || ""}
       initialView={view}
       initialError={error}
       plans={plans}

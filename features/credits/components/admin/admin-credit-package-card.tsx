@@ -35,7 +35,6 @@ export function AdminCreditPackageCard({ pkg }: AdminCreditPackageCardProps) {
   const router = useRouter();
 
   const typeLabel = BALANCE_TYPE_LABELS[pkg.type] || pkg.type;
-  const price = formatCurrency(pkg.priceCents, pkg.currency);
   const invoiceCount = pkg._count.invoice;
 
   const handleDelete = async () => {
@@ -78,7 +77,6 @@ export function AdminCreditPackageCard({ pkg }: AdminCreditPackageCardProps) {
           <>
             <span className="font-mono text-[10px]">{pkg.code}</span>
             <span className="font-semibold">{pkg.credits} creditos</span>
-            <span>{price}</span>
             <span>{invoiceCount} facturas</span>
           </>
         }

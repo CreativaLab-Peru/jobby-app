@@ -5,6 +5,7 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Plus, Trash2 } from "lucide-react"
 import { FieldWithRecommendations } from "./field-with-recommendations"
+import { CvPhotoUpload } from "./cv-photo-upload"
 import type { CVSection } from "@/types/cv"
 import { toast } from "sonner"
 
@@ -222,13 +223,28 @@ export const CVSectionForm = forwardRef<CVSectionFormRef, CVSectionFormProps>(({
     <div className="space-y-6">
       {section.fields.map((field) => (
         <div key={field.name}>
-          <FieldWithRecommendations
-            field={field}
-            value={formData[field.name] || []}
-            onChange={(value) => handleInputChange(field.name, value)}
-            onSelectChange={(value) => handleInputChange(field.name, value)}
-            onTagsChange={(tags) => handleTagsChange(field.name, tags)}
-          />
+          {field.type === "photo" ? (
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-foreground">
+                {field.label}
+              </label>
+              {field.tip && (
+                <p className="text-xs text-muted-foreground">{field.tip}</p>
+              )}
+              <CvPhotoUpload
+                value={formData[field.name] || ""}
+                onChange={(url) => handleInputChange(field.name, url)}
+              />
+            </div>
+          ) : (
+            <FieldWithRecommendations
+              field={field}
+              value={formData[field.name] || []}
+              onChange={(value) => handleInputChange(field.name, value)}
+              onSelectChange={(value) => handleInputChange(field.name, value)}
+              onTagsChange={(tags) => handleTagsChange(field.name, tags)}
+            />
+          )}
           {errors[field.name] && (
             <p className="text-xs text-destructive mt-1">{errors[field.name]}</p>
           )}

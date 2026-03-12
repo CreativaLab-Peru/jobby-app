@@ -1,7 +1,7 @@
 export interface CVField {
   name: string
   label: string
-  type: "text" | "email" | "number" | "textarea" | "select" | "tags" | "url"
+  type: "text" | "email" | "number" | "textarea" | "select" | "tags" | "url" | "photo"
   required: boolean
   tip?: string
   example?: string

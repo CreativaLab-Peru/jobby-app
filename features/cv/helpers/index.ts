@@ -99,20 +99,36 @@ export function getSections(
     const personalIdx = sections.findIndex((s) => s.id === "personal");
     if (personalIdx !== -1) {
       const hasNationality = sections[personalIdx].fields.some((f) => f.name === "nationality");
+      const hasImage = sections[personalIdx].fields.some((f) => f.name === "image");
+
+      const extraFields = [];
+
+      if (!hasImage) {
+        extraFields.push({
+          name: "image",
+          label: "Foto de perfil (Europass)",
+          type: "photo" as const,
+          required: false,
+          tip: "El formato Europass recomienda incluir una foto profesional. Sube una imagen JPG o PNG de hasta 2MB.",
+          example: "",
+        });
+      }
+
       if (!hasNationality) {
+        extraFields.push({
+          name: "nationality",
+          label: "Nacionalidad (Europass)",
+          type: "text" as const,
+          required: false,
+          tip: "Requerido por el formato Europass. Ej: Peruana, Colombiana...",
+          example: "Peruana",
+        });
+      }
+
+      if (extraFields.length > 0) {
         sections[personalIdx] = {
           ...sections[personalIdx],
-          fields: [
-            ...sections[personalIdx].fields,
-            {
-              name: "nationality",
-              label: "Nacionalidad (Europass)",
-              type: "text",
-              required: false,
-              tip: "Requerido por el formato Europass. Ej: Peruana, Colombiana...",
-              example: "Peruana",
-            },
-          ],
+          fields: [...sections[personalIdx].fields, ...extraFields],
         };
       }
     }

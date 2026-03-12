@@ -26,6 +26,8 @@ export interface CVData {
     phone?: string
     email?: string
     summary?: string
+    nationality?: string  // Campo Europass
+    image?: string        // URL de foto (Europass)
   }
   education?: {
     items?: Array<{

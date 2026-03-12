@@ -188,6 +188,22 @@ model UserPayment {
   @@map("user_subscription")
 }
 
+model CvTemplate {
+  id            String   @id                    // "harvard", "europass", "stem", "fullbright"
+  name          String
+  description   String?
+  category      String                          // "professional", "european", "academic"
+  isPremium     Boolean  @default(false)
+  requiresPhoto Boolean  @default(false)        // true para Europass
+  isActive      Boolean  @default(true)
+  displayOrder  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  cvs           Cv[]
+
+  @@map("cv_template")
+}
+
 model Cv {
   id              String          @id @default(uuid())
   userId          String?
@@ -197,6 +213,7 @@ model Cv {
   cvType          CvType?
   title           String?
   templateId      String          @default("harvard")
+  template        CvTemplate      @relation(fields: [templateId], references: [id])
   extractedJson   Json?
   fullTextSearch  String?
   createdAt       DateTime        @default(now())

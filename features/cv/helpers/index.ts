@@ -72,10 +72,12 @@ function applyCustomization(
  * Función principal que genera las secciones del CV
  * @param opportunityType - Tipo de oportunidad (INTERNSHIP, FULL_TIME, etc.)
  * @param cvType - Tipo de CV (TECHNOLOGY_ENGINEERING, DESIGN_CREATIVITY, etc.)
+ * @param templateId - ID del template (e.g. "europass" agrega campos específicos)
  */
 export function getSections(
   opportunityType: OpportunityType,
-  cvType: CvType = CvType.TECHNOLOGY_ENGINEERING
+  cvType: CvType = CvType.TECHNOLOGY_ENGINEERING,
+  templateId?: string
 ): CVSection[] {
   // Obtener configuración específica
   const config = getConfig(cvType, opportunityType);
@@ -89,6 +91,30 @@ export function getSections(
     if (baseSection) {
       const customizedSection = applyCustomization(baseSection, config);
       sections.push(customizedSection);
+    }
+  }
+
+  // Ajustes por template: campos adicionales específicos
+  if (templateId === "europass") {
+    const personalIdx = sections.findIndex((s) => s.id === "personal");
+    if (personalIdx !== -1) {
+      const hasNationality = sections[personalIdx].fields.some((f) => f.name === "nationality");
+      if (!hasNationality) {
+        sections[personalIdx] = {
+          ...sections[personalIdx],
+          fields: [
+            ...sections[personalIdx].fields,
+            {
+              name: "nationality",
+              label: "Nacionalidad (Europass)",
+              type: "text",
+              required: false,
+              tip: "Requerido por el formato Europass. Ej: Peruana, Colombiana...",
+              example: "Peruana",
+            },
+          ],
+        };
+      }
     }
   }
 

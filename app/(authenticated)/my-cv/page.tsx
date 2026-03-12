@@ -2,9 +2,9 @@ import { redirect } from "next/navigation";
 import { getActiveRoute } from "@/features/routes/actions/get-active-route";
 import { getCvForActiveRoute } from "@/features/routes/actions/get-cv-for-active-route";
 import { getCurrentCreditLimits } from "@/features/credits/actions/get-current-credits-limits";
-import MyCvsScreen from "@/features/routes/components/my-cvs-screen";
+import MyCvScreen from "@/features/routes/components/my-cv-screen";
 
-export default async function MyCvsPage() {
+export default async function MyCvPage() {
   const activeRoute = await getActiveRoute();
   if (!activeRoute) return redirect("/routes/new");
 
@@ -16,7 +16,7 @@ export default async function MyCvsPage() {
   const canCreate = creditLimits.manageCvsLimit > 0;
 
   return (
-    <MyCvsScreen
+    <MyCvScreen
       cv={cvResult?.cv ?? null}
       canCreate={canCreate}
       routeHasCv={cvResult?.routeHasCv ?? false}

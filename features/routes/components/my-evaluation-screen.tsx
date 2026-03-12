@@ -11,6 +11,8 @@ import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
 import { EvaluationCard } from "@/features/analysis/components/evaluation-card";
 import { LoadMoreButton } from "@/components/shared/load-more-button";
 import { Switch } from "@/components/ui/switch";
+import { SelectCvModal } from "@/features/analysis/components/select-cv-modal";
+import { useEvaluationModalStore } from "@/features/analysis/hooks/use-evaluation-modal-store";
 import { analyzeCvById } from "@/features/analysis/actions/analyze-cv-by-id";
 import {
   reAnalyzeCvByEvaluationId,
@@ -20,33 +22,37 @@ import {
   EvaluationWithRelations,
   getEvaluationsForActiveRoute,
 } from "@/features/routes/actions/get-evaluations-for-active-route";
+import { CvWithRelations } from "@/features/cv/actions/get-cv-for-current-user";
 
-interface MyEvaluationsScreenProps {
+interface MyEvaluationScreenProps {
   initialEvaluations: EvaluationWithRelations[];
   canAnalyze: boolean;
   hasMoreProp: boolean;
   totalCount: number;
   hasCv: boolean;
-  cvId: string | null;
+  cv: CvWithRelations | null;
 }
 
-export default function MyEvaluationsScreen({
+export default function MyEvaluationScreen({
   initialEvaluations,
   canAnalyze,
   hasMoreProp,
   totalCount: initialTotal,
   hasCv,
-  cvId,
-}: MyEvaluationsScreenProps) {
+  cv,
+}: MyEvaluationScreenProps) {
   const [evaluations, setEvaluations] = useState(initialEvaluations);
   const [hasMore, setHasMore] = useState(hasMoreProp);
   const [totalCount, setTotalCount] = useState(initialTotal);
   const [isPending, startTransition] = useTransition();
   const [justSuccessful, setJustSuccessful] = useState(true);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
+  const { onOpen, setIsAnalyzing } = useEvaluationModalStore();
   const { refreshCredits } = useCreditsStore();
   const router = useRouter();
+
+  // Build the list of CVs for the modal (just the one from the active route)
+  const cvList = cv ? [cv] : [];
 
   const handleFilterChange = (onlySuccess: boolean) => {
     setJustSuccessful(onlySuccess);
@@ -78,8 +84,8 @@ export default function MyEvaluationsScreen({
     });
   };
 
-  const handleAnalyze = async () => {
-    if (!cvId) return;
+  /** Called when the user confirms the CV in the modal */
+  const handleAnalyzeConfirm = async (cvId: string) => {
     setIsAnalyzing(true);
     try {
       const response = await analyzeCvById(cvId);
@@ -88,7 +94,7 @@ export default function MyEvaluationsScreen({
         router.push(`/process/${cvId}`);
         refreshCredits();
       } else {
-        toast.error("Error al procesar el CV");
+        toast.error(response.message || "Error al procesar el CV");
       }
     } catch {
       toast.error("Error de conexión");
@@ -98,7 +104,6 @@ export default function MyEvaluationsScreen({
   };
 
   const handleReAnalyze = async (evaluationId: string) => {
-    setIsAnalyzing(true);
     try {
       const ev = evaluations.find((e) => e.id === evaluationId);
       const response = await reAnalyzeCvByEvaluationId(evaluationId);
@@ -111,8 +116,6 @@ export default function MyEvaluationsScreen({
       }
     } catch {
       toast.error("Error de conexión");
-    } finally {
-      setIsAnalyzing(false);
     }
   };
 
@@ -121,22 +124,25 @@ export default function MyEvaluationsScreen({
       <div className="mx-auto max-w-7xl">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
           <PageHeader
-            title="Análisis de mi Ruta"
+            title="Mi Análisis"
             description="Evaluaciones de IA del CV vinculado a tu ruta activa."
             actions={
               hasCv && (
                 <Button
-                  disabled={!canAnalyze || isAnalyzing}
-                  onClick={handleAnalyze}
+                  disabled={!canAnalyze}
+                  onClick={onOpen}
                   size="sm"
                   className="font-bold rounded-xl"
                 >
                   <BarChart3 className="w-4 h-4 mr-2" />
-                  {isAnalyzing ? "Analizando..." : "Analizar CV"}
+                  Analizar CV
                 </Button>
               )
             }
           />
+
+          {/* Select CV Modal */}
+          <SelectCvModal cvs={cvList} onConfirm={handleAnalyzeConfirm} />
 
           {!hasCv ? (
             <EmptyPlaceholder

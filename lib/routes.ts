@@ -12,8 +12,8 @@ export const routes = {
       new: "/routes/new",
     },
 
-    myCvs: "/my-cvs",
-    myEvaluations: "/my-evaluations",
+    myCv: "/my-cv",
+    myEvaluation: "/my-evaluation",
     myOpportunities: "/my-opportunities",
 
     cv: {

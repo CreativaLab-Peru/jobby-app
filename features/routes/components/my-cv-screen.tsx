@@ -11,13 +11,13 @@ import { useCvModalStore } from "@/features/cv/hooks/use-cv-modal-store";
 import { CreateCVModal } from "@/features/cv/components/create-cv-modal";
 import { UploadCVModal } from "@/features/cv/components/upload-cv-modal";
 
-interface MyCvsScreenProps {
+interface MyCvScreenProps {
   cv: CvWithRelations | null;
   canCreate: boolean;
   routeHasCv: boolean;
 }
 
-export default function MyCvsScreen({ cv, canCreate, routeHasCv }: MyCvsScreenProps) {
+export default function MyCvScreen({ cv, canCreate, routeHasCv }: MyCvScreenProps) {
   const { onOpenCreate, onOpenUpload } = useCvModalStore();
 
   const actions = (
@@ -58,7 +58,7 @@ export default function MyCvsScreen({ cv, canCreate, routeHasCv }: MyCvsScreenPr
           className="space-y-8"
         >
           <PageHeader
-            title="CV de mi Ruta"
+            title="Mi CV"
             description="El currículum vinculado a tu ruta activa."
             actions={actions}
           />

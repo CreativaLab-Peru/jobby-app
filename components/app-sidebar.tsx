@@ -39,8 +39,8 @@ import { RouteSelector } from "@/features/routes/components/route-selector";
 // Items scoped to the active route (the core journey)
 const routeNavItems = [
   { title: "Mi Ruta", href: "/dashboard", icon: LayoutDashboard },
-  { title: "CV", href: "/my-cvs", icon: FileText },
-  { title: "Análisis", href: "/my-evaluations", icon: MessageSquare },
+  { title: "CV", href: "/my-cv", icon: FileText },
+  { title: "Análisis", href: "/my-evaluation", icon: MessageSquare },
   { title: "Oportunidades", href: "/my-opportunities", icon: Briefcase },
   { title: "Roadmaps", href: "/my-roadmaps", icon: Map },
 ];

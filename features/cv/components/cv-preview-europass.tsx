@@ -139,7 +139,7 @@ export function CVPreviewEuropass({ data, sections }: CVPreviewEuropassProps) {
               )}
               {edu.honors && (
                 <p className="text-[9px] mb-[1px]">
-                  <span className="font-bold">Mención: </span>
+                  <span className="font-bold">Logro Clave: </span>
                   {edu.honors}
                 </p>
               )}

@@ -6,7 +6,7 @@ import path from "path";
 import type { CVData, CVSection } from "@/types/cv";
 import { linkedinDisplay } from "@/lib/utils";
 
-// Font Arial - Same as Harvard version
+// Font Arial
 Font.register({
   family: "Arial",
   fonts: [
@@ -238,7 +238,7 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
               )}
               {edu.honors && (
                 <Text style={styles.itemBody}>
-                  <Text style={styles.metaLabel}>Mención: </Text>
+                  <Text style={styles.metaLabel}>Logro Clave: </Text>
                   {edu.honors}
                 </Text>
               )}

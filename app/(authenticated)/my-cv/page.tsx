@@ -8,10 +8,13 @@ export default async function MyCvPage() {
   const activeRoute = await getActiveRoute();
   if (!activeRoute) return redirect("/routes/new");
 
-  const [cvResult, creditLimits] = await Promise.all([
-    getCvForActiveRoute(),
-    getCurrentCreditLimits(),
-  ]);
+  const cvResult = await getCvForActiveRoute();
+
+  if (cvResult?.cv?.id) {
+    return redirect(`/cv/${cvResult.cv.id}/preview`);
+  }
+
+  const creditLimits = await getCurrentCreditLimits();
 
   const canCreate = creditLimits.manageCvsLimit > 0;
 

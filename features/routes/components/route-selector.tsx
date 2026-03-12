@@ -24,6 +24,7 @@ import {
 import { useState, useTransition, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { RouteStatus } from "@prisma/client";
+import {routes as  routesLib} from "@/lib/routes";
 
 // ── Progress helpers ───────────────────────────────────
 const JOURNEY_STEPS: RouteStatus[] = [
@@ -181,6 +182,7 @@ export function RouteSelector() {
       setStoreActive(route);
       setOpen(false);
       router.refresh();
+      router.push(routesLib.app.dashboard);
     });
   };
 

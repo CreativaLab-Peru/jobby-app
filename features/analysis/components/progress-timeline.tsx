@@ -8,7 +8,6 @@ import {
   Loader2,
   CheckCircle,
   XCircle,
-  Clock,
   FileCheck,
   UploadCloud,
   Sparkles,
@@ -18,6 +17,7 @@ type CvStatus =
   | { status: "CV_IN_PROGRESS" }
   | { status: "CV_FAILED" }
   | { status: "CV_SUCCEEDED" }
+  | { status: "CV_READY_FOR_ANALYSIS" }
   | { status: "CV_EVALUATION_PENDING_EVALUATION" }
   | { status: "CV_EVALUATION_IN_PROGRESS" }
   | { status: "CV_EVALUATION_FAILED" }
@@ -31,30 +31,22 @@ interface ProgressStatusProps {
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
-const UPLOAD_STEPS = [
-  { key: "upload", title: "Subido", desc: "Hemos recibido tu CV.", icon: UploadCloud },
-  { key: "processing", title: "Procesando", desc: "Analizando tu archivo — extrayendo datos.", icon: Loader2 },
-  { key: "queued", title: "En cola", desc: "En espera para ser analizado por IA.", icon: Clock },
-  { key: "inProgress", title: "Evaluación", desc: "Detectando fortalezas y sugerencias.", icon: Loader2 },
+const STEPS = [
+  { key: "preparing", title: "Preparando CV", desc: "Subiendo o preparando tu CV para evaluación.", icon: UploadCloud },
+  { key: "evaluation", title: "Evaluando", desc: "Analizando fortalezas y mejoras con IA.", icon: Loader2 },
   { key: "finished", title: "Finalizado", desc: "Listo — redirigiendo a resultados.", icon: FileCheck },
 ]
 
-const MANUAL_STEPS = [
-  { key: "ready", title: "CV Listo", desc: "Tu CV está listo para ser analizado.", icon: FileCheck },
-  { key: "inProgress", title: "Evaluación", desc: "Ejecutando el análisis de IA.", icon: Loader2 },
-  { key: "finished", title: "Finalizado", desc: "Listo — redirigiendo a resultados.", icon: FileCheck },
-]
-
-const UPLOAD_STATUS_TO_INDEX: Record<string, number> = {
-  CV_SUCCEEDED: 0, CV_IN_PROGRESS: 1, CV_EVALUATION_PENDING_EVALUATION: 2,
-  CV_EVALUATION_IN_PROGRESS: 3, CV_EVALUATION_SUCCEEDED: 4, CV_EVALUATION_FINISHED: 4,
-  CV_FAILED: 0, CV_EVALUATION_FAILED: 3,
-}
-
-const MANUAL_STATUS_TO_INDEX: Record<string, number> = {
-  CV_READY_FOR_ANALYSIS: 0, CV_EVALUATION_PENDING_EVALUATION: 0,
-  CV_EVALUATION_IN_PROGRESS: 1, CV_EVALUATION_SUCCEEDED: 2,
-  CV_EVALUATION_FINISHED: 2, CV_EVALUATION_FAILED: 1,
+const STATUS_TO_INDEX: Record<string, number> = {
+  CV_IN_PROGRESS: 0,
+  CV_SUCCEEDED: 0,
+  CV_READY_FOR_ANALYSIS: 0,
+  CV_EVALUATION_PENDING_EVALUATION: 0,
+  CV_EVALUATION_IN_PROGRESS: 1,
+  CV_EVALUATION_SUCCEEDED: 2,
+  CV_EVALUATION_FINISHED: 2,
+  CV_FAILED: 0,
+  CV_EVALUATION_FAILED: 1,
 }
 
 const variants = {
@@ -72,19 +64,16 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
     refreshInterval: 3000,
   })
 
-  const isManual = useMemo(() => {
-    if (!status?.status) return false;
-    return status.status === "CV_READY_FOR_ANALYSIS" ||
-      !["CV_IN_PROGRESS", "CV_SUCCEEDED", "CV_FAILED"].includes(status.status);
-  }, [status]);
-
-  const STEPS = isManual ? MANUAL_STEPS : UPLOAD_STEPS;
-  const STATUS_TO_INDEX = isManual ? MANUAL_STATUS_TO_INDEX : UPLOAD_STATUS_TO_INDEX;
-
   const activeIndex = useMemo(() => {
     if (!status?.status) return -1
     return STATUS_TO_INDEX[status.status] ?? -1
-  }, [status, STATUS_TO_INDEX])
+  }, [status])
+
+  const failureIndex = useMemo(() => {
+    if (status?.status === "CV_FAILED") return 0
+    if (status?.status === "CV_EVALUATION_FAILED") return 1
+    return -1
+  }, [status])
 
   useEffect(() => {
     setIsRendering(true)
@@ -101,7 +90,7 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
 
   if (!isRendering) {
     return (
-      <div className="flex items-center justify-center h-[90vh] rounded-lg">
+      <div className="fixed inset-0 z-40 flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
           <p className="text-muted-foreground">Cargando</p>
@@ -111,8 +100,8 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
   }
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center px-4 bg-background/50">
-      <div className="max-w-2xl w-full">
+    <div className="fixed inset-0 z-40 flex flex-col items-center justify-center overflow-y-auto px-4 py-8 md:px-8 bg-background/95">
+      <div className="mx-auto w-full max-w-7xl">
         {/* Header con gradiente del sistema */}
         <div className="text-center mb-16 mt-10">
           <h1 className="text-3xl sm:text-4xl font-black tracking-tighter text-foreground mb-3">
@@ -132,7 +121,7 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
 
             {/* Línea de Progreso (Primary) */}
             <motion.div
-              className="absolute left-1/2 transform -translate-x-1/2 top-6 w-[2px] bg-primary origin-top"
+              className="absolute left-1/2 transform -translate-x-1/2 top-6 w-[2px] bg-primary origin-top max-w-2xl"
               initial={{ height: 0 }}
               animate={{
                 height: activeIndex <= 0 ? 0 : `${(activeIndex / (STEPS.length - 1)) * 100}%`,
@@ -140,13 +129,11 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
               transition={{ type: "spring", stiffness: 40, damping: 20 }}
             />
 
-            <ol className="flex flex-col gap-y-20 w-full relative z-10">
+            <ol className="flex flex-col gap-y-24 w-full relative z-10 max-w-5xl">
               {STEPS.map((step, idx) => {
                 const StepIcon = step.icon
                 const state = activeIndex === -1 ? "pending" : idx < activeIndex ? "completed" : idx === activeIndex ? "active" : "pending"
-                const isFailure = isManual
-                  ? (status?.status === "CV_EVALUATION_FAILED" && idx === 1)
-                  : ((status?.status === "CV_FAILED" && idx === 0) || (status?.status === "CV_EVALUATION_FAILED" && idx === 3))
+                const isFailure = failureIndex === idx
 
                 return (
                   <li key={step.key} className="flex justify-center">
@@ -179,14 +166,12 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
           </div>
 
           {/* Columna Derecha: Contenido (Entity Style) */}
-          <div className="flex-1 space-y-20 py-1">
+          <div className="flex-1 space-y-24 py-1">
             {STEPS.map((step, idx) => {
               const state = activeIndex === -1 ? "pending" : idx < activeIndex ? "completed" : idx === activeIndex ? "active" : "pending"
               const isActive = state === "active"
               const isCompleted = state === "completed"
-              const isFailure = isManual
-                ? (status?.status === "CV_EVALUATION_FAILED" && idx === 1)
-                : ((status?.status === "CV_FAILED" && idx === 0) || (status?.status === "CV_EVALUATION_FAILED" && idx === 3))
+              const isFailure = failureIndex === idx
 
               return (
                 <motion.div

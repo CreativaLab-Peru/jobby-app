@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { pdf } from "@react-pdf/renderer";
@@ -12,11 +14,11 @@ import "react-pdf/dist/Page/TextLayer.css";
 // Configurar worker de PDF.js
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-export function ClientPDFPreview({ 
-  cvData, 
+export function ClientPDFPreview({
+  cvData,
   sections,
   templateId = "harvard"
-}: { 
+}: {
   cvData: CVData;
   sections: CVSection[];
   templateId?: string;
@@ -24,27 +26,33 @@ export function ClientPDFPreview({
   const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
   const [numPages, setNumPages] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  const [generationError, setGenerationError] = useState<string | null>(null);
   const [containerWidth, setContainerWidth] = useState<number | null>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const generatePdf = async () => {
-      try {
-        const documentComponent = templateId === "europass"
-          ? <CvDocumentEuropass data={cvData} sections={sections} />
-          : <CvDocument data={cvData} sections={sections} />;
-        
-        const blob = await pdf(documentComponent).toBlob();
-        setPdfBlob(blob);
-      } catch (error) {
-        console.error("Error generating PDF:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const generatePdf = React.useCallback(async () => {
+    setLoading(true);
+    setGenerationError(null);
 
+    try {
+      const documentComponent = templateId === "europass"
+        ? <CvDocumentEuropass data={cvData} sections={sections} />
+        : <CvDocument data={cvData} sections={sections} />;
+
+      const blob = await pdf(documentComponent).toBlob();
+      setPdfBlob(blob);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      setPdfBlob(null);
+      setGenerationError("No pudimos generar la vista previa. Intenta nuevamente.");
+    } finally {
+      setLoading(false);
+    }
+  }, [cvData, sections, templateId]);
+
+  useEffect(() => {
     generatePdf();
-  }, [JSON.stringify(cvData), JSON.stringify(sections), templateId]);
+  }, [generatePdf]);
 
   // Medición inicial y observación de cambios
   React.useLayoutEffect(() => {
@@ -83,8 +91,25 @@ export function ClientPDFPreview({
     );
   }
 
+  if (generationError) {
+    return (
+      <div className="flex items-center justify-center h-[90vh] bg-muted/30 rounded-lg">
+        <div className="flex flex-col items-center gap-3 text-center px-4">
+          <p className="text-sm text-destructive font-semibold">{generationError}</p>
+          <button
+            type="button"
+            onClick={generatePdf}
+            className="inline-flex items-center justify-center rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+          >
+            Reintentar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div 
+    <div
       ref={containerRef}
       className="h-[50vh] sm:h-[90vh] overflow-auto rounded-lg bg-muted/20 p-2 sm:p-4 scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
     >
@@ -111,11 +136,22 @@ export function ClientPDFPreview({
               />
             ))}
           </Document>
-        ) : pdfBlob && (
+        ) : pdfBlob ? (
            <div className="flex flex-col items-center gap-2 py-12">
              <Loader2 className="w-8 h-8 animate-spin text-primary" />
              <p className="text-sm text-muted-foreground transition-opacity">Ajustando vista previa...</p>
            </div>
+        ) : (
+          <div className="flex flex-col items-center gap-2 py-12">
+            <p className="text-sm text-muted-foreground">No hay vista previa disponible por el momento.</p>
+            <button
+              type="button"
+              onClick={generatePdf}
+              className="inline-flex items-center justify-center rounded-md border border-border px-3 py-2 text-sm font-medium hover:bg-muted"
+            >
+              Reintentar
+            </button>
+          </div>
         )}
       </div>
     </div>

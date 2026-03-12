@@ -15,11 +15,11 @@ interface PreviewCVPageProps {
 export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
   const { cvId } = await params;
   if (!cvId) {
-    return redirect('/cv')
+    return redirect('/my-cv')
   }
   const cv = await getCvById(cvId);
   if (!cv) {
-    return redirect('/cv')
+    return redirect('/my-cv')
   }
 
   const cvData: CVData = transformCVToDTO(cv);

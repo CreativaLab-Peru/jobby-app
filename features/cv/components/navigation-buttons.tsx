@@ -45,7 +45,7 @@ export function NavigationButtons({
         disabled={isLoading}
         className={cn(
           "h-12 px-8 font-black uppercase tracking-widest text-xs rounded-xl transition-all duration-300",
-          "border-none text-white shadow-glow",
+          "border-none text-white dark:text-secondary shadow-glow",
           isLastStep
             ? "text-white" // Verde lima para finalizar
             : "text-white"   // Azul para avanzar

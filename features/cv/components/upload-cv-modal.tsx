@@ -102,7 +102,7 @@ export function UploadCVModal({ initialFile, reset }: UploadCVModalProps) {
       }
 
       if (data.success) {
-        toast.success("CV subido correctamente. Procesando...");
+        toast.success("Procesando...");
         onCloseUpload();
         refreshCredits();
         reset();

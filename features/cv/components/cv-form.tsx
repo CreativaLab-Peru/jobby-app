@@ -9,8 +9,44 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { CvType, OpportunityType } from "@prisma/client";
-import {cvTypes} from "@/const";
+import { CvType, OpportunityType } from "@prisma/client"
+import { cvTypes } from "@/const"
+
+const OPPORTUNITY_DESCRIPTIONS: Record<string, string> = {
+  [OpportunityType.INTERNSHIP]: "Oportunidades de prácticas profesionales.",
+  [OpportunityType.SCHOLARSHIP]: "Oportunidades de becas académicas.",
+  [OpportunityType.EXCHANGE_PROGRAM]: "Oportunidades de programas de intercambio.",
+  [OpportunityType.EMPLOYMENT]: "Oportunidades de empleo y trabajo.",
+  default: "Selecciona un tipo de oportunidad para ver su descripción."
+};
+
+const TEMPLATE_DESCRIPTIONS: Record<string, string> = {
+  harvard: "Diseño clásico y profesional, reconocido internacionalmente.",
+  europass: "Diseño europeo estructurado, ideal para becas de movilidad y Erasmus+.",
+  default: "Elige un diseño que se adapte a tu perfil y oportunidad."
+};
+
+const CV_TYPE_DESCRIPTIONS: Record<string, string> = {
+  [CvType.TECHNOLOGY_ENGINEERING]: "Ideal para perfiles en sistemas, software, innovación o data.",
+  [CvType.DESIGN_CREATIVITY]: "Para creativos visuales, diseñadores gráficos, UX/UI o artistas digitales.",
+  [CvType.MARKETING_STRATEGY]: "Para marketers, comunicadores o estrategas de contenido.",
+  [CvType.MANAGEMENT_BUSINESS]: "Para administración, emprendimiento o desarrollo comercial.",
+  [CvType.FINANCE_PROJECTS]: "Para gestión financiera, análisis económico o PMO.",
+  [CvType.SOCIAL_MEDIA]: "Para community managers, creadores de contenido o influencers.",
+  [CvType.EDUCATION]: "Para docentes, formadores, capacitadores o coaches.",
+  [CvType.SCIENCE]: "Para perfiles STEM, sostenibilidad, impacto o proyectos de investigación.",
+  default: "Selecciona un perfil profesional para ver su descripción."
+};
+
+export const opportunityTypes = [
+  { key: OpportunityType.INTERNSHIP, value: "Pasantía" },
+  { key: OpportunityType.SCHOLARSHIP, value: "Beca" },
+  { key: OpportunityType.EXCHANGE_PROGRAM, value: "Intercambio" },
+  { key: OpportunityType.EMPLOYMENT, value: "Empleo" },
+  { key: OpportunityType.STARTUP, value: "Aceleradora" },
+]
+
+// --- INTERFACES ---
 
 interface CVFormData {
   title: string
@@ -24,160 +60,112 @@ interface CVFormProps {
   onFormDataChange: (data: CVFormData) => void
 }
 
-export const opportunityTypes = [
-  { key: OpportunityType.INTERNSHIP, value: "Pasantía" },
-  { key: OpportunityType.SCHOLARSHIP, value: "Beca" },
-  { key: OpportunityType.EXCHANGE_PROGRAM, value: "Intercambio" },
-  { key: OpportunityType.EMPLOYMENT, value: "Empleo" },
-  { key: OpportunityType.STARTUP, value: "Aceleradora" },
-]
+// --- COMPONENTES ATÓMICOS ---
+
+const HelperText = ({ children }: { children: React.ReactNode }) => (
+  <p className="text-sm text-muted-foreground transition-all duration-200">
+    {children}
+  </p>
+);
+
+// --- COMPONENTE PRINCIPAL ---
 
 export function CVForm({ formData, onFormDataChange }: CVFormProps) {
-  const updateFormData = (updates: Partial<CVFormData>) => {
-    onFormDataChange({ ...formData, ...updates })
-  }
+
+  const updateField = <K extends keyof CVFormData>(field: K, value: CVFormData[K]) => {
+    onFormDataChange({ ...formData, [field]: value });
+  };
+
+  const sharedStyles = {
+    trigger: "w-full border-secondary/20 focus:border-primary focus:ring-1 focus:ring-primary bg-background transition-colors",
+    item: "focus:bg-primary focus:text-primary-foreground cursor-pointer",
+    label: "text-sm font-semibold text-secondary-foreground/80"
+  };
 
   return (
     <div className="space-y-6 py-4">
+
+      {/* 1. Título */}
       <div className="space-y-2">
-        <Label htmlFor="title" className="text-sm font-medium text-gray-700 dark:text-gray-400">
-          Título del documento
-        </Label>
+        <Label htmlFor="title" className={sharedStyles.label}>Título del documento</Label>
         <Input
           id="title"
           placeholder="Ejemplo: CV Ingeniero de Software"
           value={formData.title}
-          onChange={(e) => updateFormData({ title: e.target.value })}
+          onChange={(e) => updateField("title", e.target.value)}
+          className="focus-visible:ring-primary border-secondary/20"
         />
-        <p>
-          <span className="text-sm text-gray-500 dark:text-gray-400">
-            El título ayudará a identificar este currículum en tu lista de CVs.
-          </span>
-        </p>
+        <HelperText>El título ayudará a identificar este currículum en tu lista.</HelperText>
       </div>
 
+      {/* 2. Tipo de Oportunidad */}
       <div className="space-y-2">
-        <Label htmlFor="opportunity" className="text-sm font-medium text-gray-700 dark:text-gray-400">
-          Tipo de Oportunidad
-        </Label>
+        <Label className={sharedStyles.label}>Tipo de Oportunidad</Label>
         <Select
           value={formData.opportunityType}
-          onValueChange={(value) => updateFormData({ opportunityType: value as OpportunityType })}
+          onValueChange={(v) => updateField("opportunityType", v as OpportunityType)}
         >
-          <SelectTrigger className="bg-white text-black w-full border-gray-200 focus:border-gray-400 focus:ring-1 focus:ring-gray-400 dark:bg-[#2d333b] dark:text-white dark:border-gray-600 dark:focus:border-gray-500 dark:focus:ring-gray-500">
-            <SelectValue placeholder="Selecciona el tipo de oportunidad" />
+          <SelectTrigger className={sharedStyles.trigger}>
+            <SelectValue placeholder="Selecciona el tipo" />
           </SelectTrigger>
-          <SelectContent className="bg-white text-black border-gray-200 dark:bg-[#2d333b] dark:text-white dark:border-gray-600">
-            {opportunityTypes.map((item) => (
-              <SelectItem
-                className="focus:bg-gray-100 focus:text-black dark:focus:bg-gray-700 dark:focus:text-white"
-                key={item.key}
-                value={item.key}
-              >
-                {item.value}
-              </SelectItem>
+          <SelectContent>
+            {opportunityTypes.map((t) => (
+              <SelectItem key={t.key} value={t.key} className={sharedStyles.item}>{t.value}</SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <p>
-          <span className="text-sm text-gray-500">
-            {formData.opportunityType === OpportunityType.INTERNSHIP && "Oportunidades de prácticas profesionales."}
-            {formData.opportunityType === OpportunityType.SCHOLARSHIP && "Oportunidades de becas académicas."}
-            {formData.opportunityType === OpportunityType.EXCHANGE_PROGRAM && "Oportunidades de programas de intercambio."}
-            {formData.opportunityType === OpportunityType.EMPLOYMENT && "Oportunidades de empleo y trabajo."}
-            {!formData.opportunityType && "Selecciona un tipo de oportunidad para ver su descripción."}
-          </span>
-        </p>
+        <HelperText>
+          {OPPORTUNITY_DESCRIPTIONS[formData.opportunityType] || OPPORTUNITY_DESCRIPTIONS.default}
+        </HelperText>
       </div>
 
-      {(formData.opportunityType === OpportunityType.INTERNSHIP || formData.opportunityType === OpportunityType.SCHOLARSHIP) && (
-        <div className="space-y-2">
-          <Label htmlFor="template" className="text-sm font-medium text-gray-700 dark:text-gray-400">
-            Diseño del CV
-          </Label>
+      {/* 3. Diseño del CV (Condicional) */}
+      {["INTERNSHIP", "SCHOLARSHIP"].includes(formData.opportunityType) && (
+        <div className="space-y-2 animate-in fade-in slide-in-from-top-1 duration-300">
+          <Label className={sharedStyles.label}>Diseño del CV</Label>
           <Select
             value={formData.templateId || "harvard"}
-            onValueChange={(value) => updateFormData({ templateId: value })}
+            onValueChange={(v) => updateField("templateId", v)}
           >
-            <SelectTrigger className="bg-white text-black w-full border-gray-200 focus:border-gray-400 focus:ring-1 focus:ring-gray-400 dark:bg-[#2d333b] dark:text-white dark:border-gray-600 dark:focus:border-gray-500 dark:focus:ring-gray-500">
-              <SelectValue placeholder="Selecciona un diseño de CV" />
+            <SelectTrigger className={sharedStyles.trigger}>
+              <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-white text-black border-gray-200 dark:bg-[#2d333b] dark:text-white dark:border-gray-600">
-              <SelectItem
-                className="focus:bg-gray-100 focus:text-black dark:focus:bg-gray-700 dark:focus:text-white"
-                value="harvard"
-              >
-                Harvard (Clásico)
-              </SelectItem>
-              <SelectItem
-                className="focus:bg-gray-100 focus:text-black dark:focus:bg-gray-700 dark:focus:text-white"
-                value="europass"
-              >
-                Europass Modern
-              </SelectItem>
-              <SelectItem
-                className="focus:bg-gray-100 focus:text-black dark:focus:bg-gray-700 dark:focus:text-white"
-                value="stem"
-              >
-                Investigador STEM
-              </SelectItem>
-              <SelectItem
-                className="focus:bg-gray-100 focus:text-black dark:focus:bg-gray-700 dark:focus:text-white"
-                value="fullbright"
-              >
-                Líder Global
-              </SelectItem>
+            <SelectContent>
+              {[
+                { id: "harvard", n: "Harvard (Clásico)" },
+                { id: "europass", n: "Europass Modern" },
+              ].map((tpl) => (
+                <SelectItem key={tpl.id} value={tpl.id} className={sharedStyles.item}>{tpl.n}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
-          <p>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              {formData.templateId === "europass" && "Diseño europeo estructurado, ideal para becas de movilidad y Erasmus+."}
-              {formData.templateId === "stem" && "Especializado para ingeniería, ciencias y proyectos técnicos."}
-              {formData.templateId === "fullbright" && "Destaca liderazgo y voluntariado, perfecto para becas de prestigio."}
-              {formData.templateId === "harvard" && "Diseño clásico y profesional, reconocido internacionalmente."}
-              {!formData.templateId && "Elige un diseño que se adapte a tu perfil y oportunidad."}
-            </span>
-          </p>
+          <HelperText>
+            {TEMPLATE_DESCRIPTIONS[formData.templateId!] || TEMPLATE_DESCRIPTIONS.default}
+          </HelperText>
         </div>
       )}
 
+      {/* 4. Perfil Profesional */}
       <div className="space-y-2">
-        <Label htmlFor="type" className="text-sm font-medium text-gray-700 dark:text-gray-400">
-          Selecciona tu perfil profesional
-        </Label>
+        <Label className={sharedStyles.label}>Perfil profesional</Label>
         <Select
           value={formData.cvType}
-          onValueChange={(value) => updateFormData({ cvType: value as CvType })}
+          onValueChange={(v) => updateField("cvType", v as CvType)}
         >
-          <SelectTrigger className="bg-white text-black w-full border-gray-200 focus:border-gray-400 focus:ring-1 focus:ring-gray-400 dark:bg-[#2d333b] dark:text-white dark:border-gray-600 dark:focus:border-gray-500 dark:focus:ring-gray-500">
-            <SelectValue placeholder="Selecciona el tipo de CV" />
+          <SelectTrigger className={sharedStyles.trigger}>
+            <SelectValue placeholder="Selecciona tu perfil" />
           </SelectTrigger>
-          <SelectContent className="bg-white text-black border-gray-200 dark:bg-[#2d333b] dark:text-white dark:border-gray-600">
-            {cvTypes.map((item) => (
-              <SelectItem
-                className="focus:bg-gray-100 focus:text-black dark:focus:bg-gray-700 dark:focus:text-white"
-                key={item.key}
-                value={item.key}
-              >
-                {item.value}
-              </SelectItem>
+          <SelectContent>
+            {cvTypes.map((t) => (
+              <SelectItem key={t.key} value={t.key} className={sharedStyles.item}>{t.value}</SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <p>
-          <span className="text-sm text-gray-500 dark:text-gray-400">
-            {formData.cvType === CvType.TECHNOLOGY_ENGINEERING && "Ideal para perfiles en sistemas, software, innovación o data."}
-            {formData.cvType === CvType.DESIGN_CREATIVITY && "Para creativos visuales, diseñadores gráficos, UX/UI o artistas digitales."}
-            {formData.cvType === CvType.MARKETING_STRATEGY && "Para marketers, comunicadores o estrategas de contenido."}
-            {formData.cvType === CvType.MANAGEMENT_BUSINESS && "Para administración, emprendimiento o desarrollo comercial."}
-            {formData.cvType === CvType.FINANCE_PROJECTS && "Para gestión financiera, análisis económico o PMO."}
-            {formData.cvType === CvType.SOCIAL_MEDIA && "Para community managers, creadores de contenido o influencers."}
-            {formData.cvType === CvType.EDUCATION && "Para docentes, formadores, capacitadores o coaches."}
-            {formData.cvType === CvType.SCIENCE && "Para perfiles STEM, sostenibilidad, impacto o proyectos de investigación."}
-            {!formData.cvType && "Selecciona un perfil profesional para ver su descripción."}
-          </span>
-        </p>
+        <HelperText>
+          {CV_TYPE_DESCRIPTIONS[formData.cvType] || CV_TYPE_DESCRIPTIONS.default}
+        </HelperText>
       </div>
+
     </div>
   )
 }

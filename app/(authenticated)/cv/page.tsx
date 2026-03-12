@@ -9,7 +9,8 @@ export default async function CVPage() {
 
   // If the active route already has a CV linked, go directly to that CV's detail page
   if (activeRoute?.cvId) {
-    return redirect(`/cv/${activeRoute.cvId}`);
+
+    return redirect(`/cv/${activeRoute.cvId}/preview`);
   }
 
   const [cvData, creditLimits] = await Promise.all([

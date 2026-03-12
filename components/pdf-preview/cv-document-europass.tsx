@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Document, Page, View, Text, StyleSheet, Font } from "@react-pdf/renderer";
+import { Document, Page, View, Text, StyleSheet, Font, Image, Svg, Path, Rect } from "@react-pdf/renderer";
 import path from "path";
 import type { CVData, CVSection } from "@/types/cv";
 import { linkedinDisplay } from "@/lib/utils";
@@ -17,224 +17,193 @@ Font.register({
   ],
 });
 
-// CEFR Levels
-const CEFR_LEVELS: Record<string, { label: string; description: string }> = {
-  A1: { label: "A1", description: "Elementary user" },
-  A2: { label: "A2", description: "Elementary user" },
-  B1: { label: "B1", description: "Independent user" },
-  B2: { label: "B2", description: "Independent user" },
-  C1: { label: "C1", description: "Proficient user" },
-  C2: { label: "C2", description: "Proficient user" },
-};
+const EU_BLUE = "#003FA3";
+const GOLD = "#FFCC00";
+
+// 5-pointed star path centrada en (cx, cy)
+function starPath(cx: number, cy: number, outer: number, inner: number): string {
+  return (
+    Array.from({ length: 10 }, (_, j) => {
+      const a = (j * 36 - 90) * (Math.PI / 180);
+      const r = j % 2 === 0 ? outer : inner;
+      return `${j === 0 ? "M" : "L"} ${(cx + r * Math.cos(a)).toFixed(3)} ${(cy + r * Math.sin(a)).toFixed(3)}`;
+    }).join(" ") + " Z"
+  );
+}
+
+// Bandera EU simplificada
+function EuFlagPdf({ width = 38, height = 26 }: { width?: number; height?: number }) {
+  const cx = width / 2;
+  const cy = height / 2;
+  const circleR = Math.min(width, height) * 0.28;
+  const outerR = Math.min(width, height) * 0.072;
+  const innerR = outerR * 0.39;
+  const stars = Array.from({ length: 12 }, (_, i) => {
+    const a = (i * 30 - 90) * (Math.PI / 180);
+    return starPath(cx + circleR * Math.cos(a), cy + circleR * Math.sin(a), outerR, innerR);
+  });
+  return (
+    <Svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+      <Rect x="0" y="0" width={String(width)} height={String(height)} fill={EU_BLUE} />
+      {stars.map((d, i) => (
+        <Path key={i} d={d} fill={GOLD} />
+      ))}
+    </Svg>
+  );
+}
+
+function PhoneIcon() {
+  return (
+    <Svg viewBox="0 0 24 24" width={9} height={9}>
+      <Path
+        d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02L6.62 10.79z"
+        fill={EU_BLUE}
+      />
+    </Svg>
+  );
+}
+
+function MailIcon() {
+  return (
+    <Svg viewBox="0 0 24 24" width={9} height={9}>
+      <Path
+        d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+        fill={EU_BLUE}
+      />
+    </Svg>
+  );
+}
+
+function LinkedInIcon() {
+  return (
+    <Svg viewBox="0 0 24 24" width={9} height={9}>
+      <Path
+        d="M19 3a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14m-.5 15.5v-5.3a3.26 3.26 0 00-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 011.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 001.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 00-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"
+        fill={EU_BLUE}
+      />
+    </Svg>
+  );
+}
+
+function MapPinIcon() {
+  return (
+    <Svg viewBox="0 0 24 24" width={9} height={9}>
+      <Path
+        d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+        fill={EU_BLUE}
+      />
+    </Svg>
+  );
+}
+
+// Parsea responsabilidades en bullets y subencabezados
+function parseLines(text: string): Array<{ type: "bullet" | "subheading"; text: string }> {
+  return text
+    .split("\n")
+    .map((line) => {
+      const raw = line.trim().replace(/^[-–•·]\s*/, "");
+      if (!raw) return null;
+      if (/^[A-ZÁÉÍÓÚÑa-záéíóúñ][^:]{2,39}:$/.test(raw)) return { type: "subheading" as const, text: raw };
+      return { type: "bullet" as const, text: raw };
+    })
+    .filter(Boolean) as Array<{ type: "bullet" | "subheading"; text: string }>;
+}
 
 const styles = StyleSheet.create({
-  // Page layout: flexbox with two columns
   page: {
-    display: "flex",
-    flexDirection: "row",
-    fontFamily: "Arial",
-    fontSize: 11,
-  },
-
-  // SIDEBAR (30%)
-  sidebar: {
-    width: "30%",
-    backgroundColor: "#0B5394",
-    color: "#FFFFFF",
-    padding: 18,
-    fontSize: 10.5,
-    lineHeight: 1.4,
-  },
-
-  sidebarHeader: {
-    textAlign: "center",
-    marginBottom: 12,
-  },
-
-  europassTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 8,
-    letterSpacing: 1,
-  },
-
-  sidebarDivider: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#FFFFFF",
-    marginBottom: 12,
-    marginTop: 4,
-  },
-
-  contactInfo: {
-    textAlign: "center",
-    marginBottom: 8,
-    fontSize: 9,
-    lineHeight: 1.5,
-  },
-
-  sidebarSectionTitle: {
-    fontSize: 11,
-    fontWeight: "bold",
-    marginTop: 8,
-    marginBottom: 6,
-    textTransform: "uppercase",
-  },
-
-  skillCategory: {
-    fontSize: 10,
-    fontWeight: "bold",
-    marginBottom: 4,
-    marginTop: 4,
-  },
-
-  skillItem: {
-    fontSize: 9,
-    marginLeft: 8,
-    marginBottom: 2,
-  },
-
-  languageItem: {
-    marginBottom: 6,
-  },
-
-  languageName: {
-    fontSize: 10,
-    fontWeight: "bold",
-    marginBottom: 2,
-  },
-
-  languageLevel: {
-    fontSize: 9,
-    marginBottom: 1,
-  },
-
-  languageLevelDescription: {
-    fontSize: 8,
-    fontStyle: "italic",
-  },
-
-  // MAIN CONTENT (70%)
-  mainContent: {
-    width: "70%",
     backgroundColor: "#FFFFFF",
-    color: "#111111",
-    padding: 18,
+    fontFamily: "Arial",
+    fontSize: 10,
+    color: "#222222",
+    paddingLeft: 25,
+    paddingRight: 25,
+    paddingTop: 18,
+    paddingBottom: 20,
+  },
+  leftBar: { position: "absolute", left: 0, top: 0, bottom: 0, width: 10, backgroundColor: EU_BLUE },
+  rightBar: { position: "absolute", right: 0, top: 0, bottom: 0, width: 10, backgroundColor: EU_BLUE },
+  topRow: { flexDirection: "row", justifyContent: "flex-end", alignItems: "center", marginBottom: 10 },
+  europassText: { color: EU_BLUE, fontSize: 18, fontWeight: "bold", marginLeft: 6 },
+  headerRow: { flexDirection: "row", alignItems: "flex-start", marginBottom: 8 },
+  photo: { width: 68, height: 68, borderRadius: 34, marginRight: 12 },
+  headerInfo: { flex: 1 },
+  fullName: { fontSize: 16, fontWeight: "bold", color: EU_BLUE, marginBottom: 5 },
+  contactRow: { flexDirection: "row", alignItems: "center", marginBottom: 2.5, flexWrap: "wrap" },
+  cLabel: { fontSize: 9, fontWeight: "bold", color: "#222", marginLeft: 3 },
+  cValue: { fontSize: 9, color: "#222", marginLeft: 2 },
+  cValueLink: { fontSize: 9, color: EU_BLUE, marginLeft: 2 },
+  cSpacer: { width: 14 },
+  sectionTitle: {
     fontSize: 11,
-    lineHeight: 1.35,
-  },
-
-  headerSection: {
-    textAlign: "center",
-    marginBottom: 8,
-  },
-
-  fullName: {
-    fontSize: 16,
     fontWeight: "bold",
-    marginBottom: 4,
-  },
-
-  address: {
-    fontSize: 9,
-    marginBottom: 8,
-  },
-
-  mainSectionTitle: {
-    fontSize: 11,
-    fontWeight: "bold",
+    color: EU_BLUE,
     textTransform: "uppercase",
-    borderBottomWidth: 1,
-    borderBottomColor: "#000000",
-    paddingBottom: 4,
-    marginTop: 6,
-    marginBottom: 6,
+    borderBottomWidth: 1.5,
+    borderBottomColor: EU_BLUE,
+    paddingBottom: 2,
+    marginTop: 9,
+    marginBottom: 5,
   },
-
-  entryRow: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 2,
-  },
-
-  entryTitle: {
-    fontSize: 10,
-    fontWeight: "bold",
-  },
-
-  entrySubtitle: {
-    fontSize: 10,
-    marginBottom: 2,
-  },
-
-  entryDate: {
-    fontSize: 9,
-    fontStyle: "italic",
-  },
-
-  entryResponsibilities: {
-    marginLeft: 8,
-    marginBottom: 4,
-  },
-
-  bulletPoint: {
-    fontSize: 10,
-    marginBottom: 1,
-    textAlign: "justify",
-  },
-
-  educationItem: {
-    marginBottom: 6,
-  },
-
-  certItem: {
-    fontSize: 10,
-    marginBottom: 3,
-  },
-
-  projectItem: {
-    marginBottom: 6,
-  },
-
-  sectionSpace: {
-    marginBottom: 0,
-  },
+  summaryText: { fontSize: 10, fontWeight: "bold", lineHeight: 1.5, textAlign: "justify" },
+  entry: { marginBottom: 6 },
+  jobTitle: { fontSize: 10, fontWeight: "bold", color: EU_BLUE },
+  companyLine: { fontSize: 10, fontStyle: "italic", marginBottom: 2 },
+  metaLine: { fontSize: 9, marginBottom: 2.5 },
+  metaLabel: { fontWeight: "bold" },
+  bulletRow: { flexDirection: "row", marginLeft: 4, marginBottom: 1.5 },
+  bulletDot: { fontSize: 11, width: 10, color: "#444", lineHeight: 1.2 },
+  bulletTxt: { fontSize: 9, flex: 1, lineHeight: 1.4, textAlign: "justify" },
+  subheadTxt: { fontSize: 9, fontWeight: "bold", marginTop: 3, marginBottom: 1, marginLeft: 4 },
+  degreeTitle: { fontSize: 10, fontWeight: "bold", color: EU_BLUE },
+  instLine: { fontSize: 10, fontStyle: "italic", marginBottom: 2 },
+  skillCat: { fontSize: 10, fontWeight: "bold", marginBottom: 3, marginTop: 4 },
+  skillItem: { fontSize: 9, marginLeft: 8, marginBottom: 1.5 },
+  itemTitle: { fontSize: 10, fontWeight: "bold", color: EU_BLUE },
+  itemBody: { fontSize: 9, marginBottom: 1 },
+  itemSection: { marginBottom: 5 },
 });
+
+function BulletList({ text }: { text: string }) {
+  const lines = parseLines(text);
+  return (
+    <>
+      {lines.map((item, idx) =>
+        item.type === "subheading" ? (
+          <Text key={idx} style={styles.subheadTxt}>
+            {item.text}
+          </Text>
+        ) : (
+          <View key={idx} style={styles.bulletRow}>
+            <Text style={styles.bulletDot}>·</Text>
+            <Text style={styles.bulletTxt}>{item.text}</Text>
+          </View>
+        )
+      )}
+    </>
+  );
+}
 
 export function CvDocumentEuropass({ data, sections }: { data: CVData; sections: CVSection[] }) {
   const sectionRenderers: Record<string, () => React.ReactElement | null> = {
     experience: () =>
       data.experience?.items?.length ? (
-        <View style={styles.sectionSpace}>
-          <Text style={styles.mainSectionTitle}>WORK EXPERIENCE</Text>
-          {data.experience.items.map((exp, index) => (
-            <View key={exp.id ?? index} style={{ marginBottom: 6 }}>
-              <View style={styles.entryRow}>
-                <View style={{ width: "70%" }}>
-                  <Text style={styles.entryTitle}>
-                    {exp.position && exp.company ? `${exp.position} at ${exp.company}` : exp.company || exp.position}
-                  </Text>
-                </View>
-              </View>
+        <View>
+          <Text style={styles.sectionTitle}>EXPERIENCIA LABORAL</Text>
+          {data.experience.items.map((exp, i) => (
+            <View key={exp.id ?? i} style={styles.entry}>
+              {exp.position && <Text style={styles.jobTitle}>{exp.position}</Text>}
+              {(exp.company || exp.duration) && (
+                <Text style={styles.companyLine}>
+                  {[exp.company, exp.duration ? `[ ${exp.duration} ]` : ""].filter(Boolean).join("  ")}
+                </Text>
+              )}
               {exp.location && (
-                <Text style={styles.entrySubtitle}>{exp.location}</Text>
+                <Text style={styles.metaLine}>
+                  <Text style={styles.metaLabel}>Población: </Text>
+                  {exp.location}
+                </Text>
               )}
-              {exp.duration && (
-                <Text style={styles.entryDate}>{exp.duration}</Text>
-              )}
-              {exp.responsibilities && (
-                <View style={styles.entryResponsibilities}>
-                  {exp.responsibilities.split("\n").map((line, idx) => {
-                    const cleaned = line.trim().replace(/^[-–•]\s*/, "");
-                    if (!cleaned) return null;
-                    return (
-                      <Text key={idx} style={styles.bulletPoint}>
-                        • {cleaned}
-                      </Text>
-                    );
-                  })}
-                </View>
-              )}
+              {exp.responsibilities && <BulletList text={exp.responsibilities} />}
             </View>
           ))}
         </View>
@@ -242,23 +211,26 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
 
     education: () =>
       data.education?.items?.length ? (
-        <View style={styles.sectionSpace}>
-          <Text style={styles.mainSectionTitle}>EDUCATION</Text>
-          {data.education.items.map((edu, index) => (
-            <View key={edu.id ?? index} style={styles.educationItem}>
-              <View style={styles.entryRow}>
-                <Text style={styles.entryTitle}>{edu.title}</Text>
-                {edu.year && <Text style={styles.entryDate}>{edu.year}</Text>}
-              </View>
-              {edu.institution && (
-                <Text style={styles.entrySubtitle}>{edu.institution}</Text>
+        <View>
+          <Text style={styles.sectionTitle}>EDUCACIÓN Y FORMACIÓN</Text>
+          {data.education.items.map((edu, i) => (
+            <View key={edu.id ?? i} style={styles.entry}>
+              {edu.title && <Text style={styles.degreeTitle}>{edu.title}</Text>}
+              {(edu.institution || edu.year) && (
+                <Text style={styles.instLine}>
+                  {[edu.institution, edu.year ? `[ ${edu.year} ]` : ""].filter(Boolean).join("  ")}
+                </Text>
               )}
               {edu.location && (
-                <Text style={{ fontSize: 9, marginBottom: 2 }}>{edu.location}</Text>
+                <Text style={styles.itemBody}>
+                  <Text style={styles.metaLabel}>Población: </Text>
+                  {edu.location}
+                </Text>
               )}
               {edu.honors && (
-                <Text style={{ fontSize: 9, fontStyle: "italic" }}>
-                  Honors: {edu.honors}
+                <Text style={styles.itemBody}>
+                  <Text style={styles.metaLabel}>Mención: </Text>
+                  {edu.honors}
                 </Text>
               )}
             </View>
@@ -266,81 +238,62 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
         </View>
       ) : null,
 
-    certifications: () =>
-      data.certifications?.items?.length ? (
-        <View style={styles.sectionSpace}>
-          <Text style={styles.mainSectionTitle}>CERTIFICATIONS</Text>
-          {data.certifications.items.map((cert, index) => (
-            <View key={cert.id ?? index} style={styles.certItem}>
-              <Text style={styles.entryTitle}>{cert.name}</Text>
-              {cert.issuer && (
-                <Text style={{ fontSize: 10 }}>by {cert.issuer}</Text>
-              )}
-              {cert.date && (
-                <Text style={{ fontSize: 9 }}>
-                  ({new Date(cert.date).getFullYear()})
+    skills: () =>
+      data.skills &&
+      (data.skills.technical?.length || data.skills.soft?.length || data.skills.languages?.length) ? (
+        <View>
+          <Text style={styles.sectionTitle}>COMPETENCIAS</Text>
+          {data.skills.technical?.length ? (
+            <View>
+              <Text style={styles.skillCat}>Competencias técnicas</Text>
+              {data.skills.technical.map((s, i) => (
+                <Text key={i} style={styles.skillItem}>
+                  · {s}
                 </Text>
-              )}
+              ))}
             </View>
-          ))}
+          ) : null}
+          {data.skills.soft?.length ? (
+            <View>
+              <Text style={styles.skillCat}>Competencias transversales</Text>
+              {data.skills.soft.map((s, i) => (
+                <Text key={i} style={styles.skillItem}>
+                  · {s}
+                </Text>
+              ))}
+            </View>
+          ) : null}
+          {data.skills.languages?.length ? (
+            <View>
+              <Text style={styles.skillCat}>Idiomas</Text>
+              {data.skills.languages.map((lang, i) => {
+                const [name, level] = lang.split(":").map((s) => s.trim());
+                return (
+                  <Text key={i} style={styles.skillItem}>
+                    · {name}
+                    {level ? ` — ${level}` : ""}
+                  </Text>
+                );
+              })}
+            </View>
+          ) : null}
         </View>
       ) : null,
 
     projects: () =>
       data.projects?.items?.length ? (
-        <View style={styles.sectionSpace}>
-          <Text style={styles.mainSectionTitle}>PROJECTS</Text>
-          {data.projects.items.map((project, index) => (
-            <View key={project.id ?? index} style={styles.projectItem}>
-              <View style={styles.entryRow}>
-                <Text style={styles.entryTitle}>{project.title}</Text>
-                {project.duration && (
-                  <Text style={styles.entryDate}>{project.duration}</Text>
-                )}
-              </View>
-              {project.description && (
-                <Text style={{ fontSize: 10, marginBottom: 2, textAlign: "justify" }}>
-                  {project.description}
+        <View>
+          <Text style={styles.sectionTitle}>PROYECTOS</Text>
+          {data.projects.items.map((p, i) => (
+            <View key={p.id ?? i} style={styles.entry}>
+              {p.title && <Text style={styles.itemTitle}>{p.title}</Text>}
+              {p.duration && <Text style={styles.companyLine}>[ {p.duration} ]</Text>}
+              {p.description && <Text style={styles.bulletTxt}>{p.description}</Text>}
+              {p.technologies && (
+                <Text style={styles.itemBody}>
+                  <Text style={styles.metaLabel}>Tecnologías: </Text>
+                  {p.technologies}
                 </Text>
-              )}
-              {project.technologies && (
-                <Text style={{ fontSize: 9 }}>
-                  <Text style={{ fontWeight: "bold" }}>Technologies:</Text> {project.technologies}
-                </Text>
-              )}
-            </View>
-          ))}
-        </View>
-      ) : null,
-
-    volunteering: () =>
-      data.volunteering?.items?.length ? (
-        <View style={styles.sectionSpace}>
-          <Text style={styles.mainSectionTitle}>VOLUNTEERING</Text>
-          {data.volunteering.items.map((vol, index) => (
-            <View key={vol.id ?? index} style={{ marginBottom: 6 }}>
-              <Text style={styles.entryTitle}>{vol.position}</Text>
-              {vol.organization && (
-                <Text style={styles.entrySubtitle}>{vol.organization}</Text>
-              )}
-              {vol.location && (
-                <Text style={{ fontSize: 9, marginBottom: 1 }}>{vol.location}</Text>
-              )}
-              {vol.duration && (
-                <Text style={styles.entryDate}>{vol.duration}</Text>
-              )}
-              {vol.responsibilities && (
-                <View style={styles.entryResponsibilities}>
-                  {vol.responsibilities.split("\n").map((line, idx) => {
-                    const cleaned = line.trim().replace(/^[-–•]\s*/, "");
-                    if (!cleaned) return null;
-                    return (
-                      <Text key={idx} style={styles.bulletPoint}>
-                        • {cleaned}
-                      </Text>
-                    );
-                  })}
-                </View>
               )}
             </View>
           ))}
@@ -349,13 +302,12 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
 
     achievements: () =>
       data.achievements?.items?.length ? (
-        <View style={styles.sectionSpace}>
-          <Text style={styles.mainSectionTitle}>ACHIEVEMENTS</Text>
-          {data.achievements.items.map((ach, index) => (
-            <View key={ach.id ?? index} style={{ marginBottom: 3 }}>
-              <Text style={{ fontSize: 10 }}>
-                {ach.title && <Text style={{ fontWeight: "bold" }}>{ach.title}:</Text>}
-                {ach.title && ach.description ? " " : ""}
+        <View>
+          <Text style={styles.sectionTitle}>LOGROS Y RECONOCIMIENTOS</Text>
+          {data.achievements.items.map((ach, i) => (
+            <View key={ach.id ?? i} style={styles.itemSection}>
+              <Text style={styles.itemBody}>
+                {ach.title ? <Text style={styles.metaLabel}>{ach.title}: </Text> : null}
                 {ach.description}
               </Text>
             </View>
@@ -363,118 +315,131 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
         </View>
       ) : null,
 
-    skills: () => null, // Skills rendered in sidebar, not main content
+    certifications: () =>
+      data.certifications?.items?.length ? (
+        <View>
+          <Text style={styles.sectionTitle}>CERTIFICACIONES</Text>
+          {data.certifications.items.map((cert, i) => (
+            <View key={cert.id ?? i} style={styles.itemSection}>
+              {cert.name && <Text style={styles.itemTitle}>{cert.name}</Text>}
+              {cert.issuer && <Text style={styles.itemBody}>por {cert.issuer}</Text>}
+              {cert.date && <Text style={styles.itemBody}>{cert.date}</Text>}
+            </View>
+          ))}
+        </View>
+      ) : null,
+
+    volunteering: () =>
+      data.volunteering?.items?.length ? (
+        <View>
+          <Text style={styles.sectionTitle}>VOLUNTARIADO</Text>
+          {data.volunteering.items.map((vol, i) => (
+            <View key={vol.id ?? i} style={styles.entry}>
+              {vol.position && <Text style={styles.jobTitle}>{vol.position}</Text>}
+              {(vol.organization || vol.duration) && (
+                <Text style={styles.companyLine}>
+                  {[vol.organization, vol.duration ? `[ ${vol.duration} ]` : ""].filter(Boolean).join("  ")}
+                </Text>
+              )}
+              {vol.location && (
+                <Text style={styles.metaLine}>
+                  <Text style={styles.metaLabel}>Población: </Text>
+                  {vol.location}
+                </Text>
+              )}
+              {vol.responsibilities && <BulletList text={vol.responsibilities} />}
+            </View>
+          ))}
+        </View>
+      ) : null,
   };
 
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {/* ========== SIDEBAR ========== */}
-        <View style={styles.sidebar}>
-          {/* Header */}
-          <View style={styles.sidebarHeader}>
-            <Text style={styles.europassTitle}>EUROPASS</Text>
-            <View style={styles.sidebarDivider} />
-          </View>
+        {/* Barras azules laterales */}
+        <View style={styles.leftBar} />
+        <View style={styles.rightBar} />
 
-          {/* Contact Info */}
-          {data.personal && (
-            <View style={styles.contactInfo}>
-              {data.personal.phone && <Text>{data.personal.phone}</Text>}
-              {data.personal.email && <Text>{data.personal.email}</Text>}
-              {data.personal.linkedin && (
-                <Text>{linkedinDisplay(data.personal.linkedin)}</Text>
-              )}
-              <View style={styles.sidebarDivider} />
-            </View>
-          )}
-
-          {/* SKILLS AND COMPETENCIES */}
-          {data.skills && (data.skills.technical?.length > 0 || data.skills.soft?.length > 0) && (
-            <View>
-              <Text style={styles.sidebarSectionTitle}>SKILLS AND COMPETENCIES</Text>
-
-              {data.skills.technical?.length > 0 && (
-                <View>
-                  <Text style={styles.skillCategory}>Digital Marketing</Text>
-                  {data.skills.technical.slice(0, 5).map((skill, idx) => (
-                    <Text key={idx} style={styles.skillItem}>
-                      • {skill}
-                    </Text>
-                  ))}
-                </View>
-              )}
-
-              {data.skills.soft?.length > 0 && (
-                <View style={{ marginTop: 4 }}>
-                  <Text style={styles.skillCategory}>Professional Skills</Text>
-                  {data.skills.soft.slice(0, 5).map((skill, idx) => (
-                    <Text key={idx} style={styles.skillItem}>
-                      • {skill}
-                    </Text>
-                  ))}
-                </View>
-              )}
-            </View>
-          )}
-
-          {/* LANGUAGE SKILLS */}
-          {data.skills?.languages && data.skills.languages.length > 0 && (
-            <View style={{ marginTop: 8 }}>
-              <Text style={styles.sidebarSectionTitle}>LANGUAGE SKILLS</Text>
-              {data.skills.languages.map((language, idx) => {
-                const [lang, level] = language.split(":").map((s) => s.trim());
-                const ceferLevel = level?.toUpperCase() as keyof typeof CEFR_LEVELS || "B1";
-                const ceferInfo = CEFR_LEVELS[ceferLevel];
-
-                return (
-                  <View key={idx} style={styles.languageItem}>
-                    <Text style={styles.languageName}>{lang || language}</Text>
-                    {ceferInfo && (
-                      <>
-                        <Text style={styles.languageLevel}>{ceferInfo.label}</Text>
-                        <Text style={styles.languageLevelDescription}>
-                          {ceferInfo.description}
-                        </Text>
-                      </>
-                    )}
-                  </View>
-                );
-              })}
-            </View>
-          )}
+        {/* Logo Europass – arriba a la derecha */}
+        <View style={styles.topRow}>
+          <EuFlagPdf />
+          <Text style={styles.europassText}>europass</Text>
         </View>
 
-        {/* ========== MAIN CONTENT ========== */}
-        <View style={styles.mainContent}>
-          {/* Header */}
-          {data.personal?.fullName && (
-            <View style={styles.headerSection}>
-              <Text style={styles.fullName}>{data.personal.fullName}</Text>
-              {data.personal.address && (
-                <Text style={styles.address}>{data.personal.address}</Text>
+        {/* Cabecera: foto + nombre + contacto */}
+        <View style={styles.headerRow}>
+          {data.personal?.image ? (
+            <Image src={data.personal.image} style={styles.photo} />
+          ) : null}
+          <View style={styles.headerInfo}>
+            <Text style={styles.fullName}>{data.personal?.fullName ?? ""}</Text>
+
+            {/* Fila 1: Nacionalidad + Teléfono */}
+            <View style={styles.contactRow}>
+              {data.personal?.nationality && (
+                <>
+                  <Text style={styles.cLabel}>Nacionalidad:</Text>
+                  <Text style={styles.cValue}>{data.personal.nationality}</Text>
+                  <View style={styles.cSpacer} />
+                </>
+              )}
+              {data.personal?.phone && (
+                <>
+                  <PhoneIcon />
+                  <Text style={styles.cLabel}>Número de teléfono:</Text>
+                  <Text style={styles.cValue}>{data.personal.phone}</Text>
+                </>
               )}
             </View>
-          )}
 
-          {/* Summary */}
-          {data.personal?.summary && (
-            <View style={{ marginBottom: 6 }}>
-              <Text style={styles.mainSectionTitle}>PROFESSIONAL SUMMARY</Text>
-              <Text style={{ textAlign: "justify" }}>{data.personal.summary}</Text>
-            </View>
-          )}
+            {/* Fila 2: Email */}
+            {data.personal?.email && (
+              <View style={styles.contactRow}>
+                <MailIcon />
+                <Text style={styles.cLabel}>Dirección de correo electrónico:</Text>
+                <Text style={styles.cValueLink}>{data.personal.email}</Text>
+              </View>
+            )}
 
-          {/* Sections */}
+            {/* Fila 3: LinkedIn */}
+            {data.personal?.linkedin && (
+              <View style={styles.contactRow}>
+                <LinkedInIcon />
+                <Text style={styles.cLabel}>LinkedIn:</Text>
+                <Text style={styles.cValueLink}>{linkedinDisplay(data.personal.linkedin)}</Text>
+              </View>
+            )}
+
+            {/* Fila 4: Domicilio */}
+            {data.personal?.address && (
+              <View style={styles.contactRow}>
+                <MapPinIcon />
+                <Text style={styles.cLabel}>Domicilio:</Text>
+                <Text style={styles.cValue}>{data.personal.address}</Text>
+              </View>
+            )}
+          </View>
+        </View>
+
+        {/* SOBRE MÍ */}
+        {data.personal?.summary && (
           <View>
-            {sections.map((section) => {
-              const renderer = sectionRenderers[section.id];
-              if (!renderer) return null;
-              return <View key={section.id}>{renderer()}</View>;
-            })}
+            <Text style={styles.sectionTitle}>SOBRE MÍ</Text>
+            <Text style={styles.summaryText}>{data.personal.summary}</Text>
           </View>
-        </View>
+        )}
+
+        {/* Secciones dinámicas */}
+        {sections.map((section) => {
+          const renderer = sectionRenderers[section.id];
+          if (!renderer) return null;
+          const el = renderer();
+          return el ? <View key={section.id}>{el}</View> : null;
+        })}
       </Page>
     </Document>
   );
 }
+
+

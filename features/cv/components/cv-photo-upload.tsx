@@ -4,44 +4,71 @@ import { useRef, useState } from "react"
 import { Camera, Trash2, Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { uploadCvPhoto } from "@/features/cv/actions/upload-cv-photo"
 
 interface CvPhotoUploadProps {
-  value?: string        // URL actual de la foto
-  onChange: (url: string) => void
+  value?: string   // base64 data URL
+  onChange: (base64: string) => void
+}
+
+/** Redimensiona y comprime la imagen a máx 400×400 JPEG 75% usando canvas */
+function compressImage(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    const objectUrl = URL.createObjectURL(file)
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl)
+      const MAX = 400
+      let { width, height } = img
+      if (width > MAX || height > MAX) {
+        if (width > height) {
+          height = Math.round((height * MAX) / width)
+          width = MAX
+        } else {
+          width = Math.round((width * MAX) / height)
+          height = MAX
+        }
+      }
+      const canvas = document.createElement("canvas")
+      canvas.width = width
+      canvas.height = height
+      const ctx = canvas.getContext("2d")
+      if (!ctx) return reject(new Error("Canvas no disponible"))
+      ctx.drawImage(img, 0, 0, width, height)
+      resolve(canvas.toDataURL("image/jpeg", 0.75))
+    }
+    img.onerror = reject
+    img.src = objectUrl
+  })
 }
 
 export function CvPhotoUpload({ value, onChange }: CvPhotoUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null)
-  const [isUploading, setIsUploading] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
   const [preview, setPreview] = useState<string | undefined>(value)
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    // Preview local inmediato
-    const localUrl = URL.createObjectURL(file)
-    setPreview(localUrl)
+    if (!file.type.startsWith("image/")) {
+      toast.error("Solo se permiten imágenes JPG, PNG o WebP")
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("La imagen no puede superar 5MB")
+      return
+    }
 
-    setIsUploading(true)
+    setIsProcessing(true)
     try {
-      const formData = new FormData()
-      formData.append("file", file)
-      const result = await uploadCvPhoto(formData)
-
-      if (result.success && result.url) {
-        onChange(result.url)
-        setPreview(result.url)
-        toast.success("Foto subida correctamente")
-      } else {
-        // Revertir preview si falló
-        setPreview(value)
-        toast.error(result.message ?? "Error al subir la foto")
-      }
+      const base64 = await compressImage(file)
+      setPreview(base64)
+      onChange(base64)
+      toast.success("Foto lista")
+    } catch {
+      toast.error("Error al procesar la imagen")
     } finally {
-      setIsUploading(false)
-      // Limpiar input para permitir re-seleccionar el mismo archivo
+      setIsProcessing(false)
       if (inputRef.current) inputRef.current.value = ""
     }
   }
@@ -67,7 +94,7 @@ export function CvPhotoUpload({ value, onChange }: CvPhotoUploadProps) {
           <Camera className="w-8 h-8 text-muted-foreground" />
         )}
         {/* Botón eliminar */}
-        {preview && !isUploading && (
+        {preview && !isProcessing && (
           <button
             type="button"
             onClick={handleRemove}
@@ -81,21 +108,21 @@ export function CvPhotoUpload({ value, onChange }: CvPhotoUploadProps) {
       {/* Controles */}
       <div className="flex flex-col gap-2 justify-center flex-1">
         <p className="text-xs text-muted-foreground">
-          JPG, PNG o WebP · máx. 2MB<br />
+          JPG, PNG o WebP · máx. 5MB (se comprime automáticamente)<br />
           Recomendado: fondo neutro, encuadre formal
         </p>
         <Button
           type="button"
           variant="outline"
           size="sm"
-          disabled={isUploading}
+          disabled={isProcessing}
           onClick={() => inputRef.current?.click()}
           className="w-fit"
         >
-          {isUploading ? (
+          {isProcessing ? (
             <>
               <span className="mr-2 h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
-              Subiendo...
+              Procesando...
             </>
           ) : (
             <>

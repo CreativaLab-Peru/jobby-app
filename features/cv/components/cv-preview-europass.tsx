@@ -1,322 +1,384 @@
 "use client"
 
+import React from "react"
 import { CVData, CVSection } from "@/types/cv"
 import { linkedinHref, linkedinDisplay } from "@/lib/utils"
+import { Phone, Mail, Linkedin, MapPin } from "lucide-react"
 
 interface CVPreviewEuropassProps {
   data: CVData
   sections: CVSection[]
 }
 
-// CEFR Level descriptions
-const CEFR_LEVELS: Record<string, { label: string; description: string }> = {
-  A1: { label: "A1", description: "Elementary user (Básico)" },
-  A2: { label: "A2", description: "Elementary user (Elementario)" },
-  B1: { label: "B1", description: "Independent user (Intermedio)" },
-  B2: { label: "B2", description: "Independent user (Intermedio-alto)" },
-  C1: { label: "C1", description: "Proficient user (Avanzado)" },
-  C2: { label: "C2", description: "Proficient user (Dominio)" },
+const EU_BLUE = "#003FA3"
+const GOLD = "#FFCC00"
+
+function EuFlagSvg({ width = 38, height = 26 }: { width?: number; height?: number }) {
+  const cx = width / 2
+  const cy = height / 2
+  const circleR = Math.min(width, height) * 0.28
+  const outerR = Math.min(width, height) * 0.072
+  const innerR = outerR * 0.39
+  const starPaths = Array.from({ length: 12 }, (_, i) => {
+    const angle = (i * 30 - 90) * (Math.PI / 180)
+    const scx = cx + circleR * Math.cos(angle)
+    const scy = cy + circleR * Math.sin(angle)
+    return (
+      Array.from({ length: 10 }, (_, j) => {
+        const a = (j * 36 - 90) * (Math.PI / 180)
+        const r = j % 2 === 0 ? outerR : innerR
+        return `${j === 0 ? "M" : "L"} ${(scx + r * Math.cos(a)).toFixed(2)} ${(scy + r * Math.sin(a)).toFixed(2)}`
+      }).join(" ") + " Z"
+    )
+  })
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width={width} height={height} fill={EU_BLUE} />
+      {starPaths.map((d, i) => (
+        <path key={i} d={d} fill={GOLD} />
+      ))}
+    </svg>
+  )
+}
+
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="text-[11px] font-bold uppercase pb-[2px] mt-[9px] mb-[5px] border-b-[1.5px]"
+      style={{ color: EU_BLUE, borderColor: EU_BLUE }}
+    >
+      {children}
+    </div>
+  )
+}
+
+function parseLines(text: string): Array<{ type: "bullet" | "subheading"; text: string }> {
+  return text
+    .split("\n")
+    .map((line) => {
+      const raw = line.trim().replace(/^[-–•·]\s*/, "")
+      if (!raw) return null
+      if (/^[A-ZÁÉÍÓÚÑa-záéíóúñ][^:]{2,39}:$/.test(raw)) return { type: "subheading" as const, text: raw }
+      return { type: "bullet" as const, text: raw }
+    })
+    .filter(Boolean) as Array<{ type: "bullet" | "subheading"; text: string }>
+}
+
+function BulletList({ text }: { text: string }) {
+  const lines = parseLines(text)
+  return (
+    <div className="mt-[2px]">
+      {lines.map((item, idx) =>
+        item.type === "subheading" ? (
+          <p key={idx} className="text-[9px] font-bold mt-[3px] mb-[1px] ml-1">
+            {item.text}
+          </p>
+        ) : (
+          <div key={idx} className="flex ml-1 mb-[1.5px]">
+            <span className="text-[10px] w-[10px] flex-shrink-0 text-[#444]">·</span>
+            <span className="text-[9px] text-justify leading-[1.4]">{item.text}</span>
+          </div>
+        )
+      )}
+    </div>
+  )
 }
 
 export function CVPreviewEuropass({ data, sections }: CVPreviewEuropassProps) {
-  // Europass color scheme
-  const sidebarBg = "bg-[#0B5394]"
-  const sidebarText = "text-white"
-  const mainBg = "bg-white"
-  const mainText = "text-black"
+  const sectionRenderers: Record<string, () => React.ReactElement | null> = {
+    experience: () =>
+      data.experience?.items?.length ? (
+        <div>
+          <SectionTitle>EXPERIENCIA LABORAL</SectionTitle>
+          {data.experience.items.map((exp, i) => (
+            <div key={exp.id || i} className="mb-[6px]">
+              {exp.position && (
+                <p className="text-[10px] font-bold" style={{ color: EU_BLUE }}>
+                  {exp.position}
+                </p>
+              )}
+              {(exp.company || exp.duration) && (
+                <p className="text-[10px] italic mb-[2px]">
+                  {[exp.company, exp.duration ? `[ ${exp.duration} ]` : ""].filter(Boolean).join("  ")}
+                </p>
+              )}
+              {exp.location && (
+                <p className="text-[9px] mb-[2.5px]">
+                  <span className="font-bold">Población: </span>
+                  {exp.location}
+                </p>
+              )}
+              {exp.responsibilities && <BulletList text={exp.responsibilities} />}
+            </div>
+          ))}
+        </div>
+      ) : null,
 
-  // Europass typography
-  const sectionTitleClasses = "text-[13px] font-bold uppercase mb-2 text-white"
-  const sidebarDivider = "border-b border-white my-2"
-  const mainSectionTitle = "text-[13px] font-bold uppercase mb-1.5 border-b border-black pb-0.5"
-  const mainDivider = "border-b border-black mb-1.5"
-  const itemTitleClasses = "text-[12px] font-bold"
-  const bodyTextClasses = "text-[11px] leading-[1.35]"
-  const smallTextClasses = "text-[10px]"
+    education: () =>
+      data.education?.items?.length ? (
+        <div>
+          <SectionTitle>EDUCACIÓN Y FORMACIÓN</SectionTitle>
+          {data.education.items.map((edu, i) => (
+            <div key={edu.id || i} className="mb-[6px]">
+              {edu.title && (
+                <p className="text-[10px] font-bold" style={{ color: EU_BLUE }}>
+                  {edu.title}
+                </p>
+              )}
+              {(edu.institution || edu.year) && (
+                <p className="text-[10px] italic mb-[2px]">
+                  {[edu.institution, edu.year ? `[ ${edu.year} ]` : ""].filter(Boolean).join("  ")}
+                </p>
+              )}
+              {edu.location && (
+                <p className="text-[9px] mb-[1px]">
+                  <span className="font-bold">Población: </span>
+                  {edu.location}
+                </p>
+              )}
+              {edu.honors && (
+                <p className="text-[9px] mb-[1px]">
+                  <span className="font-bold">Mención: </span>
+                  {edu.honors}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : null,
+
+    skills: () =>
+      data.skills && (data.skills.technical?.length || data.skills.soft?.length || data.skills.languages?.length) ? (
+        <div>
+          <SectionTitle>COMPETENCIAS</SectionTitle>
+          {data.skills.technical?.length ? (
+            <div className="mb-[3px]">
+              <p className="text-[10px] font-bold mt-[4px] mb-[3px]">Competencias técnicas</p>
+              {data.skills.technical.map((s, i) => (
+                <p key={i} className="text-[9px] ml-2 mb-[1.5px]">
+                  · {s}
+                </p>
+              ))}
+            </div>
+          ) : null}
+          {data.skills.soft?.length ? (
+            <div className="mb-[3px]">
+              <p className="text-[10px] font-bold mt-[4px] mb-[3px]">Competencias transversales</p>
+              {data.skills.soft.map((s, i) => (
+                <p key={i} className="text-[9px] ml-2 mb-[1.5px]">
+                  · {s}
+                </p>
+              ))}
+            </div>
+          ) : null}
+          {data.skills.languages?.length ? (
+            <div className="mb-[3px]">
+              <p className="text-[10px] font-bold mt-[4px] mb-[3px]">Idiomas</p>
+              {data.skills.languages.map((lang, i) => {
+                const [name, level] = lang.split(":").map((s) => s.trim())
+                return (
+                  <p key={i} className="text-[9px] ml-2 mb-[1.5px]">
+                    · {name}
+                    {level ? ` — ${level}` : ""}
+                  </p>
+                )
+              })}
+            </div>
+          ) : null}
+        </div>
+      ) : null,
+
+    projects: () =>
+      data.projects?.items?.length ? (
+        <div>
+          <SectionTitle>PROYECTOS</SectionTitle>
+          {data.projects.items.map((p, i) => (
+            <div key={p.id || i} className="mb-[6px]">
+              {p.title && (
+                <p className="text-[10px] font-bold" style={{ color: EU_BLUE }}>
+                  {p.title}
+                </p>
+              )}
+              {p.duration && <p className="text-[10px] italic mb-[2px]">[ {p.duration} ]</p>}
+              {p.description && (
+                <p className="text-[9px] text-justify leading-[1.4]">{p.description}</p>
+              )}
+              {p.technologies && (
+                <p className="text-[9px] mt-[1px]">
+                  <span className="font-bold">Tecnologías: </span>
+                  {p.technologies}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : null,
+
+    achievements: () =>
+      data.achievements?.items?.length ? (
+        <div>
+          <SectionTitle>LOGROS Y RECONOCIMIENTOS</SectionTitle>
+          {data.achievements.items.map((ach, i) => (
+            <div key={ach.id || i} className="mb-[3px]">
+              <p className="text-[9px]">
+                {ach.title && <span className="font-bold">{ach.title}: </span>}
+                {ach.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      ) : null,
+
+    certifications: () =>
+      data.certifications?.items?.length ? (
+        <div>
+          <SectionTitle>CERTIFICACIONES</SectionTitle>
+          {data.certifications.items.map((cert, i) => (
+            <div key={cert.id || i} className="mb-[5px]">
+              {cert.name && (
+                <p className="text-[10px] font-bold" style={{ color: EU_BLUE }}>
+                  {cert.name}
+                </p>
+              )}
+              {cert.issuer && <p className="text-[9px]">por {cert.issuer}</p>}
+              {cert.date && <p className="text-[9px]">{cert.date}</p>}
+            </div>
+          ))}
+        </div>
+      ) : null,
+
+    volunteering: () =>
+      data.volunteering?.items?.length ? (
+        <div>
+          <SectionTitle>VOLUNTARIADO</SectionTitle>
+          {data.volunteering.items.map((vol, i) => (
+            <div key={vol.id || i} className="mb-[6px]">
+              {vol.position && (
+                <p className="text-[10px] font-bold" style={{ color: EU_BLUE }}>
+                  {vol.position}
+                </p>
+              )}
+              {(vol.organization || vol.duration) && (
+                <p className="text-[10px] italic mb-[2px]">
+                  {[vol.organization, vol.duration ? `[ ${vol.duration} ]` : ""].filter(Boolean).join("  ")}
+                </p>
+              )}
+              {vol.location && (
+                <p className="text-[9px] mb-[2.5px]">
+                  <span className="font-bold">Población: </span>
+                  {vol.location}
+                </p>
+              )}
+              {vol.responsibilities && <BulletList text={vol.responsibilities} />}
+            </div>
+          ))}
+        </div>
+      ) : null,
+  }
 
   return (
-    <div className={`flex ${mainBg} min-h-[11in] font-[Arial]`} style={{ fontFamily: "Arial, sans-serif" }}>
-      
-      {/* ========== SIDEBAR (30%) ========== */}
-      <div className={`${sidebarBg} ${sidebarText} w-[30%] p-6`} style={{ fontSize: "11px" }}>
-        
-        {/* Header: EUROPASS */}
-        <div className="text-center mb-3">
-          <h2 className="text-[24px] font-bold mb-2">EUROPASS</h2>
-          <div className={sidebarDivider} />
+    <div
+      className="relative bg-white min-h-[297mm] w-full"
+      style={{ fontFamily: "Arial, sans-serif", fontSize: "10px", color: "#222" }}
+    >
+      {/* Barras azules laterales */}
+      <div className="absolute left-0 top-0 bottom-0 w-[10px]" style={{ backgroundColor: EU_BLUE }} />
+      <div className="absolute right-0 top-0 bottom-0 w-[10px]" style={{ backgroundColor: EU_BLUE }} />
+
+      <div className="px-[25px] py-[18px]">
+        {/* Logo Europass – arriba a la derecha */}
+        <div className="flex justify-end items-center gap-[5px] mb-[10px]">
+          <EuFlagSvg />
+          <span className="text-[18px] font-bold" style={{ color: EU_BLUE }}>
+            europass
+          </span>
         </div>
 
-        {/* Contact Info */}
-        {data.personal && (
-          <div className="mb-3 text-center">
-            {data.personal.phone && (
-              <p className={`${smallTextClasses} mb-1`}>{data.personal.phone}</p>
+        {/* Cabecera: foto + nombre + contacto */}
+        <div className="flex items-start gap-[12px] mb-[8px]">
+          {data.personal?.image && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={data.personal.image}
+              alt="foto"
+              className="w-[68px] h-[68px] rounded-full object-cover flex-shrink-0"
+            />
+          )}
+          <div className="flex-1">
+            <h1 className="text-[16px] font-bold mb-[5px]" style={{ color: EU_BLUE }}>
+              {data.personal?.fullName ?? ""}
+            </h1>
+
+            {/* Fila 1: Nacionalidad + Teléfono */}
+            <div className="flex flex-wrap items-center gap-x-[3px] mb-[2.5px]">
+              {data.personal?.nationality && (
+                <>
+                  <span className="text-[9px] font-bold">Nacionalidad:</span>
+                  <span className="text-[9px]">{data.personal.nationality}</span>
+                  <span className="w-[14px]" />
+                </>
+              )}
+              {data.personal?.phone && (
+                <>
+                  <Phone size={9} color={EU_BLUE} />
+                  <span className="text-[9px] font-bold">Número de teléfono:</span>
+                  <span className="text-[9px]">{data.personal.phone}</span>
+                </>
+              )}
+            </div>
+
+            {data.personal?.email && (
+              <div className="flex flex-wrap items-center gap-x-[3px] mb-[2.5px]">
+                <Mail size={9} color={EU_BLUE} />
+                <span className="text-[9px] font-bold">Dirección de correo electrónico:</span>
+                <span className="text-[9px]" style={{ color: EU_BLUE }}>
+                  {data.personal.email}
+                </span>
+              </div>
             )}
-            {data.personal.email && (
-              <p className={`${smallTextClasses} mb-1`}>{data.personal.email}</p>
-            )}
-            {data.personal.linkedin && (
-              <p className={`${smallTextClasses} mb-1`}>
+
+            {data.personal?.linkedin && (
+              <div className="flex flex-wrap items-center gap-x-[3px] mb-[2.5px]">
+                <Linkedin size={9} color={EU_BLUE} />
+                <span className="text-[9px] font-bold">LinkedIn:</span>
                 <a
                   href={linkedinHref(data.personal.linkedin)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline"
+                  className="text-[9px] underline"
+                  style={{ color: EU_BLUE }}
                 >
                   {linkedinDisplay(data.personal.linkedin)}
                 </a>
-              </p>
-            )}
-            <div className={sidebarDivider} />
-          </div>
-        )}
-
-        {/* SKILLS AND COMPETENCIES */}
-        {data.skills && (data.skills.technical?.length > 0 || data.skills.soft?.length > 0) && (
-          <div className="mb-3">
-            <h3 className={sectionTitleClasses}>Skills and Competencies</h3>
-            
-            {/* Technical Skills */}
-            {data.skills.technical?.length > 0 && (
-              <div className="mb-2">
-                <p className="text-[12px] font-bold mb-1">Digital Marketing</p>
-                <ul className="ml-2 space-y-0.5">
-                  {data.skills.technical.slice(0, 5).map((skill, idx) => (
-                    <li key={idx} className={`${smallTextClasses} bullet`}>
-                      • {skill}
-                    </li>
-                  ))}
-                </ul>
               </div>
             )}
 
-            {/* Soft Skills */}
-            {data.skills.soft?.length > 0 && (
-              <div>
-                <p className="text-[12px] font-bold mb-1">Professional Skills</p>
-                <ul className="ml-2 space-y-0.5">
-                  {data.skills.soft.slice(0, 5).map((skill, idx) => (
-                    <li key={idx} className={`${smallTextClasses} bullet`}>
-                      • {skill}
-                    </li>
-                  ))}
-                </ul>
+            {data.personal?.address && (
+              <div className="flex flex-wrap items-center gap-x-[3px] mb-[2.5px]">
+                <MapPin size={9} color={EU_BLUE} />
+                <span className="text-[9px] font-bold">Domicilio:</span>
+                <span className="text-[9px]">{data.personal.address}</span>
               </div>
             )}
           </div>
-        )}
-
-        {/* LANGUAGE SKILLS - EUROPASS SPECIAL */}
-        {data.skills?.languages && data.skills.languages.length > 0 && (
-          <div className="mb-3">
-            <h3 className={sectionTitleClasses}>Language Skills</h3>
-            <div className="space-y-1.5">
-              {data.skills.languages.map((language, idx) => {
-                // Expecting format like "English: C2" or just "English"
-                const [lang, level] = language.split(":").map((s) => s.trim())
-                const ceferLevel = level?.toUpperCase() as keyof typeof CEFR_LEVELS || "B1"
-                const ceferInfo = CEFR_LEVELS[ceferLevel]
-
-                return (
-                  <div key={idx} className="mb-2">
-                    <p className="text-[12px] font-bold">{lang || language}</p>
-                    {ceferInfo && (
-                      <p className={`${smallTextClasses}`}>
-                        {ceferInfo.label} ({ceferInfo.description.split("(")[1]?.replace(")", "")}
-                      </p>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        )}
-
-      </div>
-
-      {/* ========== MAIN CONTENT (70%) ========== */}
-      <div className={`${mainBg} ${mainText} w-[70%] p-6`} style={{ fontSize: "11px", lineHeight: "1.35" }}>
-        
-        {/* Header: Full Name */}
-        {data.personal?.fullName && (
-          <div className="text-center mb-3">
-            <h1 className="text-[18px] font-bold mb-2">{data.personal.fullName}</h1>
-            {data.personal.address && (
-              <p className={smallTextClasses}>{data.personal.address}</p>
-            )}
-          </div>
-        )}
-
-        {/* Summary / Professional Profile */}
-        {data.personal?.summary && (
-          <div className="mb-3">
-            <h2 className={mainSectionTitle}>Professional Summary</h2>
-            <p className={`${bodyTextClasses} text-justify`}>{data.personal.summary}</p>
-          </div>
-        )}
-
-        {/* WORK EXPERIENCE */}
-        {data.experience?.items?.length ? (
-          <div className="mb-3">
-            <h2 className={mainSectionTitle}>Work Experience</h2>
-            {data.experience.items.map((exp, index) => (
-              <div key={exp.id || index} className="mb-2">
-                <div className="flex justify-between items-baseline">
-                  <p className={`${itemTitleClasses}`}>
-                    {exp.position && exp.company ? `${exp.position} at ${exp.company}` : exp.company || exp.position}
-                  </p>
-                </div>
-                {exp.location && (
-                  <p className={`${smallTextClasses} mb-0.5`}>{exp.location}</p>
-                )}
-                {exp.duration && (
-                  <p className={`${smallTextClasses} italic mb-1`}>{exp.duration}</p>
-                )}
-                {exp.responsibilities && (
-                  <div className="ml-2">
-                    {exp.responsibilities.split("\n").map((line, idx) => {
-                      const cleaned = line.trim().replace(/^[-–•]\s*/, "")
-                      if (!cleaned) return null
-                      return (
-                        <p key={idx} className={`${bodyTextClasses} mb-0.5`}>
-                          • {cleaned}
-                        </p>
-                      )
-                    })}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        ) : null}
-
-        {/* EDUCATION */}
-        {data.education?.items?.length ? (
-          <div className="mb-3">
-            <h2 className={mainSectionTitle}>Education</h2>
-            {data.education.items.map((edu, index) => (
-              <div key={edu.id || index} className="mb-1.5">
-                <div className="flex justify-between items-baseline">
-                  <p className={itemTitleClasses}>{edu.title}</p>
-                  {edu.year && <span className={smallTextClasses}>{edu.year}</span>}
-                </div>
-                {edu.institution && (
-                  <p className={bodyTextClasses}>{edu.institution}</p>
-                )}
-                {edu.location && (
-                  <p className={smallTextClasses}>{edu.location}</p>
-                )}
-                {edu.honors && (
-                  <p className={smallTextClasses} style={{ fontStyle: "italic" }}>
-                    Honors: {edu.honors}
-                  </p>
-                )}
-              </div>
-            ))}
-          </div>
-        ) : null}
-
-        {/* CERTIFICATIONS */}
-        {data.certifications?.items?.length ? (
-          <div className="mb-3">
-            <h2 className={mainSectionTitle}>Certifications</h2>
-            {data.certifications.items.map((cert, index) => (
-              <div key={cert.id || index} className="mb-1">
-                <p className={itemTitleClasses}>{cert.name}</p>
-                {cert.issuer && (
-                  <p className={bodyTextClasses}>by {cert.issuer}</p>
-                )}
-                {cert.date && (
-                  <p className={smallTextClasses}>({new Date(cert.date).getFullYear()})</p>
-                )}
-              </div>
-            ))}
-          </div>
-        ) : null}
-
-        {/* PROJECTS */}
-        {data.projects?.items?.length ? (
-          <div className="mb-3">
-            <h2 className={mainSectionTitle}>Projects</h2>
-            {data.projects.items.map((project, index) => (
-              <div key={project.id || index} className="mb-1.5">
-                <div className="flex justify-between items-baseline">
-                  <p className={itemTitleClasses}>{project.title}</p>
-                  {project.duration && (
-                    <span className={`${smallTextClasses} italic`}>{project.duration}</span>
-                  )}
-                </div>
-                {project.description && (
-                  <p className={`${bodyTextClasses} mb-0.5`}>{project.description}</p>
-                )}
-                {project.technologies && (
-                  <p className={smallTextClasses}>
-                    <span className="font-bold">Technologies:</span> {project.technologies}
-                  </p>
-                )}
-              </div>
-            ))}
-          </div>
-        ) : null}
-
-        {/* VOLUNTEERING */}
-        {data.volunteering?.items?.length ? (
-          <div className="mb-3">
-            <h2 className={mainSectionTitle}>Volunteering and Community Activities</h2>
-            {data.volunteering.items.map((vol, index) => (
-              <div key={vol.id || index} className="mb-1.5">
-                <p className={itemTitleClasses}>{vol.position}</p>
-                {vol.organization && (
-                  <p className={bodyTextClasses}>{vol.organization}</p>
-                )}
-                {vol.location && (
-                  <span className={`${smallTextClasses} mr-2`}>{vol.location}</span>
-                )}
-                {vol.duration && (
-                  <span className={`${smallTextClasses} italic`}>{vol.duration}</span>
-                )}
-                {vol.responsibilities && (
-                  <div className="ml-2 mt-0.5">
-                    {vol.responsibilities.split("\n").map((line, idx) => {
-                      const cleaned = line.trim().replace(/^[-–•]\s*/, "")
-                      if (!cleaned) return null
-                      return (
-                        <p key={idx} className={`${bodyTextClasses} mb-0.5`}>
-                          • {cleaned}
-                        </p>
-                      )
-                    })}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        ) : null}
-
-        {/* ACHIEVEMENTS */}
-        {data.achievements?.items?.length ? (
-          <div className="mb-3">
-            <h2 className={mainSectionTitle}>Achievements and Recognition</h2>
-            {data.achievements.items.map((achievement, index) => (
-              <div key={achievement.id || index} className="mb-1">
-                <p className={bodyTextClasses}>
-                  {achievement.title && <span className="font-bold">{achievement.title}:</span>}
-                  {achievement.title && achievement.description ? " " : ""}
-                  {achievement.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        ) : null}
-
-      </div>
-
-      {/* Empty state */}
-      {!data.personal?.fullName && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
-          <p className="text-sm font-medium">Completa tu información personal para ver la vista previa</p>
         </div>
-      )}
+
+        {/* SOBRE MÍ */}
+        {data.personal?.summary && (
+          <div>
+            <SectionTitle>SOBRE MÍ</SectionTitle>
+            <p className="text-[10px] font-bold text-justify leading-[1.5]">{data.personal.summary}</p>
+          </div>
+        )}
+
+        {/* Secciones dinámicas */}
+        {sections.map((section) => {
+          const renderer = sectionRenderers[section.id]
+          if (!renderer) return null
+          const el = renderer()
+          return el ? <div key={section.id}>{el}</div> : null
+        })}
+      </div>
     </div>
   )
 }

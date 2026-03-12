@@ -2,7 +2,7 @@
 
 import {getCurrentUser} from "@/features/share/actions/get-current-user";
 import {prisma} from "@/lib/prisma";
-import {CvType, Language, OpportunityType, CvSectionType, CreditBalanceType} from "@prisma/client";
+import {CvType, Language, OpportunityType, CvSectionType, CreditBalanceType, RouteStatus} from "@prisma/client";
 import {JsonObject} from "@prisma/client/runtime/library";
 import {consumeCredits} from "@/features/credits/actions/consume-credits";
 
@@ -130,6 +130,17 @@ export const createCVByTitleAndType = async (
       amount: 1,
       description: `Add new CV ${currentUser.id}`,
     });
+
+    // Link CV to the user's active route (if it has no CV yet)
+    const activeRoute = await prisma.route.findFirst({
+      where: { userId: currentUser.id, isActive: true, cvId: null },
+    });
+    if (activeRoute) {
+      await prisma.route.update({
+        where: { id: activeRoute.id },
+        data: { cvId: newCv.id, status: RouteStatus.CV_CREATED },
+      });
+    }
 
     return {
       success: true,

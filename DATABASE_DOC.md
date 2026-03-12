@@ -175,7 +175,18 @@ Almacena la foto de perfil subida por el usuario para incluirla en plantillas qu
 
 ---
 
-## �🚦 Diccionario de Tipos (Enums Clave)
+## 🗺️ 9. Dominio de Rutas Guiadas
+
+### `route` (Mapeado como `route`)
+Representa una ruta guiada del usuario que agrupa un CV, su análisis y oportunidades en un flujo paso a paso.
+- **Campos:** `id`, `userId`, `cvId?` (unique, nullable hasta que se cree un CV), `name`, `status` (`RouteStatus`), `isActive`, `createdAt`, `updatedAt`.
+- **Índices:** `[userId]`, `[userId, isActive]`.
+- **Relaciones:** Pertenece a `user` (CASCADE), opcionalmente vincula a `cv` (1:1).
+- **Flujo:** CV_PENDING → CV_CREATED → ANALYSIS_PENDING → ANALYSIS_DONE → OPPORTUNITIES_PENDING → OPPORTUNITIES_DONE.
+
+---
+
+## 🚦 Diccionario de Tipos (Enums Clave)
 
 | Enum | Propósito |
 | :--- | :--- |
@@ -191,6 +202,7 @@ Almacena la foto de perfil subida por el usuario para incluirla en plantillas qu
 | `PaymentStatus` | Estado de factura: PENDING, PAID, FAILED, REFUNDED. |
 | `CreditBalanceType` | Tipo de saldo de créditos: AI_ACTIONS, UPLOADS, MANAGE_CVS, SEARCH_OPPORTUNITIES. |
 | `TransactionType` | Tipo de transacción de créditos: RECHARGE, CONSUMPTION, REFUND, BONUS. |
+| `RouteStatus` | Ciclo de vida de la ruta guiada: CV_PENDING, CV_CREATED, ANALYSIS_PENDING, ANALYSIS_DONE, OPPORTUNITIES_PENDING, OPPORTUNITIES_DONE. |
 
 ---
 

@@ -1,6 +1,6 @@
 import { inngest } from "./client";
 import { prisma } from "@/lib/prisma";
-import { CreditBalanceType, JobStatus, LogAction, LogLevel } from "@prisma/client";
+import { CreditBalanceType, JobStatus, LogAction, LogLevel, RouteStatus } from "@prisma/client";
 import { logsService } from "@/features/share/services/logs-service";
 import { consumeCredits } from "@/features/credits/actions/consume-credits";
 import { transformCvToAnalysis } from "@/inngest/utils/cv-transformer";
@@ -114,6 +114,20 @@ export const getAndSaveOpportunities = inngest.createFunction(
         where: { id: job.id },
         data: { status: JobStatus.SUCCEEDED, finishedAt: new Date() },
       });
+
+      // ✅ Advance route status to OPPORTUNITIES_DONE
+      const route = await prisma.route.findFirst({
+        where: { cvId, userId },
+      });
+      if (route && (
+        route.status === RouteStatus.ANALYSIS_DONE ||
+        route.status === RouteStatus.OPPORTUNITIES_PENDING
+      )) {
+        await prisma.route.update({
+          where: { id: route.id },
+          data: { status: RouteStatus.OPPORTUNITIES_DONE },
+        });
+      }
 
       await logsService.createLog({
         userId,

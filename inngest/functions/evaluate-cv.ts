@@ -1,6 +1,6 @@
 import {inngest} from "./client";
 import {prisma} from "@/lib/prisma";
-import {CreditBalanceType, CvSectionType, JobStatus, LogAction, LogLevel} from "@prisma/client";
+import {CreditBalanceType, CvSectionType, JobStatus, LogAction, LogLevel, RouteStatus} from "@prisma/client";
 import {logsService} from "@/features/share/services/logs-service";
 import {getPromptToEvaluateCv} from "@/features/cv/prompts/get-prompt-to-evaluate-cv";
 import {queryGemini} from "@/features/cv/queries/query-gemini";
@@ -294,6 +294,20 @@ export const evaluateCv = inngest.createFunction(
           finishedAt: new Date(),
         },
       });
+
+      // ✅ Advance route status to ANALYSIS_DONE
+      const route = await prisma.route.findFirst({
+        where: { cvId, userId },
+      });
+      if (route && (
+        route.status === RouteStatus.CV_CREATED ||
+        route.status === RouteStatus.ANALYSIS_PENDING
+      )) {
+        await prisma.route.update({
+          where: { id: route.id },
+          data: { status: RouteStatus.ANALYSIS_DONE },
+        });
+      }
 
     } catch (error: any) {
       // ✅ Update evaluation record

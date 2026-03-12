@@ -8,6 +8,10 @@ export const routes = {
   app: {
     dashboard: "/dashboard",
 
+    routes: {
+      new: "/routes/new",
+    },
+
     cv: {
       root: "/cv",
       detail: (cvId: string) => `/cv/${cvId}`,

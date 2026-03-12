@@ -1,9 +1,17 @@
 import { CvListScreen } from "@/features/cv/components/cv-list-screen";
-import { getCvForCurrentUser } from "@/features/cv/actions/get-cv-for-current-user";
 import { getCurrentCreditLimits } from "@/features/credits/actions/get-current-credits-limits";
-import {getAllCvForCurrentUser} from "@/features/cv/actions/get-all-cv-for-current-user";
+import { getAllCvForCurrentUser } from "@/features/cv/actions/get-all-cv-for-current-user";
+import { getActiveRoute } from "@/features/routes/actions/get-active-route";
+import { redirect } from "next/navigation";
 
 export default async function CVPage() {
+  const activeRoute = await getActiveRoute();
+
+  // If the active route already has a CV linked, go directly to that CV's detail page
+  if (activeRoute?.cvId) {
+    return redirect(`/cv/${activeRoute.cvId}`);
+  }
+
   const [cvData, creditLimits] = await Promise.all([
     getAllCvForCurrentUser(0, 6),
     getCurrentCreditLimits()
@@ -18,6 +26,7 @@ export default async function CVPage() {
       canCreate={canCreate}
       hasMoreProp={hasMore}
       totalCount={cvData.totalCount}
+      routeId={activeRoute?.id ?? null}
     />
   );
 }

@@ -6,7 +6,8 @@ import {
   JobStatus,
   LogAction,
   LogLevel,
-  OpportunityType
+  OpportunityType,
+  RouteStatus
 } from "@prisma/client";
 import { getTextFromPdfApi } from "@/utils/get-text-from-pdf-api";
 import { logsService } from "@/features/share/services/logs-service";
@@ -177,6 +178,17 @@ export const uploadNewCv = inngest.createFunction(
         amount: 1,
         description: `Add new CV ${cvId}`,
       });
+
+      // ✅ Link CV to user's active route (if it has no CV yet)
+      const activeRoute = await prisma.route.findFirst({
+        where: { userId, isActive: true, cvId: null },
+      });
+      if (activeRoute) {
+        await prisma.route.update({
+          where: { id: activeRoute.id },
+          data: { cvId, status: RouteStatus.CV_CREATED },
+        });
+      }
 
       await logsService.createLog({
         userId,

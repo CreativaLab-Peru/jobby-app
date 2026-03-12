@@ -1,3 +1,22 @@
+# v1.1.27 - 2026-03-12
+
+## Features
+- **Route model**: New `route` table to guide users through a step-by-step journey (CV → Analysis → Opportunities).
+- **Route-based sidebar**: Sidebar reorganized with route selector, "Ruta Activa" nav group, and "Mi Cuenta" section.
+- **Dashboard stepper**: Dashboard now shows a 3-step progress flow for the active route instead of generic stats.
+- **First-time route creation**: Users with no routes are redirected to `/routes/new` to create their first route.
+- **Auto-filtering by route**: CV, Evaluations, and Opportunities pages automatically filter by the active route's CV.
+- **Auto-advance route status**: Route status advances automatically when CV is created/uploaded, evaluation completes, or opportunities are found.
+- **Zustand route store**: Global client state for active route via `use-route-store.ts` and `RouteProvider`.
+
+## Schema Changes
+- Added `Route` model with `RouteStatus` enum (`CV_PENDING`, `CV_CREATED`, `ANALYSIS_PENDING`, `ANALYSIS_DONE`, `OPPORTUNITIES_PENDING`, `OPPORTUNITIES_DONE`).
+- Added `routes` relation on `User` model.
+- Added optional `route` back-relation on `Cv` model (1:1 via unique `cvId`).
+- Migration: `20260312045719_add_route_model`.
+
+---
+
 # v1.1.26 - 2026-03-11
 
 ## Features

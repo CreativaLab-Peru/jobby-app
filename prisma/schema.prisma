@@ -333,6 +333,7 @@ model CvEvaluation {
   overallScore    Float?
   summary         String?
   extractorOutput Json?
+  improvementsJson Json?            // AI-generated improved texts per section
   createdByJobId  String?
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt

@@ -12,6 +12,10 @@ export const routes = {
       new: "/routes/new",
     },
 
+    myCvs: "/my-cvs",
+    myEvaluations: "/my-evaluations",
+    myOpportunities: "/my-opportunities",
+
     cv: {
       root: "/cv",
       detail: (cvId: string) => `/cv/${cvId}`,

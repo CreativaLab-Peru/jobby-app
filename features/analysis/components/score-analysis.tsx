@@ -7,6 +7,11 @@ import { AnalysisHeader } from "@/features/analysis/components/analysis-header"
 import { CVScoreCard } from "@/features/analysis/components/cv-score-card"
 import { RecommendationsSection } from "@/features/analysis/components/recommendations-section"
 import { ScoreBreakdownModal } from "@/features/analysis/components/score-breakdown-modal"
+import {
+  ImprovementsSection,
+  ImprovedText,
+  SuggestedAddition,
+} from "@/features/analysis/components/improvements-section"
 import { Recommendation, ScoreCategory } from "@/types/analysis"
 
 // Movido fuera para evitar recreación en render
@@ -23,12 +28,18 @@ interface AnalysisScoreProps {
   scoreBreakdown: ScoreCategory[]
   cvScore: number
   recommendations: Recommendation[]
+  cvId?: string | null
+  improvedTexts?: ImprovedText[]
+  suggestedAdditions?: SuggestedAddition[]
 }
 
 export default function AnalysisScore({
                                         scoreBreakdown,
                                         cvScore,
                                         recommendations,
+                                        cvId,
+                                        improvedTexts = [],
+                                        suggestedAdditions = [],
                                       }: AnalysisScoreProps) {
   const [showScoreBreakdown, setShowScoreBreakdown] = useState(false)
 
@@ -37,6 +48,8 @@ export default function AnalysisScore({
     ...cat,
     Icon: ICONS[cat.icon] || Award
   }))
+
+  const hasImprovements = improvedTexts.length > 0 || suggestedAdditions.length > 0
 
   return (
     <div className="min-h-screen bg-background/30 pb-20 flex items-center justify-center px-4">
@@ -50,7 +63,16 @@ export default function AnalysisScore({
           onShowBreakdown={() => setShowScoreBreakdown(true)}
         />
 
-        {/* 3. Recomendaciones (Flujo natural hacia abajo) */}
+        {/* 3. Textos mejorados y sugerencias (nuevo) */}
+        {hasImprovements && cvId && (
+          <ImprovementsSection
+            cvId={cvId}
+            improvedTexts={improvedTexts}
+            suggestedAdditions={suggestedAdditions}
+          />
+        )}
+
+        {/* 4. Recomendaciones (Flujo natural hacia abajo) */}
         <RecommendationsSection recommendations={recommendations} />
       </div>
 

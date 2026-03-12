@@ -77,7 +77,7 @@ export default function RouteStepper({
       description: cvTitle
         ? `CV activo: "${cvTitle}"`
         : "Crea un CV desde cero o sube uno existente para comenzar.",
-      href: "/cv",
+      href: "/my-cvs",
       icon: FileText,
       status: getStepStatus("CV_PENDING", "CV_CREATED", routeStatus),
       cta: cvId ? "Ver mi CV" : "Crear CV",
@@ -89,7 +89,7 @@ export default function RouteStepper({
         evaluationScore !== null
           ? `Última puntuación: ${evaluationScore}/100`
           : "La IA analizará tu CV y te dará recomendaciones para mejorarlo.",
-      href: cvId ? `/evaluations?cvId=${cvId}` : "/evaluations",
+      href: "/my-evaluations",
       icon: BarChart3,
       status: getStepStatus("CV_CREATED", "ANALYSIS_DONE", routeStatus),
       cta: evaluationScore !== null ? "Ver análisis" : "Analizar CV",
@@ -101,7 +101,7 @@ export default function RouteStepper({
         opportunitiesCount > 0
           ? `${opportunitiesCount} oportunidades encontradas`
           : "Encuentra vacantes, becas y pasantías que se alinean con tu perfil.",
-      href: cvId ? `/opportunities?cvId=${cvId}` : "/opportunities",
+      href: "/my-opportunities",
       icon: Briefcase,
       status: getStepStatus("ANALYSIS_DONE", "OPPORTUNITIES_DONE", routeStatus),
       cta: opportunitiesCount > 0 ? "Ver oportunidades" : "Buscar oportunidades",

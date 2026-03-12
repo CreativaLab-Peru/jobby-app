@@ -19,6 +19,19 @@ type EvaluateCvResponse = {
     text: string;
     severity: "LOW" | "MEDIUM" | "HIGH";
   }>;
+  improvedTexts: Array<{
+    sectionType: string;
+    originalSnippet: string;
+    improvedText: string;
+    changeReason: string;
+  }>;
+  suggestedAdditions: Array<{
+    sectionType: string;
+    title: string;
+    suggestedText: string;
+    impact: "LOW" | "MEDIUM" | "HIGH";
+    reason: string;
+  }>;
 };
 
 /**
@@ -179,7 +192,11 @@ export const evaluateCv = inngest.createFunction(
 
     try {
       // ✅ Generate prompt using the appropriate CV data
-      const promptToEvaluateCv = getPromptToEvaluateCv(cvDataForEvaluation);
+      const promptToEvaluateCv = getPromptToEvaluateCv(
+        cvDataForEvaluation,
+        cv?.cvType ?? null,
+        cv?.opportunityType ?? null,
+      );
 
       await logsService.createLog({
         userId,
@@ -239,6 +256,10 @@ export const evaluateCv = inngest.createFunction(
             status: JobStatus.SUCCEEDED,
             overallScore: result.data.overallScore,
             summary: result.data.summary,
+            improvementsJson: {
+              improvedTexts: result.data.improvedTexts || [],
+              suggestedAdditions: result.data.suggestedAdditions || [],
+            },
           },
         });
 

@@ -8,12 +8,18 @@
 - **Auto-filtering by route**: CV, Evaluations, and Opportunities pages automatically filter by the active route's CV.
 - **Auto-advance route status**: Route status advances automatically when CV is created/uploaded, evaluation completes, or opportunities are found.
 - **Zustand route store**: Global client state for active route via `use-route-store.ts` and `RouteProvider`.
+- **Route-scoped pages**: New `/my-cvs`, `/my-evaluations`, `/my-opportunities` pages that always filter by the active route's CV. Sidebar updated to use these new paths.
+- **Analysis & Correction**: Enhanced AI evaluation prompt now generates improved text suggestions per section and suggested content additions, tailored to CV type and target opportunity.
+- **Improvements section**: New `ImprovementsSection` component on the evaluation detail page showing current vs. improved text with one-click "Accept & Apply" to update the CV directly.
+- **Suggested additions**: AI recommends missing sections/content to add, with impact level (HIGH/MEDIUM/LOW).
 
 ## Schema Changes
 - Added `Route` model with `RouteStatus` enum (`CV_PENDING`, `CV_CREATED`, `ANALYSIS_PENDING`, `ANALYSIS_DONE`, `OPPORTUNITIES_PENDING`, `OPPORTUNITIES_DONE`).
 - Added `routes` relation on `User` model.
 - Added optional `route` back-relation on `Cv` model (1:1 via unique `cvId`).
+- Added `improvementsJson` field on `CvEvaluation` to store AI-generated improved texts and suggested additions.
 - Migration: `20260312045719_add_route_model`.
+- Migration: `20260312054210_add_improvements_json_to_evaluation`.
 
 ---
 

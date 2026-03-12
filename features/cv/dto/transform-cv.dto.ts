@@ -27,6 +27,8 @@ export function transformCVToDTO(cv: CVWithSections): CVData {
       linkedin?: string;
       phone?: string;
       email?: string;
+      nationality?: string;
+      image?: string;
     }
     | null
     | undefined;
@@ -49,6 +51,8 @@ export function transformCVToDTO(cv: CVWithSections): CVData {
       phone: contact?.phone ?? "",
       email: contact?.email ?? "",
       summary: summary?.text ?? "",
+      nationality: contact?.nationality ?? "",
+      image: contact?.image ?? "",
     },
     education: {
       items: education.map((item) => ({

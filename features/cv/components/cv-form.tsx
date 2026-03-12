@@ -16,6 +16,7 @@ interface CVFormData {
   title: string
   cvType: CvType
   opportunityType: OpportunityType
+  templateId?: string
 }
 
 interface CVFormProps {
@@ -88,6 +89,57 @@ export function CVForm({ formData, onFormDataChange }: CVFormProps) {
           </span>
         </p>
       </div>
+
+      {(formData.opportunityType === OpportunityType.INTERNSHIP || formData.opportunityType === OpportunityType.SCHOLARSHIP) && (
+        <div className="space-y-2">
+          <Label htmlFor="template" className="text-sm font-medium text-gray-700 dark:text-gray-400">
+            Diseño del CV
+          </Label>
+          <Select
+            value={formData.templateId || "harvard"}
+            onValueChange={(value) => updateFormData({ templateId: value })}
+          >
+            <SelectTrigger className="bg-white text-black w-full border-gray-200 focus:border-gray-400 focus:ring-1 focus:ring-gray-400 dark:bg-[#2d333b] dark:text-white dark:border-gray-600 dark:focus:border-gray-500 dark:focus:ring-gray-500">
+              <SelectValue placeholder="Selecciona un diseño de CV" />
+            </SelectTrigger>
+            <SelectContent className="bg-white text-black border-gray-200 dark:bg-[#2d333b] dark:text-white dark:border-gray-600">
+              <SelectItem
+                className="focus:bg-gray-100 focus:text-black dark:focus:bg-gray-700 dark:focus:text-white"
+                value="harvard"
+              >
+                Harvard (Clásico)
+              </SelectItem>
+              <SelectItem
+                className="focus:bg-gray-100 focus:text-black dark:focus:bg-gray-700 dark:focus:text-white"
+                value="europass"
+              >
+                Europass Modern
+              </SelectItem>
+              <SelectItem
+                className="focus:bg-gray-100 focus:text-black dark:focus:bg-gray-700 dark:focus:text-white"
+                value="stem"
+              >
+                Investigador STEM
+              </SelectItem>
+              <SelectItem
+                className="focus:bg-gray-100 focus:text-black dark:focus:bg-gray-700 dark:focus:text-white"
+                value="fullbright"
+              >
+                Líder Global
+              </SelectItem>
+            </SelectContent>
+          </Select>
+          <p>
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              {formData.templateId === "europass" && "Diseño europeo estructurado, ideal para becas de movilidad y Erasmus+."}
+              {formData.templateId === "stem" && "Especializado para ingeniería, ciencias y proyectos técnicos."}
+              {formData.templateId === "fullbright" && "Destaca liderazgo y voluntariado, perfecto para becas de prestigio."}
+              {formData.templateId === "harvard" && "Diseño clásico y profesional, reconocido internacionalmente."}
+              {!formData.templateId && "Elige un diseño que se adapte a tu perfil y oportunidad."}
+            </span>
+          </p>
+        </div>
+      )}
 
       <div className="space-y-2">
         <Label htmlFor="type" className="text-sm font-medium text-gray-700 dark:text-gray-400">

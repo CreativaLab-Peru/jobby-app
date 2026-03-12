@@ -16,6 +16,7 @@ interface PreviewCVComponentProps {
   cvId?: string
   opportunityType: OpportunityType
   cvType: CvType
+  templateId?: string
   sectionIds: string[]
   canAnalyze: boolean
   analysisTokens: number
@@ -27,6 +28,7 @@ export function PreviewCVComponent({
   cvId,
   opportunityType,
   cvType,
+  templateId = "harvard",
   sectionIds,
   canAnalyze,
   analysisTokens,
@@ -37,10 +39,10 @@ export function PreviewCVComponent({
 
   // Regenerar las secciones en el cliente usando los IDs
   const sections = useMemo(() => {
-    const allSections = getSections(opportunityType, cvType);
+    const allSections = getSections(opportunityType, cvType, templateId);
     const sectionMap = new Map(allSections.map(s => [s.id, s]));
     return sectionIds.map(id => sectionMap.get(id)).filter(Boolean) as typeof allSections;
-  }, [opportunityType, cvType, sectionIds]);
+  }, [opportunityType, cvType, sectionIds, templateId]);
 
   return (
     <div className="min-h-screen bg-gradient-primary">
@@ -55,7 +57,7 @@ export function PreviewCVComponent({
             <div className="lg:col-span-3">
               <Card className="shadow-card border-0 bg-card">
                 <CardContent className="p-0 text-card-foreground">
-                  <PdfPreviewWrapper cvData={cvData} sections={sections} />
+                  <PdfPreviewWrapper cvData={cvData} sections={sections} templateId={templateId} />
                 </CardContent>
               </Card>
             </div>
@@ -67,6 +69,7 @@ export function PreviewCVComponent({
                 cvData={cvData}
                 sections={sections}
                 cvId={cvId}
+                templateId={templateId}
                 canAnalyze={canAnalyze}
                 analysisTokens={analysisTokens}
                 opportunitiesActionTokens={opportunitiesActionTokens}

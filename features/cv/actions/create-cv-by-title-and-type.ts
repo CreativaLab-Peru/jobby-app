@@ -12,7 +12,8 @@ import {consumeCredits} from "@/features/credits/actions/consume-credits";
 export const createCVByTitleAndType = async (
   title: string,
   cvType: CvType,
-  opportunityType?: OpportunityType
+  opportunityType?: OpportunityType,
+  templateId: string = "harvard"
 ) => {
   try {
     const currentUser = await getCurrentUser();
@@ -105,6 +106,7 @@ export const createCVByTitleAndType = async (
         title,
         cvType,
         opportunityType,
+        templateId,
         language: Language.EN,
         userId: currentUser.id,
         sections: {

@@ -31,10 +31,12 @@ export function AdminCreateCvModal({ isOpen, onClose, onCreated }: AdminCreateCv
     title: string;
     cvType: CvType;
     opportunityType: OpportunityType;
+    templateId: string;
   }>({
     title: "",
     cvType: "TECHNOLOGY_ENGINEERING",
     opportunityType: "INTERNSHIP",
+    templateId: "harvard",
   });
 
   const handleCreate = () => {
@@ -46,6 +48,7 @@ export function AdminCreateCvModal({ isOpen, onClose, onCreated }: AdminCreateCv
         title: formData.title.trim(),
         cvType: formData.cvType,
         opportunityType: formData.opportunityType,
+        templateId: formData.templateId,
       }).then((result) => {
         if (result.success) {
           onClose();
@@ -89,7 +92,12 @@ export function AdminCreateCvModal({ isOpen, onClose, onCreated }: AdminCreateCv
               />
             </div>
 
-            <CVForm formData={formData} onFormDataChange={setFormData} />
+            <CVForm
+              formData={formData}
+              onFormDataChange={(data) =>
+                setFormData(prev => ({ ...prev, ...data, templateId: data.templateId ?? prev.templateId }))
+              }
+            />
           </div>
         </div>
 

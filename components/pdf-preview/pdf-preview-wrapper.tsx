@@ -12,15 +12,18 @@ const ClientPDFPreview = dynamic(
 
 export function PdfPreviewWrapper({
   cvData,
-  sections
+  sections,
+  templateId = "harvard"
 }: {
   cvData: CVData;
   sections: CVSection[];
+  templateId?: string;
 }) {
   return (
     <ClientPDFPreview
       cvData={cvData}
       sections={sections}
+      templateId={templateId}
     />
   );
 }

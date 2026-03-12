@@ -29,6 +29,7 @@ export default async function EditCVPage({ params }: EditCVPageProps) {
       id={cv.id}
       opportunityType={cv.opportunityType}
       cvType={cv.cvType}
+      templateId={cv.templateId}
     />
   )
 }

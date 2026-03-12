@@ -23,7 +23,7 @@ export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
   }
 
   const cvData: CVData = transformCVToDTO(cv);
-  const sections = getSections(cv.opportunityType, cv.cvType);
+  const sections = getSections(cv.opportunityType, cv.cvType, cv.templateId);
   // Extraer solo los IDs de las secciones (sin los iconos/funciones)
   const sectionIds = sections.map(s => s.id);
 
@@ -37,6 +37,7 @@ export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
       opportunityType={cv.opportunityType}
       cvId={cv.id}
       cvType={cv.cvType}
+      templateId={cv.templateId}
       sectionIds={sectionIds}
       canAnalyze={hasCredits}
       analysisTokens={creditLimits.aiActionsLimit}

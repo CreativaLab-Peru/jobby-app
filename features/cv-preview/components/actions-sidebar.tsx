@@ -13,6 +13,7 @@ interface ActionsSidebarProps {
   cvData: CVData
   sections: CVSection[]
   cvId?: string
+  templateId?: string
   onEditCV: () => void
   onHome: () => void
   isDisabled: boolean
@@ -25,6 +26,7 @@ export function ActionsSidebar({
   cvData,
   sections,
   cvId,
+  templateId = "harvard",
   onEditCV,
   onHome,
   isDisabled,
@@ -43,8 +45,14 @@ export function ActionsSidebar({
     try {
       const { pdf } = await import("@react-pdf/renderer")
       const { CvDocument } = await import("@/components/pdf-preview/cv-document")
+      const { CvDocumentEuropass } = await import("@/components/pdf-preview/cv-document-europass")
 
-      const blob = await pdf(<CvDocument data={cvData} sections={sections} />).toBlob()
+      // Seleccionar el componente correcto basado en el template
+      const DocumentComponent = templateId === "europass" 
+        ? CvDocumentEuropass 
+        : CvDocument
+      
+      const blob = await pdf(<DocumentComponent data={cvData} sections={sections} />).toBlob()
       const url = URL.createObjectURL(blob)
       const link = document.createElement("a")
       link.href = url

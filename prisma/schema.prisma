@@ -49,6 +49,7 @@ model User {
   complaints                 Complaint[]
   role                       UserRole           @default(USER)
   interviewSessions InterviewSession[]
+  cvPhotos                   CvPhoto[]
 
   @@map("user")
 }
@@ -188,6 +189,34 @@ model UserPayment {
   @@map("user_subscription")
 }
 
+model CvTemplate {
+  id            String   @id                    // "harvard", "europass", "stem", "fullbright"
+  name          String
+  description   String?
+  category      String                          // "professional", "european", "academic"
+  isPremium     Boolean  @default(false)
+  requiresPhoto Boolean  @default(false)        // true para Europass
+  isActive      Boolean  @default(true)
+  displayOrder  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  cvs           Cv[]
+
+  @@map("cv_template")
+}
+
+model CvPhoto {
+  id        String   @id @default(uuid())
+  userId    String
+  url       String        // URL pública de Cloudinary
+  publicId  String        // public_id de Cloudinary (para eliminar)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("cv_photo")
+}
+
 model Cv {
   id              String          @id @default(uuid())
   userId          String?
@@ -196,6 +225,8 @@ model Cv {
   opportunityType OpportunityType
   cvType          CvType?
   title           String?
+  templateId      String          @default("harvard")
+  template        CvTemplate      @relation(fields: [templateId], references: [id])
   extractedJson   Json?
   fullTextSearch  String?
   createdAt       DateTime        @default(now())

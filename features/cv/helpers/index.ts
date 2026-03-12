@@ -101,10 +101,12 @@ export function getSections(
       const hasNationality = sections[personalIdx].fields.some((f) => f.name === "nationality");
       const hasImage = sections[personalIdx].fields.some((f) => f.name === "image");
 
-      const extraFields = [];
+      let fields = [...sections[personalIdx].fields];
 
+      // Insertar "image" justo después de fullName (índice 0)
       if (!hasImage) {
-        extraFields.push({
+        const afterFullName = fields.findIndex((f) => f.name === "fullName");
+        fields.splice(afterFullName + 1, 0, {
           name: "image",
           label: "Foto de perfil (Europass)",
           type: "photo" as const,
@@ -114,10 +116,13 @@ export function getSections(
         });
       }
 
+      // Insertar "nationality" justo después de "address"
       if (!hasNationality) {
-        extraFields.push({
+        const afterAddress = fields.findIndex((f) => f.name === "address");
+        const insertAt = afterAddress >= 0 ? afterAddress + 1 : fields.length;
+        fields.splice(insertAt, 0, {
           name: "nationality",
-          label: "Nacionalidad (Europass)",
+          label: "Nacionalidad",
           type: "text" as const,
           required: false,
           tip: "Requerido por el formato Europass. Ej: Peruana, Colombiana...",
@@ -125,12 +130,10 @@ export function getSections(
         });
       }
 
-      if (extraFields.length > 0) {
-        sections[personalIdx] = {
-          ...sections[personalIdx],
-          fields: [...sections[personalIdx].fields, ...extraFields],
-        };
-      }
+      sections[personalIdx] = {
+        ...sections[personalIdx],
+        fields,
+      };
     }
   }
 

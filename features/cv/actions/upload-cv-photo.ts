@@ -1,48 +1,64 @@
 "use server"
 
-import { put } from "@vercel/blob"
-import { auth } from "@/lib/auth"
-import { headers } from "next/headers"
+import { cloudinary } from "@/lib/cloudinary"
+import { prisma } from "@/lib/prisma"
+import { getCurrentUser } from "@/features/share/actions/get-current-user"
 
-interface UploadCvPhotoResult {
-  success: boolean
-  url?: string
-  message?: string
-}
+const MAX_PHOTOS = 6
 
-export async function uploadCvPhoto(formData: FormData): Promise<UploadCvPhotoResult> {
-  try {
-    const session = await auth.api.getSession({ headers: await headers() })
-    if (!session?.user?.id) {
-      return { success: false, message: "No autenticado" }
+export async function uploadCvPhoto(formData: FormData) {
+  const user = await getCurrentUser()
+  if (!user) return { error: "No autenticado" }
+
+  // Verificar límite
+  const count = await prisma.cvPhoto.count({ where: { userId: user.id } })
+  if (count >= MAX_PHOTOS) {
+    return {
+      error: `Límite de ${MAX_PHOTOS} fotos alcanzado. Elimina alguna para subir una nueva.`,
     }
-
-    const file = formData.get("file") as File | null
-    if (!file) {
-      return { success: false, message: "No se recibió ningún archivo" }
-    }
-
-    // Validar tipo
-    if (!["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type)) {
-      return { success: false, message: "Solo se permiten imágenes JPG, PNG o WebP" }
-    }
-
-    // Validar tamaño (2MB)
-    if (file.size > 2 * 1024 * 1024) {
-      return { success: false, message: "La imagen no puede superar 2MB" }
-    }
-
-    const ext = file.name.split(".").pop() ?? "jpg"
-    const filename = `cv-photos/${session.user.id}/${Date.now()}.${ext}`
-
-    const blob = await put(filename, file, {
-      access: "public",
-      contentType: file.type,
-    })
-
-    return { success: true, url: blob.url }
-  } catch (error) {
-    console.error("Error uploading CV photo:", error)
-    return { success: false, message: "Error al subir la foto" }
   }
+
+  const file = formData.get("file") as File | null
+  if (!file) return { error: "No se recibió ningún archivo" }
+
+  // Validaciones
+  if (!["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type)) {
+    return { error: "Solo se permiten imágenes JPG, PNG o WebP" }
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    return { error: "La imagen no puede superar 5MB" }
+  }
+
+  const bytes = await file.arrayBuffer()
+  const buffer = Buffer.from(bytes)
+
+  const result = await new Promise<{ secure_url: string; public_id: string }>(
+    (resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          {
+            folder: `cv_photos/${user.id}`,
+            transformation: [
+              { width: 400, height: 400, crop: "limit" },
+              { quality: "auto:good" },
+            ],
+          },
+          (error, res) => {
+            if (error || !res) return reject(error ?? new Error("Sin respuesta de Cloudinary"))
+            resolve(res as { secure_url: string; public_id: string })
+          }
+        )
+        .end(buffer)
+    }
+  )
+
+  const photo = await prisma.cvPhoto.create({
+    data: {
+      userId: user.id,
+      url: result.secure_url,
+      publicId: result.public_id,
+    },
+  })
+
+  return { photo }
 }

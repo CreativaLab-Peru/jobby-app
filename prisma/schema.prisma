@@ -49,6 +49,7 @@ model User {
   complaints                 Complaint[]
   role                       UserRole           @default(USER)
   interviewSessions InterviewSession[]
+  cvPhotos                   CvPhoto[]
 
   @@map("user")
 }
@@ -202,6 +203,18 @@ model CvTemplate {
   cvs           Cv[]
 
   @@map("cv_template")
+}
+
+model CvPhoto {
+  id        String   @id @default(uuid())
+  userId    String
+  url       String        // URL pública de Cloudinary
+  publicId  String        // public_id de Cloudinary (para eliminar)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("cv_photo")
 }
 
 model Cv {

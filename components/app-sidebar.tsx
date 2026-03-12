@@ -32,6 +32,7 @@ import {
   Shield,
   Receipt,
   Sliders,
+  Map,
 } from "lucide-react";
 import { RouteSelector } from "@/features/routes/components/route-selector";
 
@@ -41,6 +42,7 @@ const routeNavItems = [
   { title: "CV", href: "/my-cvs", icon: FileText },
   { title: "Análisis", href: "/my-evaluations", icon: MessageSquare },
   { title: "Oportunidades", href: "/my-opportunities", icon: Briefcase },
+  { title: "Roadmaps", href: "/my-roadmaps", icon: Map },
 ];
 
 // Account-level items (not route-scoped)

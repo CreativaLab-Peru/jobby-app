@@ -1,6 +1,15 @@
 # WIP
 
 ### BEFORE DEPLOYMENT
+- Run migration `20260311002011_add_template_id_to_cv` — adds `templateId TEXT NOT NULL DEFAULT 'harvard'` to `cv` table.
+- Run migration `20260312000454_add_cv_template_model` — creates `cv_template` table and seeds the 4 initial templates (`harvard`, `europass`, `stem`, `fullbright`). Adds FK from `cv.templateId`.
+- Run migration `20260312010952_add_cv_photo` — creates `cv_photo` table linked to `user`.
+- No new environment variables required.
+
+---
+
+
+### BEFORE DEPLOYMENT
 - Run migration `20260310040541_credit_package_plan_relation` — adds `planId` column and relation to `credit_package` table, linking each package to a `PaymentPlan` (`migrate deploy` handles this automatically in the build script).
 - No new environment variables required.
 - Existing credit packages without a plan assigned will have `planId = null`; assign them from the admin panel at `/admin/credit-packages`.

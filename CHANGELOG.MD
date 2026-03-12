@@ -1,11 +1,20 @@
 # v1.1.26 - 2026-03-11
 
+## Features
+- CV templates support: new `cv_template` table and `templateId` field on `cv`.
+- CV photo upload: new `cv_photo` table linked to `user`.
+- Europass template visual polish and PDF layout fixes.
+- Create CV modal redesigned with template preview panel (only for Pasantía/Beca).
+- Admin modal now supports `templateId`.
+
 ## Enhancements
 - Change the price from 9.90 to 19.90 and 19.90 to 29.90
 - Update the cv pay page with video and hero
 
 ## Fixes
 - Some functions of the admin dashboard were fixed, as well as adding a filter by packages.
+
+---
 
 # v1.1.25 - 2026-03-07
 

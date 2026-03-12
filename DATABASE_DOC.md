@@ -57,6 +57,7 @@ Preferencias profesionales del usuario para búsqueda de empleo y matching con o
 Documento principal que puede ser de diferentes categorías (`CvType`) e idiomas (`Language`).
 - **`extractedJson`**: Almacena la data estructurada resultante del parseo inicial.
 - **`fullTextSearch`**: Campo optimizado para búsquedas globales de texto.
+- **`templateId`**: FK hacia `CvTemplate` (`@default("harvard")`). Define la plantilla visual utilizada para renderizar el CV. Plantillas disponibles: `harvard`, `europass`, `stem`, `fullbright`.
 
 ### `cv_section`
 Representa los bloques modulares de un CV (Experiencia, Educación, etc.).
@@ -158,7 +159,23 @@ Almacena los reclamos enviados por usuarios a través del Libro de Reclamaciones
 
 ---
 
-## 🚦 Diccionario de Tipos (Enums Clave)
+## �️ 8. Dominio de Plantillas y Multimedia
+
+### `cv_template` (Mapeado como `cv_template`)
+Catálogo de plantillas visuales disponibles para generar un CV.
+- **Campos:** `id`, `name`, `description?`, `category`, `isPremium`, `requiresPhoto`, `isActive`, `displayOrder`, `createdAt`, `updatedAt`.
+- **Plantillas iniciales:** `harvard` (profesional), `europass` (europeo), `stem` (técnico), `fullbright` (becas).
+- **Relación:** Un `cv` pertenece a una `cv_template` mediante `templateId` (FK RESTRICT, `@default("harvard")`).
+
+### `cv_photo` (Mapeado como `cv_photo`)
+Almacena la foto de perfil subida por el usuario para incluirla en plantillas que la requieren (e.g. Europass).
+- **Campos:** `id`, `userId`, `url`, `publicId`, `createdAt`.
+- **Índice:** `[userId]`.
+- **Relación:** Cascada con `user` — si el usuario se elimina, su foto también.
+
+---
+
+## �🚦 Diccionario de Tipos (Enums Clave)
 
 | Enum | Propósito |
 | :--- | :--- |

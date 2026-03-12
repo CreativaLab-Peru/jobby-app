@@ -23,7 +23,7 @@ import { useCvModalStore } from "../hooks/use-cv-modal-store";
 import { cn } from "@/lib/utils";
 
 const TEMPLATES = [
-  { id: "harvard", label: "Harvard (Clásico)", preview: null },
+  { id: "harvard", label: "Harvard (Clásico)", preview: "/cv_templates/Harvard_template.png" },
   { id: "europass", label: "Europass Modern", preview: "/cv_templates/Europass_template.png" },
   { id: "stem", label: "Investigador STEM", preview: null },
   { id: "fullbright", label: "Líder Global", preview: null },

@@ -15,6 +15,7 @@ export const createAdminCv = async (params: {
   cvType: CvType;
   opportunityType: OpportunityType;
   language?: Language;
+  templateId?: string;
 }): Promise<AdminCreateCvResult> => {
   try {
     const admin = await requireAdmin();
@@ -47,6 +48,7 @@ export const createAdminCv = async (params: {
         cvType: params.cvType,
         opportunityType: params.opportunityType,
         language: params.language ?? Language.EN,
+        templateId: params.templateId ?? "harvard",
         userId: user.id,
         sections: {
           create: defaultSections.map((section) => ({

@@ -1,25 +1,49 @@
-import {getStatisticsForUser} from "@/features/dashboard/actions/get-statistics-for-user";
-import DashboardScreen from "@/features/dashboard/screens/dashboard-screen";
-import {getCurrentCreditLimits} from "@/features/credits/actions/get-current-credits-limits";
+import { redirect } from "next/navigation";
+import { getActiveRoute } from "@/features/routes/actions/get-active-route";
+import RouteStepper from "@/features/routes/components/route-stepper";
+import { prisma } from "@/lib/prisma";
 
 export default async function DashboardPage() {
-  const stats = await getStatisticsForUser();
-  const score = stats?.latestEvaluation?.overallScore || 0;
-  const recommendations = stats?.latestEvaluation?.recommendations || [];
-  const subscription = stats?.subscription;
-  const creditLimits = await getCurrentCreditLimits();
-  const sector = stats?.latestEvaluation?.cv?.cvType || null;
-  const cvTitle = stats?.latestEvaluation?.cv?.title || null;
+  const activeRoute = await getActiveRoute();
+
+  // If the user has no routes, redirect to create one
+  if (!activeRoute) {
+    return redirect("/routes/new");
+  }
+
+  const cv = activeRoute.cv;
+  const latestEval = cv?.evaluations?.[0] ?? null;
+
+  // Check if the user has any roadmap for this route's CV
+  let hasRoadmap = false;
+  if (cv?.id) {
+    const roadmapCount = await prisma.roadmap.count({
+      where: { cvId: cv.id, userId: activeRoute.userId, status: "SUCCEEDED" },
+    });
+    hasRoadmap = roadmapCount > 0;
+  }
+
+  // Check if the user has an active subscription
+  // const activePayment = await prisma.userPayment.findFirst({
+  //   where: {
+  //     userId: activeRoute.userId,
+  //     plan: { isNot: null },
+  //   },
+  //   select: { id: true },
+  // });
+
+  const hasSubscription = false;
 
   return (
-    <DashboardScreen
-      score={score}
-      stats={stats}
-      recommendations={recommendations as any}
-      subscription={subscription as any}
-      limits={creditLimits}
-      sector={sector}
-      cvTitle={cvTitle}
+    <RouteStepper
+      routeName={activeRoute.name}
+      routeStatus={activeRoute.status}
+      cvId={cv?.id ?? null}
+      cvTitle={cv?.title ?? null}
+      evaluationScore={latestEval?.overallScore ?? null}
+      opportunitiesCount={cv?._count?.opportunities ?? 0}
+      hasRoadmap={hasRoadmap}
+      hasSubscription={hasSubscription}
     />
   );
 }

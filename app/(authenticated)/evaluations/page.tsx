@@ -5,6 +5,7 @@ import {
   geEvaluationsForCurrentUser
 } from "@/features/cv/actions/get-evaluations-for-current-user";
 import {getAllCvForCurrentUser} from "@/features/cv/actions/get-all-cv-for-current-user";
+import {getActiveRoute} from "@/features/routes/actions/get-active-route";
 
 type MyEvaluationsPageProps = {
   searchParams?: Promise<{
@@ -15,7 +16,11 @@ type MyEvaluationsPageProps = {
 export default async function MyEvaluationsPage({
                                                   searchParams
                                                 }:MyEvaluationsPageProps) {
-  const { cvId } = searchParams ? await searchParams : {};
+  const { cvId: paramCvId } = searchParams ? await searchParams : {};
+  const activeRoute = await getActiveRoute();
+
+  // Use the route's cvId as default if no explicit filter is provided
+  const cvId = paramCvId || activeRoute?.cvId || undefined;
 
   const params: EvaluationFilterOptions = {
     skip: 0,

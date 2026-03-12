@@ -6,6 +6,8 @@ import {SidebarProvider} from "@/components/ui/sidebar";
 import AppSidebar from "@/components/app-sidebar";
 import {ThemeSync} from "@/components/theme-sync";
 import {PaddleProvider} from "@/features/billing/components/paddle-provider";
+import {getRoutesForUser} from "@/features/routes/actions/get-routes-for-user";
+import {RouteProvider} from "@/features/routes/components/route-provider";
 
 export const dynamic = "force-dynamic";
 
@@ -17,13 +19,18 @@ export default async function RootLayout({
     return redirect("/logout");
   }
 
+  const [creditsLimits, routesResult] = await Promise.all([
+    getCurrentCreditLimits(),
+    getRoutesForUser(),
+  ]);
 
-  const creditsLimits = await getCurrentCreditLimits();
+  const routes = routesResult?.routes ?? [];
 
   return (
   <SidebarProvider>
     <ThemeSync />
     <PaddleProvider>
+    <RouteProvider routes={routes}>
     {/* Sidebar lateral */}
     <AppSidebar userRole={user.role}/>
 
@@ -37,6 +44,7 @@ export default async function RootLayout({
         </div>
       </div>
     </main>
+    </RouteProvider>
     </PaddleProvider>
     {/*<TermsModal isOpen={!isTermsAccepted} userId={user?.id}/>*/}
   </SidebarProvider>

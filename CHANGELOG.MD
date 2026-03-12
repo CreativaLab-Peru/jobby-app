@@ -1,3 +1,57 @@
+# v1.1.28 - 2026-03-12
+
+## Features
+- **AI Roadmap**: Generate a personalized, step-by-step roadmap for any opportunity using AI (CV context + opportunity requirements).
+- **Roadmap generation via Inngest**: New `generate-roadmap` background function with QueueJob tracking, credit consumption, and route status advancement.
+- **Career Accelerator gating**: Only the first roadmap step is visible for free users; STARTER/PRO plan holders see all steps.
+- **Roadmap UI**: Vertical stepper component with timeline, action items, estimated duration, resources, and blur overlay for locked steps with upgrade CTA.
+- **Roadmap on opportunity detail**: "Generar Roadmap con IA" button on every opportunity detail page with polling for generation status.
+- **Route stepper step 4**: Dashboard stepper now includes a 4th "Roadmap personalizado" step after opportunities.
+
+## Enhancements
+- **KISS score card**: Removed redundant big number + circle combo and modal. Score now shows compact ring + inline category breakdown bars.
+- **KISS improvements section**: Cards expanded by default (no accordions), "Apply All" button, simpler before→after layout, removed framer-motion dependency.
+- **KISS recommendations section**: Unified card container with dividers, compact header.
+- **KISS analysis header**: Left-aligned compact layout instead of centered full-width block.
+- **KISS analysis page layout**: Flattened `max-w-3xl` layout, removed `ScoreBreakdownModal` dependency.
+
+## Schema Changes
+- Added `Roadmap` model (`roadmap` table) with unique constraint on `[opportunityId, cvId, userId]`.
+- Added `RoadmapStep` model (`roadmap_step` table) with `order`, `title`, `description`, `actionItems` (JSON), `estimatedDays`, `resources` (JSON), `isFree`.
+- Extended `RouteStatus` enum with `ROADMAP_PENDING` and `ROADMAP_DONE`.
+- Added `roadmaps` relation on `User` and `Opportunity` models.
+- Migration: `20260312063620_add_roadmap_models`.
+
+## API
+- New `POST /api/roadmap/generate` endpoint to trigger AI roadmap generation.
+
+---
+
+# v1.1.27 - 2026-03-12
+
+## Features
+- **Route model**: New `route` table to guide users through a step-by-step journey (CV → Analysis → Opportunities).
+- **Route-based sidebar**: Sidebar reorganized with route selector, "Ruta Activa" nav group, and "Mi Cuenta" section.
+- **Dashboard stepper**: Dashboard now shows a 3-step progress flow for the active route instead of generic stats.
+- **First-time route creation**: Users with no routes are redirected to `/routes/new` to create their first route.
+- **Auto-filtering by route**: CV, Evaluations, and Opportunities pages automatically filter by the active route's CV.
+- **Auto-advance route status**: Route status advances automatically when CV is created/uploaded, evaluation completes, or opportunities are found.
+- **Zustand route store**: Global client state for active route via `use-route-store.ts` and `RouteProvider`.
+- **Route-scoped pages**: New `/my-cvs`, `/my-evaluations`, `/my-opportunities` pages that always filter by the active route's CV. Sidebar updated to use these new paths.
+- **Analysis & Correction**: Enhanced AI evaluation prompt now generates improved text suggestions per section and suggested content additions, tailored to CV type and target opportunity.
+- **Improvements section**: New `ImprovementsSection` component on the evaluation detail page showing current vs. improved text with one-click "Accept & Apply" to update the CV directly.
+- **Suggested additions**: AI recommends missing sections/content to add, with impact level (HIGH/MEDIUM/LOW).
+
+## Schema Changes
+- Added `Route` model with `RouteStatus` enum (`CV_PENDING`, `CV_CREATED`, `ANALYSIS_PENDING`, `ANALYSIS_DONE`, `OPPORTUNITIES_PENDING`, `OPPORTUNITIES_DONE`).
+- Added `routes` relation on `User` model.
+- Added optional `route` back-relation on `Cv` model (1:1 via unique `cvId`).
+- Added `improvementsJson` field on `CvEvaluation` to store AI-generated improved texts and suggested additions.
+- Migration: `20260312045719_add_route_model`.
+- Migration: `20260312054210_add_improvements_json_to_evaluation`.
+
+---
+
 # v1.1.26 - 2026-03-11
 
 ## Features

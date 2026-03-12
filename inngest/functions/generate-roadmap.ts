@@ -1,0 +1,289 @@
+import { inngest } from "./client";
+import { prisma } from "@/lib/prisma";
+import { CreditBalanceType, JobStatus, LogAction, LogLevel, RouteStatus } from "@prisma/client";
+import { logsService } from "@/features/share/services/logs-service";
+import { consumeCredits } from "@/features/credits/actions/consume-credits";
+import { queryGemini } from "@/features/cv/queries/query-gemini";
+
+type RoadmapStepAI = {
+  order: number;
+  title: string;
+  description: string;
+  actionItems: string[];
+  estimatedDays: number;
+  resources: { title: string; url?: string; type: string }[];
+};
+
+type RoadmapAIResponse = {
+  title: string;
+  summary: string;
+  steps: RoadmapStepAI[];
+};
+
+export const generateRoadmap = inngest.createFunction(
+  { id: "generate-roadmap", name: "Generate AI Roadmap", retries: 3 },
+  { event: "generate.roadmap" },
+  async ({ event, step }) => {
+    const { opportunityId, cvId, userId } = event.data;
+
+    // Create QueueJob
+    const job = await prisma.queueJob.upsert({
+      where: { jobId: event.id },
+      update: { status: JobStatus.IN_PROGRESS, startedAt: new Date() },
+      create: {
+        jobId: event.id,
+        type: "GENERATE_ROADMAP",
+        payload: event.data,
+        status: JobStatus.IN_PROGRESS,
+        cvId,
+        startedAt: new Date(),
+      },
+    });
+
+    // Create or update roadmap record as IN_PROGRESS
+    const roadmap = await prisma.roadmap.upsert({
+      where: {
+        opportunityId_cvId_userId: { opportunityId, cvId, userId },
+      },
+      update: { status: JobStatus.IN_PROGRESS, createdByJobId: job.id },
+      create: {
+        userId,
+        cvId,
+        opportunityId,
+        status: JobStatus.IN_PROGRESS,
+        createdByJobId: job.id,
+      },
+    });
+
+    await logsService.createLog({
+      userId,
+      action: LogAction.JOB,
+      level: LogLevel.INFO,
+      entity: "ROADMAP",
+      entityId: roadmap.id,
+      message: "Started roadmap generation",
+      metadata: { cvId, opportunityId },
+    });
+
+    try {
+      // 1. Fetch CV + Opportunity data
+      const { cv, opportunity, userPrefs } = await step.run("fetch-data", async () => {
+        const [cvData, oppData, prefsData] = await Promise.all([
+          prisma.cv.findUnique({
+            where: { id: cvId },
+            include: { sections: true },
+          }),
+          prisma.opportunity.findFirst({
+            where: { id: opportunityId, cvId },
+          }),
+          prisma.userPreference.findUnique({ where: { userId } }),
+        ]);
+        return {
+          cv: cvData,
+          opportunity: oppData
+            ? {
+                ...oppData,
+                match: Number(oppData.match),
+              }
+            : null,
+          userPrefs: prefsData,
+        };
+      });
+
+      if (!cv || !opportunity) {
+        await prisma.queueJob.update({
+          where: { id: job.id },
+          data: { status: JobStatus.FAILED, lastError: "CV or Opportunity not found", finishedAt: new Date() },
+        });
+        await prisma.roadmap.update({
+          where: { id: roadmap.id },
+          data: { status: JobStatus.FAILED },
+        });
+        return { message: "CV or Opportunity not found" };
+      }
+
+      // 2. Build CV summary for the prompt
+      const cvSummary = await step.run("build-cv-summary", () => {
+        const sections = cv.sections || [];
+        const parts: string[] = [];
+
+        for (const section of sections) {
+          const content = section.contentJson;
+          if (!content) continue;
+          if (section.sectionType === "SUMMARY") {
+            parts.push(`RESUMEN: ${(content as any).text || JSON.stringify(content)}`);
+          } else if (section.sectionType === "EXPERIENCE") {
+            const items = Array.isArray(content) ? content : [content];
+            parts.push(`EXPERIENCIA: ${items.map((i: any) => `${i.title || ""} en ${i.company || ""}`).join(", ")}`);
+          } else if (section.sectionType === "EDUCATION") {
+            const items = Array.isArray(content) ? content : [content];
+            parts.push(`EDUCACIÓN: ${items.map((i: any) => `${i.degree || i.title || ""} en ${i.institution || ""}`).join(", ")}`);
+          } else if (section.sectionType === "SKILLS") {
+            const json = content as any;
+            const skills: string[] = [];
+            if (json.technical) skills.push(...json.technical);
+            if (json.soft) skills.push(...json.soft);
+            if (Array.isArray(json)) skills.push(...json.map((s: any) => (typeof s === "string" ? s : s.name)));
+            parts.push(`HABILIDADES: ${skills.join(", ")}`);
+          }
+        }
+
+        return parts.join("\n");
+      });
+
+      // 3. Call Gemini to generate roadmap
+      const aiResult = await step.run("generate-with-ai", async () => {
+        const prompt = `Eres un experto en orientación profesional y planificación de carrera.
+Genera un roadmap paso a paso DETALLADO y ACCIONABLE para que un candidato pueda conseguir esta oportunidad.
+
+## OPORTUNIDAD
+- Título: ${opportunity.title}
+- Tipo: ${opportunity.type}
+- Empresa: ${opportunity.company || "No especificada"}
+- Ubicación: ${opportunity.location || "No especificada"}
+- Descripción: ${opportunity.description || "No disponible"}
+- Requisitos: ${opportunity.requirements || "No especificados"}
+- Beneficios: ${opportunity.benefits || "No especificados"}
+- Match actual: ${Math.round(opportunity.match * 100)}%
+- Fecha límite: ${opportunity.deadline ? new Date(opportunity.deadline).toLocaleDateString("es-ES") : "No especificada"}
+
+## PERFIL DEL CANDIDATO (CV)
+${cvSummary}
+
+## PREFERENCIAS
+- País: ${userPrefs?.country || "No especificado"}
+- Nivel: ${userPrefs?.expLevel || "No especificado"}
+
+## INSTRUCCIONES
+Genera un roadmap con 5-8 pasos concretos, ordenados cronológicamente. Cada paso debe ser accionable y específico.
+El primer paso siempre debe ser algo que el candidato pueda hacer INMEDIATAMENTE.
+Los pasos deben cubrir: preparación de documentos, mejora de perfil, networking, preparación de entrevistas, y seguimiento.
+
+IMPORTANTE: Responde SOLO en formato JSON válido con esta estructura exacta:
+{
+  "title": "Título corto del roadmap",
+  "summary": "Resumen de 1-2 oraciones del plan",
+  "steps": [
+    {
+      "order": 1,
+      "title": "Título del paso",
+      "description": "Descripción detallada de qué hacer y por qué",
+      "actionItems": ["Acción concreta 1", "Acción concreta 2", "Acción concreta 3"],
+      "estimatedDays": 3,
+      "resources": [{"title": "Nombre del recurso", "url": "", "type": "article|video|tool"}]
+    }
+  ]
+}`;
+
+        return await queryGemini<RoadmapAIResponse>({ prompt, type: "JSON" });
+      });
+
+      if (!aiResult.success || !aiResult.data?.steps?.length) {
+        throw new Error(`AI generation failed: ${aiResult.message}`);
+      }
+
+      // 4. Save roadmap steps
+      await step.run("save-roadmap", async () => {
+        // Delete old steps if any (re-generation case)
+        await prisma.roadmapStep.deleteMany({ where: { roadmapId: roadmap.id } });
+
+        const stepsData = aiResult.data!.steps.map((s, i) => ({
+          roadmapId: roadmap.id,
+          order: s.order || i + 1,
+          title: s.title,
+          description: s.description,
+          actionItems: s.actionItems || [],
+          estimatedDays: s.estimatedDays || null,
+          resources: s.resources || [],
+          isFree: i === 0, // Only first step is free
+        }));
+
+        await prisma.roadmapStep.createMany({ data: stepsData });
+
+        // Update roadmap with title/summary + mark as SUCCEEDED
+        await prisma.roadmap.update({
+          where: { id: roadmap.id },
+          data: {
+            title: aiResult.data!.title,
+            summary: aiResult.data!.summary,
+            status: JobStatus.SUCCEEDED,
+          },
+        });
+      });
+
+      // 5. Consume credits
+      await step.run("consume-credits", async () => {
+        await consumeCredits({
+          userId,
+          type: CreditBalanceType.AI_ACTIONS,
+          amount: 1,
+          description: `Roadmap generado para oportunidad ${opportunity.title}`,
+        });
+      });
+
+      // 6. Advance route status
+      await step.run("update-route", async () => {
+        const route = await prisma.route.findFirst({
+          where: { cvId, userId },
+        });
+        if (
+          route &&
+          (route.status === RouteStatus.OPPORTUNITIES_DONE ||
+            route.status === RouteStatus.ROADMAP_PENDING)
+        ) {
+          await prisma.route.update({
+            where: { id: route.id },
+            data: { status: RouteStatus.ROADMAP_DONE },
+          });
+        }
+      });
+
+      // 7. Mark job as SUCCEEDED
+      await prisma.queueJob.update({
+        where: { id: job.id },
+        data: { status: JobStatus.SUCCEEDED, finishedAt: new Date() },
+      });
+
+      await logsService.createLog({
+        userId,
+        action: LogAction.JOB,
+        level: LogLevel.INFO,
+        entity: "ROADMAP",
+        entityId: roadmap.id,
+        message: "Roadmap generated successfully",
+        metadata: { cvId, opportunityId, stepsCount: aiResult.data!.steps.length },
+      });
+
+      return { success: true, roadmapId: roadmap.id, stepsCount: aiResult.data!.steps.length };
+    } catch (err: any) {
+      console.error("❌ Roadmap generation failed:", err);
+
+      await prisma.roadmap.update({
+        where: { id: roadmap.id },
+        data: { status: JobStatus.FAILED },
+      });
+
+      await prisma.queueJob.update({
+        where: { id: job.id },
+        data: {
+          status: JobStatus.FAILED,
+          lastError: err?.message ?? "Unknown error",
+          finishedAt: new Date(),
+        },
+      });
+
+      await logsService.createLog({
+        userId,
+        action: LogAction.JOB,
+        level: LogLevel.ERROR,
+        entity: "ROADMAP",
+        entityId: roadmap.id,
+        message: "Roadmap generation failed",
+        metadata: { error: err?.message, cvId, opportunityId },
+      });
+
+      throw err;
+    }
+  },
+);
+

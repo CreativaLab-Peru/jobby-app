@@ -10,6 +10,8 @@ import type {EvaluationScore} from "@prisma/client";
 export type GetScoreAndOpportunityById = {
   evaluation: CvEvaluation & { scores: EvaluationScore[], recommendations: PrismaRecommendation[] }
   opportunities: Opportunity[]
+  cvId: string | null
+  improvementsJson: any
 }
 
 export const getEvaluationById = async (analyzeId: string): Promise<GetScoreAndOpportunityById | null> => {
@@ -48,11 +50,11 @@ export const getEvaluationById = async (analyzeId: string): Promise<GetScoreAndO
       deadline: opp.deadline,
     }));
 
-    // We cast to any here to match the component expectation which uses the Prisma type
-    // In a real scenario we should update the component prop types to expect number instead of Decimal
     const scoreAndOpportunities: GetScoreAndOpportunityById = {
       evaluation: cvEvaluation,
       opportunities: serializedOpportunities as unknown as Opportunity[],
+      cvId: cvId,
+      improvementsJson: cvEvaluation.improvementsJson ?? null,
     }
 
     return scoreAndOpportunities;

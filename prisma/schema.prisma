@@ -50,6 +50,8 @@ model User {
   role                       UserRole           @default(USER)
   interviewSessions InterviewSession[]
   cvPhotos                   CvPhoto[]
+  routes                     Route[]
+  roadmaps                   Roadmap[]
 
   @@map("user")
 }
@@ -241,6 +243,7 @@ model Cv {
   opportunities   Opportunity[]
   queueJobs       QueueJob[]
   interviewSessions InterviewSession[]
+  route           Route?
 
   @@index([userId])
   @@index([language])
@@ -269,6 +272,7 @@ model Opportunity {
   updatedAt    DateTime        @updatedAt
   cv           Cv              @relation(fields: [cvId], references: [id], onDelete: Cascade)
   interviewSessions InterviewSession[]
+  roadmaps     Roadmap[]
 
   @@id([id, cvId])
   @@map("opportunity")
@@ -331,6 +335,7 @@ model CvEvaluation {
   overallScore    Float?
   summary         String?
   extractorOutput Json?
+  improvementsJson Json?            // AI-generated improved texts per section
   createdByJobId  String?
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
@@ -555,6 +560,78 @@ model LogEntry {
   @@index([action])
   @@index([level])
   @@map("log_entry")
+}
+
+// Ruta guiada del usuario (agrupa CV → Análisis → Oportunidades)
+model Route {
+  id        String      @id @default(uuid())
+  userId    String
+  cvId      String?     @unique // 1:1 con CV, nullable hasta que se cree
+  name      String
+  status    RouteStatus @default(CV_PENDING)
+  isActive  Boolean     @default(true)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cv   Cv?   @relation(fields: [cvId], references: [id])
+
+  @@index([userId])
+  @@index([userId, isActive])
+  @@map("route")
+}
+
+// Roadmap generado por IA para una oportunidad específica
+model Roadmap {
+  id            String       @id @default(uuid())
+  userId        String
+  cvId          String
+  opportunityId String
+  status        JobStatus    @default(PENDING)
+  title         String?
+  summary       String?      @db.Text
+  createdByJobId String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunity Opportunity @relation(fields: [opportunityId, cvId], references: [id, cvId], onDelete: Cascade)
+  steps       RoadmapStep[]
+
+  @@unique([opportunityId, cvId, userId])
+  @@index([userId])
+  @@index([cvId])
+  @@map("roadmap")
+}
+
+// Paso individual del roadmap
+model RoadmapStep {
+  id             String   @id @default(uuid())
+  roadmapId      String
+  order          Int
+  title          String
+  description    String   @db.Text
+  actionItems    Json     // Array de strings con acciones concretas
+  estimatedDays  Int?     // Días estimados para completar
+  resources      Json?    // Array de { title, url, type } con recursos útiles
+  isFree         Boolean  @default(false) // Si es visible sin plan de pago
+  createdAt      DateTime @default(now())
+
+  roadmap Roadmap @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+
+  @@index([roadmapId, order])
+  @@map("roadmap_step")
+}
+
+enum RouteStatus {
+  CV_PENDING
+  CV_CREATED
+  ANALYSIS_PENDING
+  ANALYSIS_DONE
+  OPPORTUNITIES_PENDING
+  OPPORTUNITIES_DONE
+  ROADMAP_PENDING
+  ROADMAP_DONE
 }
 
 enum CreditBalanceType {

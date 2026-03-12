@@ -36,13 +36,23 @@ export function PreviewCVComponent({
 }: PreviewCVComponentProps) {
   const [isDisabled] = useState(false)
   const router = useRouter()
+  const safeSectionIds = Array.isArray(sectionIds) ? sectionIds : []
 
   // Regenerar las secciones en el cliente usando los IDs
   const sections = useMemo(() => {
-    const allSections = getSections(opportunityType, cvType, templateId);
-    const sectionMap = new Map(allSections.map(s => [s.id, s]));
-    return sectionIds.map(id => sectionMap.get(id)).filter(Boolean) as typeof allSections;
-  }, [opportunityType, cvType, sectionIds, templateId]);
+    const allSections = getSections(opportunityType, cvType, templateId)
+    if (!allSections.length) return []
+
+    // Fallback: if section IDs are not present, render the default section order.
+    if (!safeSectionIds.length) return allSections
+
+    const sectionMap = new Map(allSections.map((section) => [section.id, section]))
+    const mappedSections = safeSectionIds
+      .map((id) => sectionMap.get(id))
+      .filter(Boolean) as typeof allSections
+
+    return mappedSections.length ? mappedSections : allSections
+  }, [opportunityType, cvType, safeSectionIds, templateId])
 
   return (
     <div className="min-h-screen bg-gradient-primary">
@@ -73,8 +83,8 @@ export function PreviewCVComponent({
                 canAnalyze={canAnalyze}
                 analysisTokens={analysisTokens}
                 opportunitiesActionTokens={opportunitiesActionTokens}
-                onHome={() => router.push('/cv')}
-                onEditCV={() => router.push(`/cv/${cvId}/edit`)}
+                onHome={() => router.push('/my-cv')}
+                onEditCV={() => router.push(cvId ? `/cv/${cvId}/edit` : '/my-cv')}
               />
               <TipCard opportunityType={opportunityType} />
             </div>

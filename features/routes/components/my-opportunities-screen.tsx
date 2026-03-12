@@ -87,6 +87,7 @@ export default function MyOpportunitiesScreen({
     setIsCvsLoading(true);
     try {
       const cvData = await getAllCvForCurrentUser(0, 100);
+      console.log("[cvData]", cvData)
       if (cvData?.cvs) {
         setCvs(cvData.cvs);
         if (cvId) setSelectedCvId(cvId);

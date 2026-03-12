@@ -105,12 +105,12 @@ export function CVCard({ cv }: CVCardProps) {
               <DropdownMenuItem onClick={() => router.push(`/cv/${cv.id}/edit`)} className="cursor-pointer font-medium">
                 <Edit className="mr-2 h-4 w-4" /> Editar
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setShowDeleteDialog(true)}
-                className="cursor-pointer text-destructive focus:text-destructive font-medium"
-              >
-                <Trash2 className="mr-2 h-4 w-4" /> Eliminar
-              </DropdownMenuItem>
+              {/*<DropdownMenuItem*/}
+              {/*  onClick={() => setShowDeleteDialog(true)}*/}
+              {/*  className="cursor-pointer text-destructive focus:text-destructive font-medium"*/}
+              {/*>*/}
+              {/*  <Trash2 className="mr-2 h-4 w-4" /> Eliminar*/}
+              {/*</DropdownMenuItem>*/}
             </DropdownMenuContent>
           </DropdownMenu>
         }

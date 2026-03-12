@@ -156,14 +156,14 @@ export const educationSection: CVSection = {
   icon: GraduationCap,
   multiple: true,
   fields: [
-    {
-      name: "level",
-      label: "Nivel Educativo",
-      type: "select",
-      required: true,
-      options: ["SECUNDARIA", "BACHILLER", "TECNICO", "LICENCIADO", "MAESTRIA", "DOCTORADO", "OTRO"],
-      tip: "Selecciona el nivel más alto que estés cursando o hayas completado",
-    },
+    // {
+    //   name: "level",
+    //   label: "Nivel Educativo",
+    //   type: "select",
+    //   required: true,
+    //   options: ["SECUNDARIA", "BACHILLER", "TECNICO", "LICENCIADO", "MAESTRIA", "DOCTORADO", "OTRO"],
+    //   tip: "Selecciona el nivel más alto que estés cursando o hayas completado",
+    // },
     {
       name: "title",
       label: "Título/Carrera/Especialidad",

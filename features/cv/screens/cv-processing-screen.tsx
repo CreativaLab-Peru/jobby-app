@@ -2,16 +2,16 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import { FileText, Loader2, CheckCircle, XCircle, Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FileText, Loader2, CheckCircle, XCircle, Sparkles, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { getCvProcessingStatus } from "@/features/cv/actions/get-cv-processing-status";
 
 const STEPS = [
-  { text: "Extrayendo texto del PDF...", icon: FileText },
-  { text: "Analizando estructura con IA...", icon: Sparkles },
+  { text: "Analizando el contenido...", icon: FileText },
+  { text: "Extrayendo texto del PDF...", icon: Sparkles },
   { text: "Organizando secciones...", icon: FileText },
   { text: "Finalizando procesamiento...", icon: CheckCircle },
 ];
@@ -39,14 +39,12 @@ export function CvProcessingScreen({ cvId }: CvProcessingScreenProps) {
     }
   }, [cvId, router]);
 
-  // Poll every 3 seconds
   useEffect(() => {
-    poll(); // initial check
+    poll();
     const interval = setInterval(poll, 3000);
     return () => clearInterval(interval);
   }, [poll]);
 
-  // Animate step text
   useEffect(() => {
     if (status === "SUCCEEDED" || status === "FAILED") return;
     const interval = setInterval(() => {
@@ -59,77 +57,128 @@ export function CvProcessingScreen({ cvId }: CvProcessingScreenProps) {
   const StepIcon = currentStep.icon;
 
   return (
-    <main className="min-h-[90vh] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-md text-center space-y-8"
+    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background">
+      {/* ── BACKGROUND LAYER ── */}
+      <div
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: `radial-gradient(var(--primary) 1px, transparent 1px)`,
+          backgroundSize: '40px 40px'
+        }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background to-secondary/10 pointer-events-none" />
+
+      {/* ── CONTENT LAYER ── */}
+      <motion.main
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="relative z-10 w-full max-w-2xl px-6 flex flex-col items-center text-center"
       >
-        {/* Icon */}
-        <div className="flex justify-center">
-          {status === "FAILED" ? (
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-red-500/10">
-              <XCircle className="h-10 w-10 text-red-500" />
-            </div>
-          ) : (
-            <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/10">
-              <Loader2 className="h-10 w-10 text-primary animate-spin" />
-            </div>
-          )}
+        {/* Status Visual */}
+        <div className="mb-10">
+          <AnimatePresence mode="wait">
+            {status === "FAILED" ? (
+              <motion.div
+                key="failed"
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="flex h-24 w-24 items-center justify-center rounded-3xl bg-destructive/10 text-destructive shadow-inner"
+              >
+                <XCircle className="h-12 w-12" />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="loading"
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="relative flex h-24 w-24 items-center justify-center rounded-3xl bg-primary/10 text-primary"
+              >
+                <Loader2 className="h-12 w-12 animate-spin" />
+                <div className="absolute inset-0 rounded-3xl border-2 border-primary/20 animate-pulse" />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
-        {/* Title */}
-        <div className="space-y-2">
-          <h1 className="text-2xl font-black tracking-tight">
-            {status === "FAILED" ? "Error al procesar" : "Procesando tu CV"}
+        {/* Textual Information */}
+        <div className="space-y-4 mb-12">
+          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">
+            {status === "FAILED" ? "Algo no salió bien" : "Subiendo tu cv"}
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-lg text-muted-foreground max-w-lg mx-auto font-medium">
             {status === "FAILED"
-              ? "Ocurrió un problema al analizar tu archivo. Puedes intentarlo de nuevo."
-              : "Nuestra IA está analizando y estructurando tu documento. Esto tomará unos segundos."
+              ? "No pudimos procesar el documento. Asegúrate de que el archivo no esté protegido o dañado."
+              : "Tu CV esta siendo procesado. Asegúrate de que el archivo sea un pdf"
             }
           </p>
         </div>
 
-        {/* Step indicator */}
-        {status !== "FAILED" && (
+        {/* Step Indicator & Progress */}
+        <AnimatePresence mode="wait">
+          {status !== "FAILED" && (
+            <motion.div
+              key="progress-area"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="w-full space-y-8"
+            >
+              {/* Active Step */}
+              <div className="flex items-center justify-center gap-3 px-6 py-3 bg-secondary/20 rounded-2xl w-fit mx-auto border border-secondary/30">
+                <StepIcon className="h-5 w-5 text-primary animate-bounce" />
+                <span className="text-sm font-bold tracking-wide uppercase text-secondary-foreground">
+                  {currentStep.text}
+                </span>
+              </div>
+
+              {/* Enhanced Progress Bar */}
+              <div className="w-full h-3 rounded-full bg-secondary/30 p-1 border border-secondary/20 overflow-hidden">
+                <motion.div
+                  className="h-full rounded-full bg-primary shadow-[0_0_15px_rgba(var(--primary),0.5)]"
+                  initial={{ width: "5%" }}
+                  animate={{ width: status === "SUCCEEDED" ? "100%" : "90%" }}
+                  transition={{
+                    width: { duration: status === "SUCCEEDED" ? 0.5 : 40, ease: "easeInOut" }
+                  }}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Action Buttons for Failure */}
+        {status === "FAILED" && (
           <motion.div
-            key={stepIndex}
-            initial={{ opacity: 0, y: 8 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            className="flex items-center justify-center gap-2 text-sm font-medium text-muted-foreground"
+            className="flex flex-col sm:flex-row gap-4 w-full justify-center"
           >
-            <StepIcon className="h-4 w-4 text-primary" />
-            <span>{currentStep.text}</span>
+            <Button
+              size="lg"
+              onClick={() => router.push("/cv")}
+              className="rounded-2xl h-14 px-8 font-bold text-lg bg-primary shadow-lg shadow-primary/20 hover:opacity-90"
+            >
+              Volver al panel
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => router.back()}
+              className="rounded-2xl h-14 px-8 font-bold text-lg border-secondary/50 hover:bg-secondary/10"
+            >
+              <ArrowLeft className="mr-2 h-5 w-5" />
+              Reintentar
+            </Button>
           </motion.div>
         )}
+      </motion.main>
 
-        {/* Progress bar */}
-        {status !== "FAILED" && (
-          <div className="w-full h-1.5 rounded-full bg-secondary overflow-hidden">
-            <motion.div
-              className="h-full rounded-full bg-primary"
-              initial={{ width: "5%" }}
-              animate={{ width: status === "SUCCEEDED" ? "100%" : "85%" }}
-              transition={{ duration: status === "SUCCEEDED" ? 0.5 : 30, ease: "linear" }}
-            />
-          </div>
-        )}
-
-        {/* Actions */}
-        {status === "FAILED" && (
-          <div className="flex flex-col gap-3">
-            <Button onClick={() => router.push("/cv")} className="font-semibold">
-              Volver a Mis CVs
-            </Button>
-            <Button variant="ghost" onClick={() => router.back()} className="text-xs text-muted-foreground">
-              Intentar de nuevo
-            </Button>
-          </div>
-        )}
-      </motion.div>
-    </main>
+      {/* Footer Branding */}
+      <footer className="absolute bottom-10 text-center">
+        <p className="text-xs font-bold tracking-[0.2em] uppercase text-muted-foreground/40 flex items-center gap-2">
+          <Sparkles className="h-3 w-3" /> Powered by Gemini AI
+        </p>
+      </footer>
+    </div>
   );
 }
-

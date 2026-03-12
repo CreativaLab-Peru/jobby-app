@@ -23,8 +23,8 @@ export default function CreateRouteForm() {
     startTransition(async () => {
       const result = await createRoute(name.trim());
       if (result.success) {
-        router.push("/dashboard");
         router.refresh();
+        router.push("/dashboard");
       } else {
         setError(result.message || "Error al crear la ruta.");
       }

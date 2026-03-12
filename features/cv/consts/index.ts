@@ -4,7 +4,7 @@ import {
 } from "lucide-react";
 
 export const CV_TYPE_CONFIG: Record<string, { label: string; icon: React.ElementType; colorClass: string }> = {
-  TECHNOLOGY_ENGINEERING: { label: "Inteligencia Artificial", icon: Code2, colorClass: "text-blue-500" },
+  TECHNOLOGY_ENGINEERING: { label: "Inteligencia Artificial, Ingeniería y Sistemas", icon: Code2, colorClass: "text-blue-500" },
   DESIGN_CREATIVITY: { label: "Creatividad Digital & Multimedia", icon: Palette, colorClass: "text-pink-500" },
   MARKETING_STRATEGY: { label: "Innovación & Estrategia de Negocios", icon: Megaphone, colorClass: "text-orange-500" },
   MANAGEMENT_BUSINESS: { label: "Gestión, Innovación y Emprendimiento", icon: BarChart3, colorClass: "text-emerald-500" },

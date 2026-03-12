@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getActiveRoute } from "@/features/routes/actions/get-active-route";
 import RouteStepper from "@/features/routes/components/route-stepper";
+import { prisma } from "@/lib/prisma";
 
 export default async function DashboardPage() {
   const activeRoute = await getActiveRoute();
@@ -13,6 +14,15 @@ export default async function DashboardPage() {
   const cv = activeRoute.cv;
   const latestEval = cv?.evaluations?.[0] ?? null;
 
+  // Check if the user has any roadmap for this route's CV
+  let hasRoadmap = false;
+  if (cv?.id) {
+    const roadmapCount = await prisma.roadmap.count({
+      where: { cvId: cv.id, userId: activeRoute.userId, status: "SUCCEEDED" },
+    });
+    hasRoadmap = roadmapCount > 0;
+  }
+
   return (
     <RouteStepper
       routeName={activeRoute.name}
@@ -21,6 +31,7 @@ export default async function DashboardPage() {
       cvTitle={cv?.title ?? null}
       evaluationScore={latestEval?.overallScore ?? null}
       opportunitiesCount={cv?._count?.opportunities ?? 0}
+      hasRoadmap={hasRoadmap}
     />
   );
 }

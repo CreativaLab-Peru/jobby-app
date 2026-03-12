@@ -10,6 +10,7 @@ import {
   ArrowRight,
   Lock,
   Sparkles,
+  Map,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -35,6 +36,7 @@ interface RouteStepperProps {
   cvTitle: string | null;
   evaluationScore: number | null;
   opportunitiesCount: number;
+  hasRoadmap?: boolean;
 }
 
 const STATUS_ORDER: RouteStatus[] = [
@@ -44,6 +46,8 @@ const STATUS_ORDER: RouteStatus[] = [
   "ANALYSIS_DONE",
   "OPPORTUNITIES_PENDING",
   "OPPORTUNITIES_DONE",
+  "ROADMAP_PENDING",
+  "ROADMAP_DONE",
 ];
 
 function getStepStatus(
@@ -67,6 +71,7 @@ export default function RouteStepper({
   cvTitle,
   evaluationScore,
   opportunitiesCount,
+  hasRoadmap = false,
 }: RouteStepperProps) {
   const router = useRouter();
 
@@ -105,6 +110,17 @@ export default function RouteStepper({
       icon: Briefcase,
       status: getStepStatus("ANALYSIS_DONE", "OPPORTUNITIES_DONE", routeStatus),
       cta: opportunitiesCount > 0 ? "Ver oportunidades" : "Buscar oportunidades",
+    },
+    {
+      id: 4,
+      title: "Roadmap personalizado",
+      description: hasRoadmap
+        ? "Tienes un roadmap generado. Revísalo en el detalle de tu oportunidad."
+        : "Selecciona una oportunidad y genera un plan paso a paso con IA.",
+      href: "/my-opportunities",
+      icon: Map,
+      status: getStepStatus("OPPORTUNITIES_DONE", "ROADMAP_DONE", routeStatus),
+      cta: hasRoadmap ? "Ver oportunidades" : "Elegir oportunidad",
     },
   ];
 

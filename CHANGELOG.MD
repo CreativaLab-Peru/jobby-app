@@ -1,3 +1,32 @@
+# v1.1.28 - 2026-03-12
+
+## Features
+- **AI Roadmap**: Generate a personalized, step-by-step roadmap for any opportunity using AI (CV context + opportunity requirements).
+- **Roadmap generation via Inngest**: New `generate-roadmap` background function with QueueJob tracking, credit consumption, and route status advancement.
+- **Career Accelerator gating**: Only the first roadmap step is visible for free users; STARTER/PRO plan holders see all steps.
+- **Roadmap UI**: Vertical stepper component with timeline, action items, estimated duration, resources, and blur overlay for locked steps with upgrade CTA.
+- **Roadmap on opportunity detail**: "Generar Roadmap con IA" button on every opportunity detail page with polling for generation status.
+- **Route stepper step 4**: Dashboard stepper now includes a 4th "Roadmap personalizado" step after opportunities.
+
+## Enhancements
+- **KISS score card**: Removed redundant big number + circle combo and modal. Score now shows compact ring + inline category breakdown bars.
+- **KISS improvements section**: Cards expanded by default (no accordions), "Apply All" button, simpler before→after layout, removed framer-motion dependency.
+- **KISS recommendations section**: Unified card container with dividers, compact header.
+- **KISS analysis header**: Left-aligned compact layout instead of centered full-width block.
+- **KISS analysis page layout**: Flattened `max-w-3xl` layout, removed `ScoreBreakdownModal` dependency.
+
+## Schema Changes
+- Added `Roadmap` model (`roadmap` table) with unique constraint on `[opportunityId, cvId, userId]`.
+- Added `RoadmapStep` model (`roadmap_step` table) with `order`, `title`, `description`, `actionItems` (JSON), `estimatedDays`, `resources` (JSON), `isFree`.
+- Extended `RouteStatus` enum with `ROADMAP_PENDING` and `ROADMAP_DONE`.
+- Added `roadmaps` relation on `User` and `Opportunity` models.
+- Migration: `20260312063620_add_roadmap_models`.
+
+## API
+- New `POST /api/roadmap/generate` endpoint to trigger AI roadmap generation.
+
+---
+
 # v1.1.27 - 2026-03-12
 
 ## Features

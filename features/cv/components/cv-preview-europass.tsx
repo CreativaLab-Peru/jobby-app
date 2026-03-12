@@ -11,6 +11,7 @@ interface CVPreviewEuropassProps {
 }
 
 const EU_BLUE = "#003FA3"
+const BORDER_COLOR = "#2596be"
 const GOLD = "#FFCC00"
 
 function EuFlagSvg({ width = 38, height = 26 }: { width?: number; height?: number }) {
@@ -44,8 +45,8 @@ function EuFlagSvg({ width = 38, height = 26 }: { width?: number; height?: numbe
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="text-[11px] font-bold uppercase pb-[2px] mt-[9px] mb-[5px] border-b-[1.5px]"
-      style={{ color: EU_BLUE, borderColor: EU_BLUE }}
+      className="text-[11px] font-bold uppercase pb-0 mt-[9px] mb-[5px] border-b border-black"
+      style={{ color: EU_BLUE }}
     >
       {children}
     </div>
@@ -281,11 +282,15 @@ export function CVPreviewEuropass({ data, sections }: CVPreviewEuropassProps) {
       className="relative bg-white min-h-[297mm] w-full"
       style={{ fontFamily: "Arial, sans-serif", fontSize: "10px", color: "#222" }}
     >
-      {/* Barras azules laterales */}
-      <div className="absolute left-0 top-0 bottom-0 w-[10px]" style={{ backgroundColor: EU_BLUE }} />
-      <div className="absolute right-0 top-0 bottom-0 w-[10px]" style={{ backgroundColor: EU_BLUE }} />
+      {/* Marco tipo esquina ┌─┐└─┘ */}
+      <div className="absolute left-0 right-0 top-0 h-[14px]" style={{ backgroundColor: BORDER_COLOR }} />
+      <div className="absolute left-0 right-0 bottom-0 h-[14px]" style={{ backgroundColor: BORDER_COLOR }} />
+      <div className="absolute left-0 top-0 w-[14px] h-[60px]" style={{ backgroundColor: BORDER_COLOR }} />
+      <div className="absolute right-0 top-0 w-[14px] h-[60px]" style={{ backgroundColor: BORDER_COLOR }} />
+      <div className="absolute left-0 bottom-0 w-[14px] h-[60px]" style={{ backgroundColor: BORDER_COLOR }} />
+      <div className="absolute right-0 bottom-0 w-[14px] h-[60px]" style={{ backgroundColor: BORDER_COLOR }} />
 
-      <div className="px-[25px] py-[18px]">
+      <div className="px-[30px] pt-[26px] pb-[26px]">
         {/* Logo Europass – arriba a la derecha */}
         <div className="flex justify-end items-center gap-[5px] mb-[10px]">
           <EuFlagSvg />
@@ -297,12 +302,16 @@ export function CVPreviewEuropass({ data, sections }: CVPreviewEuropassProps) {
         {/* Cabecera: foto + nombre + contacto */}
         <div className="flex items-start gap-[12px] mb-[8px]">
           {data.personal?.image && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={data.personal.image}
-              alt="foto"
-              className="w-[68px] h-[68px] rounded-full object-cover flex-shrink-0"
-            />
+            <div className="relative w-[75px] h-[75px] rounded-full flex-shrink-0 overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={data.personal.image}
+                alt="foto"
+                className="w-full h-full object-cover"
+              />
+              {/* Vignette overlay */}
+              <div className="absolute inset-0 rounded-full" style={{ boxShadow: "inset 0 0 10px 3px rgba(0,0,0,0.20)" }} />
+            </div>
           )}
           <div className="flex-1">
             <h1 className="text-[16px] font-bold mb-[5px]" style={{ color: EU_BLUE }}>

@@ -18,6 +18,7 @@ Font.register({
 });
 
 const EU_BLUE = "#003FA3";
+const BORDER_COLOR = "#2596be";
 const GOLD = "#FFCC00";
 
 // 5-pointed star path centrada en (cx, cy)
@@ -113,54 +114,62 @@ const styles = StyleSheet.create({
   page: {
     backgroundColor: "#FFFFFF",
     fontFamily: "Arial",
-    fontSize: 10,
+    fontSize: 10.5,
     color: "#222222",
-    paddingLeft: 25,
-    paddingRight: 25,
-    paddingTop: 18,
-    paddingBottom: 20,
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingTop: 32,
+    paddingBottom: 32,
   },
-  leftBar: { position: "absolute", left: 0, top: 0, bottom: 0, width: 10, backgroundColor: EU_BLUE },
-  rightBar: { position: "absolute", right: 0, top: 0, bottom: 0, width: 10, backgroundColor: EU_BLUE },
+  topBar: { position: "absolute", left: 0, right: 0, top: 0, height: 14, backgroundColor: BORDER_COLOR },
+  bottomBar: { position: "absolute", left: 0, right: 0, bottom: 0, height: 14, backgroundColor: BORDER_COLOR },
+  leftBarTop: { position: "absolute", top: 0, left: 0, width: 14, height: 60, backgroundColor: BORDER_COLOR },
+  rightBarTop: { position: "absolute", top: 0, right: 0, width: 14, height: 60, backgroundColor: BORDER_COLOR },
+  leftBarBottom: { position: "absolute", bottom: 0, left: 0, width: 14, height: 60, backgroundColor: BORDER_COLOR },
+  rightBarBottom: { position: "absolute", bottom: 0, right: 0, width: 14, height: 60, backgroundColor: BORDER_COLOR },
   topRow: { flexDirection: "row", justifyContent: "flex-end", alignItems: "center", marginBottom: 10 },
   europassText: { color: EU_BLUE, fontSize: 18, fontWeight: "bold", marginLeft: 6 },
   headerRow: { flexDirection: "row", alignItems: "flex-start", marginBottom: 8 },
-  photo: { width: 68, height: 68, borderRadius: 34, marginRight: 12 },
+  photo: { width: 68, height: 68, borderRadius: 34, marginRight: 12, objectFit: "cover" },
+  photoWrap: { width: 75, height: 75, borderRadius: 37.5, marginRight: 14, overflow: "hidden", borderWidth: 2, borderColor: "rgba(0,0,0,0.08)", borderStyle: "solid" },
   headerInfo: { flex: 1 },
   fullName: { fontSize: 16, fontWeight: "bold", color: EU_BLUE, marginBottom: 5 },
   contactRow: { flexDirection: "row", alignItems: "center", marginBottom: 2.5, flexWrap: "wrap" },
-  cLabel: { fontSize: 9, fontWeight: "bold", color: "#222", marginLeft: 3 },
-  cValue: { fontSize: 9, color: "#222", marginLeft: 2 },
-  cValueLink: { fontSize: 9, color: EU_BLUE, marginLeft: 2 },
+  cLabel: { fontSize: 9.5, fontWeight: "bold", color: "#222", marginLeft: 3 },
+  cValue: { fontSize: 9.5, color: "#222", marginLeft: 2 },
+  cValueLink: { fontSize: 9.5, color: EU_BLUE, marginLeft: 2 },
   cSpacer: { width: 14 },
   sectionTitle: {
-    fontSize: 11,
+    fontSize: 11.5,
     fontWeight: "bold",
     color: EU_BLUE,
     textTransform: "uppercase",
-    borderBottomWidth: 1.5,
-    borderBottomColor: EU_BLUE,
-    paddingBottom: 2,
-    marginTop: 9,
+    borderBottomWidth: 0.75,
+    borderBottomColor: "#222222",
+    paddingBottom: 0,
+    marginTop: 0,
     marginBottom: 5,
   },
-  summaryText: { fontSize: 10, fontWeight: "bold", lineHeight: 1.5, textAlign: "justify" },
-  entry: { marginBottom: 6 },
-  jobTitle: { fontSize: 10, fontWeight: "bold", color: EU_BLUE },
-  companyLine: { fontSize: 10, fontStyle: "italic", marginBottom: 2 },
-  metaLine: { fontSize: 9, marginBottom: 2.5 },
+  summaryText: { fontSize: 10.5, fontWeight: "bold", lineHeight: 1.5, textAlign: "justify" },
+  entry: { marginBottom: 7 },
+  jobTitle: { fontSize: 10.5, fontWeight: "bold", color: EU_BLUE },
+  companyLine: { fontSize: 10.5, fontStyle: "italic", marginBottom: 2 },
+  metaLine: { fontSize: 9.5, marginBottom: 2.5 },
   metaLabel: { fontWeight: "bold" },
-  bulletRow: { flexDirection: "row", marginLeft: 4, marginBottom: 1.5 },
-  bulletDot: { fontSize: 11, width: 10, color: "#444", lineHeight: 1.2 },
-  bulletTxt: { fontSize: 9, flex: 1, lineHeight: 1.4, textAlign: "justify" },
-  subheadTxt: { fontSize: 9, fontWeight: "bold", marginTop: 3, marginBottom: 1, marginLeft: 4 },
-  degreeTitle: { fontSize: 10, fontWeight: "bold", color: EU_BLUE },
-  instLine: { fontSize: 10, fontStyle: "italic", marginBottom: 2 },
-  skillCat: { fontSize: 10, fontWeight: "bold", marginBottom: 3, marginTop: 4 },
-  skillItem: { fontSize: 9, marginLeft: 8, marginBottom: 1.5 },
-  itemTitle: { fontSize: 10, fontWeight: "bold", color: EU_BLUE },
-  itemBody: { fontSize: 9, marginBottom: 1 },
-  itemSection: { marginBottom: 5 },
+  bulletRow: { flexDirection: "row", marginLeft: 4, marginBottom: 2 },
+  bulletDot: { fontSize: 11.5, width: 10, color: "#444", lineHeight: 1.2 },
+  bulletTxt: { fontSize: 9.5, flex: 1, lineHeight: 1.45, textAlign: "justify" },
+  descTxt: { fontSize: 9.5, lineHeight: 1.45, textAlign: "justify" },
+  subheadTxt: { fontSize: 9.5, fontWeight: "bold", marginTop: 3, marginBottom: 1, marginLeft: 4 },
+  degreeTitle: { fontSize: 10.5, fontWeight: "bold", color: EU_BLUE },
+  instLine: { fontSize: 10.5, fontStyle: "italic", marginBottom: 2 },
+  skillCat: { fontSize: 10.5, fontWeight: "bold", marginBottom: 3, marginTop: 5 },
+  skillItem: { fontSize: 9.5, marginLeft: 8, marginBottom: 2 },
+  itemTitle: { fontSize: 10.5, fontWeight: "bold", color: EU_BLUE },
+  itemBody: { fontSize: 9.5, marginBottom: 1 },
+  itemSection: { marginBottom: 6 },
+  sectionWrap: { paddingTop: 12 },
+  titleGuard: { flexDirection: "row", flexWrap: "nowrap" },
 });
 
 function BulletList({ text }: { text: string }) {
@@ -190,7 +199,7 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
         <View>
           <Text style={styles.sectionTitle}>EXPERIENCIA LABORAL</Text>
           {data.experience.items.map((exp, i) => (
-            <View key={exp.id ?? i} style={styles.entry}>
+            <View key={exp.id ?? i} style={styles.entry} wrap={false}>
               {exp.position && <Text style={styles.jobTitle}>{exp.position}</Text>}
               {(exp.company || exp.duration) && (
                 <Text style={styles.companyLine}>
@@ -214,7 +223,7 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
         <View>
           <Text style={styles.sectionTitle}>EDUCACIÓN Y FORMACIÓN</Text>
           {data.education.items.map((edu, i) => (
-            <View key={edu.id ?? i} style={styles.entry}>
+            <View key={edu.id ?? i} style={styles.entry} wrap={false}>
               {edu.title && <Text style={styles.degreeTitle}>{edu.title}</Text>}
               {(edu.institution || edu.year) && (
                 <Text style={styles.instLine}>
@@ -285,10 +294,10 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
         <View>
           <Text style={styles.sectionTitle}>PROYECTOS</Text>
           {data.projects.items.map((p, i) => (
-            <View key={p.id ?? i} style={styles.entry}>
+            <View key={p.id ?? i} style={styles.entry} wrap={false}>
               {p.title && <Text style={styles.itemTitle}>{p.title}</Text>}
               {p.duration && <Text style={styles.companyLine}>[ {p.duration} ]</Text>}
-              {p.description && <Text style={styles.bulletTxt}>{p.description}</Text>}
+              {p.description && <Text style={styles.descTxt}>{p.description}</Text>}
               {p.technologies && (
                 <Text style={styles.itemBody}>
                   <Text style={styles.metaLabel}>Tecnologías: </Text>
@@ -305,7 +314,7 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
         <View>
           <Text style={styles.sectionTitle}>LOGROS Y RECONOCIMIENTOS</Text>
           {data.achievements.items.map((ach, i) => (
-            <View key={ach.id ?? i} style={styles.itemSection}>
+            <View key={ach.id ?? i} style={styles.itemSection} wrap={false}>
               <Text style={styles.itemBody}>
                 {ach.title ? <Text style={styles.metaLabel}>{ach.title}: </Text> : null}
                 {ach.description}
@@ -320,7 +329,7 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
         <View>
           <Text style={styles.sectionTitle}>CERTIFICACIONES</Text>
           {data.certifications.items.map((cert, i) => (
-            <View key={cert.id ?? i} style={styles.itemSection}>
+            <View key={cert.id ?? i} style={styles.itemSection} wrap={false}>
               {cert.name && <Text style={styles.itemTitle}>{cert.name}</Text>}
               {cert.issuer && <Text style={styles.itemBody}>por {cert.issuer}</Text>}
               {cert.date && <Text style={styles.itemBody}>{cert.date}</Text>}
@@ -334,7 +343,7 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
         <View>
           <Text style={styles.sectionTitle}>VOLUNTARIADO</Text>
           {data.volunteering.items.map((vol, i) => (
-            <View key={vol.id ?? i} style={styles.entry}>
+            <View key={vol.id ?? i} style={styles.entry} wrap={false}>
               {vol.position && <Text style={styles.jobTitle}>{vol.position}</Text>}
               {(vol.organization || vol.duration) && (
                 <Text style={styles.companyLine}>
@@ -357,9 +366,13 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {/* Barras azules laterales */}
-        <View style={styles.leftBar} />
-        <View style={styles.rightBar} />
+        {/* Marco tipo esquina ┌─┐└─┘ – fixed para repetir en cada página */}
+        <View style={styles.topBar} fixed />
+        <View style={styles.bottomBar} fixed />
+        <View style={styles.leftBarTop} fixed />
+        <View style={styles.rightBarTop} fixed />
+        <View style={styles.leftBarBottom} fixed />
+        <View style={styles.rightBarBottom} fixed />
 
         {/* Logo Europass – arriba a la derecha */}
         <View style={styles.topRow}>
@@ -370,7 +383,9 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
         {/* Cabecera: foto + nombre + contacto */}
         <View style={styles.headerRow}>
           {data.personal?.image ? (
-            <Image src={data.personal.image} style={styles.photo} />
+            <View style={styles.photoWrap}>
+              <Image src={data.personal.image} style={{ width: 75, height: 75, objectFit: "cover" }} />
+            </View>
           ) : null}
           <View style={styles.headerInfo}>
             <Text style={styles.fullName}>{data.personal?.fullName ?? ""}</Text>
@@ -435,7 +450,7 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
           const renderer = sectionRenderers[section.id];
           if (!renderer) return null;
           const el = renderer();
-          return el ? <View key={section.id}>{el}</View> : null;
+          return el ? <View key={section.id} style={styles.sectionWrap}>{el}</View> : null;
         })}
       </Page>
     </Document>

@@ -6,11 +6,11 @@
 -- the enum.
 
 
-ALTER TYPE "RouteStatus" ADD VALUE 'ROADMAP_PENDING';
-ALTER TYPE "RouteStatus" ADD VALUE 'ROADMAP_DONE';
+ALTER TYPE "RouteStatus" ADD VALUE IF NOT EXISTS 'ROADMAP_PENDING';
+ALTER TYPE "RouteStatus" ADD VALUE IF NOT EXISTS 'ROADMAP_DONE';
 
 -- CreateTable
-CREATE TABLE "roadmap" (
+CREATE TABLE IF NOT EXISTS "roadmap" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "cvId" TEXT NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE "roadmap" (
 );
 
 -- CreateTable
-CREATE TABLE "roadmap_step" (
+CREATE TABLE IF NOT EXISTS "roadmap_step" (
     "id" TEXT NOT NULL,
     "roadmapId" TEXT NOT NULL,
     "order" INTEGER NOT NULL,
@@ -42,22 +42,46 @@ CREATE TABLE "roadmap_step" (
 );
 
 -- CreateIndex
-CREATE INDEX "roadmap_userId_idx" ON "roadmap"("userId");
+CREATE INDEX IF NOT EXISTS "roadmap_userId_idx" ON "roadmap"("userId");
 
 -- CreateIndex
-CREATE INDEX "roadmap_cvId_idx" ON "roadmap"("cvId");
+CREATE INDEX IF NOT EXISTS "roadmap_cvId_idx" ON "roadmap"("cvId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "roadmap_opportunityId_cvId_userId_key" ON "roadmap"("opportunityId", "cvId", "userId");
+CREATE UNIQUE INDEX IF NOT EXISTS "roadmap_opportunityId_cvId_userId_key" ON "roadmap"("opportunityId", "cvId", "userId");
 
 -- CreateIndex
-CREATE INDEX "roadmap_step_roadmapId_order_idx" ON "roadmap_step"("roadmapId", "order");
+CREATE INDEX IF NOT EXISTS "roadmap_step_roadmapId_order_idx" ON "roadmap_step"("roadmapId", "order");
 
 -- AddForeignKey
-ALTER TABLE "roadmap" ADD CONSTRAINT "roadmap_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint
+        WHERE conname = 'roadmap_userId_fkey'
+    ) THEN
+        ALTER TABLE "roadmap" ADD CONSTRAINT "roadmap_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "roadmap" ADD CONSTRAINT "roadmap_opportunityId_cvId_fkey" FOREIGN KEY ("opportunityId", "cvId") REFERENCES "opportunity"("id", "cvId") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint
+        WHERE conname = 'roadmap_opportunityId_cvId_fkey'
+    ) THEN
+        ALTER TABLE "roadmap" ADD CONSTRAINT "roadmap_opportunityId_cvId_fkey" FOREIGN KEY ("opportunityId", "cvId") REFERENCES "opportunity"("id", "cvId") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "roadmap_step" ADD CONSTRAINT "roadmap_step_roadmapId_fkey" FOREIGN KEY ("roadmapId") REFERENCES "roadmap"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint
+        WHERE conname = 'roadmap_step_roadmapId_fkey'
+    ) THEN
+        ALTER TABLE "roadmap_step" ADD CONSTRAINT "roadmap_step_roadmapId_fkey" FOREIGN KEY ("roadmapId") REFERENCES "roadmap"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;

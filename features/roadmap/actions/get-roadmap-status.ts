@@ -22,8 +22,37 @@ export async function getRoadmapStatus(
           userId: user.id,
         },
       },
-      select: { id: true, status: true },
+      select: {
+        id: true,
+        status: true,
+        createdByJobId: true,
+        _count: { select: { steps: true } },
+      },
     });
+
+    if (
+      roadmap &&
+      roadmap.status === "IN_PROGRESS" &&
+      roadmap.createdByJobId &&
+      roadmap._count.steps > 0
+    ) {
+      const job = await prisma.queueJob.findUnique({
+        where: { id: roadmap.createdByJobId },
+        select: { status: true },
+      });
+
+      if (job?.status === "SUCCEEDED") {
+        await prisma.roadmap.update({
+          where: { id: roadmap.id },
+          data: { status: "SUCCEEDED" },
+        });
+
+        return {
+          status: "SUCCEEDED",
+          roadmapId: roadmap.id,
+        };
+      }
+    }
 
     return {
       status: roadmap?.status ?? null,

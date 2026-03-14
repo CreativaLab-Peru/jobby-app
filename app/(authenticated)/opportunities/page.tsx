@@ -2,6 +2,7 @@ import OpportunitiesScreen from "@/features/opportunities/screens/opportunites-s
 import {getOpportunities, paginationParams} from "@/features/opportunities/get-opportunities";
 import {getAllCvForCurrentUser} from "@/features/cv/actions/get-all-cv-for-current-user";
 import {getActiveRoute} from "@/features/routes/actions/get-active-route";
+import { getStatisticsForUser } from "@/features/dashboard/actions/get-statistics-for-user";
 
 type OpportunitiesPageProps = {
   searchParams?: Promise<{
@@ -29,6 +30,9 @@ export default async function OpportunitiesPage({
     getAllCvForCurrentUser(0, 50),
   ]);
 
+  const stats = await getStatisticsForUser();
+  const hasSubscription = Boolean(stats?.subscription && ["starter", "pro"].includes(stats.subscription.plan.slug));
+
   const hasMore = data ? data.hasMore : false;
   const initialCvs = cvData.cvs;
 
@@ -39,6 +43,7 @@ export default async function OpportunitiesPage({
       hasMoreProp={hasMore}
       totalCount={data?.totalCount || 0}
       currentFilterCvId={cvId || null}
+      hasSubscription={hasSubscription}
     />
   );
 }

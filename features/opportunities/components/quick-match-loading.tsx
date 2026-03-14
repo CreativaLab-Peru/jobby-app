@@ -2,7 +2,7 @@
 
 import {motion, AnimatePresence} from "framer-motion";
 import {Rocket, Target, Zap, Search} from "lucide-react";
-import {useEffect, useState, useTransition} from "react";
+import {useEffect, useRef, useState, useTransition} from "react";
 import {useRouter} from "next/navigation";
 
 interface QuickMatchLoadingModalProps {
@@ -13,6 +13,7 @@ export function QuickMatchLoading({cvId}: QuickMatchLoadingModalProps) {
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const [isPending, startTransition] = useTransition(); // Para una navegación suave
+  const hasNavigatedRef = useRef(false);
   const router = useRouter();
 
   const steps = [
@@ -37,12 +38,6 @@ export function QuickMatchLoading({cvId}: QuickMatchLoadingModalProps) {
 
         if (nextValue >= 100) {
           clearInterval(progressTimer);
-
-          // --- NAVEGACIÓN ATÓMICA ---
-          // Usamos startTransition para que Next.js priorice
-          // la renderización de la nueva página
-          router.push(`/opportunities?cvId=${cvId}`);
-          router.refresh(); // Forzamos al SSR a buscar nuevos datos
           return 100;
         }
         return nextValue;
@@ -57,7 +52,16 @@ export function QuickMatchLoading({cvId}: QuickMatchLoadingModalProps) {
       clearInterval(progressTimer);
       clearInterval(stepTimer);
     };
-  }, [cvId, router]);
+  }, [cvId]);
+
+  useEffect(() => {
+    if (!cvId || progress < 100 || hasNavigatedRef.current) return;
+    hasNavigatedRef.current = true;
+
+    startTransition(() => {
+      router.push(`/opportunities?cvId=${cvId}`);
+    });
+  }, [progress, cvId, router, startTransition]);
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background">

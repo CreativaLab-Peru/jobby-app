@@ -2,7 +2,7 @@ import { inngest } from "@/inngest/functions/client";
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import { prisma } from "@/lib/prisma";
-import { getCurrentCreditLimits } from "@/features/credits/actions/get-current-credits-limits";
+import { getRoadmapGenerationPermissionByUser } from "@/features/roadmap/actions/get-roadmap-generation-permission";
 
 interface GenerateRoadmapBody {
   opportunityId: string;
@@ -65,13 +65,17 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verify credit limits
-    const creditLimits = await getCurrentCreditLimits();
-    if (creditLimits.aiActionsLimit <= 0) {
+    const permission = await getRoadmapGenerationPermissionByUser(
+      currentUser.id,
+      opportunityId,
+      cvId,
+    );
+
+    if (!permission.canGenerate) {
       return NextResponse.json(
         {
           success: false,
-          message: "No tienes créditos disponibles. Actualiza tu plan.",
+          message: permission.message || "No puedes generar roadmap para esta oportunidad.",
         },
         { status: 403 },
       );

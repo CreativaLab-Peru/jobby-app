@@ -1,3 +1,11 @@
+# WIP
+
+## Fix
+- Plan-based access to opportunities (FREE/STARTER: first only, PRO: all) with simplified blur + CTA lock.
+- Improved roadmap generation UX with fullscreen loading and fixed `IN_PROGRESS` status issue after completion.
+
+---
+
 # v1.1.28 - 2026-03-12
 
 ## Features

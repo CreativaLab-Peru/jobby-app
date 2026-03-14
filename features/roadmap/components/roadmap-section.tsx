@@ -11,6 +11,8 @@ interface RoadmapSectionProps {
   cvId: string;
   initialRoadmap: RoadmapData;
   canViewFull: boolean;
+  canGenerate?: boolean;
+  blockedMessage?: string | null;
 }
 
 /**
@@ -22,6 +24,8 @@ export function RoadmapSection({
   cvId,
   initialRoadmap,
   canViewFull,
+  canGenerate = true,
+  blockedMessage = null,
 }: RoadmapSectionProps) {
   const router = useRouter();
 
@@ -54,6 +58,8 @@ export function RoadmapSection({
         cvId={cvId}
         existingStatus={initialRoadmap?.status ?? null}
         onGenerated={handleGenerated}
+        canGenerate={canGenerate}
+        blockedMessage={blockedMessage}
       />
     </div>
   );

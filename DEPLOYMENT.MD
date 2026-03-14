@@ -1,13 +1,27 @@
 # WIP
 
 ### BEFORE DEPLOYMENT
+- Migrations included in this release:
+  - `20260312045719_add_route_model`
+  - `20260312054210_add_improvements_json_to_evaluation`
+  - `20260312063620_add_roadmap_models`
+- These migrations are additive and idempotent (`IF NOT EXISTS` / `ADD VALUE IF NOT EXISTS`), designed to avoid failures when objects already exist.
+- Pre-deploy checks:
+  - Verify a recent DB backup/snapshot exists.
+  - Run migrations first in staging with production-like data.
+  - Validate `bunx prisma migrate status` returns no pending/failed migrations.
+- Post-deploy smoke checks:
+  - Verify opportunities match flow creates and lists records.
+  - Verify roadmap generation transitions to `SUCCEEDED` and persists steps.
+  - Verify route statuses advance to `OPPORTUNITIES_DONE` / `ROADMAP_DONE` where applicable.
+
+### BEFORE DEPLOYMENT
 - Run migration `20260311002011_add_template_id_to_cv` — adds `templateId TEXT NOT NULL DEFAULT 'harvard'` to `cv` table.
 - Run migration `20260312000454_add_cv_template_model` — creates `cv_template` table and seeds the 4 initial templates (`harvard`, `europass`, `stem`, `fullbright`). Adds FK from `cv.templateId`.
 - Run migration `20260312010952_add_cv_photo` — creates `cv_photo` table linked to `user`.
 - No new environment variables required.
 
 ---
-
 
 ### BEFORE DEPLOYMENT
 - Run migration `20260310040541_credit_package_plan_relation` — adds `planId` column and relation to `credit_package` table, linking each package to a `PaymentPlan` (`migrate deploy` handles this automatically in the build script).

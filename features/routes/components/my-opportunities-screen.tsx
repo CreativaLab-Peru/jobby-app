@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { AnimatePresence, motion } from "framer-motion";
 import OpportunityCard from "@/features/opportunities/components/opportunity-card";
 import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { LoadMoreButton } from "@/components/shared/load-more-button";
 import { Button } from "@/components/ui/button";
@@ -51,11 +51,15 @@ export default function MyOpportunitiesScreen({
   const searchParams = useSearchParams();
   const [isLockedMode, setIsLockedMode] = useState(false);
   const router = useRouter();
+  const hasOpenedFromMatchParamRef = useRef(false);
 
   // Auto-abrir modal si se navega con ?match=true
   useEffect(() => {
+    if (hasOpenedFromMatchParamRef.current) return;
     if (!hasCv || !cvId) return;
     if (searchParams.get("match") !== "true") return;
+
+    hasOpenedFromMatchParamRef.current = true;
 
     // Limpiar el query param de la URL sin recargar
     router.replace("/my-opportunities", { scroll: false });
@@ -73,8 +77,7 @@ export default function MyOpportunitiesScreen({
         console.error("Error al cargar CVs:", error);
       }
     })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [hasCv, cvId, searchParams, router, onOpen, setSelectedCvId]);
 
   // Aplicar blur mode para cuentas sin suscripción (mostrar solo la primera oportunidad)
   useEffect(() => {
@@ -83,7 +86,6 @@ export default function MyOpportunitiesScreen({
       return;
     }
     setIsLockedMode(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasSubscription, totalCount]);
 
   // Debounce

@@ -8,12 +8,10 @@ import {
   ArrowDown,
   Loader2,
   Copy,
-  Check
 } from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import {toast} from "sonner";
-import {applyImprovement} from "@/features/analysis/actions/apply-improvement";
 import {SECTION_LABELS} from "@/const";
 
 import {

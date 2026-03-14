@@ -6,7 +6,8 @@ import { PageHeader } from "@/components/shared/page-header";
 import { AnimatePresence, motion } from "framer-motion";
 import OpportunityCard from "@/features/opportunities/components/opportunity-card";
 import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition, useEffect, useRef } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { LoadMoreButton } from "@/components/shared/load-more-button";
 import { Button } from "@/components/ui/button";
 import { QuickMatchCvModal } from "@/features/opportunities/components/quick-match-cv-modal";
@@ -25,6 +26,7 @@ interface MyOpportunitiesScreenProps {
   totalCount: number;
   hasCv: boolean;
   cvId: string | null;
+  hasSubscription: boolean;
 }
 
 export default function MyOpportunitiesScreen({
@@ -33,6 +35,7 @@ export default function MyOpportunitiesScreen({
   totalCount: initialTotal,
   hasCv,
   cvId,
+  hasSubscription,
 }: MyOpportunitiesScreenProps) {
   const [opportunities, setOpportunities] = useState<RouteOpportunity[]>(initialData);
   const [hasMore, setHasMore] = useState(hasMoreProp);
@@ -45,6 +48,45 @@ export default function MyOpportunitiesScreen({
 
   const { onOpen, setSelectedCvId } = useQuickMatchModalStore();
   const { credits } = useCredits();
+  const searchParams = useSearchParams();
+  const [isLockedMode, setIsLockedMode] = useState(false);
+  const router = useRouter();
+  const hasOpenedFromMatchParamRef = useRef(false);
+
+  // Auto-abrir modal si se navega con ?match=true
+  useEffect(() => {
+    if (hasOpenedFromMatchParamRef.current) return;
+    if (!hasCv || !cvId) return;
+    if (searchParams.get("match") !== "true") return;
+
+    hasOpenedFromMatchParamRef.current = true;
+
+    // Limpiar el query param de la URL sin recargar
+    router.replace("/my-opportunities", { scroll: false });
+
+    (async () => {
+      try {
+        const cvData = await getAllCvForCurrentUser(0, 100);
+        if (cvData?.cvs) {
+          const routeCv = cvData.cvs.filter((cv) => cv.id === cvId);
+          setCvs(routeCv);
+          setSelectedCvId(cvId);
+          onOpen();
+        }
+      } catch (error) {
+        console.error("Error al cargar CVs:", error);
+      }
+    })();
+  }, [hasCv, cvId, searchParams, router, onOpen, setSelectedCvId]);
+
+  // Aplicar blur mode para cuentas sin suscripción (mostrar solo la primera oportunidad)
+  useEffect(() => {
+    if (!hasSubscription && totalCount > 1) {
+      setIsLockedMode(true);
+      return;
+    }
+    setIsLockedMode(false);
+  }, [hasSubscription, totalCount]);
 
   // Debounce
   useEffect(() => {
@@ -84,13 +126,14 @@ export default function MyOpportunitiesScreen({
   };
 
   const handleQuickMatch = async () => {
+    if (!cvId) return;
     setIsCvsLoading(true);
     try {
       const cvData = await getAllCvForCurrentUser(0, 100);
-      console.log("[cvData]", cvData)
       if (cvData?.cvs) {
-        setCvs(cvData.cvs);
-        if (cvId) setSelectedCvId(cvId);
+        const routeCv = cvData.cvs.filter((cv) => cv.id === cvId);
+        setCvs(routeCv);
+        setSelectedCvId(cvId);
         onOpen();
       }
     } catch (error) {
@@ -167,11 +210,28 @@ export default function MyOpportunitiesScreen({
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.3, delay: (index % 10) * 0.05 }}
                           >
-                            <OpportunityCard opportunity={opt} />
+                            <div className="relative">
+                              <div className={isLockedMode && index !== 0 ? 'filter blur-sm grayscale-[40%] pointer-events-none select-none' : ''}>
+                                <OpportunityCard opportunity={opt} />
+                              </div>
+                            </div>
                           </motion.div>
                         ))}
                       </AnimatePresence>
                     </div>
+                    {isLockedMode && opportunities.length > 1 && (
+                      <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+                        <div className="max-w-sm w-full mx-4 text-center p-6 rounded-2xl border border-border bg-background/90 backdrop-blur-sm shadow-xl pointer-events-auto">
+                          <p className="font-bold text-foreground mb-2">Contenido bloqueado</p>
+                          <p className="text-sm text-muted-foreground mb-4">Actualiza a Starter o Pro para ver todas las oportunidades.</p>
+                          <div className="flex justify-center">
+                            <Button size="sm" onClick={() => router.push('/credits')}>
+                              Ver planes
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     <LoadMoreButton
                       handleLoadMore={handleLoadMore}
                       hasMore={hasMore}

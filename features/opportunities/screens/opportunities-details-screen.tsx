@@ -26,6 +26,8 @@ interface Props {
   formattedDeadline: string | null;
   roadmap?: RoadmapData;
   canViewFullRoadmap?: boolean;
+  canGenerateRoadmap?: boolean;
+  roadmapBlockedMessage?: string | null;
 }
 
 // Sub-componente interno para limpieza visual
@@ -48,6 +50,8 @@ export function OpportunityDetailsScreen({
                                            formattedDeadline,
                                            roadmap = null,
                                            canViewFullRoadmap = false,
+                                           canGenerateRoadmap = true,
+                                           roadmapBlockedMessage = null,
                                          }: Props) {
 
   const { required, optional } = requirements;
@@ -205,6 +209,8 @@ export function OpportunityDetailsScreen({
                   cvId={opportunity.cv.id}
                   initialRoadmap={roadmap}
                   canViewFull={canViewFullRoadmap}
+                  canGenerate={canGenerateRoadmap}
+                  blockedMessage={roadmapBlockedMessage}
                 />
               </CardContent>
             </Card>

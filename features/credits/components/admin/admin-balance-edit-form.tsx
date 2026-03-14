@@ -14,6 +14,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/shared/page-header";
 import { AdminBalanceDetail } from "@/features/credits/actions/admin/get-admin-balance-by-id";
 import { updateAdminBalance } from "@/features/credits/actions/admin/update-admin-balance";
+import { addAdminCredits } from "@/features/credits/actions/admin/add-admin-credits";
+import { CreditBalanceType } from "@prisma/client";
 import { routes } from "@/lib/routes";
 
 const BALANCE_TYPE_LABELS: Record<string, string> = {
@@ -29,6 +31,8 @@ interface AdminBalanceEditFormProps {
 
 export function AdminBalanceEditForm({ balance }: AdminBalanceEditFormProps) {
   const [amount, setAmount] = useState(balance.amount);
+  const [selectedType, setSelectedType] = useState<CreditBalanceType>(balance.type as CreditBalanceType);
+  const [isAddMode, setIsAddMode] = useState(true);
   const [reason, setReason] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -41,18 +45,38 @@ export function AdminBalanceEditForm({ balance }: AdminBalanceEditFormProps) {
     e.preventDefault();
     setIsLoading(true);
 
-    const result = await updateAdminBalance(balance.id, {
-      amount,
-      reason: reason.trim() || undefined,
-    });
+    try {
+      if (isAddMode) {
+        // amount field is treated as delta to add
+        const delta = amount;
+        const res = await addAdminCredits(balance.userId, selectedType, delta, reason.trim() || undefined);
+        if (res.success) {
+          toast.success(res.message);
+          router.push(routes.app.admin.balances.detail(res.balanceId));
+          router.refresh();
+        } else {
+          const errorMsg = "error" in res ? res.error : "Error aplicando créditos";
+          toast.error(errorMsg);
+        }
+      } else {
+        // replace behavior on the current balance id (keeps existing semantics)
+        const result = await updateAdminBalance(balance.id, {
+          amount,
+          reason: reason.trim() || undefined,
+        });
 
-    if (result.success) {
-      toast.success(result.message);
-      router.push(routes.app.admin.balances.detail(balance.id));
-      router.refresh();
-    } else {
-      const errorMsg = (result as { error: string }).error || "Error actualizando balance";
-      toast.error(errorMsg);
+        if (result.success) {
+          toast.success(result.message);
+          router.push(routes.app.admin.balances.detail(balance.id));
+          router.refresh();
+        } else {
+          const errorMsg = (result as { error: string }).error || "Error actualizando balance";
+          toast.error(errorMsg);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error procesando la solicitud");
     }
 
     setIsLoading(false);
@@ -85,13 +109,24 @@ export function AdminBalanceEditForm({ balance }: AdminBalanceEditFormProps) {
               {/* Amount */}
               <div className="space-y-2">
                 <Label htmlFor="amount" className="text-sm font-semibold">Nuevo monto de creditos</Label>
-                <Input
-                  id="amount"
-                  type="number"
-                  value={amount}
-                  onChange={(e) => setAmount(parseInt(e.target.value) || 0)}
-                  disabled={isLoading}
-                />
+                <div className="flex gap-2">
+                  <Input
+                    id="amount"
+                    type="number"
+                    value={amount}
+                    onChange={(e) => setAmount(parseInt(e.target.value) || 0)}
+                    disabled={isLoading}
+                  />
+                  <select className="px-3 rounded-lg border" value={selectedType} onChange={(e) => setSelectedType(e.target.value as CreditBalanceType)}>
+                    {Object.entries(BALANCE_TYPE_LABELS).map(([key, label]) => (
+                      <option key={key} value={key}>{label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input id="addMode" type="checkbox" checked={isAddMode} onChange={(e) => setIsAddMode(e.target.checked)} />
+                  <label htmlFor="addMode" className="text-xs">Agregar al balance seleccionado (si está marcado). Si no, reemplaza el balance actual.</label>
+                </div>
                 {diff !== 0 && (
                   <p className={`text-xs font-semibold ${diff > 0 ? "text-green-600" : "text-red-600"}`}>
                     {diff > 0 ? `+${diff}` : diff} creditos ({diff > 0 ? "recarga" : "consumo"})

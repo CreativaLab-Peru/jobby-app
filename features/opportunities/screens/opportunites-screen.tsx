@@ -32,6 +32,7 @@ interface Props {
   hasMoreProp?: boolean;
   totalCount?: number;
   currentFilterCvId: string | null;
+  hasSubscription: boolean;
 }
 
 export default function OpportunitiesScreen({
@@ -39,7 +40,8 @@ export default function OpportunitiesScreen({
                                               initialCvs,
                                               totalCount: initialTotal,
                                               hasMoreProp,
-                                              currentFilterCvId
+                                              currentFilterCvId,
+                                              hasSubscription
                                             }: Props) {
   const [opportunities, setOpportunities] = useState<(
     Opportunity & {
@@ -56,10 +58,19 @@ export default function OpportunitiesScreen({
   const [cvs, setCvs] = useState<CvWithRelations[]>([]);
   const [isCvsLoading, setIsCvsLoading] = useState(false);
   const [filterCvId, setFilterCvId] = useState<string | null>(currentFilterCvId);
+  const [isLockedMode, setIsLockedMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const {onOpen, setSelectedCvId} = useQuickMatchModalStore();
   const {credits} = useCredits();
+
+  useEffect(() => {
+    if (!hasSubscription && opportunities.length > 1) {
+      setIsLockedMode(true);
+      return;
+    }
+    setIsLockedMode(false);
+  }, [hasSubscription, opportunities.length]);
 
   const cvOptions = initialCvs.map(cv => ({
     value: cv.id,
@@ -210,11 +221,29 @@ export default function OpportunitiesScreen({
                         animate={{opacity: 1, scale: 1}}
                         transition={{duration: 0.3, delay: (index % 10) * 0.05}}
                       >
-                        <OpportunityCard opportunity={opt}/>
+                        <div className="relative">
+                          <div className={isLockedMode && index !== 0 ? 'filter blur-sm grayscale-[40%] pointer-events-none select-none' : ''}>
+                            <OpportunityCard opportunity={opt}/>
+                          </div>
+                        </div>
                       </motion.div>
                     ))}
                   </AnimatePresence>
                 </div>
+
+                {isLockedMode && opportunities.length > 1 && (
+                  <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+                    <div className="max-w-sm w-full mx-4 text-center p-6 rounded-2xl border border-border bg-background/90 backdrop-blur-sm shadow-xl pointer-events-auto">
+                      <p className="font-bold text-foreground mb-2">Contenido bloqueado</p>
+                      <p className="text-sm text-muted-foreground mb-4">Actualiza a Starter o Pro para ver todas las oportunidades.</p>
+                      <div className="flex justify-center">
+                        <Button size="sm" onClick={() => window.location.href = '/credits'}>
+                          Ver planes
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Load More Button */}
                 <LoadMoreButton

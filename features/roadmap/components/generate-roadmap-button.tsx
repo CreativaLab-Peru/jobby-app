@@ -11,6 +11,8 @@ interface GenerateRoadmapButtonProps {
   cvId: string;
   existingStatus: string | null;
   onGenerated: () => void;
+  canGenerate?: boolean;
+  blockedMessage?: string | null;
 }
 
 export function GenerateRoadmapButton({
@@ -18,11 +20,14 @@ export function GenerateRoadmapButton({
   cvId,
   existingStatus,
   onGenerated,
+  canGenerate = true,
+  blockedMessage = null,
 }: GenerateRoadmapButtonProps) {
   const [status, setStatus] = useState(existingStatus);
   const [isTriggering, setIsTriggering] = useState(false);
 
   const isProcessing = status === "PENDING" || status === "IN_PROGRESS";
+  const showFullscreenLoading = isTriggering || isProcessing;
 
   // Poll while processing
   useEffect(() => {
@@ -77,10 +82,27 @@ export function GenerateRoadmapButton({
 
   if (isProcessing) {
     return (
-      <Button disabled size="sm" variant="outline" className="rounded-xl font-bold text-xs">
-        <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" />
-        Generando roadmap...
-      </Button>
+      <>
+        <Button disabled size="sm" variant="outline" className="rounded-xl font-bold text-xs">
+          <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" />
+          Generando roadmap...
+        </Button>
+        {showFullscreenLoading && (
+          <div className="fixed inset-0 z-[120] bg-background/95 backdrop-blur-sm flex items-center justify-center">
+            <div className="text-center space-y-4 px-6">
+              <div className="mx-auto h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <Loader2 className="h-7 w-7 text-primary animate-spin" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-lg font-black tracking-tight">Generando tu roadmap</p>
+                <p className="text-sm text-muted-foreground">
+                  Estamos construyendo tu plan personalizado. Esto puede tardar unos segundos.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
     );
   }
 
@@ -99,22 +121,58 @@ export function GenerateRoadmapButton({
     );
   }
 
+  if (!canGenerate) {
+    return (
+      <div className="space-y-2">
+        <Button
+          disabled
+          size="sm"
+          variant="outline"
+          className="rounded-xl font-bold text-xs"
+        >
+          <Map className="w-3.5 h-3.5 mr-2" />
+          Roadmap bloqueado
+        </Button>
+        {blockedMessage && (
+          <p className="text-xs text-muted-foreground max-w-sm mx-auto">{blockedMessage}</p>
+        )}
+      </div>
+    );
+  }
+
   // No roadmap yet or needs generation
   if (!status || status !== "SUCCEEDED") {
     return (
-      <Button
-        onClick={handleGenerate}
-        disabled={isTriggering}
-        size="sm"
-        className="rounded-xl font-bold text-xs"
-      >
-        {isTriggering ? (
-          <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" />
-        ) : (
-          <Map className="w-3.5 h-3.5 mr-2" />
+      <>
+        <Button
+          onClick={handleGenerate}
+          disabled={isTriggering}
+          size="sm"
+          className="rounded-xl font-bold text-xs"
+        >
+          {isTriggering ? (
+            <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" />
+          ) : (
+            <Map className="w-3.5 h-3.5 mr-2" />
+          )}
+          Generar Roadmap con IA
+        </Button>
+        {showFullscreenLoading && (
+          <div className="fixed inset-0 z-[120] bg-background/95 backdrop-blur-sm flex items-center justify-center">
+            <div className="text-center space-y-4 px-6">
+              <div className="mx-auto h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <Loader2 className="h-7 w-7 text-primary animate-spin" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-lg font-black tracking-tight">Generando tu roadmap</p>
+                <p className="text-sm text-muted-foreground">
+                  Estamos construyendo tu plan personalizado. Esto puede tardar unos segundos.
+                </p>
+              </div>
+            </div>
+          </div>
         )}
-        Generar Roadmap con IA
-      </Button>
+      </>
     );
   }
 

@@ -1,8 +1,7 @@
 import { inngest } from "./client";
 import { prisma } from "@/lib/prisma";
-import { CreditBalanceType, JobStatus, LogAction, LogLevel, RouteStatus } from "@prisma/client";
+import { JobStatus, LogAction, LogLevel, RouteStatus } from "@prisma/client";
 import { logsService } from "@/features/share/services/logs-service";
-import { consumeCredits } from "@/features/credits/actions/consume-credits";
 import { queryGemini } from "@/features/cv/queries/query-gemini";
 
 type RoadmapStepAI = {
@@ -211,17 +210,7 @@ IMPORTANTE: Responde SOLO en formato JSON válido con esta estructura exacta:
         });
       });
 
-      // 5. Consume credits
-      await step.run("consume-credits", async () => {
-        await consumeCredits({
-          userId,
-          type: CreditBalanceType.AI_ACTIONS,
-          amount: 1,
-          description: `Roadmap generado para oportunidad ${opportunity.title}`,
-        });
-      });
-
-      // 6. Advance route status
+      // 5. Advance route status
       await step.run("update-route", async () => {
         const route = await prisma.route.findFirst({
           where: { cvId, userId },
@@ -238,10 +227,18 @@ IMPORTANTE: Responde SOLO en formato JSON válido con esta estructura exacta:
         }
       });
 
-      // 7. Mark job as SUCCEEDED
+      // 6. Mark job as SUCCEEDED
       await prisma.queueJob.update({
         where: { id: job.id },
         data: { status: JobStatus.SUCCEEDED, finishedAt: new Date() },
+      });
+
+      // Ensure final roadmap status is SUCCEEDED in the last replayed invocation.
+      // Inngest can replay function execution across step boundaries and the top-level
+      // upsert sets IN_PROGRESS again, so we force the terminal status here.
+      await prisma.roadmap.update({
+        where: { id: roadmap.id },
+        data: { status: JobStatus.SUCCEEDED },
       });
 
       await logsService.createLog({

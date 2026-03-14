@@ -112,7 +112,9 @@ export default function RouteStepper({
         opportunitiesCount > 0
           ? `${opportunitiesCount} oportunidades encontradas`
           : "Descubre becas, programas y oportunidades globales alineadas a tu perfil.",
-      href: "/my-opportunities",
+      href: opportunitiesCount === 0 && cvId
+        ? "/my-opportunities?match=true"
+        : "/my-opportunities",
       icon: Briefcase,
       status: getStepStatus("ANALYSIS_DONE", "OPPORTUNITIES_DONE", routeStatus),
       cta: opportunitiesCount > 0 ? "Ver oportunidades" : "Buscar oportunidades",

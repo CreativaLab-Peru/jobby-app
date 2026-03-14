@@ -54,7 +54,7 @@ You must return **only one valid JSON object** following this structure:
    - PROJECTS → [{ title?, duration, description, technologies? }]
    - CERTIFICATIONS → [{ name, issuer?, year?, date? }]
    - LANGUAGES → [{ language, proficiency }]
-   - CONTACT → { fullName?, email?, phone?, linkedin?(just the additional name, not the completed URL), address?, summary? }
+   - CONTACT → { fullName?, email?, phone?, linkedin?, address?, summary? }
    - SUMMARY → { text }
    - VOLUNTEERING → [{ organization?, location?, position?, duration?, responsabilities? }]
    - ACHIEVEMENTS → [{ title?, description?, date? }]

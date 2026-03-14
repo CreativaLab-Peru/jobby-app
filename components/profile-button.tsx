@@ -1,57 +1,79 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  User, LogOut, Settings, BookA, Loader2, Home, ChevronRight
+} from "lucide-react";
+
+import { Button, ButtonProps } from "@/components/ui/button";
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-} from "@/components/ui/popover"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { User, LogOut, Settings, BookA, Loader2, Home } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { Separator } from "@/components/ui/separator"
-import { authClient } from "@/lib/auth-client"
-import { useState } from "react"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/popover";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import { useSidebar } from "@/components/ui/sidebar";
+import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
 
 interface ProfileButtonProps {
   user: {
-    id: string
-    name: string
-    email: string
-    image?: string
-  }
+    id: string;
+    name: string;
+    email: string;
+    image?: string | null;
+  } | null;
 }
 
 export function ProfileButton({ user }: ProfileButtonProps) {
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter();
+  const { state } = useSidebar();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const isCollapsed = state === "collapsed";
 
   const handleLogout = async () => {
     try {
-      setIsLoading(true)
-      await authClient.signOut()
-      router.push("/login")
+      setIsLoading(true);
+      await authClient.signOut();
+      router.push("/login");
     } catch (error) {
-      console.error("Error during logout:", error)
+      console.error("Logout failed:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
+
+  // Definición de acciones para evitar repetición (KISS)
+  const menuGroups = [
+    {
+      items: [
+        { label: "Inicio", icon: Home, onClick: () => router.push("/") },
+        { label: "Configuración", icon: Settings, onClick: () => router.push("/settings") },
+      ]
+    },
+    {
+      items: [
+        { label: "Libro de reclamaciones", icon: BookA, onClick: () => router.push("/complaints") },
+      ]
+    }
+  ];
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
-          className="h-10 w-10 rounded-full p-0 ring-offset-background transition-colors hover:bg-accent"
+          className={cn(
+            "relative h-10 w-10 rounded-full p-0 transition-all hover:ring-2 hover:ring-primary/20",
+            !isCollapsed && "hover:bg-accent"
+          )}
         >
-          <Avatar className="h-10 w-10 border border-border">
-            <AvatarImage
-              src={user?.image || "/images/user-avatar.png"}
-              alt="User avatar"
-            />
-            <AvatarFallback>
+          <Avatar className="h-10 w-10 border border-border shadow-sm">
+            <AvatarImage src={user?.image || ""} alt={user?.name || "Avatar"} />
+            <AvatarFallback className="bg-muted">
               <User className="h-5 w-5 text-muted-foreground" />
             </AvatarFallback>
           </Avatar>
@@ -59,100 +81,106 @@ export function ProfileButton({ user }: ProfileButtonProps) {
       </PopoverTrigger>
 
       <PopoverContent
-        align="end"
-        className="w-56 rounded-xl border border-border bg-popover p-2 text-popover-foreground shadow-lg"
+        side={isCollapsed ? "right" : "top"}
+        align={isCollapsed ? "end" : "center"}
+        sideOffset={15}
+        className="w-64 rounded-xl p-2 shadow-xl border-border bg-popover/95 backdrop-blur-md"
       >
-        <div className="flex flex-col gap-1">
-
-          {/* USER INFO */}
-          <div className="flex items-center gap-3 px-2 py-3 mb-1 border-b border-border">
-            <Avatar className="h-9 w-9 border border-border">
-              <AvatarImage
-                src={user?.image || "/images/user-avatar.png"}
-                alt="User avatar"
-              />
-              <AvatarFallback>
-                <User className="h-4 w-4 text-muted-foreground" />
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col min-w-0">
-              <span className="text-sm font-semibold truncate leading-none mb-1">
-                {user.name || "Usuario"}
-              </span>
-              <span className="text-xs text-muted-foreground truncate">
-                {user.email}
-              </span>
-            </div>
+        {/* Header con Info de Usuario */}
+        <div className="flex items-center gap-3 px-3 py-4 mb-2 bg-muted/30 rounded-lg">
+          <Avatar className="h-10 w-10 border border-background">
+            <AvatarImage src={user?.image || ""} />
+            <AvatarFallback><User className="h-4 w-4" /></AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col min-w-0">
+            <p className="text-sm font-bold truncate leading-none mb-1">
+              {user?.name || "Usuario"}
+            </p>
+            <p className="text-[11px] text-muted-foreground truncate font-medium">
+              {user?.email}
+            </p>
           </div>
+        </div>
 
-          {/* ACTIONS */}
-          <MenuButton onClick={() => router.push("/")}>
-            <Home className="h-4 w-4 text-muted-foreground" />
-            <span>Inicio</span>
-          </MenuButton>
+        <div className="space-y-1">
+          {menuGroups.map((group, idx) => (
+            <div key={idx}>
+              {group.items.map((item) => (
+                <MenuAction key={item.label} onClick={item.onClick} icon={item.icon}>
+                  {item.label}
+                </MenuAction>
+              ))}
+              <Separator className="my-1 opacity-50" />
+            </div>
+          ))}
 
-          <MenuButton onClick={() => router.push("/settings")}>
-            <Settings className="h-4 w-4 text-muted-foreground" />
-            <span>Configuración</span>
-          </MenuButton>
-
-
-
-          <Separator className="my-1 bg-border" />
-
-          <MenuButton onClick={() => router.push("/complaints")}>
-            <BookA className="h-4 w-4 text-muted-foreground" />
-            <span className='text-start'>Libro de reclamaciones</span>
-          </MenuButton>
-
-          <Separator className="my-1 bg-border" />
-
-          <MenuButton
+          {/* Logout con estado de carga */}
+          {/* Logout con estado de carga */}
+          <Button
+            variant="ghost"
             disabled={isLoading}
             onClick={handleLogout}
-            // @ts-ignore
-            variant={'destructive'}
+            className={cn(
+              "w-full justify-start gap-3 px-3 h-10 transition-all duration-200",
+              // Estado inicial: Texto rojo suave
+              "text-destructive",
+              // Estado Hover: Fondo rojo sólido y texto de contraste (blanco/negro según tema)
+              "hover:bg-destructive hover:text-destructive-foreground"
+            )}
           >
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              <>
-                <LogOut className="h-4 w-4" />
-                <span>Cerrar sesión</span>
-              </>
+              <LogOut className="h-4 w-4" />
             )}
-          </MenuButton>
+            <span className="font-medium text-sm">
+    {isLoading ? "Cerrando sesión..." : "Cerrar sesión"}
+  </span>
+          </Button>
+        </div>
 
-          {/* VERSION */}
-          <div className="py-1 text-center text-[10px] uppercase tracking-wider text-muted-foreground/60 font-medium">
-            Versión 1.0.0
-          </div>
+        <div className="mt-2 pt-2 border-t border-border/40 flex justify-center">
+          <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-muted-foreground/50">
+            Levely v1.0.0
+          </span>
         </div>
       </PopoverContent>
     </Popover>
-  )
+  );
 }
 
 /* -------------------------------------------------------------------------- */
-/* Helper Button                                */
+/* Sub-componente Interno: MenuAction                                         */
 /* -------------------------------------------------------------------------- */
 
-function MenuButton({
-                      children,
-                      className = "",
-                      ...props
-                    }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+interface MenuActionProps extends ButtonProps {
+  icon: React.ElementType;
+  children: React.ReactNode;
+}
+
+function MenuAction({ icon: Icon, children, className, ...props }: MenuActionProps) {
   return (
     <Button
       variant="ghost"
       size="sm"
       className={cn(
-        "w-full justify-start",
+        // Añadimos hover:text-accent-foreground para asegurar contraste en modo claro
+        "w-full justify-between px-3 h-10 font-medium group transition-all hover:bg-accent hover:text-accent-foreground",
         className
       )}
       {...props}
     >
-      {children}
+      <div className="flex items-center gap-3">
+        {/* El icono ahora cambia a foreground en hover para resaltar */}
+        <Icon className="h-4 w-4 text-muted-foreground group-hover:text-secondary transition-colors" />
+
+        {/* Forzamos que el texto sea claramente visible en hover */}
+        <span className="text-sm transition-colors">
+          {children}
+        </span>
+      </div>
+
+      <ChevronRight className="h-3 w-3 text-muted-secondary/30 group-hover:text-secondary/70 transition-all group-hover:translate-x-0.5" />
     </Button>
-  )
+  );
 }

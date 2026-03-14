@@ -43,8 +43,7 @@ export const cvTypes = [
   },
 ];
 
-
-export const OPPORTUNITY_CONFIG: Record<string, string> = {
+export const OPPORTUNITY_MAP: Record<string, string> = {
   INTERNSHIP: "Pasantía",
   SCHOLARSHIP: "Beca",
   EXCHANGE_PROGRAM: "Intercambio",

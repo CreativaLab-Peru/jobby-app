@@ -88,7 +88,7 @@ export default function RouteStepper({
       description: cvTitle
         ? `CV activo: "${cvTitle}"`
         : "Sube tu CV o crea uno desde cero para analizar tu potencial profesional.",
-      href: "/my-cv",
+      href: !cvId ? "/my-cv" : `/cv/${cvId}/preview`,
       icon: FileText,
       status: getStepStatus("CV_PENDING", "CV_CREATED", routeStatus),
       cta: cvId ? "Ver mi CV" : "Subir o crear CV",

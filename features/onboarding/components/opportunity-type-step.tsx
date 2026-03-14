@@ -3,7 +3,7 @@
 import { useOnboardingStore } from "@/features/onboarding/store/talent-onboarding-store";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
-import {OPPORTUNITY_CONFIG} from "@/const";
+import {OPPORTUNITY_MAP} from "@/const";
 
 export function OpportunityTypeStep() {
   const { formData, updateFormData, errors } = useOnboardingStore();
@@ -34,7 +34,7 @@ export function OpportunityTypeStep() {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {Object.entries(OPPORTUNITY_CONFIG).map(([key, label]) => {
+        {Object.entries(OPPORTUNITY_MAP).map(([key, label]) => {
           const isSelected = selectedTypes.includes(key);
           return (
             <button

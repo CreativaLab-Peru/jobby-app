@@ -267,6 +267,7 @@ export function RouteSelector() {
                 onClick={() => {
                   setOpen(false);
                   setShowCreate(true);
+                  router.push('/dashboard');
                 }}
                 className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-primary hover:bg-primary/5 transition-colors"
               >

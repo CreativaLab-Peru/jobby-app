@@ -83,7 +83,7 @@ export function PreviewCVComponent({
                 canAnalyze={canAnalyze}
                 analysisTokens={analysisTokens}
                 opportunitiesActionTokens={opportunitiesActionTokens}
-                onHome={() => router.push('/my-cv')}
+                onHome={() => router.push('/dashboard')}
                 onEditCV={() => router.push(cvId ? `/cv/${cvId}/edit` : '/my-cv')}
               />
               <TipCard opportunityType={opportunityType} />

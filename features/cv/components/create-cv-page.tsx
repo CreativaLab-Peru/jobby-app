@@ -146,7 +146,7 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType, template
                         />
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-6 space-y-6">
+                    <CardContent className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
                       <CVSectionForm
                         ref={formRef}
                         section={currentSection}

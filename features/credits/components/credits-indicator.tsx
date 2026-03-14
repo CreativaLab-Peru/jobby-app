@@ -61,10 +61,10 @@ export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
                 className="flex flex-1 items-center justify-between"
               >
                 <div className="flex flex-col items-start leading-none">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  <span className="text-[10px] font-bold text-muted-foreground">
                     Créditos
                   </span>
-                  <span className="text-sm font-bold text-foreground">
+                  <span className="text-xs font-bold text-foreground">
                     {totalAvailable} disponibles
                   </span>
                 </div>
@@ -83,7 +83,7 @@ export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
       >
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h4 className="font-semibold text-sm">Desglose de energía</h4>
+            <h4 className="font-semibold text-xs">Desglose de energía</h4>
             <Zap className="h-4 w-4 text-yellow-500" />
           </div>
 
@@ -140,7 +140,7 @@ export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
 // Sub-componente interno para mantener el código limpio (KISS)
 function CreditRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) {
   return (
-    <div className="flex items-center justify-between text-sm">
+    <div className="flex items-center justify-between text-xs">
       <div className="flex items-center gap-2 text-muted-foreground text-xs">
         {icon}
         <span>{label}</span>

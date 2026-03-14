@@ -100,8 +100,8 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-40 flex flex-col items-center justify-center overflow-y-auto px-4 py-8 md:px-8 bg-background/95">
-      <div className="mx-auto w-full max-w-7xl">
+    <div className="fixed inset-0 z-40 flex flex-col items-center justify-center overflow-y-auto px-4 py-8 md:px-8 bg-background">
+      <div className="mx-auto w-full max-w-3xl">
         {/* Header con gradiente del sistema */}
         <div className="text-center mb-16 mt-10">
           <h1 className="text-3xl sm:text-4xl font-black tracking-tighter text-foreground mb-3">

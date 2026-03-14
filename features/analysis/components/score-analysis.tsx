@@ -47,7 +47,7 @@ export default function AnalysisScore({
 
   return (
     <div className="pb-20 px-4 md:px-8">
-      <div className="mx-auto max-w-3xl py-8 space-y-8">
+      <div className="mx-auto max-w-7xl py-8 space-y-8">
         {/* 1. Header */}
         <AnalysisHeader />
 
@@ -64,7 +64,7 @@ export default function AnalysisScore({
         )}
 
         {/* 4. Recommendations */}
-        <RecommendationsSection recommendations={recommendations} />
+        {/*<RecommendationsSection recommendations={recommendations} />*/}
       </div>
     </div>
   )

@@ -1,4 +1,3 @@
-// page.tsx
 import { getEvaluationById } from "@/features/analysis/actions/get-score-by-id";
 import AnalysisScore from "@/features/analysis/components/score-analysis";
 import { mapEvaluationToAnalysis } from "@/features/analysis/dto/map-evaluation-to-analysis";

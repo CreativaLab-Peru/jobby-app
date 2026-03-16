@@ -1,171 +1,165 @@
 "use client"
 
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { CvType, OpportunityType } from "@prisma/client"
-import { cvTypes } from "@/const"
-
-const OPPORTUNITY_DESCRIPTIONS: Record<string, string> = {
-  [OpportunityType.INTERNSHIP]: "Oportunidades de prácticas profesionales.",
-  [OpportunityType.SCHOLARSHIP]: "Oportunidades de becas académicas.",
-  [OpportunityType.EXCHANGE_PROGRAM]: "Oportunidades de programas de intercambio.",
-  [OpportunityType.EMPLOYMENT]: "Oportunidades de empleo y trabajo.",
-  default: "Selecciona un tipo de oportunidad para ver su descripción."
-};
-
-const TEMPLATE_DESCRIPTIONS: Record<string, string> = {
-  harvard: "Diseño clásico y profesional, reconocido internacionalmente.",
-  europass: "Diseño europeo estructurado, ideal para becas de movilidad y Erasmus+.",
-  default: "Elige un diseño que se adapte a tu perfil y oportunidad."
-};
-
-const CV_TYPE_DESCRIPTIONS: Record<string, string> = {
-  [CvType.TECHNOLOGY_ENGINEERING]: "Ideal para perfiles en sistemas, software, innovación o data.",
-  [CvType.DESIGN_CREATIVITY]: "Para creativos visuales, diseñadores gráficos, UX/UI o artistas digitales.",
-  [CvType.MARKETING_STRATEGY]: "Para marketers, comunicadores o estrategas de contenido.",
-  [CvType.MANAGEMENT_BUSINESS]: "Para administración, emprendimiento o desarrollo comercial.",
-  [CvType.FINANCE_PROJECTS]: "Para gestión financiera, análisis económico o PMO.",
-  [CvType.SOCIAL_MEDIA]: "Para community managers, creadores de contenido o influencers.",
-  [CvType.EDUCATION]: "Para docentes, formadores, capacitadores o coaches.",
-  [CvType.SCIENCE]: "Para perfiles STEM, sostenibilidad, impacto o proyectos de investigación.",
-  default: "Selecciona un perfil profesional para ver su descripción."
-};
-
-export const opportunityTypes = [
-  { key: OpportunityType.INTERNSHIP, value: "Pasantía" },
-  { key: OpportunityType.SCHOLARSHIP, value: "Beca" },
-  { key: OpportunityType.EXCHANGE_PROGRAM, value: "Intercambio" },
-  { key: OpportunityType.EMPLOYMENT, value: "Empleo" },
-  { key: OpportunityType.STARTUP, value: "Aceleradora" },
-]
-
-// --- INTERFACES ---
-
-interface CVFormData {
-  title: string
-  cvType: CvType
-  opportunityType: OpportunityType
-  templateId?: string
-}
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FormField } from "@/components/form-field";
+import { CVFormData, cvFormSchema } from "@/features/cv/schema";
+import {cvTypes, languages, opportunities} from "@/const";
+import {useEffect, useRef} from "react";
 
 interface CVFormProps {
-  formData: CVFormData
-  onFormDataChange: (data: CVFormData) => void
+  defaultValues?: Partial<CVFormData>;
+  onValuesChange: (data: CVFormData) => void;
 }
 
-// --- COMPONENTES ATÓMICOS ---
+export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
+  const {
+    register,
+    setValue,
+    watch,
+    formState: { errors},
+  } = useForm<CVFormData>({
+    resolver: zodResolver(cvFormSchema),
+    defaultValues: {
+      title: "",
+      templateId: "harvard",
+      ...defaultValues,
+    },
+  });
 
-const HelperText = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-sm text-muted-foreground transition-all duration-200">
-    {children}
-  </p>
-);
+  const allValues = watch();
+  const prevValuesRef = useRef<string>("");
 
-// --- COMPONENTE PRINCIPAL ---
+  useEffect(() => {
+    const currentValuesStr = JSON.stringify(allValues);
 
-export function CVForm({ formData, onFormDataChange }: CVFormProps) {
+    // Solo notificamos al padre si los datos realmente cambiaron
+    if (prevValuesRef.current !== currentValuesStr) {
+      prevValuesRef.current = currentValuesStr;
+      onValuesChange(allValues);
+    }
+  }, [allValues, onValuesChange]);
 
-  const updateField = <K extends keyof CVFormData>(field: K, value: CVFormData[K]) => {
-    onFormDataChange({ ...formData, [field]: value });
-  };
-
-  const sharedStyles = {
-    trigger: "w-full border-secondary/20 focus:border-primary focus:ring-1 focus:ring-primary bg-background transition-colors",
-    item: "focus:bg-primary focus:text-primary-foreground cursor-pointer",
-    label: "text-sm font-semibold text-secondary-foreground/80"
-  };
+  // Suscripción a valores para lógica condicional y descripciones
+  const selectedOpportunity = watch("opportunityType");
+  const selectedTemplate = watch("templateId");
 
   return (
-    <div className="space-y-6 py-4">
+    <form className="space-y-6 py-4">
 
-      {/* 1. Título */}
-      <div className="space-y-2">
-        <Label htmlFor="title" className={sharedStyles.label}>Título del documento</Label>
-        <Input
-          id="title"
-          placeholder="Ejemplo: CV Ingeniero de Software"
-          value={formData.title}
-          onChange={(e) => updateField("title", e.target.value)}
-          className="focus-visible:ring-primary border-secondary/20"
-        />
-        <HelperText>El título ayudará a identificar este currículum en tu lista.</HelperText>
-      </div>
+      {/* 1. Título - Usando tu FormField Custom con register */}
+      <FormField
+        label="Nombre del CV"
+        placeholder="Ejemplo: CV Ingeniero de Software"
+        register={register("title")}
+        error={errors.title?.message}
+      />
 
-      {/* 2. Tipo de Oportunidad */}
+      {/* 2. Tipo de Oportunidad - Select (Manual porque Radix no usa ref) */}
       <div className="space-y-2">
-        <Label className={sharedStyles.label}>Tipo de Oportunidad</Label>
+        <Label className={errors.opportunityType ? "text-destructive" : ""}>
+          Tipo de Oportunidad
+        </Label>
         <Select
-          value={formData.opportunityType}
-          onValueChange={(v) => updateField("opportunityType", v as OpportunityType)}
+          onValueChange={(v) => setValue("opportunityType", v as any, { shouldValidate: true })}
+          defaultValue={defaultValues?.opportunityType}
         >
-          <SelectTrigger className={sharedStyles.trigger}>
+          <SelectTrigger className={errors.opportunityType ? "border-destructive" : ""}>
             <SelectValue placeholder="Selecciona el tipo" />
           </SelectTrigger>
           <SelectContent>
-            {opportunityTypes.map((t) => (
-              <SelectItem key={t.key} value={t.key} className={sharedStyles.item}>{t.value}</SelectItem>
+            {opportunities.map((t) => (
+              <SelectItem key={t.key} value={t.key}>{t.value}</SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <HelperText>
-          {OPPORTUNITY_DESCRIPTIONS[formData.opportunityType] || OPPORTUNITY_DESCRIPTIONS.default}
-        </HelperText>
+        {/*<p className="text-sm text-muted-foreground">*/}
+        {/*  {OPPORTUNITY_DESCRIPTIONS[selectedOpportunity] || OPPORTUNITY_DESCRIPTIONS.default}*/}
+        {/*</p>*/}
+        {errors.opportunityType && (
+          <p className="text-xs font-semibold text-destructive">{errors.opportunityType.message}</p>
+        )}
       </div>
 
-      {/* 3. Diseño del CV (Condicional) */}
-      {["INTERNSHIP", "SCHOLARSHIP"].includes(formData.opportunityType) && (
-        <div className="space-y-2 animate-in fade-in slide-in-from-top-1 duration-300">
-          <Label className={sharedStyles.label}>Diseño del CV</Label>
-          <Select
-            value={formData.templateId || "harvard"}
-            onValueChange={(v) => updateField("templateId", v)}
-          >
-            <SelectTrigger className={sharedStyles.trigger}>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {[
-                { id: "harvard", n: "Harvard (Clásico)" },
-                { id: "europass", n: "Europass Modern" },
-              ].map((tpl) => (
-                <SelectItem key={tpl.id} value={tpl.id} className={sharedStyles.item}>{tpl.n}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <HelperText>
-            {TEMPLATE_DESCRIPTIONS[formData.templateId!] || TEMPLATE_DESCRIPTIONS.default}
-          </HelperText>
-        </div>
-      )}
+      {/* 3. Diseño del CV */}
+      <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+        <Label className={errors.templateId ? "text-destructive" : ""}>Diseño del CV</Label>
+        <Select
+          onValueChange={(v) => setValue("templateId", v, { shouldValidate: true })}
+          defaultValue={selectedTemplate || "harvard"}
+        >
+          <SelectTrigger className={errors.templateId ? "border-destructive" : ""}>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="harvard">Harvard (Clásico)</SelectItem>
+            <SelectItem value="europass">Europass Modern</SelectItem>
+          </SelectContent>
+        </Select>
+        {/*<p className="text-sm text-muted-foreground">*/}
+        {/*  {TEMPLATE_DESCRIPTIONS[selectedTemplate!] || TEMPLATE_DESCRIPTIONS.default}*/}
+        {/*</p>*/}
+        {errors.templateId && (
+          <p className="text-xs font-semibold text-destructive">{errors.templateId.message}</p>
+        )}
+      </div>
 
       {/* 4. Perfil Profesional */}
       <div className="space-y-2">
-        <Label className={sharedStyles.label}>Perfil profesional</Label>
+        <Label className={errors.cvType ? "text-destructive" : ""}>Perfil profesional</Label>
         <Select
-          value={formData.cvType}
-          onValueChange={(v) => updateField("cvType", v as CvType)}
+          onValueChange={(v) => setValue("cvType", v as any, { shouldValidate: true })}
+          defaultValue={defaultValues?.cvType}
         >
-          <SelectTrigger className={sharedStyles.trigger}>
+          <SelectTrigger className={errors.cvType ? "border-destructive" : ""}>
             <SelectValue placeholder="Selecciona tu perfil" />
           </SelectTrigger>
           <SelectContent>
             {cvTypes.map((t) => (
-              <SelectItem key={t.key} value={t.key} className={sharedStyles.item}>{t.value}</SelectItem>
+              <SelectItem key={t.key} value={t.key}>{t.value}</SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <HelperText>
-          {CV_TYPE_DESCRIPTIONS[formData.cvType] || CV_TYPE_DESCRIPTIONS.default}
-        </HelperText>
+        {/*<p className="text-sm text-muted-foreground">*/}
+        {/*  {CV_TYPE_DESCRIPTIONS[selectedCvType] || CV_TYPE_DESCRIPTIONS.default}*/}
+        {/*</p>*/}
+        {errors.cvType && (
+          <p className="text-xs font-semibold text-destructive">{errors.cvType.message}</p>
+        )}
       </div>
 
-    </div>
+      {/* 5. Idioma del CV */}
+      <div className="space-y-2">
+        <Label className={errors.language ? "text-destructive" : ""}>
+          Idioma del Currículum
+        </Label>
+        <Select
+          onValueChange={(v) => setValue("language", v as any, { shouldValidate: true })}
+          defaultValue={defaultValues?.language}
+        >
+          <SelectTrigger className={errors.language ? "border-destructive" : ""}>
+            <SelectValue placeholder="Selecciona el idioma" />
+          </SelectTrigger>
+          <SelectContent>
+            {languages.map((lang) => (
+              <SelectItem key={lang.key} value={lang.key}>
+                {lang.value}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <p className="text-xs text-muted-foreground">
+          El contenido del CV se generará en este idioma.
+        </p>
+        {errors.language && (
+          <p className="text-xs font-semibold text-destructive animate-in fade-in slide-in-from-top-1">
+            {errors.language.message}
+          </p>
+        )}
+      </div>
+
+    </form>
   )
 }

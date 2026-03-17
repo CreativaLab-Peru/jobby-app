@@ -33,12 +33,15 @@ export const createPreferenceForNewUser = async (id: string) => {
       }
     }
 
+    const priceCents = Number(directPayment.priceCentsPEN) || 0
+    const pricePEN = priceCents > 0 ? priceCents / 100 : 9.90
+
     const body: PreferenceCreateData = {
       body: {
         items: [
           {
             id: directPayment.id,
-            unit_price: Number(directPayment.priceCentsPEN) || 9.90,
+            unit_price: pricePEN,
             quantity: 1,
             title: directPayment.name,
             currency_id: 'PEN',

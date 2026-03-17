@@ -17,8 +17,9 @@ export interface UpdateAdminPlanInput {
   priceCentsUSD?: number;
   paddleProductId?: string | null;
   paddlePriceIdUSD?: string | null;
-  manualCvLimit?: number;
-  uploadCvLimit?: number;
+  manageCvsCredits?: number;
+  aiAnalysisCredits?: number;
+  opportunitiesCredits?: number;
   features?: Record<string, unknown> | null;
 }
 
@@ -61,22 +62,80 @@ export const updateAdminPlan = async (
     if (input.priceCentsUSD !== undefined) data.priceCentsUSD = input.priceCentsUSD || 0;
     if (input.paddleProductId !== undefined) data.paddleProductId = input.paddleProductId || null;
     if (input.paddlePriceIdUSD !== undefined) data.paddlePriceIdUSD = input.paddlePriceIdUSD || null;
-    if (input.manualCvLimit !== undefined) data.manualCvLimit = input.manualCvLimit;
-    if (input.uploadCvLimit !== undefined) data.uploadCvLimit = input.uploadCvLimit;
+    if (input.manageCvsCredits !== undefined) data.manualCvLimit = input.manageCvsCredits;
+    data.uploadCvLimit = 0;
     if (input.features !== undefined) data.features = input.features ?? null;
 
-    const updatedPlan = await prisma.paymentPlan.update({
-      where: { id: planId },
-      data,
-      select: {
-        id: true,
-        slug: true,
-        name: true,
-        description: true,
-        priceCentsUSD: true,
-        paddleProductId: true,
-        paddlePriceIdUSD: true,
-      },
+    const updatedPlan = await prisma.$transaction(async (tx) => {
+      const plan = await tx.paymentPlan.update({
+        where: { id: planId },
+        data,
+        select: {
+          id: true,
+          slug: true,
+          name: true,
+          description: true,
+          priceCentsUSD: true,
+          paddleProductId: true,
+          paddlePriceIdUSD: true,
+        },
+      });
+
+      const packageCode = plan.slug.toUpperCase();
+
+      const packageDefinitions = [
+        {
+          type: "MANAGE_CVS" as const,
+          name: `${plan.name} MANAGE CVS`,
+          credits: input.manageCvsCredits,
+        },
+        {
+          type: "AI_ACTIONS" as const,
+          name: `${plan.name} AI ACTIONS`,
+          credits: input.aiAnalysisCredits,
+        },
+        {
+          type: "SEARCH_OPPORTUNITIES" as const,
+          name: `${plan.name} OPPORTUNITIES`,
+          credits: input.opportunitiesCredits,
+        },
+      ];
+
+      for (const packageDefinition of packageDefinitions) {
+        if (packageDefinition.credits === undefined) continue;
+
+        const updatedCount = await tx.creditPackage.updateMany({
+          where: {
+            planId: plan.id,
+            type: packageDefinition.type,
+          },
+          data: {
+            code: packageCode,
+            name: packageDefinition.name,
+            credits: packageDefinition.credits,
+            active: true,
+            priceCents: 0,
+            currency: "USD",
+          },
+        });
+
+        if (updatedCount.count === 0) {
+          await tx.creditPackage.create({
+            data: {
+              planId: plan.id,
+              type: packageDefinition.type,
+              code: packageCode,
+              name: packageDefinition.name,
+              credits: packageDefinition.credits,
+              active: true,
+              priceCents: 0,
+              currency: "USD",
+            },
+          });
+        }
+      }
+
+      return plan;
     });
 
     const shouldSyncPaddle =

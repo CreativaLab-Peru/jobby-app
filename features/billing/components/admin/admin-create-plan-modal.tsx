@@ -24,8 +24,9 @@ export function AdminCreatePlanModal({ isOpen, onClose, onCreated }: AdminCreate
   const [description, setDescription] = useState("");
   const [pricePEN, setPricePEN] = useState(0);
   const [priceUSD, setPriceUSD] = useState(0);
-  const [manualCvLimit, setManualCvLimit] = useState(0);
-  const [uploadCvLimit, setUploadCvLimit] = useState(0);
+  const [manageCvsCredits, setManageCvsCredits] = useState(0);
+  const [aiAnalysisCredits, setAiAnalysisCredits] = useState(0);
+  const [opportunitiesCredits, setOpportunitiesCredits] = useState(0);
 
   const handleCreate = () => {
     if (!name.trim() || !slug.trim() || isPending) return;
@@ -37,8 +38,9 @@ export function AdminCreatePlanModal({ isOpen, onClose, onCreated }: AdminCreate
         description: description.trim() || null,
         priceCentsPEN: Math.round(pricePEN * 100),
         priceCentsUSD: Math.round(priceUSD * 100),
-        manualCvLimit,
-        uploadCvLimit,
+        manageCvsCredits,
+        aiAnalysisCredits,
+        opportunitiesCredits,
       }).then((result) => {
         if (result.success) {
           toast.success(result.message);
@@ -49,8 +51,9 @@ export function AdminCreatePlanModal({ isOpen, onClose, onCreated }: AdminCreate
           setDescription("");
           setPricePEN(0);
           setPriceUSD(0);
-          setManualCvLimit(0);
-          setUploadCvLimit(0);
+          setManageCvsCredits(0);
+          setAiAnalysisCredits(0);
+          setOpportunitiesCredits(0);
         } else {
           const errorMsg = (result as { error: string }).error || "Error al crear el plan";
           toast.error(errorMsg);
@@ -100,22 +103,26 @@ export function AdminCreatePlanModal({ isOpen, onClose, onCreated }: AdminCreate
               <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Descripcion del plan..." rows={2} />
             </div>
 
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-5 gap-3">
               <div className="space-y-2">
-                <Label className="text-sm font-semibold">Precio PEN 🇵🇪</Label>
+                <Label className="text-sm font-semibold">Precio PEN</Label>
                 <Input type="number" min={0} step="0.01" value={pricePEN} onChange={(e) => setPricePEN(parseFloat(e.target.value) || 0)} placeholder="19.90" />
               </div>
               <div className="space-y-2">
-                <Label className="text-sm font-semibold">Precio USD 🌎</Label>
+                <Label className="text-sm font-semibold">Precio USD</Label>
                 <Input type="number" min={0} step="0.01" value={priceUSD} onChange={(e) => setPriceUSD(parseFloat(e.target.value) || 0)} placeholder="9.90" />
               </div>
               <div className="space-y-2">
-                <Label className="text-sm font-semibold">CVs manuales</Label>
-                <Input type="number" min={0} value={manualCvLimit} onChange={(e) => setManualCvLimit(parseInt(e.target.value) || 0)} />
+                <Label className="text-sm font-semibold">CV Manual</Label>
+                <Input type="number" min={0} value={manageCvsCredits} onChange={(e) => setManageCvsCredits(parseInt(e.target.value) || 0)} />
               </div>
               <div className="space-y-2">
-                <Label className="text-sm font-semibold">CVs upload</Label>
-                <Input type="number" min={0} value={uploadCvLimit} onChange={(e) => setUploadCvLimit(parseInt(e.target.value) || 0)} />
+                <Label className="text-sm font-semibold">IA Analisis</Label>
+                <Input type="number" min={0} value={aiAnalysisCredits} onChange={(e) => setAiAnalysisCredits(parseInt(e.target.value) || 0)} />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold">Oportunidades</Label>
+                <Input type="number" min={0} value={opportunitiesCredits} onChange={(e) => setOpportunitiesCredits(parseInt(e.target.value) || 0)} />
               </div>
             </div>
           </div>

@@ -30,8 +30,6 @@ export function AdminCreateCreditPackageModal({ isOpen, onClose, onCreated }: Ad
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [credits, setCredits] = useState(0);
-  const [priceCents, setPriceCents] = useState(0);
-  const [currency, setCurrency] = useState("USD");
   const [type, setType] = useState<CreditBalanceType>("AI_ACTIONS");
 
   const handleCreate = () => {
@@ -42,8 +40,6 @@ export function AdminCreateCreditPackageModal({ isOpen, onClose, onCreated }: Ad
         name: name.trim(),
         code: code.trim(),
         credits,
-        priceCents,
-        currency,
         type,
         active: true,
       }).then((result) => {
@@ -53,8 +49,6 @@ export function AdminCreateCreditPackageModal({ isOpen, onClose, onCreated }: Ad
           setName("");
           setCode("");
           setCredits(0);
-          setPriceCents(0);
-          setCurrency("USD");
           setType("AI_ACTIONS");
         } else {
           const errorMsg = (result as { error: string }).error || "Error al crear el paquete";

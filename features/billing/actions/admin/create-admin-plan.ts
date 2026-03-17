@@ -16,8 +16,9 @@ export interface CreateAdminPlanInput {
   description?: string | null;
   priceCentsPEN: number;
   priceCentsUSD: number;
-  manualCvLimit: number;
-  uploadCvLimit: number;
+  manageCvsCredits: number;
+  aiAnalysisCredits: number;
+  opportunitiesCredits: number;
   features?: unknown;
 }
 
@@ -52,10 +53,47 @@ export const createAdminPlan = async (
         paymentType: "ONE_TIME",
         priceCentsPEN: input.priceCentsPEN,
         priceCentsUSD: input.priceCentsUSD,
-        manualCvLimit: input.manualCvLimit,
-        uploadCvLimit: input.uploadCvLimit,
+        manualCvLimit: input.manageCvsCredits,
+        uploadCvLimit: 0,
         features: (input.features as Prisma.InputJsonValue) ?? null,
       },
+    });
+
+    const packageCode = input.slug.trim().toUpperCase();
+
+    await prisma.creditPackage.createMany({
+      data: [
+        {
+          code: packageCode,
+          name: `${input.name.trim()} MANAGE CVS`,
+          credits: input.manageCvsCredits,
+          priceCents: 0,
+          currency: "USD",
+          active: true,
+          type: "MANAGE_CVS",
+          planId: plan.id,
+        },
+        {
+          code: packageCode,
+          name: `${input.name.trim()} AI ACTIONS`,
+          credits: input.aiAnalysisCredits,
+          priceCents: 0,
+          currency: "USD",
+          active: true,
+          type: "AI_ACTIONS",
+          planId: plan.id,
+        },
+        {
+          code: packageCode,
+          name: `${input.name.trim()} OPPORTUNITIES`,
+          credits: input.opportunitiesCredits,
+          priceCents: 0,
+          currency: "USD",
+          active: true,
+          type: "SEARCH_OPPORTUNITIES",
+          planId: plan.id,
+        },
+      ],
     });
 
     let message = "Plan creado exitosamente";

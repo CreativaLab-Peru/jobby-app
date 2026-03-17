@@ -2,12 +2,13 @@
 
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/features/share/actions/require-admin";
-import { PaymentPlan, UserPayment, User } from "@prisma/client";
+import { CreditPackage, PaymentPlan, User, UserPayment } from "@prisma/client";
 
 export type AdminPlanDetail = PaymentPlan & {
   payments: (Pick<UserPayment, "id" | "userId" | "active" | "startedAt" | "expiresAt"> & {
     user: Pick<User, "id" | "email" | "name">;
   })[];
+  creditPackages: Pick<CreditPackage, "id" | "type" | "credits" | "name" | "code" | "active">[];
   _count: { payments: number };
 };
 
@@ -38,6 +39,16 @@ export const getAdminPlanById = async (
           },
           orderBy: { createdAt: "desc" },
           take: 20,
+        },
+        creditPackages: {
+          select: {
+            id: true,
+            type: true,
+            credits: true,
+            name: true,
+            code: true,
+            active: true,
+          },
         },
         _count: { select: { payments: true } },
       },

@@ -21,6 +21,10 @@ interface AdminPlanEditFormProps {
 }
 
 export function AdminPlanEditForm({plan}: AdminPlanEditFormProps) {
+  const getCreditsByType = (type: "MANAGE_CVS" | "AI_ACTIONS" | "SEARCH_OPPORTUNITIES") => {
+    return plan.creditPackages.find((pkg) => pkg.type === type)?.credits ?? 0;
+  };
+
   const [name, setName] = useState(plan.name);
   const [slug, setSlug] = useState(plan.slug);
   const [description, setDescription] = useState(plan.description || "");
@@ -33,8 +37,9 @@ export function AdminPlanEditForm({plan}: AdminPlanEditFormProps) {
     plan.priceCentsUSD ? Number(plan.priceCentsUSD) / 100 : 0
   );
   
-  const [manualCvLimit, setManualCvLimit] = useState(plan.manualCvLimit);
-  const [uploadCvLimit, setUploadCvLimit] = useState(plan.uploadCvLimit);
+  const [manageCvsCredits, setManageCvsCredits] = useState(getCreditsByType("MANAGE_CVS"));
+  const [aiAnalysisCredits, setAiAnalysisCredits] = useState(getCreditsByType("AI_ACTIONS"));
+  const [opportunitiesCredits, setOpportunitiesCredits] = useState(getCreditsByType("SEARCH_OPPORTUNITIES"));
   const [featuresJson, setFeaturesJson] = useState(plan.features ? JSON.stringify(plan.features, null, 2) : "");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -66,8 +71,9 @@ export function AdminPlanEditForm({plan}: AdminPlanEditFormProps) {
       description: description.trim() || null,
       priceCentsPEN: pricePEN > 0 ? Math.round(pricePEN * 100) : 0,
       priceCentsUSD: priceUSD > 0 ? Math.round(priceUSD * 100) : 0,
-      manualCvLimit,
-      uploadCvLimit,
+      manageCvsCredits,
+      aiAnalysisCredits,
+      opportunitiesCredits,
       features,
     });
 
@@ -145,15 +151,36 @@ export function AdminPlanEditForm({plan}: AdminPlanEditFormProps) {
                   <p className="text-xs text-muted-foreground">Dólares estadounidenses (Paddle maneja conversión automática)</p>
                 </div>
 
-                <div className="space-y-2 md:col-span-2">
-                  <Label className="text-sm font-semibold">Caracteristicas (JSON)</Label>
-                  <Textarea
-                    value={featuresJson}
-                    onChange={(e) => setFeaturesJson(e.target.value)}
-                    rows={10}
+                <div className="space-y-2">
+                  <Label className="text-sm font-semibold">CV Manual</Label>
+                  <Input
+                    type="number"
+                    min={0}
+                    value={manageCvsCredits}
+                    onChange={(e) => setManageCvsCredits(parseInt(e.target.value) || 0)}
                     disabled={isLoading}
-                    className="font-mono text-xs"
-                    placeholder='{"feature1": true, "maxItems": 10}'
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm font-semibold">IA Analisis</Label>
+                  <Input
+                    type="number"
+                    min={0}
+                    value={aiAnalysisCredits}
+                    onChange={(e) => setAiAnalysisCredits(parseInt(e.target.value) || 0)}
+                    disabled={isLoading}
+                  />
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <Label className="text-sm font-semibold">Oportunidades</Label>
+                  <Input
+                    type="number"
+                    min={0}
+                    value={opportunitiesCredits}
+                    onChange={(e) => setOpportunitiesCredits(parseInt(e.target.value) || 0)}
+                    disabled={isLoading}
                   />
                 </div>
               </div>

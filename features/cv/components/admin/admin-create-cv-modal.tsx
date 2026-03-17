@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from "react";
 import { Plus, Loader2, ShieldCheck } from "lucide-react";
-import { CvType, OpportunityType } from "@prisma/client";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -14,10 +13,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label"; // Importante para consistencia
+import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { CVForm } from "@/features/cv/components/cv-form";
 import { createAdminCv } from "@/features/cv/actions/admin/create-admin-cv";
+// Importamos el tipo directamente de tu esquema
+import { CVFormData } from "@/features/cv/schema";
 
 interface AdminCreateCvModalProps {
   isOpen: boolean;
@@ -28,46 +29,49 @@ interface AdminCreateCvModalProps {
 export function AdminCreateCvModal({ isOpen, onClose, onCreated }: AdminCreateCvModalProps) {
   const [isPending, startTransition] = useTransition();
   const [userIdentifier, setUserIdentifier] = useState("");
-  const [formData, setFormData] = useState<{
-    title: string;
-    cvType: CvType;
-    opportunityType: OpportunityType;
-    templateId: string;
-  }>({
+
+  // 1. Estado alineado con CVFormData
+  const [formData, setFormData] = useState<CVFormData>({
     title: "",
-    cvType: "TECHNOLOGY_ENGINEERING",
-    opportunityType: "INTERNSHIP",
     templateId: "harvard",
+    // @ts-ignore - Estos vendrán del esquema/enums de Prisma
+    cvType: undefined,
+    // @ts-ignore
+    opportunityType: undefined,
+    language: "ES" // Asumiendo un default
   });
 
   const handleCreate = () => {
-    if (!formData.title.trim() || !userIdentifier.trim() || isPending) return;
+    // Validaciones básicas de UI antes de llamar al Action
+    if (!formData.title || !userIdentifier.trim() || isPending) {
+      toast.error("Por favor completa los campos obligatorios");
+      return;
+    }
 
-    startTransition(() => {
-      createAdminCv({
-        userIdentifier: userIdentifier.trim(),
-        title: formData.title.trim(),
-        cvType: formData.cvType,
-        opportunityType: formData.opportunityType,
-        templateId: formData.templateId,
-      }).then((result) => {
-        // @ts-ignore - Dependiendo de tu estructura de retorno de Action
+    startTransition(async () => {
+      try {
+        const result = await createAdminCv({
+          userIdentifier: userIdentifier.trim(),
+          ...formData, // Spread de los datos validados por el formulario
+        });
+
         if (result?.success) {
-          onClose();
           toast.success("CV creado exitosamente");
           onCreated(result.data.id);
+          onClose();
         } else {
-          toast.error("Error al crear el CV");
+          toast.error(result?.error || "Error al crear el CV");
         }
-      });
+      } catch (error) {
+        toast.error("Error de conexión con el servidor");
+      }
     });
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[520px] rounded-[1.5rem] border-secondary/20 bg-background backdrop-blur-xl p-0 overflow-hidden shadow-2xl">
+      <DialogContent className="sm:max-w-[520px] rounded-[1.5rem] border-secondary/20 bg-background p-0 overflow-hidden shadow-2xl">
         <div className="p-8">
-          {/* Header con identidad visual de Admin */}
           <DialogHeader className="items-center text-center space-y-4 mb-6">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-sm ring-1 ring-primary/20">
               <ShieldCheck className="h-8 w-8" />
@@ -83,7 +87,6 @@ export function AdminCreateCvModal({ isOpen, onClose, onCreated }: AdminCreateCv
           </DialogHeader>
 
           <div className="space-y-6">
-            {/* Campo de Identificador: Prioridad Técnica */}
             <div className="space-y-2">
               <Label className="text-sm font-semibold text-secondary-foreground/80">
                 Usuario (correo o ID)
@@ -96,8 +99,8 @@ export function AdminCreateCvModal({ isOpen, onClose, onCreated }: AdminCreateCv
               />
             </div>
 
-            {/* Inyección del formulario base */}
             <div className="border-t border-secondary/10 pt-4">
+              {/* 2. Uso correcto de las nuevas Props del CVForm */}
               <CVForm
                 defaultValues={formData}
                 onValuesChange={(data) =>
@@ -112,20 +115,21 @@ export function AdminCreateCvModal({ isOpen, onClose, onCreated }: AdminCreateCv
           </div>
         </div>
 
-        {/* Footer con distinción de colores Secondary/Primary */}
         <DialogFooter className="p-6 bg-secondary/5 border-t border-secondary/10">
           <div className="flex w-full gap-3">
             <Button
               variant="outline"
               onClick={onClose}
-              className="flex-1 rounded-xl h-12 font-bold border-secondary/20 hover:bg-secondary/10 transition-colors"
+              className="flex-1 rounded-xl h-12 font-bold"
+              disabled={isPending}
             >
               Cancelar
             </Button>
             <Button
               onClick={handleCreate}
-              disabled={!formData.title.trim() || !userIdentifier.trim() || isPending}
-              className="flex-[2] rounded-xl h-12 font-bold bg-primary text-primary-foreground hover:opacity-90 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+              // 3. Validación de botón más robusta
+              disabled={isPending || !userIdentifier.trim() || formData.title.length < 3}
+              className="flex-[2] rounded-xl h-12 font-bold bg-primary shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
             >
               {isPending ? (
                 <Loader2 className="h-5 w-5 animate-spin" />

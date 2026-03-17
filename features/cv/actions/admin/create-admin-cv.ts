@@ -6,7 +6,7 @@ import { Cv, CvType, Language, OpportunityType } from "@prisma/client";
 import { getDefaultCvSections } from "@/features/cv/actions/admin/default-cv-sections";
 
 export type AdminCreateCvResult =
-  | { success: true; data: Cv }
+  | { success: true; data: Cv, error: null }
   | { success: false, error: string };
 
 export const createAdminCv = async (params: {
@@ -61,7 +61,7 @@ export const createAdminCv = async (params: {
       },
     });
 
-    return { success: true, data: newCv };
+    return { success: true, data: newCv, error: null };
   } catch (error) {
     console.error("[ADMIN_CREATE_CV_ERROR]", error);
     return { success: false, error: "Error creando CV" };

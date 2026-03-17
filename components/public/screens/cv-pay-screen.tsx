@@ -9,12 +9,14 @@ import {HeroSection} from "@/components/public/hero-section";
 import {CreditPackModal} from "@/features/credits/components/credit-pack-modal";
 import {HotSaleSection} from "@/components/ui/app/public/cv-builder/hot-sale-section";
 import AutoPlayVideo from "@/components/auto-play-video";
+import { CreditPackOffer } from "@/features/credits/consts";
 
 interface CVPayClientContentProps {
   user: User | null;
+  packs: CreditPackOffer[];
 }
 
-export function CVPayScreen({ user }: CVPayClientContentProps) {
+export function CVPayScreen({ user, packs }: CVPayClientContentProps) {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { setFileData } = useAnalysisStore();
   const router = useRouter();
@@ -36,7 +38,7 @@ export function CVPayScreen({ user }: CVPayClientContentProps) {
     <>
       <HeroSection onFileSelected={handleFileSelection} />
       <HotSaleSection user={user} />
-      <CreditPackModal />
+      <CreditPackModal packs={packs} />
       {/* ... Resto de tus secciones (Video, HowItWorks, etc.) */}
       <section className="container-levely section-padding">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

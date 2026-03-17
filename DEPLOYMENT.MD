@@ -1,5 +1,34 @@
 # WIP
 
+### CURRENT DEPLOYMENT NOTES (Dual-Pricing & Admin System)
+
+#### Database Migrations Included
+- `20260316000000_add_paddle_fields_and_dual_pricing` — Adds dual pricing support:
+  - Adds `priceCentsPEN` (for Mercado Pago in PEN)
+  - Adds `priceCentsUSD` (for Paddle in USD)
+  - Adds `paddleProductId` and `paddlePriceIdUSD` for Paddle integration
+
+#### Pre-Deployment Checklist
+✅ All migrations are backwards-compatible and idempotent
+✅ Database backup verified before deployment
+✅ Staging environment tested with production-like data
+
+#### Build & Deployment
+```bash
+bun run build
+```
+
+#### Environment Variables Required (Paddle)
+- `PADDLE_API_KEY` — Paddle server API key
+- `NEXT_PUBLIC_PADDLE_CLIENT_TOKEN` — Paddle client token
+- `PADDLE_WEBHOOK_SECRET` — Paddle webhook signing secret
+
+#### Post-Deployment
+1. Verify payment plans created: `psql -d <db> -c "SELECT slug, name, priceCentsPEN, priceCentsUSD FROM subscription_plan;"`
+2. Verify Paddle price IDs configured in admin panel `/admin/plans`
+
+---
+
 ### BEFORE DEPLOYMENT
 - Migrations included in this release:
   - `20260312045719_add_route_model`

@@ -8,7 +8,7 @@ import {FAQSection} from "@/components/ui/app/public/cv-builder/faq-section";
 import {useAnalysisStore} from "@/hooks/use-analysis-store";
 import {useRouter} from "next/navigation";
 import {AuthInterceptionModal} from "@/components/auth-interception-modal";
-import {CREDIT_PACKS} from "@/features/credits/consts";
+import {CreditPackOffer} from "@/features/credits/consts";
 import {CreditPackCard} from "@/features/credits/components/credit-pack-card";
 import {User} from "@prisma/client";
 import {
@@ -23,9 +23,10 @@ import {HeroSection} from "@/components/public/hero-section";
 
 interface CVBuilderScreenProps {
   user: User | null;
+  packs: CreditPackOffer[];
 }
 
-export default function CVBuilderScreen({user}: CVBuilderScreenProps) {
+export default function CVBuilderScreen({user, packs}: CVBuilderScreenProps) {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const {setFileData} = useAnalysisStore();
 
@@ -116,7 +117,7 @@ export default function CVBuilderScreen({user}: CVBuilderScreenProps) {
           </div>
         </div>
         <div className="grid md:grid-cols-2 gap-8 mb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          {CREDIT_PACKS.map((pack) => (
+          {packs.map((pack) => (
             <CreditPackCard
               key={pack.id}
               pack={pack}

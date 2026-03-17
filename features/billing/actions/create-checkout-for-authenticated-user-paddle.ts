@@ -3,11 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { paddle, BASE_URL } from "@/features/billing/domain/paddle-client";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
-
-function getPaddlePriceId(slug: string): string | null {
-  const key = `PADDLE_PRICE_ID_${slug.toUpperCase().replace(/-/g, "_")}`;
-  return process.env[key] ?? null;
-}
+import { syncPlanToPaddle } from "@/features/billing/actions/admin/sync-plan-to-paddle";
 
 export const createCheckoutForAuthenticatedUserPaddle = async (slug: string) => {
   try {
@@ -25,22 +21,65 @@ export const createCheckoutForAuthenticatedUserPaddle = async (slug: string) => 
       return { success: false, error: "No se ha encontrado el plan de pago" };
     }
 
-    const priceId = getPaddlePriceId(paymentPlan.slug);
+    let priceId = paymentPlan.paddlePriceIdUSD;
+
+    if (!priceId && Number(paymentPlan.priceCentsUSD) > 0) {
+      const syncResult = await syncPlanToPaddle({
+        planId: paymentPlan.id,
+        slug: paymentPlan.slug,
+        name: paymentPlan.name,
+        description: paymentPlan.description,
+        priceCentsUSD: Number(paymentPlan.priceCentsUSD),
+        paddleProductId: paymentPlan.paddleProductId,
+      });
+      priceId = syncResult?.paddlePriceIdUSD ?? null;
+    }
+
     if (!priceId) {
       return {
         success: false,
-        error: `PADDLE_PRICE_ID_${paymentPlan.slug.toUpperCase()} no está configurado`,
+        error: `El plan de pago no tiene un precio de Paddle configurado. Por favor, contacta al soporte.`,
       };
     }
 
-    const transaction = await paddle.transactions.create({
-      items: [{ priceId, quantity: 1 }],
-      customData: {
-        user_id: currentUser.id,
-        id: paymentPlan.id,
-        type: paymentPlan.paymentType,
-      },
-    });
+    let transaction;
+    try {
+      transaction = await paddle.transactions.create({
+        items: [{ priceId, quantity: 1 }],
+        customData: {
+          user_id: currentUser.id,
+          id: paymentPlan.id,
+          type: paymentPlan.paymentType,
+        },
+      });
+    } catch (error) {
+      const paddleError = error as { code?: string };
+      if (paddleError?.code === "transaction_price_not_found") {
+        const syncResult = await syncPlanToPaddle({
+          planId: paymentPlan.id,
+          slug: paymentPlan.slug,
+          name: paymentPlan.name,
+          description: paymentPlan.description,
+          priceCentsUSD: Number(paymentPlan.priceCentsUSD),
+          paddleProductId: paymentPlan.paddleProductId,
+        });
+
+        if (!syncResult?.paddlePriceIdUSD) {
+          return { success: false, error: "No se pudo sincronizar el precio del plan en Paddle" };
+        }
+
+        transaction = await paddle.transactions.create({
+          items: [{ priceId: syncResult.paddlePriceIdUSD, quantity: 1 }],
+          customData: {
+            user_id: currentUser.id,
+            id: paymentPlan.id,
+            type: paymentPlan.paymentType,
+          },
+        });
+      } else {
+        throw error;
+      }
+    }
 
     if (!transaction?.id) {
       return { success: false, error: "No se pudo crear la transacción en Paddle" };

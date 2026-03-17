@@ -8,7 +8,7 @@ import {useState, useTransition} from "react";
 import {
   createPreferenceForAuthenticatedUser
 } from "@/features/billing/actions/create-preference-for-authenticated-user";
-import {CREDIT_PACKS} from "@/features/credits/consts";
+import {CreditPackOffer} from "@/features/credits/consts";
 import { PaymentMethod } from "@/features/credits/components/payment-method-modal";
 import { createCheckoutForAuthenticatedUserPaddle } from "@/features/billing/actions/create-checkout-for-authenticated-user-paddle";
 import { usePaddle } from "@/features/billing/components/paddle-provider";
@@ -23,9 +23,10 @@ interface CreditLimits {
 
 interface MyCreditsScreenProps {
   currentCredit: CreditLimits;
+  packs: CreditPackOffer[];
 }
 
-export function MyCreditsScreen({ currentCredit }: MyCreditsScreenProps) {
+export function MyCreditsScreen({ currentCredit, packs }: MyCreditsScreenProps) {
 
   const { openCheckout } = usePaddle();
   const [isPending, startTransition] = useTransition();
@@ -83,7 +84,7 @@ export function MyCreditsScreen({ currentCredit }: MyCreditsScreenProps) {
           )}
 
           <div className="grid md:grid-cols-2 gap-8">
-            {CREDIT_PACKS.map((pack) => (
+            {packs.map((pack) => (
               <CreditPackCard
                 key={pack.id}
                 pack={pack}

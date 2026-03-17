@@ -35,7 +35,7 @@ export function AdminPlanCard({ plan }: AdminPlanCardProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
-  const price = formatCurrency(plan.priceCents as unknown as number, plan.currency);
+  const price = `${formatCurrency(Number(plan.priceCentsPEN), "PEN")} / ${formatCurrency(Number(plan.priceCentsUSD), "USD")}`;
   const typeLabel = PAYMENT_TYPE_LABELS[plan.paymentType] || plan.paymentType;
   const paymentsCount = plan._count.payments;
 

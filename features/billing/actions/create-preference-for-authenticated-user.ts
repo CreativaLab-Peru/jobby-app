@@ -35,7 +35,7 @@ export const createPreferenceForAuthenticatedUser = async (slug: string) => {
       }
     }
 
-    const price = Number(paymentPlan.priceCents) || 0;
+    const price = Number(paymentPlan.priceCentsPEN) || 0;
     if (price <= 0) {
       return {
         success: false,
@@ -51,7 +51,7 @@ export const createPreferenceForAuthenticatedUser = async (slug: string) => {
             unit_price: price,
             quantity: 1,
             title: paymentPlan.name || 'sin-titulo',
-            currency_id: paymentPlan.currency,
+            currency_id: "PEN",
           },
         ],
         metadata: {

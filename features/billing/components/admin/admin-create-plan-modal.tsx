@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from "react";
 import { Loader2, Plus, Tag } from "lucide-react";
-import { PaymentType } from "@prisma/client";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -10,15 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createAdminPlan } from "@/features/billing/actions/admin/create-admin-plan";
-
-const TYPE_OPTIONS: { value: PaymentType; label: string }[] = [
-  { value: "FREE", label: "Gratis" },
-  { value: "ONE_TIME", label: "Pago unico" },
-  { value: "SUBSCRIPTION", label: "Suscripcion" },
-  { value: "REFUND", label: "Reembolso" },
-];
 
 interface AdminCreatePlanModalProps {
   isOpen: boolean;
@@ -31,9 +22,8 @@ export function AdminCreatePlanModal({ isOpen, onClose, onCreated }: AdminCreate
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
-  const [paymentType, setPaymentType] = useState<PaymentType>("ONE_TIME");
-  const [priceCents, setPriceCents] = useState(0);
-  const [currency, setCurrency] = useState("USD");
+  const [pricePEN, setPricePEN] = useState(0);
+  const [priceUSD, setPriceUSD] = useState(0);
   const [manualCvLimit, setManualCvLimit] = useState(0);
   const [uploadCvLimit, setUploadCvLimit] = useState(0);
 
@@ -45,9 +35,8 @@ export function AdminCreatePlanModal({ isOpen, onClose, onCreated }: AdminCreate
         name: name.trim(),
         slug: slug.trim(),
         description: description.trim() || null,
-        paymentType,
-        priceCents,
-        currency,
+        priceCentsPEN: Math.round(pricePEN * 100),
+        priceCentsUSD: Math.round(priceUSD * 100),
         manualCvLimit,
         uploadCvLimit,
       }).then((result) => {
@@ -58,9 +47,8 @@ export function AdminCreatePlanModal({ isOpen, onClose, onCreated }: AdminCreate
           setName("");
           setSlug("");
           setDescription("");
-          setPaymentType("ONE_TIME");
-          setPriceCents(0);
-          setCurrency("USD");
+          setPricePEN(0);
+          setPriceUSD(0);
           setManualCvLimit(0);
           setUploadCvLimit(0);
         } else {
@@ -112,35 +100,14 @@ export function AdminCreatePlanModal({ isOpen, onClose, onCreated }: AdminCreate
               <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Descripcion del plan..." rows={2} />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-4 gap-3">
               <div className="space-y-2">
-                <Label className="text-sm font-semibold">Tipo de pago</Label>
-                <Select value={paymentType} onValueChange={(v) => setPaymentType(v as PaymentType)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {TYPE_OPTIONS.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label className="text-sm font-semibold">Precio PEN 🇵🇪</Label>
+                <Input type="number" min={0} step="0.01" value={pricePEN} onChange={(e) => setPricePEN(parseFloat(e.target.value) || 0)} placeholder="19.90" />
               </div>
               <div className="space-y-2">
-                <Label className="text-sm font-semibold">Moneda</Label>
-                <Select value={currency} onValueChange={setCurrency}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="USD">USD</SelectItem>
-                    <SelectItem value="PEN">PEN</SelectItem>
-                    <SelectItem value="EUR">EUR</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold">Precio (centavos)</Label>
-                <Input type="number" min={0} value={priceCents} onChange={(e) => setPriceCents(parseInt(e.target.value) || 0)} />
+                <Label className="text-sm font-semibold">Precio USD 🌎</Label>
+                <Input type="number" min={0} step="0.01" value={priceUSD} onChange={(e) => setPriceUSD(parseFloat(e.target.value) || 0)} placeholder="9.90" />
               </div>
               <div className="space-y-2">
                 <Label className="text-sm font-semibold">CVs manuales</Label>

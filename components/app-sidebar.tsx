@@ -27,7 +27,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   LayoutDashboard, FileText, MessageSquare, MessageSquareWarning,
   Activity, Briefcase, CreditCard, Settings, Users, BarChart3,
-  Tag, Wallet, Mic, Shield, Receipt, X, Map
+  Tag, Wallet, Mic, Shield, Receipt, X, Map, Coins
 } from "lucide-react";
 
 import { ProfileButton } from "@/components/profile-button";

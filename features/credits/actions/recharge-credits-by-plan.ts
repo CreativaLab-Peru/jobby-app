@@ -21,14 +21,18 @@ export const rechargeCreditsByPlan = async (paymentPlanId: string, userId: strin
       throw new Error("Payment plan code not found");
     }
 
-    const creditsPackage = await prisma.creditPackage.findMany({
+    let creditsPackage = await prisma.creditPackage.findMany({
       where: {
-        code,
-      }
-    })
+        planId: paymentPlanId,
+      },
+    });
 
     if (!creditsPackage || creditsPackage.length === 0) {
-      throw new Error("Credits package not found for the given plan code");
+      creditsPackage = await prisma.creditPackage.findMany({
+        where: {
+          code,
+        },
+      });
     }
 
     // Usamos $transaction para que sea "todo o nada"
@@ -40,11 +44,36 @@ export const rechargeCreditsByPlan = async (paymentPlanId: string, userId: strin
       if (!paymentPlan) throw new Error("PLAN_NOT_FOUND");
 
       const code = paymentPlan.slug.toUpperCase();
-      const creditsPackage = await tx.creditPackage.findMany({
-        where: { code }
+
+      let creditsPackage = await tx.creditPackage.findMany({
+        where: { planId: paymentPlanId },
       });
 
-      if (!creditsPackage.length) throw new Error("PACKAGES_NOT_FOUND");
+      if (!creditsPackage.length) {
+        creditsPackage = await tx.creditPackage.findMany({
+          where: { code },
+        });
+      }
+
+      if (!creditsPackage.length) {
+        await rechargeCredits({
+          userId,
+          amount: paymentPlan.manualCvLimit,
+          description: `Recarga base por plan ${paymentPlan.name} (fallback sin paquetes)` ,
+          type: "MANAGE_CVS" as any,
+          metadata: { paymentPlanId, fallback: true }
+        }, tx);
+
+        await rechargeCredits({
+          userId,
+          amount: paymentPlan.uploadCvLimit,
+          description: `Recarga base por plan ${paymentPlan.name} (fallback sin paquetes)` ,
+          type: "UPLOADS" as any,
+          metadata: { paymentPlanId, fallback: true }
+        }, tx);
+
+        return;
+      }
 
       for (const creditPackage of creditsPackage) {
         await rechargeCredits({

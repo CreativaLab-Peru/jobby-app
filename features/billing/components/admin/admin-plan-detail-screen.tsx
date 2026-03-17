@@ -49,7 +49,7 @@ export function AdminPlanDetailScreen({ plan }: AdminPlanDetailScreenProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
-  const price = formatCurrency(plan.priceCents as unknown as number, plan.currency);
+  const price = `${formatCurrency(Number(plan.priceCentsPEN), "PEN")} / ${formatCurrency(Number(plan.priceCentsUSD), "USD")}`;
   const typeLabel = PAYMENT_TYPE_LABELS[plan.paymentType] || plan.paymentType;
   const paymentsCount = plan._count.payments;
 
@@ -189,10 +189,6 @@ export function AdminPlanDetailScreen({ plan }: AdminPlanDetailScreenProps) {
               <div>
                 <span className="text-muted-foreground">ID:</span>
                 <span className="ml-2 font-mono text-xs text-foreground">{plan.id}</span>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Moneda:</span>
-                <span className="ml-2 font-medium text-foreground">{plan.currency}</span>
               </div>
             </div>
           </Card>

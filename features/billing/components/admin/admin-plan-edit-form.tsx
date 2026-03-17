@@ -5,31 +5,16 @@ import {useRouter} from "next/navigation";
 import {motion} from "framer-motion";
 import {ArrowLeft, Loader2, Save} from "lucide-react";
 import {toast} from "sonner";
-import {PaymentType} from "@prisma/client";
 
 import {Button} from "@/components/ui/button";
 import {Card} from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Textarea} from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
 import {PageHeader} from "@/components/shared/page-header";
 import {AdminPlanDetail} from "@/features/billing/actions/admin/get-admin-plan-by-id";
 import {updateAdminPlan} from "@/features/billing/actions/admin/update-admin-plan";
 import {routes} from "@/lib/routes";
-
-const TYPE_OPTIONS: { value: PaymentType; label: string }[] = [
-  {value: "FREE", label: "Gratis"},
-  {value: "ONE_TIME", label: "Pago unico"},
-  {value: "SUBSCRIPTION", label: "Suscripcion"},
-  {value: "REFUND", label: "Reembolso"},
-];
 
 interface AdminPlanEditFormProps {
   plan: AdminPlanDetail;
@@ -39,9 +24,15 @@ export function AdminPlanEditForm({plan}: AdminPlanEditFormProps) {
   const [name, setName] = useState(plan.name);
   const [slug, setSlug] = useState(plan.slug);
   const [description, setDescription] = useState(plan.description || "");
-  const [paymentType, setPaymentType] = useState<PaymentType>(plan.paymentType);
-  const [priceCents, setPriceCents] = useState(Number(plan.priceCents));
-  const [currency, setCurrency] = useState(plan.currency);
+  
+  // Precios por moneda
+  const [pricePEN, setPricePEN] = useState<number>(
+    plan.priceCentsPEN ? Number(plan.priceCentsPEN) / 100 : 0
+  );
+  const [priceUSD, setPriceUSD] = useState<number>(
+    plan.priceCentsUSD ? Number(plan.priceCentsUSD) / 100 : 0
+  );
+  
   const [manualCvLimit, setManualCvLimit] = useState(plan.manualCvLimit);
   const [uploadCvLimit, setUploadCvLimit] = useState(plan.uploadCvLimit);
   const [featuresJson, setFeaturesJson] = useState(plan.features ? JSON.stringify(plan.features, null, 2) : "");
@@ -58,10 +49,10 @@ export function AdminPlanEditForm({plan}: AdminPlanEditFormProps) {
       return;
     }
 
-    let features: unknown = null;
+    let features: Record<string, unknown> | null = null;
     if (featuresJson.trim()) {
       try {
-        features = JSON.parse(featuresJson);
+        features = JSON.parse(featuresJson) as Record<string, unknown>;
       } catch {
         toast.error("El JSON de caracteristicas no es valido");
         setIsLoading(false);
@@ -73,9 +64,8 @@ export function AdminPlanEditForm({plan}: AdminPlanEditFormProps) {
       name: name.trim(),
       slug: slug.trim(),
       description: description.trim() || null,
-      paymentType,
-      priceCents,
-      currency,
+      priceCentsPEN: pricePEN > 0 ? Math.round(pricePEN * 100) : 0,
+      priceCentsUSD: priceUSD > 0 ? Math.round(priceUSD * 100) : 0,
       manualCvLimit,
       uploadCvLimit,
       features,
@@ -128,40 +118,31 @@ export function AdminPlanEditForm({plan}: AdminPlanEditFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-semibold">Tipo de pago</Label>
-                  <Select value={paymentType}
-                          onValueChange={(v) => setPaymentType(v as PaymentType)}
-                          disabled={isLoading}>
-                    <SelectTrigger><SelectValue/></SelectTrigger>
-                    <SelectContent>
-                      {TYPE_OPTIONS.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label className="text-sm font-semibold">Precio PEN (Mercado Pago) 🇵🇪</Label>
+                  <Input 
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    value={pricePEN}
+                    onChange={(e) => setPricePEN(parseFloat(e.target.value) || 0)}
+                    disabled={isLoading}
+                    placeholder="Ej: 19.90"
+                  />
+                  <p className="text-xs text-muted-foreground">Soles peruanos (se almacena como centavos en BD)</p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-semibold">Moneda</Label>
-                  <Select value={currency} onValueChange={setCurrency} disabled={isLoading}>
-                    <SelectTrigger><SelectValue/></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="USD">USD</SelectItem>
-                      <SelectItem value="PEN">PEN</SelectItem>
-                      <SelectItem value="EUR">EUR</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-sm font-semibold">Precio (centavos)</Label>
-                  <Input type="number"
-                         min={0}
-                         step="0.01"
-                         value={priceCents}
-                         onChange={(e) => setPriceCents(parseInt(e.target.value) || 0)}
-                         disabled={isLoading}/>
-                  <p className="text-xs text-muted-foreground">Ej: 1000 = {currency} 10.00</p>
+                  <Label className="text-sm font-semibold">Precio USD (Paddle) 🌎</Label>
+                  <Input 
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    value={priceUSD}
+                    onChange={(e) => setPriceUSD(parseFloat(e.target.value) || 0)}
+                    disabled={isLoading}
+                    placeholder="Ej: 9.90"
+                  />
+                  <p className="text-xs text-muted-foreground">Dólares estadounidenses (Paddle maneja conversión automática)</p>
                 </div>
 
                 <div className="space-y-2 md:col-span-2">

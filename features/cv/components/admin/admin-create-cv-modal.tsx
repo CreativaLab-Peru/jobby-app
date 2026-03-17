@@ -99,8 +99,8 @@ export function AdminCreateCvModal({ isOpen, onClose, onCreated }: AdminCreateCv
             {/* Inyección del formulario base */}
             <div className="border-t border-secondary/10 pt-4">
               <CVForm
-                formData={formData}
-                onFormDataChange={(data) =>
+                defaultValues={formData}
+                onValuesChange={(data) =>
                   setFormData(prev => ({
                     ...prev,
                     ...data,

@@ -3,17 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Sparkles, Star, ArrowRight } from "lucide-react";
 import { PaymentMethodModal, PaymentMethod } from "./payment-method-modal";
+import { CreditPackOffer } from "@/features/credits/consts";
 
 interface PackProps {
-  pack: {
-    id: string;
-    name: string;
-    price: number;
-    limits: { manageCvsLimit: number; aiActionsLimit: number; opportunitiesActionsLimit: number };
-    features: { text: string; included: boolean }[];
-    highlight: boolean;
-    variant: "outline" | "default";
-  };
+  pack: CreditPackOffer;
   onPurchase: (packId: string, method: PaymentMethod) => void;
   isAuthenticated?: boolean;
 }

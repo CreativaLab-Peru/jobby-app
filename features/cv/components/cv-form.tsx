@@ -75,7 +75,7 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
         label="Tipo de Oportunidad"
         placeholder="Selecciona el tipo"
         value={watch("opportunityType")}
-        options={opportunities} // Asumiendo que opportunities ya tiene {key, value}
+        options={opportunities}
         onChange={(v) => setValue("opportunityType", v as any, { shouldValidate: true })}
         error={errors.opportunityType?.message}
       />

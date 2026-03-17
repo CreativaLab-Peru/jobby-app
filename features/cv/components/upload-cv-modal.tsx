@@ -257,7 +257,12 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
             {step === 1 ? (
               <Button
                 onClick={() => setStep(2)}
-                disabled={!currentFile || !!errors.file || credits.manageCvsLimit <= 0}
+                disabled={
+                  !currentFile ||
+                  !!errors.file ||
+                  isLoadingCredits ||
+                  (!isLoadingCredits && credits.manageCvsLimit <= 0)
+                }
                 className="w-full rounded-xl h-12 font-bold transition-all active:scale-95"
                 variant="accent"
               >

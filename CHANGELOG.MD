@@ -3,6 +3,9 @@
 ## Fix
 - Plan-based access to opportunities (FREE/STARTER: first only, PRO: all) with simplified blur + CTA lock.
 - Improved roadmap generation UX with fullscreen loading and fixed `IN_PROGRESS` status issue after completion.
+- Include templateId when we upload a CV
+- Refactor in the creating and uploading cv
+- Fix issue for improved text in the language of the CV
 
 ---
 

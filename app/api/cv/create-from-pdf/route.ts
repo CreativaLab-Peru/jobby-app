@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     const title = formData.get("title") as string || file?.name;
     const cvType = (formData.get("cvType") as CvType) || CvType.TECHNOLOGY_ENGINEERING;
     const opportunityType = (formData.get("opportunityType") as OpportunityType) || OpportunityType.EMPLOYMENT;
-
+    const templateId = (formData.get("templateId") as string) || "harvard";
     if (!file) {
       return NextResponse.json({success: false, message: "Archivo necesario"}, {status: 400});
     }
@@ -74,6 +74,7 @@ export async function POST(req: Request) {
         opportunityType,
         cvType,
         title,
+        templateId,
         attachments: {
           create: {
             filename: file.name,

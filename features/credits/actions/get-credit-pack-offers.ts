@@ -2,6 +2,17 @@
 
 import { prisma } from "@/lib/prisma";
 import { CREDIT_PACKS, CreditPackOffer } from "@/features/credits/consts";
+import { Prisma } from "@prisma/client";
+
+type NumericLike = number | string | { toNumber?: () => number };
+
+type PlanOfferProjection = {
+  name: string;
+  priceCentsPEN: NumericLike;
+  manualCvLimit: number;
+  features: Prisma.JsonValue | null;
+  creditPackages: Array<{ type: string; credits: number }>;
+};
 
 export const getCreditPackOffers = async (): Promise<CreditPackOffer[]> => {
   try {
@@ -16,8 +27,10 @@ export const getCreditPackOffers = async (): Promise<CreditPackOffer[]> => {
       select: {
         id: true,
         slug: true,
+        name: true,
         priceCentsPEN: true,
         manualCvLimit: true,
+        features: true,
         creditPackages: {
           where: {
             active: true,
@@ -46,11 +59,7 @@ export const getCreditPackOffers = async (): Promise<CreditPackOffer[]> => {
 
 const buildOfferFromPlan = (
   basePack: CreditPackOffer,
-  plan?: {
-    priceCentsPEN: unknown;
-    manualCvLimit: number;
-    creditPackages: Array<{ type: string; credits: number }>;
-  }
+  plan?: PlanOfferProjection
 ) => {
   if (!plan) return {};
 
@@ -68,19 +77,22 @@ const buildOfferFromPlan = (
   };
 
   return {
-    price: Number(plan.priceCentsPEN) / 100,
+    name: plan.name || basePack.name,
+    price: toNumber(plan.priceCentsPEN) / 100,
     limits: dynamicLimits,
-    features: basePack.features.map((feature) => {
-      if (/hasta\s+\d+\s+cvs\s+guardados/i.test(feature.text)) {
-        return { ...feature, text: `Hasta ${dynamicLimits.manageCvsLimit} CVs guardados` };
-      }
+    features: getPlanFeatureItems(plan.features).length
+      ? getPlanFeatureItems(plan.features).map((text) => ({ text, included: true }))
+      : basePack.features.map((feature) => {
+          if (/hasta\s+\d+\s+cvs\s+guardados/i.test(feature.text)) {
+            return { ...feature, text: `Hasta ${dynamicLimits.manageCvsLimit} CVs guardados` };
+          }
 
-      if (/(máximo|hasta)\s+\d+\s+oportunidades/i.test(feature.text)) {
-        return { ...feature, text: `Hasta ${dynamicLimits.opportunitiesActionsLimit} oportunidades` };
-      }
+          if (/(máximo|hasta)\s+\d+\s+oportunidades/i.test(feature.text)) {
+            return { ...feature, text: `Hasta ${dynamicLimits.opportunitiesActionsLimit} oportunidades` };
+          }
 
-      return feature;
-    }),
+          return feature;
+        }),
   };
 };
 
@@ -89,4 +101,28 @@ const getCreditsByType = (
   type: string
 ) => {
   return packages.find((creditPackage) => creditPackage.type === type)?.credits;
+};
+
+const toNumber = (value: NumericLike): number => {
+  if (typeof value === "number") return value;
+  if (typeof value === "string") return Number(value);
+  return value.toNumber?.() ?? Number(value);
+};
+
+const getPlanFeatureItems = (features: PlanOfferProjection["features"]): string[] => {
+  if (!features || typeof features !== "object" || Array.isArray(features)) {
+    return [];
+  }
+
+  const featureRecord = features as Record<string, Prisma.JsonValue>;
+  const rawItems = Array.isArray(featureRecord.items)
+    ? featureRecord.items
+    : Array.isArray(featureRecord.caracteristics)
+      ? featureRecord.caracteristics
+      : [];
+
+  return rawItems
+    .filter((item): item is string => typeof item === "string")
+    .map((item) => item.trim())
+    .filter(Boolean);
 };

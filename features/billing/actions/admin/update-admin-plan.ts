@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/features/share/actions/require-admin";
 import { revalidatePath } from "next/cache";
 import { syncPlanToPaddle } from "@/features/billing/actions/admin/sync-plan-to-paddle";
+import { Prisma } from "@prisma/client";
 
 export type UpdateAdminPlanResult =
   | { success: true; message: string }
@@ -20,7 +21,7 @@ export interface UpdateAdminPlanInput {
   manageCvsCredits?: number;
   aiAnalysisCredits?: number;
   opportunitiesCredits?: number;
-  features?: Record<string, unknown> | null;
+  features?: Prisma.InputJsonObject | null;
 }
 
 export const updateAdminPlan = async (
@@ -53,7 +54,7 @@ export const updateAdminPlan = async (
       }
     }
 
-    const data: Record<string, unknown> = {};
+    const data: Prisma.PaymentPlanUpdateInput = {};
 
     if (input.name !== undefined) data.name = input.name.trim();
     if (input.slug !== undefined) data.slug = input.slug.trim();
@@ -64,7 +65,9 @@ export const updateAdminPlan = async (
     if (input.paddlePriceIdUSD !== undefined) data.paddlePriceIdUSD = input.paddlePriceIdUSD || null;
     if (input.manageCvsCredits !== undefined) data.manualCvLimit = input.manageCvsCredits;
     data.uploadCvLimit = 0;
-    if (input.features !== undefined) data.features = input.features ?? null;
+    if (input.features !== undefined) {
+      data.features = input.features ?? Prisma.JsonNull;
+    }
 
     const updatedPlan = await prisma.$transaction(async (tx) => {
       const plan = await tx.paymentPlan.update({

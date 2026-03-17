@@ -15,6 +15,7 @@ import {PageHeader} from "@/components/shared/page-header";
 import {AdminPlanDetail} from "@/features/billing/actions/admin/get-admin-plan-by-id";
 import {updateAdminPlan} from "@/features/billing/actions/admin/update-admin-plan";
 import {routes} from "@/lib/routes";
+import type {Prisma} from "@prisma/client";
 
 interface AdminPlanEditFormProps {
   plan: AdminPlanDetail;
@@ -40,7 +41,7 @@ export function AdminPlanEditForm({plan}: AdminPlanEditFormProps) {
   const [manageCvsCredits, setManageCvsCredits] = useState(getCreditsByType("MANAGE_CVS"));
   const [aiAnalysisCredits, setAiAnalysisCredits] = useState(getCreditsByType("AI_ACTIONS"));
   const [opportunitiesCredits, setOpportunitiesCredits] = useState(getCreditsByType("SEARCH_OPPORTUNITIES"));
-  const [featuresJson, setFeaturesJson] = useState(plan.features ? JSON.stringify(plan.features, null, 2) : "");
+  const [featureLines, setFeatureLines] = useState(extractFeatureLines(plan.features).join("\n"));
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -54,16 +55,21 @@ export function AdminPlanEditForm({plan}: AdminPlanEditFormProps) {
       return;
     }
 
-    let features: Record<string, unknown> | null = null;
-    if (featuresJson.trim()) {
-      try {
-        features = JSON.parse(featuresJson) as Record<string, unknown>;
-      } catch {
-        toast.error("El JSON de caracteristicas no es valido");
-        setIsLoading(false);
-        return;
-      }
+    const items = featureLines
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    const featureValidationError = validateFeatureItems(items);
+    if (featureValidationError) {
+      toast.error(featureValidationError);
+      setIsLoading(false);
+      return;
     }
+
+    const features: Prisma.InputJsonObject | null = items.length
+      ? ({ items } as Prisma.InputJsonObject)
+      : null;
 
     const result = await updateAdminPlan(plan.id, {
       name: name.trim(),
@@ -124,7 +130,7 @@ export function AdminPlanEditForm({plan}: AdminPlanEditFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-semibold">Precio PEN (Mercado Pago) 🇵🇪</Label>
+                  <Label className="text-sm font-semibold">Precio PEN (Mercado Pago)</Label>
                   <Input 
                     type="number"
                     min={0}
@@ -138,7 +144,7 @@ export function AdminPlanEditForm({plan}: AdminPlanEditFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-semibold">Precio USD (Paddle) 🌎</Label>
+                  <Label className="text-sm font-semibold">Precio USD (Paddle)</Label>
                   <Input 
                     type="number"
                     min={0}
@@ -183,6 +189,17 @@ export function AdminPlanEditForm({plan}: AdminPlanEditFormProps) {
                     disabled={isLoading}
                   />
                 </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <Label className="text-sm font-semibold">Items del card (uno por linea)</Label>
+                  <Textarea
+                    value={featureLines}
+                    onChange={(e) => setFeatureLines(e.target.value)}
+                    rows={6}
+                    disabled={isLoading}
+                    placeholder={"Hasta 3 CVs guardados\nAnalisis y feedback de CV\nMaximo 5 oportunidades"}
+                  />
+                </div>
               </div>
 
               <div className="flex items-center justify-end gap-3 border-t border-border/40 pt-6">
@@ -204,5 +221,46 @@ export function AdminPlanEditForm({plan}: AdminPlanEditFormProps) {
       </div>
     </main>
   );
+}
+
+function extractFeatureLines(features: Prisma.JsonValue | null): string[] {
+  if (!features || typeof features !== "object" || Array.isArray(features)) {
+    return [];
+  }
+
+  const featureRecord = features as Record<string, Prisma.JsonValue>;
+  const rawItems = featureRecord.items ?? featureRecord.caracteristics;
+
+  if (!Array.isArray(rawItems)) {
+    return [];
+  }
+
+  return rawItems.filter((item): item is string => typeof item === "string");
+}
+
+function validateFeatureItems(items: string[]): string | null {
+  const MAX_ITEMS = 8;
+  const MAX_ITEM_LENGTH = 90;
+  const featureRegex = /^[\p{L}\p{N}\s.,:;¡!¿?()'"+\-/%&]+$/u;
+
+  if (items.length > MAX_ITEMS) {
+    return `Maximo ${MAX_ITEMS} items por plan.`;
+  }
+
+  for (const item of items) {
+    if (item.length < 3) {
+      return "Cada item debe tener al menos 3 caracteres.";
+    }
+
+    if (item.length > MAX_ITEM_LENGTH) {
+      return `Cada item debe tener maximo ${MAX_ITEM_LENGTH} caracteres.`;
+    }
+
+    if (!featureRegex.test(item)) {
+      return "Los items solo pueden contener letras, numeros y puntuacion basica.";
+    }
+  }
+
+  return null;
 }
 

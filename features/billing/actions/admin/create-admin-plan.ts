@@ -19,7 +19,7 @@ export interface CreateAdminPlanInput {
   manageCvsCredits: number;
   aiAnalysisCredits: number;
   opportunitiesCredits: number;
-  features?: unknown;
+  features?: Prisma.InputJsonObject | null;
 }
 
 export const createAdminPlan = async (
@@ -55,7 +55,7 @@ export const createAdminPlan = async (
         priceCentsUSD: input.priceCentsUSD,
         manualCvLimit: input.manageCvsCredits,
         uploadCvLimit: 0,
-        features: (input.features as Prisma.InputJsonValue) ?? null,
+        features: input.features ?? Prisma.JsonNull,
       },
     });
 

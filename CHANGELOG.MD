@@ -8,6 +8,7 @@
 ## Fix
 - The discrepancy in the Mercado Pago amount has been corrected: `priceCentsPEN` is now converted to soles (`/100`) before `unit_price` is sent in both payment flows.
 - Synced plan creation/editing with credits model: admin now manages `MANAGE_CVS`, `AI_ACTIONS`, `SEARCH_OPPORTUNITIES` and keeps linked `CreditPackage` records updated.
+- Added essential validation for plan card items (line-based features): trims empty lines, enforces allowed characters, and caps item length/count to avoid broken forms/cards.
 - Plan-based access to opportunities (FREE/STARTER: first only, PRO: all) with simplified blur + CTA lock.
 - Improved roadmap generation UX with fullscreen loading and fixed `IN_PROGRESS` status issue after completion.
 ---

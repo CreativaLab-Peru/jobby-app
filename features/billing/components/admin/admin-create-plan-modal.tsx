@@ -27,9 +27,21 @@ export function AdminCreatePlanModal({ isOpen, onClose, onCreated }: AdminCreate
   const [manageCvsCredits, setManageCvsCredits] = useState(0);
   const [aiAnalysisCredits, setAiAnalysisCredits] = useState(0);
   const [opportunitiesCredits, setOpportunitiesCredits] = useState(0);
+  const [featureLines, setFeatureLines] = useState("");
 
   const handleCreate = () => {
     if (!name.trim() || !slug.trim() || isPending) return;
+
+    const featureItems = featureLines
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    const featureValidationError = validateFeatureItems(featureItems);
+    if (featureValidationError) {
+      toast.error(featureValidationError);
+      return;
+    }
 
     startTransition(() => {
       createAdminPlan({
@@ -41,6 +53,7 @@ export function AdminCreatePlanModal({ isOpen, onClose, onCreated }: AdminCreate
         manageCvsCredits,
         aiAnalysisCredits,
         opportunitiesCredits,
+        features: featureItems.length ? { items: featureItems } : null,
       }).then((result) => {
         if (result.success) {
           toast.success(result.message);
@@ -54,6 +67,7 @@ export function AdminCreatePlanModal({ isOpen, onClose, onCreated }: AdminCreate
           setManageCvsCredits(0);
           setAiAnalysisCredits(0);
           setOpportunitiesCredits(0);
+          setFeatureLines("");
         } else {
           const errorMsg = (result as { error: string }).error || "Error al crear el plan";
           toast.error(errorMsg);
@@ -125,6 +139,16 @@ export function AdminCreatePlanModal({ isOpen, onClose, onCreated }: AdminCreate
                 <Input type="number" min={0} value={opportunitiesCredits} onChange={(e) => setOpportunitiesCredits(parseInt(e.target.value) || 0)} />
               </div>
             </div>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Items del card (uno por linea)</Label>
+              <Textarea
+                value={featureLines}
+                onChange={(e) => setFeatureLines(e.target.value)}
+                placeholder={"Hasta 3 CVs guardados\nAnalisis y feedback de CV\nMaximo 5 oportunidades"}
+                rows={4}
+              />
+            </div>
           </div>
         </div>
 
@@ -145,5 +169,31 @@ export function AdminCreatePlanModal({ isOpen, onClose, onCreated }: AdminCreate
 
 function slugify(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function validateFeatureItems(items: string[]): string | null {
+  const MAX_ITEMS = 8;
+  const MAX_ITEM_LENGTH = 90;
+  const featureRegex = /^[\p{L}\p{N}\s.,:;¡!¿?()'"+\-/%&]+$/u;
+
+  if (items.length > MAX_ITEMS) {
+    return `Maximo ${MAX_ITEMS} items por plan.`;
+  }
+
+  for (const item of items) {
+    if (item.length < 3) {
+      return "Cada item debe tener al menos 3 caracteres.";
+    }
+
+    if (item.length > MAX_ITEM_LENGTH) {
+      return `Cada item debe tener maximo ${MAX_ITEM_LENGTH} caracteres.`;
+    }
+
+    if (!featureRegex.test(item)) {
+      return "Los items solo pueden contener letras, numeros y puntuacion basica.";
+    }
+  }
+
+  return null;
 }
 

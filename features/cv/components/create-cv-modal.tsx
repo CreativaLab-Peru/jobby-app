@@ -2,8 +2,7 @@
 
 import {useState, useTransition} from "react";
 import {useRouter} from "next/navigation";
-import {Loader2, Sparkles, LayoutTemplate, ChevronLeft, ChevronRight} from "lucide-react";
-import {OpportunityType} from "@prisma/client";
+import {Loader2, Sparkles, LayoutTemplate} from "lucide-react";
 import {toast} from "sonner";
 import Image from "next/image";
 
@@ -25,6 +24,7 @@ import {useCreditsStore} from "@/store/use-credits-store";
 import {useCvModalStore} from "../hooks/use-cv-modal-store";
 import {cn} from "@/lib/utils";
 import {CVFormData} from "@/features/cv/schema";
+import {Language} from "@prisma/client";
 
 const TEMPLATES = [
   {id: "harvard", label: "Harvard (Clásico)", preview: "/cv_templates/Harvard_template.png"},
@@ -42,7 +42,7 @@ export function CreateCVModal() {
     cvType: "TECHNOLOGY_ENGINEERING",
     opportunityType: "INTERNSHIP",
     templateId: "harvard",
-    language: "ES", // O el default que uses
+    language: Language.ES,
   });
 
   const currentIndex = TEMPLATES.findIndex(t => t.id === formData.templateId);
@@ -52,11 +52,11 @@ export function CreateCVModal() {
     if (!formData.title.trim() || isPending) return;
     startTransition( async () => {
       const body: CreateCvBody = {
-        language: formData.language,
         cvType: formData.cvType,
         title: formData.title,
         templateId: formData.templateId,
         opportunityType: formData.opportunityType,
+        language: formData.language,
       }
       const result = await createCVByTitleAndType(body)
       if (result?.success) {

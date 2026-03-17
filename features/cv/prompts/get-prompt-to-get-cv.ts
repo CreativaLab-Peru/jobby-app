@@ -24,6 +24,7 @@ You must return **only one valid JSON object** following this structure:
 
 {
   "opportunityType": "one of: INTERNSHIP | SCHOLARSHIP | EXCHANGE_PROGRAM | EMPLOYMENT | STARTUP",
+  "language": "one of: EN, ES"
   "cvType": "one of: TECHNOLOGY_ENGINEERING | DESIGN_CREATIVITY | MARKETING_STRATEGY | MANAGEMENT_BUSINESS | FINANCE_PROJECTS | SOCIAL_MEDIA | EDUCATION | SCIENCE",
   "sections": [
     {

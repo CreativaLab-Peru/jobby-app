@@ -19,11 +19,11 @@ ${contextBlock || "No additional context provided."}
 
 ### TASK
 Analyze the provided CV and generate:
+
 1. A structural evaluation with scores per section.
 2. Actionable recommendations.
-3. **Improved text versions** for each section that can be directly applied to improve the CV.
+3. **Improved text versions** for each section that can be directly applied to improve the CV in the language of the CV.
 4. **Suggested additions** — new content the user should consider adding to boost their score.
-
 All improvements MUST be tailored to the CV category and target opportunity type above.
 
 ### INPUT DATA (JSON)
@@ -43,9 +43,9 @@ Return a valid JSON object following this schema:
   "improvedTexts": [
     {
       "sectionType": "string",
-      "originalSnippet": "Brief excerpt of what the user currently has (Spanish, max 80 chars)",
-      "improvedText": "The full improved version of this section content in Spanish. Must be ready to copy-paste.",
-      "changeReason": "Short explanation in Spanish of why this change improves the CV"
+      "originalSnippet": "Brief excerpt of what the user currently has (Language of the cv, max 80 chars)",
+      "improvedText": "The full improved version of this section content in the language of the cv. Must be ready to copy-paste.",
+      "changeReason": "Short explanation in language of the cv of why this change improves the CV"
     }
   ],
   "suggestedAdditions": [

@@ -11,7 +11,7 @@ export const cvFormSchema = z.object({
   cvType: z.enum(CvType, "Selecciona un perfil profesional válido"),
   opportunityType: z.enum(OpportunityType,"Selecciona un tipo de oportunidad"),
   templateId: z.string().optional(),
-  language: z.enum(Language, "Selecciona un tipo de oportunidad"),
+  language: z.enum(Language, "Selecciona un idioma"),
 }).refine((data) => {
   if (["INTERNSHIP", "SCHOLARSHIP"].includes(data.opportunityType)) {
     return !!data.templateId;

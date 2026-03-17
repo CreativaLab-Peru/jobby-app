@@ -2,7 +2,7 @@
 
 import {AlertCircle, Search} from "lucide-react";
 import {Card} from "@/components/ui/card";
-import {CV_TYPE_OPTIONS, CvSectionType} from "@/features/cv/consts";
+import {cvTypeOptions, CvSectionType} from "@/features/cv/consts";
 
 interface Recommendation {
   id: string;

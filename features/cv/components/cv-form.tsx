@@ -8,6 +8,7 @@ import { FormField } from "@/components/form-field";
 import { CVFormData, cvFormSchema } from "@/features/cv/schema";
 import {cvTypes, languages, opportunities} from "@/const";
 import {useEffect, useRef} from "react";
+import {FormSelect} from "@/components/form/select-input";
 
 interface CVFormProps {
   defaultValues?: Partial<CVFormData>;
@@ -57,54 +58,27 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
         error={errors.title?.message}
       />
 
-      {/* 2. Tipo de Oportunidad - Select (Manual porque Radix no usa ref) */}
-      <div className="space-y-2">
-        <Label className={errors.opportunityType ? "text-destructive" : ""}>
-          Tipo de Oportunidad
-        </Label>
-        <Select
-          onValueChange={(v) => setValue("opportunityType", v as any, { shouldValidate: true })}
-          defaultValue={defaultValues?.opportunityType}
-        >
-          <SelectTrigger className={errors.opportunityType ? "border-destructive" : ""}>
-            <SelectValue placeholder="Selecciona el tipo" />
-          </SelectTrigger>
-          <SelectContent>
-            {opportunities.map((t) => (
-              <SelectItem key={t.key} value={t.key}>{t.value}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {/*<p className="text-sm text-muted-foreground">*/}
-        {/*  {OPPORTUNITY_DESCRIPTIONS[selectedOpportunity] || OPPORTUNITY_DESCRIPTIONS.default}*/}
-        {/*</p>*/}
-        {errors.opportunityType && (
-          <p className="text-xs font-semibold text-destructive">{errors.opportunityType.message}</p>
-        )}
-      </div>
+      {/* 1. Diseño del CV */}
+      <FormSelect
+        label="Diseño del CV"
+        value={watch("templateId")}
+        options={[
+          { key: "harvard", value: "Harvard (Clásico)" },
+          { key: "europass", value: "Europass Modern" },
+        ]}
+        onChange={(v) => setValue("templateId", v as any, { shouldValidate: true })}
+        error={errors.templateId?.message}
+      />
 
-      {/* 3. Diseño del CV */}
-      <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-        <Label className={errors.templateId ? "text-destructive" : ""}>Diseño del CV</Label>
-        <Select
-          onValueChange={(v) => setValue("templateId", v, { shouldValidate: true })}
-          defaultValue={selectedTemplate || "harvard"}
-        >
-          <SelectTrigger className={errors.templateId ? "border-destructive" : ""}>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="harvard">Harvard (Clásico)</SelectItem>
-            <SelectItem value="europass">Europass Modern</SelectItem>
-          </SelectContent>
-        </Select>
-        {/*<p className="text-sm text-muted-foreground">*/}
-        {/*  {TEMPLATE_DESCRIPTIONS[selectedTemplate!] || TEMPLATE_DESCRIPTIONS.default}*/}
-        {/*</p>*/}
-        {errors.templateId && (
-          <p className="text-xs font-semibold text-destructive">{errors.templateId.message}</p>
-        )}
-      </div>
+      {/* 3. Tipo de Oportunidad - Select (Manual porque Radix no usa ref) */}
+      <FormSelect
+        label="Tipo de Oportunidad"
+        placeholder="Selecciona el tipo"
+        value={watch("opportunityType")}
+        options={opportunities} // Asumiendo que opportunities ya tiene {key, value}
+        onChange={(v) => setValue("opportunityType", v as any, { shouldValidate: true })}
+        error={errors.opportunityType?.message}
+      />
 
       {/* 4. Perfil Profesional */}
       <div className="space-y-2">
@@ -122,43 +96,21 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
             ))}
           </SelectContent>
         </Select>
-        {/*<p className="text-sm text-muted-foreground">*/}
-        {/*  {CV_TYPE_DESCRIPTIONS[selectedCvType] || CV_TYPE_DESCRIPTIONS.default}*/}
-        {/*</p>*/}
         {errors.cvType && (
           <p className="text-xs font-semibold text-destructive">{errors.cvType.message}</p>
         )}
       </div>
 
       {/* 5. Idioma del CV */}
-      <div className="space-y-2">
-        <Label className={errors.language ? "text-destructive" : ""}>
-          Idioma del Currículum
-        </Label>
-        <Select
-          onValueChange={(v) => setValue("language", v as any, { shouldValidate: true })}
-          defaultValue={defaultValues?.language}
-        >
-          <SelectTrigger className={errors.language ? "border-destructive" : ""}>
-            <SelectValue placeholder="Selecciona el idioma" />
-          </SelectTrigger>
-          <SelectContent>
-            {languages.map((lang) => (
-              <SelectItem key={lang.key} value={lang.key}>
-                {lang.value}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <p className="text-xs text-muted-foreground">
-          El contenido del CV se generará en este idioma.
-        </p>
-        {errors.language && (
-          <p className="text-xs font-semibold text-destructive animate-in fade-in slide-in-from-top-1">
-            {errors.language.message}
-          </p>
-        )}
-      </div>
+      <FormSelect
+        label="Idioma del Currículum"
+        placeholder="Selecciona el idioma"
+        value={watch("language")}
+        options={languages}
+        onChange={(v) => setValue("language", v as any, { shouldValidate: true })}
+        error={errors.language?.message}
+        description="El contenido del CV se generará en este idioma."
+      />
 
     </form>
   )

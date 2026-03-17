@@ -105,8 +105,9 @@ Contenedor de resultados de IA para un CV específico.
 
 ### `subscription_plan` (Mapeado como `subscription_plan` — modelo `PaymentPlan`)
 Planes de pago disponibles en la plataforma.
-- **Campos:** `id`, `slug` (unique), `name`, `description?`, `paymentType` (SUBSCRIPTION | ONE_TIME | REFUND | FREE), `priceCents`, `currency`, `features?` (Json), `manualCvLimit`, `uploadCvLimit`.
-- **Relación:** Tiene muchos `UserPayment`.
+- **Campos:** `id`, `slug` (unique), `name`, `description?`, `paymentType` (SUBSCRIPTION | ONE_TIME | REFUND | FREE), `priceCentsPEN` (Mercado Pago), `priceCentsUSD` (Paddle), `paddleProductId?`, `paddlePriceIdUSD?`, `features?` (Json), `manualCvLimit`, `uploadCvLimit`.
+- **Relaciones:** Tiene muchos `UserPayment` y muchos `CreditPackage`.
+- **Notas de integración:** precios se almacenan en centavos; para Mercado Pago se convierten a monto PEN al generar la preferencia (`unit_price`).
 
 ### `user_subscription` (Mapeado como `user_subscription` — modelo `UserPayment`)
 Registro de pagos/suscripciones de usuarios a planes.
@@ -122,6 +123,7 @@ Sistema de créditos flexible.
 Paquetes de créditos disponibles para compra.
 - **Campos:** `id`, `code`, `name`, `credits`, `priceCents`, `currency`, `active`, `type` (`CreditBalanceType`), `planId?` (FK a `subscription_plan`).
 - **Relación:** Tiene muchos `Invoice`. Opcionalmente pertenece a un `PaymentPlan` — permite agrupar paquetes por plan en el panel de administración.
+- **Convención actual:** al crear/editar un plan admin se sincronizan 3 paquetes por tipo (`MANAGE_CVS`, `AI_ACTIONS`, `SEARCH_OPPORTUNITIES`) asociados por `planId`.
 
 ### `invoice` (Mapeado como `invoice`)
 Facturas de pagos realizados por usuarios.
@@ -129,9 +131,9 @@ Facturas de pagos realizados por usuarios.
 - **Relación:** Con `user` y opcionalmente con `CreditPackage`.
 
 ### Flujos de Créditos:
-- **Adquisición de Créditos:** Compra de paquetes de créditos que incrementan `user_credit_balance`.
+- **Adquisición de Créditos:** Compra de plan/paquete que recarga `user_credit_balance` según los `credit_package` asociados al `planId`.
 - **Consumo de Créditos:** Deducción de créditos al procesar CVs para evaluaciones de IA, reflejado en `credit_transaction`.
-- **Recarga Automática:** Si el saldo de créditos cae por debajo de un umbral, se puede activar una recarga automática (si está habilitada).
+- **Fallback de recarga:** si no se encuentran paquetes por plan, el sistema puede usar límites del plan como fallback para evitar pérdida de crédito post-pago.
 
 ---
 

@@ -48,5 +48,7 @@ next-env.d.ts
 # Locales generated files
 /localtests
 
-# Scripts 
+# Scripts
 /scripts
+
+helloWorld

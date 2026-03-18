@@ -44,7 +44,7 @@ Return a valid JSON object following this schema:
     {
       "sectionType": "string",
       "originalSnippet": "Brief excerpt of what the user currently has (Language of the cv, max 80 chars)",
-      "improvedText": "The full improved version of this section content in the language of the cv. Must be ready to copy-paste.",
+      "improvedText": "The full improved version of this section content in the language of the cv. Must be ready to copy-paste.(not json, just plain text)",
       "changeReason": "Short explanation in language of the cv of why this change improves the CV"
     }
   ],
@@ -52,7 +52,7 @@ Return a valid JSON object following this schema:
     {
       "sectionType": "string",
       "title": "Short title in Spanish",
-      "suggestedText": "The content to add, written in Spanish, ready to copy-paste",
+      "suggestedText": "The content to add, written in Spanish, ready to copy-paste (not json, just plain text)",
       "impact": "LOW | MEDIUM | HIGH",
       "reason": "Why adding this improves the CV (Spanish)"
     }

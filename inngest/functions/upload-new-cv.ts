@@ -129,7 +129,6 @@ export const uploadNewCv = inngest.createFunction(
       await prisma.cv.update({
         where: { id: cvId },
         data: {
-          opportunityType,
           cvType,
           extractedJson: jsonData,
           fullTextSearch: textCv,

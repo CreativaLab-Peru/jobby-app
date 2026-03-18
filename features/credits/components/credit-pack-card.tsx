@@ -20,7 +20,7 @@ export function CreditPackCard({ pack, onPurchase, isAuthenticated = true }: Pac
         pack.highlight ? "border-primary shadow-sm ring-1 ring-primary/20" : "border-border"
       }`}>
         {pack.highlight && (
-          <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary px-4 py-1 uppercase text-[10px] tracking-widest font-bold text-white">
+          <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary px-4 py-1 uppercase text-[10px] tracking-widest font-bold">
             <Star className="w-3 h-3 mr-1 fill-current" /> Recomendado
           </Badge>
         )}

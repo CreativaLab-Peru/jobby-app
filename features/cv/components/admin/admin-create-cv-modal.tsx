@@ -103,7 +103,13 @@ export function AdminCreateCvModal({ isOpen, onClose, onCreated }: AdminCreateCv
               {/* 2. Uso correcto de las nuevas Props del CVForm */}
               <CVForm
                 defaultValues={formData}
-                onValuesChange={(newValues) => setFormData(newValues)}
+                onValuesChange={(data) =>
+                  setFormData(prev => ({
+                    ...prev,
+                    ...data,
+                    templateId: data.templateId ?? prev.templateId
+                  }))
+                }
               />
             </div>
           </div>

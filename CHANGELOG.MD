@@ -1,12 +1,19 @@
 # WIP
 
+## Features
+- Updated `/credits` offers to read limits from plan-linked credit packages (no hardcoded credit amounts in cards).
+- Fixed admin plan list preview price format to show PEN/USD correctly from cents.
+- Product prices in Paddle have been modified so that they can be edited from within the app.
+
 ## Fix
+- The discrepancy in the Mercado Pago amount has been corrected: `priceCentsPEN` is now converted to soles (`/100`) before `unit_price` is sent in both payment flows.
+- Synced plan creation/editing with credits model: admin now manages `MANAGE_CVS`, `AI_ACTIONS`, `SEARCH_OPPORTUNITIES` and keeps linked `CreditPackage` records updated.
+- Added essential validation for plan card items (line-based features): trims empty lines, enforces allowed characters, and caps item length/count to avoid broken forms/cards.
 - Plan-based access to opportunities (FREE/STARTER: first only, PRO: all) with simplified blur + CTA lock.
 - Improved roadmap generation UX with fullscreen loading and fixed `IN_PROGRESS` status issue after completion.
 - Include templateId when we upload a CV
 - Refactor in the creating and uploading cv
 - Fix issue for improved text in the language of the CV
-
 ---
 
 # v1.1.28 - 2026-03-12

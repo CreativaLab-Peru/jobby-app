@@ -42,6 +42,7 @@ export default async function RootLayout({
     <AppSidebar
       initialUser={userNavbar}
       creditLimits={creditsLimits}
+      userRole={user.role}
     />
 
     {/* Contenido Principal */}

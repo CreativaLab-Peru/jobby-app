@@ -6,7 +6,7 @@ import { PaymentPlan, UserPayment, User } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 
 export type AdminPaymentItem = UserPayment & {
-  plan: Pick<PaymentPlan, "id" | "slug" | "name" | "currency" | "paymentType"> & { priceCents: number };
+  plan: Pick<PaymentPlan, "id" | "slug" | "name" | "paymentType" | "priceCentsPEN" | "priceCentsUSD">;
   user: Pick<User, "id" | "email" | "name">;
 };
 
@@ -89,8 +89,8 @@ export const getAdminPayments = async (
               id: true,
               slug: true,
               name: true,
-              priceCents: true,
-              currency: true,
+              priceCentsPEN: true,
+              priceCentsUSD: true,
               paymentType: true,
             },
           },
@@ -101,13 +101,12 @@ export const getAdminPayments = async (
       prisma.userPayment.count({ where }),
     ]);
 
+    const paymentsParsed = JSON.parse(JSON.stringify(payments)) as AdminPaymentItem[];
+
     return {
       success: true,
       data: {
-        payments: payments.map(p => ({
-          ...p,
-          plan: { ...p.plan, priceCents: Number(p.plan.priceCents) },
-        })) as AdminPaymentItem[],
+        payments: paymentsParsed,
         hasMore: skip + take < totalCount,
         totalCount,
       },

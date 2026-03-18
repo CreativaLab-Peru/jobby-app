@@ -8,7 +8,6 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
 import { PageHeader } from "@/components/shared/page-header";
@@ -25,7 +24,6 @@ interface AdminPlanListScreenProps {
   currentPage: number;
   pageSize: number;
   initialQuery?: string;
-  initialPaymentType?: string;
   initialView?: "card" | "list";
   initialError?: string | null;
 }
@@ -36,14 +34,13 @@ export function AdminPlanListScreen({
   currentPage,
   pageSize,
   initialQuery = "",
-  initialPaymentType = "",
   initialView = "list",
   initialError = null,
 }: AdminPlanListScreenProps) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [searchText, setSearchText] = useState(initialQuery);
-  const [showFilters, setShowFilters] = useState(Boolean(initialPaymentType));
+  const [showFilters, setShowFilters] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -61,7 +58,7 @@ export function AdminPlanListScreen({
   const startItem = totalCount === 0 ? 0 : (currentPage - 1) * pageSize + 1;
   const endItem = Math.min(totalCount, currentPage * pageSize);
   const hasQuery = initialQuery.length > 0;
-  const hasFilters = Boolean(initialPaymentType);
+  const hasFilters = false;
 
   const updateQuery = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -92,7 +89,7 @@ export function AdminPlanListScreen({
 
   const handleClearFilters = () => {
     setSearchText("");
-    updateQuery({ q: null, paymentType: null, page: "1" });
+    updateQuery({ q: null, page: "1" });
   };
 
   const handleViewChange = (value: string) => {
@@ -160,23 +157,9 @@ export function AdminPlanListScreen({
               {showFilters && (
                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
                   <div className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-card/60 p-4 md:flex-row md:items-center">
-                    <div className="flex flex-1 flex-wrap items-center gap-3">
-                      <Select value={initialPaymentType || "all"} onValueChange={(value) => updateQuery({ paymentType: value === "all" ? null : value, page: "1" })}>
-                        <SelectTrigger className="w-[200px] h-10 text-xs"><SelectValue placeholder="Tipo de pago" /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">Todos los tipos</SelectItem>
-                          <SelectItem value="FREE">Gratis</SelectItem>
-                          <SelectItem value="ONE_TIME">Pago unico</SelectItem>
-                          <SelectItem value="SUBSCRIPTION">Suscripcion</SelectItem>
-                          <SelectItem value="REFUND">Reembolso</SelectItem>
-                        </SelectContent>
-                      </Select>
+                    <div className="text-xs text-muted-foreground">
+                      No hay filtros adicionales para planes.
                     </div>
-                    {hasFilters && (
-                      <Button variant="ghost" size="sm" className="h-10 gap-2 text-xs text-muted-foreground" onClick={handleClearFilters}>
-                        <X className="h-3.5 w-3.5" />Limpiar filtros
-                      </Button>
-                    )}
                   </div>
                 </motion.div>
               )}

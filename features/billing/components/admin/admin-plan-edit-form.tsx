@@ -5,46 +5,43 @@ import {useRouter} from "next/navigation";
 import {motion} from "framer-motion";
 import {ArrowLeft, Loader2, Save} from "lucide-react";
 import {toast} from "sonner";
-import {PaymentType} from "@prisma/client";
 
 import {Button} from "@/components/ui/button";
 import {Card} from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Textarea} from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
 import {PageHeader} from "@/components/shared/page-header";
 import {AdminPlanDetail} from "@/features/billing/actions/admin/get-admin-plan-by-id";
 import {updateAdminPlan} from "@/features/billing/actions/admin/update-admin-plan";
 import {routes} from "@/lib/routes";
-
-const TYPE_OPTIONS: { value: PaymentType; label: string }[] = [
-  {value: "FREE", label: "Gratis"},
-  {value: "ONE_TIME", label: "Pago unico"},
-  {value: "SUBSCRIPTION", label: "Suscripcion"},
-  {value: "REFUND", label: "Reembolso"},
-];
+import type {Prisma} from "@prisma/client";
 
 interface AdminPlanEditFormProps {
   plan: AdminPlanDetail;
 }
 
 export function AdminPlanEditForm({plan}: AdminPlanEditFormProps) {
+  const getCreditsByType = (type: "MANAGE_CVS" | "AI_ACTIONS" | "SEARCH_OPPORTUNITIES") => {
+    return plan.creditPackages.find((pkg) => pkg.type === type)?.credits ?? 0;
+  };
+
   const [name, setName] = useState(plan.name);
   const [slug, setSlug] = useState(plan.slug);
   const [description, setDescription] = useState(plan.description || "");
-  const [paymentType, setPaymentType] = useState<PaymentType>(plan.paymentType);
-  const [priceCents, setPriceCents] = useState(Number(plan.priceCents));
-  const [currency, setCurrency] = useState(plan.currency);
-  const [manualCvLimit, setManualCvLimit] = useState(plan.manualCvLimit);
-  const [uploadCvLimit, setUploadCvLimit] = useState(plan.uploadCvLimit);
-  const [featuresJson, setFeaturesJson] = useState(plan.features ? JSON.stringify(plan.features, null, 2) : "");
+  
+  // Precios por moneda
+  const [pricePEN, setPricePEN] = useState<number>(
+    plan.priceCentsPEN ? Number(plan.priceCentsPEN) / 100 : 0
+  );
+  const [priceUSD, setPriceUSD] = useState<number>(
+    plan.priceCentsUSD ? Number(plan.priceCentsUSD) / 100 : 0
+  );
+  
+  const [manageCvsCredits, setManageCvsCredits] = useState(getCreditsByType("MANAGE_CVS"));
+  const [aiAnalysisCredits, setAiAnalysisCredits] = useState(getCreditsByType("AI_ACTIONS"));
+  const [opportunitiesCredits, setOpportunitiesCredits] = useState(getCreditsByType("SEARCH_OPPORTUNITIES"));
+  const [featureLines, setFeatureLines] = useState(extractFeatureLines(plan.features).join("\n"));
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -58,26 +55,31 @@ export function AdminPlanEditForm({plan}: AdminPlanEditFormProps) {
       return;
     }
 
-    let features: unknown = null;
-    if (featuresJson.trim()) {
-      try {
-        features = JSON.parse(featuresJson);
-      } catch {
-        toast.error("El JSON de caracteristicas no es valido");
-        setIsLoading(false);
-        return;
-      }
+    const items = featureLines
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    const featureValidationError = validateFeatureItems(items);
+    if (featureValidationError) {
+      toast.error(featureValidationError);
+      setIsLoading(false);
+      return;
     }
+
+    const features: Prisma.InputJsonObject | null = items.length
+      ? ({ items } as Prisma.InputJsonObject)
+      : null;
 
     const result = await updateAdminPlan(plan.id, {
       name: name.trim(),
       slug: slug.trim(),
       description: description.trim() || null,
-      paymentType,
-      priceCents,
-      currency,
-      manualCvLimit,
-      uploadCvLimit,
+      priceCentsPEN: pricePEN > 0 ? Math.round(pricePEN * 100) : 0,
+      priceCentsUSD: priceUSD > 0 ? Math.round(priceUSD * 100) : 0,
+      manageCvsCredits,
+      aiAnalysisCredits,
+      opportunitiesCredits,
       features,
     });
 
@@ -128,51 +130,74 @@ export function AdminPlanEditForm({plan}: AdminPlanEditFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-semibold">Tipo de pago</Label>
-                  <Select value={paymentType}
-                          onValueChange={(v) => setPaymentType(v as PaymentType)}
-                          disabled={isLoading}>
-                    <SelectTrigger><SelectValue/></SelectTrigger>
-                    <SelectContent>
-                      {TYPE_OPTIONS.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label className="text-sm font-semibold">Precio PEN (Mercado Pago)</Label>
+                  <Input 
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    value={pricePEN}
+                    onChange={(e) => setPricePEN(parseFloat(e.target.value) || 0)}
+                    disabled={isLoading}
+                    placeholder="Ej: 19.90"
+                  />
+                  <p className="text-xs text-muted-foreground">Soles peruanos (se almacena como centavos en BD)</p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-semibold">Moneda</Label>
-                  <Select value={currency} onValueChange={setCurrency} disabled={isLoading}>
-                    <SelectTrigger><SelectValue/></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="USD">USD</SelectItem>
-                      <SelectItem value="PEN">PEN</SelectItem>
-                      <SelectItem value="EUR">EUR</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Label className="text-sm font-semibold">Precio USD (Paddle)</Label>
+                  <Input 
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    value={priceUSD}
+                    onChange={(e) => setPriceUSD(parseFloat(e.target.value) || 0)}
+                    disabled={isLoading}
+                    placeholder="Ej: 9.90"
+                  />
+                  <p className="text-xs text-muted-foreground">Dólares estadounidenses (Paddle maneja conversión automática)</p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-semibold">Precio (centavos)</Label>
-                  <Input type="number"
-                         min={0}
-                         step="0.01"
-                         value={priceCents}
-                         onChange={(e) => setPriceCents(parseInt(e.target.value) || 0)}
-                         disabled={isLoading}/>
-                  <p className="text-xs text-muted-foreground">Ej: 1000 = {currency} 10.00</p>
+                  <Label className="text-sm font-semibold">CV Manual</Label>
+                  <Input
+                    type="number"
+                    min={0}
+                    value={manageCvsCredits}
+                    onChange={(e) => setManageCvsCredits(parseInt(e.target.value) || 0)}
+                    disabled={isLoading}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm font-semibold">IA Analisis</Label>
+                  <Input
+                    type="number"
+                    min={0}
+                    value={aiAnalysisCredits}
+                    onChange={(e) => setAiAnalysisCredits(parseInt(e.target.value) || 0)}
+                    disabled={isLoading}
+                  />
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
-                  <Label className="text-sm font-semibold">Caracteristicas (JSON)</Label>
-                  <Textarea
-                    value={featuresJson}
-                    onChange={(e) => setFeaturesJson(e.target.value)}
-                    rows={10}
+                  <Label className="text-sm font-semibold">Oportunidades</Label>
+                  <Input
+                    type="number"
+                    min={0}
+                    value={opportunitiesCredits}
+                    onChange={(e) => setOpportunitiesCredits(parseInt(e.target.value) || 0)}
                     disabled={isLoading}
-                    className="font-mono text-xs"
-                    placeholder='{"feature1": true, "maxItems": 10}'
+                  />
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <Label className="text-sm font-semibold">Items del card (uno por linea)</Label>
+                  <Textarea
+                    value={featureLines}
+                    onChange={(e) => setFeatureLines(e.target.value)}
+                    rows={6}
+                    disabled={isLoading}
+                    placeholder={"Hasta 3 CVs guardados\nAnalisis y feedback de CV\nMaximo 5 oportunidades"}
                   />
                 </div>
               </div>
@@ -196,5 +221,46 @@ export function AdminPlanEditForm({plan}: AdminPlanEditFormProps) {
       </div>
     </main>
   );
+}
+
+function extractFeatureLines(features: Prisma.JsonValue | null): string[] {
+  if (!features || typeof features !== "object" || Array.isArray(features)) {
+    return [];
+  }
+
+  const featureRecord = features as Record<string, Prisma.JsonValue>;
+  const rawItems = featureRecord.items ?? featureRecord.caracteristics;
+
+  if (!Array.isArray(rawItems)) {
+    return [];
+  }
+
+  return rawItems.filter((item): item is string => typeof item === "string");
+}
+
+function validateFeatureItems(items: string[]): string | null {
+  const MAX_ITEMS = 8;
+  const MAX_ITEM_LENGTH = 90;
+  const featureRegex = /^[\p{L}\p{N}\s.,:;¡!¿?()'"+\-/%&]+$/u;
+
+  if (items.length > MAX_ITEMS) {
+    return `Maximo ${MAX_ITEMS} items por plan.`;
+  }
+
+  for (const item of items) {
+    if (item.length < 3) {
+      return "Cada item debe tener al menos 3 caracteres.";
+    }
+
+    if (item.length > MAX_ITEM_LENGTH) {
+      return `Cada item debe tener maximo ${MAX_ITEM_LENGTH} caracteres.`;
+    }
+
+    if (!featureRegex.test(item)) {
+      return "Los items solo pueden contener letras, numeros y puntuacion basica.";
+    }
+  }
+
+  return null;
 }
 

@@ -13,7 +13,7 @@ export interface CreateAdminCreditPackageInput {
   code: string;
   name: string;
   credits: number;
-  priceCents: number;
+  priceCents?: number;
   currency?: string;
   active?: boolean;
   type: CreditBalanceType;
@@ -41,7 +41,7 @@ export const createAdminCreditPackage = async (
         code: input.code.trim(),
         name: input.name.trim(),
         credits: input.credits,
-        priceCents: input.priceCents,
+        priceCents: input.priceCents ?? 0,
         currency: input.currency || "USD",
         active: input.active ?? true,
         type: input.type,

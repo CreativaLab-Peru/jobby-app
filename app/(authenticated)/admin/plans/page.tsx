@@ -9,7 +9,6 @@ interface AdminPlansPageProps {
   searchParams: Promise<{
     page?: string;
     q?: string;
-    paymentType?: string;
     view?: string;
   }>;
 }
@@ -25,12 +24,10 @@ export default async function AdminPlansPage({ searchParams }: AdminPlansPagePro
   const pageSize = 10;
   const skip = (page - 1) * pageSize;
   const query = params.q || "";
-  const paymentType = params.paymentType || undefined;
   const view = (params.view === "card" ? "card" : "list") as "card" | "list";
 
   const result = await getAdminPlansList(skip, pageSize, {
     query: query || undefined,
-    paymentType: paymentType || null,
   });
 
   const plans = result.success ? result.data.plans : [];
@@ -44,7 +41,6 @@ export default async function AdminPlansPage({ searchParams }: AdminPlansPagePro
       currentPage={page}
       pageSize={pageSize}
       initialQuery={query}
-      initialPaymentType={paymentType || ""}
       initialView={view}
       initialError={error}
     />

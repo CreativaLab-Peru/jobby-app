@@ -35,8 +35,9 @@ export const createPreferenceForAuthenticatedUser = async (slug: string) => {
       }
     }
 
-    const price = Number(paymentPlan.priceCents) || 0;
-    if (price <= 0) {
+    const priceCents = Number(paymentPlan.priceCentsPEN) || 0;
+    const pricePEN = priceCents / 100;
+    if (pricePEN <= 0) {
       return {
         success: false,
         error: 'El precio del plan de pago no es válido',
@@ -48,10 +49,10 @@ export const createPreferenceForAuthenticatedUser = async (slug: string) => {
         items: [
           {
             id: paymentPlan.id,
-            unit_price: price,
+            unit_price: pricePEN,
             quantity: 1,
             title: paymentPlan.name || 'sin-titulo',
-            currency_id: paymentPlan.currency,
+            currency_id: "PEN",
           },
         ],
         metadata: {

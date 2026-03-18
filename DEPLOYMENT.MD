@@ -1,5 +1,77 @@
 # WIP
 
+### CURRENT DEPLOYMENT NOTES (Billing + Credits)
+
+#### Scope of this release
+- Mercado Pago payment fix: amount is sent in soles (`priceCentsPEN / 100`) in both flows (authenticated user and new user).
+- `/credits` now displays credits per plan using `credit_package` linked to the plan (by type).
+- Admin plans: synchronized editing/preview with prices in cents and credits by type.
+
+#### Database migrations (must exist in production)
+- `20260310040541_credit_package_plan_relation`
+- `20260316000000_add_paddle_fields_and_dual_pricing`
+- `20260316010000_backfill_dual_pricing_non_null`
+
+#### Paddle / Payments configuration
+- Required env vars:
+  - `MP_ACCESS_TOKEN`
+  - `PADDLE_API_KEY`
+  - `NEXT_PUBLIC_PADDLE_CLIENT_TOKEN`
+  - `PADDLE_WEBHOOK_SECRET`
+- Not required anymore:
+  - `PADDLE_PRICE_ID_STARTER`
+  - `PADDLE_PRICE_ID_PRO`
+
+### IMPORTANT
+#### Deployment steps (only critical)
+1. `bun run build`
+2. `bunx prisma migrate status` (confirm no pending/failed migrations)
+3. `bunx prisma migrate deploy`
+4. Quick smoke test:
+  - `/admin/plans`: create/edit plan and validate PEN/USD price in preview.
+  - `/admin/plans`: validate Paddle sync IDs (`paddleProductId`, `paddlePriceIdUSD`) are persisted after create/update.
+  - `/credits`: validate that limits match credits configured in the plan.
+  - Mercado Pago checkout: confirm it charges exactly the configured soles value.
+  - Paddle checkout: confirm checkout opens and uses current plan price.
+
+#### Data integrity check (recommended)
+```sql
+SELECT slug, name, "priceCentsPEN", "priceCentsUSD", "paddlePriceIdUSD"
+FROM subscription_plan
+ORDER BY slug;
+```
+
+# NEED UPDATE WITH DATE OF MERGE
+
+### CURRENT DEPLOYMENT NOTES (Dual-Pricing & Admin System)
+
+#### Database Migrations Included
+- `20260316000000_add_paddle_fields_and_dual_pricing` — Adds dual pricing support:
+  - Adds `priceCentsPEN` (for Mercado Pago in PEN)
+  - Adds `priceCentsUSD` (for Paddle in USD)
+  - Adds `paddleProductId` and `paddlePriceIdUSD` for Paddle integration
+
+#### Pre-Deployment Checklist
+✅ All migrations are backwards-compatible and idempotent
+✅ Database backup verified before deployment
+✅ Staging environment tested with production-like data
+
+#### Build & Deployment
+```bash
+bun run build
+```
+
+#### Environment Variables Required (Paddle)
+- `PADDLE_API_KEY` — Paddle server API key
+- `NEXT_PUBLIC_PADDLE_CLIENT_TOKEN` — Paddle client token
+- `PADDLE_WEBHOOK_SECRET` — Paddle webhook signing secret
+
+#### Post-Deployment
+1. Verify payment plans created: `psql -d <db> -c "SELECT slug, name, priceCentsPEN, priceCentsUSD FROM subscription_plan;"`
+2. Verify Paddle price IDs configured in admin panel `/admin/plans`
+
+---
+
 ### BEFORE DEPLOYMENT
 - Migrations included in this release:
   - `20260312045719_add_route_model`

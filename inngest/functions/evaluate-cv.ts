@@ -5,6 +5,7 @@ import {logsService} from "@/features/share/services/logs-service";
 import {getPromptToEvaluateCv} from "@/features/cv/prompts/get-prompt-to-evaluate-cv";
 import {queryGemini} from "@/features/cv/queries/query-gemini";
 import {consumeCredits} from "@/features/credits/actions/consume-credits";
+import type {EvaluateCvSectionsPayload} from "@/features/cv/helpers/types";
 
 type EvaluateCvResponse = {
   overallScore: number;
@@ -34,53 +35,158 @@ type EvaluateCvResponse = {
   }>;
 };
 
+type CvSectionInput = {
+  sectionType?: CvSectionType | string;
+  contentJson?: unknown;
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const toRecordArray = (value: unknown): Record<string, unknown>[] => {
+  if (Array.isArray(value)) {
+    return value.filter(isRecord);
+  }
+
+  return isRecord(value) ? [value] : [];
+};
+
+const toStringArray = (value: unknown): string[] => {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .map((item) => {
+      if (typeof item === "string") return item;
+      if (isRecord(item) && typeof item.name === "string") return item.name;
+      return "";
+    })
+    .filter(Boolean);
+};
+
 /**
- * Builds CV data from sections when extractedJson is not available (manual CVs)
+ * Normalizes CV sections to the mapped structure used by CV forms.
  */
-function buildCvDataFromSections(sections: any[]): Record<string, any> {
-  const cvData: Record<string, any> = {};
+function buildMappedSectionsPayload(sections: CvSectionInput[]): EvaluateCvSectionsPayload {
+  const payload: EvaluateCvSectionsPayload = {};
+  const personal: Record<string, unknown> = {};
+  const skills: Record<string, unknown> = {};
 
   for (const section of sections) {
-    const sectionType = section.sectionType?.toLowerCase() || "";
     const content = section.contentJson;
-
     if (!content) continue;
 
     switch (section.sectionType) {
-      case CvSectionType.SUMMARY:
-        cvData.summary = content.text || content;
+      case CvSectionType.SUMMARY: {
+        if (typeof content === "string") {
+          personal.summary = content;
+        } else if (isRecord(content) && typeof content.text === "string") {
+          personal.summary = content.text;
+        }
         break;
+      }
+      case CvSectionType.CONTACT: {
+        if (isRecord(content)) {
+          Object.assign(personal, content);
+        }
+        break;
+      }
       case CvSectionType.EXPERIENCE:
-        cvData.experience = Array.isArray(content) ? content : [content];
+        payload.experience = {items: toRecordArray(content)};
         break;
       case CvSectionType.EDUCATION:
-        cvData.education = Array.isArray(content) ? content : [content];
-        break;
-      case CvSectionType.SKILLS:
-        cvData.skills = content;
+        payload.education = {items: toRecordArray(content)};
         break;
       case CvSectionType.PROJECTS:
-        cvData.projects = Array.isArray(content) ? content : [content];
-        break;
-      case CvSectionType.CERTIFICATIONS:
-        cvData.certifications = Array.isArray(content) ? content : [content];
-        break;
-      case CvSectionType.LANGUAGES:
-        cvData.languages = Array.isArray(content) ? content : [content];
-        break;
-      case CvSectionType.CONTACT:
-        cvData.contact = content;
+        payload.projects = {items: toRecordArray(content)};
         break;
       case CvSectionType.ACHIEVEMENTS:
-        cvData.achievements = Array.isArray(content) ? content : [content];
+        payload.achievements = {items: toRecordArray(content)};
+        break;
+      case CvSectionType.CERTIFICATIONS:
+        payload.certifications = {items: toRecordArray(content)};
         break;
       case CvSectionType.VOLUNTEERING:
-        cvData.volunteering = Array.isArray(content) ? content : [content];
+        payload.volunteering = {items: toRecordArray(content)};
+        break;
+      case CvSectionType.SKILLS: {
+        if (isRecord(content)) {
+          skills.technical = toStringArray(content.technical);
+          skills.soft = toStringArray(content.soft);
+          skills.languages = toStringArray(content.languages);
+        } else {
+          skills.technical = toStringArray(content);
+        }
+        break;
+      }
+      case CvSectionType.LANGUAGES: {
+        const currentLanguages = Array.isArray(skills.languages)
+          ? (skills.languages as string[])
+          : [];
+        const languageValues = toStringArray(content);
+        skills.languages = Array.from(new Set([...currentLanguages, ...languageValues]));
+        break;
+      }
+      default:
         break;
     }
   }
 
-  return cvData;
+  if (Object.keys(personal).length > 0) {
+    payload.personal = personal;
+  }
+
+  if (Object.keys(skills).length > 0) {
+    payload.skills = skills;
+  }
+
+  return payload;
+}
+
+function buildMappedSectionsFromLegacyExtractedJson(raw: Record<string, unknown>): EvaluateCvSectionsPayload {
+  const mappedSections: CvSectionInput[] = [];
+
+  if (raw.summary !== undefined) {
+    mappedSections.push({
+      sectionType: CvSectionType.SUMMARY,
+      contentJson: raw.summary,
+    });
+  }
+
+  if (raw.contact !== undefined) {
+    mappedSections.push({
+      sectionType: CvSectionType.CONTACT,
+      contentJson: raw.contact,
+    });
+  }
+
+  if (raw.experience !== undefined) mappedSections.push({sectionType: CvSectionType.EXPERIENCE, contentJson: raw.experience});
+  if (raw.education !== undefined) mappedSections.push({sectionType: CvSectionType.EDUCATION, contentJson: raw.education});
+  if (raw.projects !== undefined) mappedSections.push({sectionType: CvSectionType.PROJECTS, contentJson: raw.projects});
+  if (raw.achievements !== undefined) mappedSections.push({sectionType: CvSectionType.ACHIEVEMENTS, contentJson: raw.achievements});
+  if (raw.certifications !== undefined) mappedSections.push({sectionType: CvSectionType.CERTIFICATIONS, contentJson: raw.certifications});
+  if (raw.volunteering !== undefined) mappedSections.push({sectionType: CvSectionType.VOLUNTEERING, contentJson: raw.volunteering});
+  if (raw.skills !== undefined) mappedSections.push({sectionType: CvSectionType.SKILLS, contentJson: raw.skills});
+  if (raw.languages !== undefined) mappedSections.push({sectionType: CvSectionType.LANGUAGES, contentJson: raw.languages});
+
+  return buildMappedSectionsPayload(mappedSections);
+}
+
+function buildCvPayloadForEvaluation(cv: {sections?: CvSectionInput[]; extractedJson?: unknown}): EvaluateCvSectionsPayload {
+  if (Array.isArray(cv.sections) && cv.sections.length > 0) {
+    return buildMappedSectionsPayload(cv.sections);
+  }
+
+  if (isRecord(cv.extractedJson)) {
+    const extractedSections = cv.extractedJson.sections;
+
+    if (Array.isArray(extractedSections)) {
+      return buildMappedSectionsPayload(extractedSections as CvSectionInput[]);
+    }
+
+    return buildMappedSectionsFromLegacyExtractedJson(cv.extractedJson);
+  }
+
+  return {};
 }
 
 /**
@@ -147,19 +253,16 @@ export const evaluateCv = inngest.createFunction(
       include: {sections: true}
     });
 
-    // Build CV data from extractedJson OR sections
-    let cvDataForEvaluation: any;
+    // Build payload only with mapped sections used by CV forms.
+    const mappedSectionsForEvaluation = buildCvPayloadForEvaluation({
+      sections: cv?.sections,
+      extractedJson: cv?.extractedJson,
+    });
 
-    if (cv?.extractedJson) {
-      // Uploaded CV with extracted data
-      cvDataForEvaluation = cv.extractedJson;
-    } else if (cv?.sections && cv.sections.length > 0) {
-      // Manual CV - build data from sections
-      cvDataForEvaluation = buildCvDataFromSections(cv.sections);
-    } else {
+    if (Object.keys(mappedSectionsForEvaluation).length === 0) {
       // Refund token and fail
       await refundAnalysisToken(userId);
-      throw new Error("CV data not available - no extractedJson or sections found");
+      throw new Error("CV data not available - no mapped sections found for evaluation");
     }
     let evaluation: any = null;
 
@@ -193,7 +296,7 @@ export const evaluateCv = inngest.createFunction(
     try {
       // ✅ Generate prompt using the appropriate CV data
       const promptToEvaluateCv = getPromptToEvaluateCv(
-        cvDataForEvaluation,
+        mappedSectionsForEvaluation,
         cv?.cvType ?? null,
         cv?.opportunityType ?? null,
       );

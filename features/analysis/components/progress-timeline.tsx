@@ -32,7 +32,7 @@ interface ProgressStatusProps {
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 const STEPS = [
-  { key: "preparing", title: "Preparando CV", desc: "Subiendo o preparando tu CV para evaluación.", icon: UploadCloud },
+  { key: "preparing", title: "Preparando CV", desc: "Subiendo y preparando tu CV para evaluación.", icon: UploadCloud },
   { key: "evaluation", title: "Evaluando", desc: "Analizando fortalezas y mejoras con IA.", icon: Loader2 },
   { key: "finished", title: "Finalizado", desc: "Listo — redirigiendo a resultados.", icon: FileCheck },
 ]

@@ -60,21 +60,6 @@ export function ImprovementsSection({
   const [isPending, startTransition] = useTransition();
   const [applyingSection, setApplyingSection] = useState<string | null>(null);
 
-  // const router = useRouter();
-  //
-  // const handleApply = (sectionType: string, improvedText: string) => {
-  //   setApplyingSection(sectionType);
-  //   startTransition(async () => {
-  //     const result = await applyImprovement(cvId, sectionType, improvedText);
-  //     if (result.success) {
-  //       setAppliedSections((prev) => new Set(prev).add(sectionType));
-  //       toast.success(`"${SECTION_LABELS[sectionType] || sectionType}" actualizada`);
-  //     } else {
-  //       toast.error(result.message || "Error al aplicar la mejora");
-  //     }
-  //     setApplyingSection(null);
-  //   });
-  // };
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -86,21 +71,6 @@ export function ImprovementsSection({
   };
 
   const handleApplyAll = () => {
-    // const pending = improvedTexts.filter((t) => !appliedSections.has(t.sectionType));
-    // if (pending.length === 0) return;
-    // startTransition(async () => {
-    //   for (const item of pending) {
-    //     const result = await applyImprovement(cvId, item.sectionType, item.improvedText);
-    //     if (result.success) {
-    //       setAppliedSections((prev) => new Set(prev).add(item.sectionType));
-    //     }
-    //   }
-    //   toast.success("Todas las mejoras fueron aplicadas");
-    // });
-
-    // Abrir otra pestania de esto
-    // router.push(`/cv/${cvId}/edit`);
-
     if (cvId) {
       window.open(`/cv/${cvId}/edit`, "_blank", "noopener,noreferrer");
     }
@@ -168,9 +138,6 @@ export function ImprovementsSection({
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-emerald-600"/>
                 <h2 className="text-base font-bold">Textos Mejorados</h2>
-                {/*<span className="text-xs text-muted-foreground">*/}
-                {/*          ({improvedTexts.length - pendingCount}/{improvedTexts.length} aplicados)*/}
-                {/*        </span>*/}
               </div>
               {pendingCount > 0 && (
                 <Button
@@ -190,13 +157,13 @@ export function ImprovementsSection({
               )}
             </div>
 
-            {improvedTexts.map((item) => {
+            {improvedTexts.map((item, index) => {
               const isApplied = appliedSections.has(item.sectionType);
               // const isLoading = applyingSection === item.sectionType;
               const label = SECTION_LABELS[item.sectionType] || item.sectionType;
 
               return (
-                <div key={item.sectionType}
+                <div key={`${item.sectionType}-${index}`}
                      className="p-4 space-y-3 transition-colors hover:bg-muted/30">
                   <div className="space-y-4">
                     <div key={item.sectionType} className="p-4 space-y-3">
@@ -212,21 +179,6 @@ export function ImprovementsSection({
                           <span
                             className={cn("text-sm font-bold", isApplied && "text-emerald-600")}>{label}</span>
                         </div>
-                        {/*{!isApplied && (*/}
-                        {/*  <Button*/}
-                        {/*    size="sm"*/}
-                        {/*    variant="ghost"*/}
-                        {/*    onClick={() => handleApply(item.sectionType, item.improvedText)}*/}
-                        {/*    disabled={isPending}*/}
-                        {/*    className="text-xs font-bold text-primary h-7 px-2"*/}
-                        {/*  >*/}
-                        {/*    {isLoading ? (*/}
-                        {/*      <Loader2 className="w-3 h-3 animate-spin"/>*/}
-                        {/*    ) : (*/}
-                        {/*      "Aplicar"*/}
-                        {/*    )}*/}
-                        {/*  </Button>*/}
-                        {/*)}*/}
                       </div>
 
                       {/* Reason */}

@@ -348,7 +348,7 @@ export const skillsSection: CVSection = {
       name: "languages",
       label: "Idiomas",
       type: "tags",
-      required: true,
+      required: false,
       tip: "Incluye nivel de dominio (Básico, Intermedio, Avanzado, Nativo)",
       example: "Español (Nativo), Inglés (Avanzado), Francés (Intermedio)",
     },

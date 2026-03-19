@@ -265,6 +265,7 @@ model Cv {
 model Opportunity {
   id                String
   cvId              String
+  routeId           String?
   title             String
   type              OpportunityType
   deadline          DateTime?
@@ -280,6 +281,7 @@ model Opportunity {
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   cv                Cv                 @relation(fields: [cvId], references: [id], onDelete: Cascade)
+  route             Route?             @relation(fields: [routeId], references: [id], onDelete: Cascade)
   interviewSessions InterviewSession[]
   roadmaps          Roadmap[]
 
@@ -582,9 +584,10 @@ model Route {
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  cv      Cv?      @relation(fields: [cvId], references: [id])
-  roadmap Roadmap?
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cv            Cv?           @relation(fields: [cvId], references: [id])
+  opportunities Opportunity[]
+  roadmaps      Roadmap[]
 
   @@index([userId])
   @@index([userId, isActive])
@@ -610,7 +613,7 @@ model Roadmap {
   route       Route         @relation(fields: [routeId], references: [id], onDelete: Cascade)
   steps       RoadmapStep[]
 
-  @@unique([opportunityId, cvId, userId])
+  @@unique([opportunityId, cvId, userId, routeId])
   @@index([userId])
   @@index([cvId])
   @@map("roadmap")

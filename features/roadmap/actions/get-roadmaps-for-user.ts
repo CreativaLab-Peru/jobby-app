@@ -33,9 +33,18 @@ export async function getRoadmapsForUser(params: GetRoadmapsParams = {}) {
     const user = await getCurrentUser();
     if (!user) return null;
 
+    const activeRoute = await prisma.route.findFirst({
+      where: {
+        isActive: true,
+      }
+    })
+
+    if (!activeRoute) return null;
+
     const where: any = {
       userId: user.id,
       status: "SUCCEEDED",
+      routeId: activeRoute.id,
     };
 
     if (query) {

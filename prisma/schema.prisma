@@ -623,16 +623,28 @@ model Roadmap {
 model RoadmapStep {
   id            String   @id @default(uuid())
   roadmapId     String
-  order         Int
-  title         String
+  order         Int      // Seguirá el orden 1-4 de los bloques base [cite: 32]
+  title         String   // Ejemplo: "Define tu perfil/proyecto" [cite: 33]
   description   String   @db.Text
-  actionItems   Json // Array de strings con acciones concretas
-  estimatedDays Int? // Días estimados para completar
-  resources     Json? // Array de { title, url, type } con recursos útiles
-  isFree        Boolean  @default(false) // Si es visible sin plan de pago
-  createdAt     DateTime @default(now())
 
-  roadmap Roadmap @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  // Datos dinámicos del sistema inteligente
+  actionItems   Json     // Array de strings (Máximo 3 tareas) [cite: 39, 50]
+  sourceInsights Json?    // Array de strings (Máximo 3 datos reales del programa)
+
+  // Comparativa de competitividad
+  exampleWeak   String?  @db.Text // Perfil débil [cite: 42, 53]
+  exampleStrong String?  @db.Text // Perfil competitivo [cite: 42, 53]
+
+  // Metadatos para IA y Matching
+  tags          String[] // Categorías: ielts, leadership, mvp, etc. [cite: 43, 54]
+
+  // Configuración y recursos
+  estimatedDays Int?
+  resources     Json?    // Array de { title, url, type }
+  isFree        Boolean  @default(false)
+
+  createdAt     DateTime @default(now())
+  roadmap       Roadmap  @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
 
   @@index([roadmapId, order])
   @@map("roadmap_step")

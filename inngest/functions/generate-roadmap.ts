@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { JobStatus, LogAction, LogLevel, RouteStatus } from "@prisma/client";
 import { logsService } from "@/features/share/services/logs-service";
 import { queryGemini } from "@/features/cv/queries/query-gemini";
+import {
+  getPromptToGenerateRoadmap,
+  PromptToGenerateRoadmap
+} from "@/features/roadmap/prompts/get-prompt-to-evaluate-cv";
 
 type RoadmapStepAI = {
   order: number;
@@ -23,7 +27,7 @@ export const generateRoadmap = inngest.createFunction(
   { id: "generate-roadmap", name: "Generate AI Roadmap", retries: 3 },
   { event: "generate.roadmap" },
   async ({ event, step }) => {
-    const { opportunityId, cvId, userId } = event.data;
+    const { opportunityId, cvId, userId, routeId } = event.data;
 
     // Create QueueJob
     const job = await prisma.queueJob.upsert({
@@ -42,12 +46,13 @@ export const generateRoadmap = inngest.createFunction(
     // Create or update roadmap record as IN_PROGRESS
     const roadmap = await prisma.roadmap.upsert({
       where: {
-        opportunityId_cvId_userId: { opportunityId, cvId, userId },
+        opportunityId_cvId_userId_routeId: { opportunityId, cvId, userId, routeId },
       },
       update: { status: JobStatus.IN_PROGRESS, createdByJobId: job.id },
       create: {
         userId,
         cvId,
+        routeId,
         opportunityId,
         status: JobStatus.IN_PROGRESS,
         createdByJobId: job.id,
@@ -132,47 +137,17 @@ export const generateRoadmap = inngest.createFunction(
 
       // 3. Call Gemini to generate roadmap
       const aiResult = await step.run("generate-with-ai", async () => {
-        const prompt = `Eres un experto en orientación profesional y planificación de carrera.
-Genera un roadmap paso a paso DETALLADO y ACCIONABLE para que un candidato pueda conseguir esta oportunidad.
-
-## OPORTUNIDAD
-- Título: ${opportunity.title}
-- Tipo: ${opportunity.type}
-- Empresa: ${opportunity.company || "No especificada"}
-- Ubicación: ${opportunity.location || "No especificada"}
-- Descripción: ${opportunity.description || "No disponible"}
-- Requisitos: ${opportunity.requirements || "No especificados"}
-- Beneficios: ${opportunity.benefits || "No especificados"}
-- Match actual: ${Math.round(opportunity.match * 100)}%
-- Fecha límite: ${opportunity.deadline ? new Date(opportunity.deadline).toLocaleDateString("es-ES") : "No especificada"}
-
-## PERFIL DEL CANDIDATO (CV)
-${cvSummary}
-
-## PREFERENCIAS
-- País: ${userPrefs?.country || "No especificado"}
-- Nivel: ${userPrefs?.expLevel || "No especificado"}
-
-## INSTRUCCIONES
-Genera un roadmap con 5-8 pasos concretos, ordenados cronológicamente. Cada paso debe ser accionable y específico.
-El primer paso siempre debe ser algo que el candidato pueda hacer INMEDIATAMENTE.
-Los pasos deben cubrir: preparación de documentos, mejora de perfil, networking, preparación de entrevistas, y seguimiento.
-
-IMPORTANTE: Responde SOLO en formato JSON válido con esta estructura exacta:
-{
-  "title": "Título corto del roadmap",
-  "summary": "Resumen de 1-2 oraciones del plan",
-  "steps": [
-    {
-      "order": 1,
-      "title": "Título del paso",
-      "description": "Descripción detallada de qué hacer y por qué",
-      "actionItems": ["Acción concreta 1", "Acción concreta 2", "Acción concreta 3"],
-      "estimatedDays": 3,
-      "resources": [{"title": "Nombre del recurso", "url": "", "type": "article|video|tool"}]
-    }
-  ]
-}`;
+        const prompt = getPromptToGenerateRoadmap({
+          opportunity: {
+            title: opportunity.title,
+            type: opportunity.type,
+            company: opportunity.company,
+            requirements: opportunity.requirements,
+            match: opportunity.match,
+          },
+          cvSummary,
+          userPrefs,
+        });
 
         return await queryGemini<RoadmapAIResponse>({ prompt, type: "JSON" });
       });

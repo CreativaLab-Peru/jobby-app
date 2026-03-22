@@ -23,9 +23,11 @@ export default async function EditCVPage({ params }: EditCVPageProps) {
   }
 
   const cvData: CVData = transformCVToDTO(cv);
+  const language = cv.language || "ES";
   return (
     <CreateCVPage
       cv={cvData}
+      language={ language}
       id={cv.id}
       opportunityType={cv.opportunityType}
       cvType={cv.cvType}

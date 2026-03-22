@@ -192,7 +192,7 @@ export function CvDocument({ data, sections, lang = "ES" }: { data: CVData; sect
               </View>
               {edu.honors ? (
                 <View>
-                  <Text style={{ fontSize: 10.5 }}>Honores: {edu.honors}</Text>
+                  <Text style={{ fontSize: 10.5 }}>{t.honors}: {edu.honors}</Text>
                 </View>
               ) : null}
             </View>
@@ -224,7 +224,7 @@ export function CvDocument({ data, sections, lang = "ES" }: { data: CVData; sect
               ) : null}
               {proj.technologies ? (
                 <Text style={{ fontSize: 10.5 }}>
-                  <Text style={{ fontWeight: "bold" }}>Tecnologías:</Text> {proj.technologies}
+                  <Text style={{ fontWeight: "bold" }}>{t.softSkills}:</Text> {proj.technologies}
                 </Text>
               ) : null}
             </View>

@@ -10,6 +10,7 @@ import {CVData} from "@/types/cv"
 import {PdfPreviewWrapper} from "@/components/pdf-preview/pdf-preview-wrapper"
 import {OpportunityType, CvType} from "@prisma/client"
 import {getSections} from "@/features/cv/helpers";
+import {OPPORTUNITY_MAP} from "@/const";
 
 interface PreviewCVComponentProps {
   cv: CVData
@@ -54,7 +55,31 @@ export function PreviewCVComponent({
       .filter(Boolean) as typeof allSections
 
     return mappedSections.length ? mappedSections : allSections
-  }, [opportunityType, cvType, safeSectionIds, templateId])
+  }, [opportunityType, cvType, safeSectionIds, templateId]);
+
+  const opportunityMapped = OPPORTUNITY_MAP[opportunityType] || "No especificado";
+
+  const activeTips = useMemo(() => {
+    const tips = [
+      {
+        id: "opt",
+        description: "Tu CV está optimizado para",
+        highlight: opportunityMapped,
+        footer: ". El análisis te mostrará cómo mejorarlo aún más."
+      }
+    ];
+
+    if (language === 'EN') {
+      tips.push({
+        id: "lang",
+        description: "Hemos detectado que tu CV está en",
+        highlight: "Inglés",
+        footer: ". Esto aumenta tus posibilidades en vacantes internacionales."
+      });
+    }
+
+    return tips;
+  }, [language, opportunityMapped]);
 
   return (
     <div className="min-h-screen bg-gradient-primary">
@@ -93,7 +118,16 @@ export function PreviewCVComponent({
                 onHome={() => router.push('/dashboard')}
                 onEditCV={() => router.push(cvId ? `/cv/${cvId}/edit` : '/my-cv')}
               />
-              <TipCard opportunityType={opportunityType}/>
+              <div className="space-y-4">
+                {activeTips.map((tip) => (
+                  <TipCard
+                    key={tip.id}
+                    description={tip.description}
+                    highlightedText={tip.highlight}
+                    footer={tip.footer}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </motion.div>

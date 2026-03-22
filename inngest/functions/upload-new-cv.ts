@@ -52,6 +52,7 @@ export const uploadNewCv = inngest.createFunction(
       const processedData = await step.run("normalize-data", async () => {
         let opportunityType = aiResult.opportunityType || OpportunityType.EMPLOYMENT;
         let cvType = aiResult.cvType || CvType.TECHNOLOGY_ENGINEERING;
+        let language = aiResult.language || 'ES';
 
         // Validar contra Enums de Prisma
         if (!Object.values(OpportunityType).includes(opportunityType)) {
@@ -61,7 +62,7 @@ export const uploadNewCv = inngest.createFunction(
           cvType = CvType.TECHNOLOGY_ENGINEERING;
         }
 
-        return { ...aiResult, opportunityType, cvType };
+        return { ...aiResult, opportunityType, cvType, language };
       });
 
       // 4. Persistencia en Base de Datos (Transaccional)
@@ -77,6 +78,7 @@ export const uploadNewCv = inngest.createFunction(
               opportunityType: processedData.opportunityType,
               extractedJson: processedData,
               fullTextSearch: textCv,
+              language: processedData.language || "EN",
             }
           });
 

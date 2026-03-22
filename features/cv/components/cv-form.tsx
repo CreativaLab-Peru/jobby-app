@@ -63,7 +63,7 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
         label="Diseño del CV"
         value={watch("templateId")}
         options={[
-          { key: "harvard", value: "Harvard (Clásico)" },
+          { key: "harvard", value: "Harvard (Recomendado)" },
           { key: "europass", value: "Europass Modern" },
         ]}
         onChange={(v) => setValue("templateId", v as any, { shouldValidate: true })}

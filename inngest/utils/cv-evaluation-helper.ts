@@ -151,3 +151,21 @@ function buildMappedSectionsFromLegacyExtractedJson(raw: Record<string, unknown>
   // Reutilizamos la lógica de mapeo estándar para garantizar consistencia
   return buildMappedSectionsPayload(mappedSections);
 }
+
+// Obtenemos los valores válidos del Enum de Prisma
+const VALID_CV_SECTIONS = Object.values(CvSectionType);
+
+/**
+ * Asegura que el string enviado por la IA sea un miembro válido del Enum.
+ * Si no lo es, intenta convertirlo a mayúsculas o usa un fallback.
+ */
+export const sanitizeSectionType = (rawType: string): CvSectionType => {
+  const normalized = rawType?.toUpperCase().trim() as CvSectionType;
+
+  if (VALID_CV_SECTIONS.includes(normalized)) {
+    return normalized;
+  }
+
+  // Fallback: Si no lo reconoce, lo mandamos a COMPLEMENTS para no romper la DB
+  return CvSectionType.COMPLEMENTS;
+};

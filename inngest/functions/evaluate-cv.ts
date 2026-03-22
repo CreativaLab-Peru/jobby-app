@@ -6,7 +6,7 @@ import { queryGemini } from "@/features/cv/queries/query-gemini";
 import {consumeCredits, ConsumeCreditsParams} from "@/features/credits/actions/consume-credits";
 import {
   buildCvPayloadForEvaluation,
-  filterSectionsByOpportunity
+  filterSectionsByOpportunity, sanitizeSectionType
 } from "../utils/cv-evaluation-helper";
 import {refundCredits} from "@/features/credits/actions/refund-credits";
 
@@ -71,23 +71,47 @@ export const evaluateCv = inngest.createFunction(
 
       // 5. Persistencia de Resultados (Transacción)
       await step.run("persist-evaluation-results", async () => {
+        const { data } = aiResult;
+
+        // 1. Mapeamos y sanitizamos los scores
+        const scoresToCreate = (data.sectionScores || []).map((score: any) => ({
+          evaluationId: evaluation!.id,
+          sectionType: sanitizeSectionType(score.sectionType),
+          score: Number(score.score) || 0,
+          detailsJson: score.details || {},
+        }));
+
+        // 2. Mapeamos y sanitizamos los textos mejorados (dentro del JSON)
+        const improvedTexts = (data.improvedTexts || []).map((item: any) => ({
+          ...item,
+          sectionType: sanitizeSectionType(item.sectionType),
+        }));
+
+        const suggestedAdditions = (data.suggestedAdditions || []).map((item: any) => ({
+          ...item,
+          sectionType: sanitizeSectionType(item.sectionType),
+        }));
+
+        // 3. Ejecutamos la transacción con datos limpios
         await prisma.$transaction([
+          // Actualizar la evaluación principal
           prisma.cvEvaluation.update({
             where: { id: evaluation!.id },
             data: {
               status: JobStatus.SUCCEEDED,
-              overallScore: aiResult.data.overallScore,
-              summary: aiResult.data.summary,
+              overallScore: data.overallScore,
+              summary: data.summary,
               improvementsJson: {
-                improvedTexts: aiResult.data.improvedTexts || [],
-                suggestedAdditions: aiResult.data.suggestedAdditions || [],
+                improvedTexts,
+                suggestedAdditions,
               },
             },
           }),
-          // Creación de scores y recomendaciones...
-          ...aiResult.data.sectionScores.map(score => prisma.evaluationScore.create({
-            data: { evaluationId: evaluation!.id, sectionType: score.sectionType, score: score.score, detailsJson: score.details }
-          }))
+
+          // Crear todos los scores de una vez
+          ...scoresToCreate.map(scoreData =>
+            prisma.evaluationScore.create({ data: scoreData })
+          )
         ]);
       });
 

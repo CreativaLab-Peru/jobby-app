@@ -74,8 +74,8 @@ export const uploadNewCv = inngest.createFunction(
           await tx.cv.update({
             where: { id: cvId },
             data: {
-              cvType: processedData.cvType,
-              opportunityType: processedData.opportunityType,
+              // cvType: processedData.cvType,
+              // opportunityType: processedData.opportunityType,
               extractedJson: processedData,
               fullTextSearch: textCv,
               language: processedData.language || "EN",

@@ -1,0 +1,32 @@
+export const i18n = {
+  ES: {
+    achievements: "LOGROS Y RECONOCIMIENTOS",
+    certifications: "LICENCIAS Y CERTIFICACIONES",
+    education: "EDUCACIÓN",
+    projects: "PROYECTOS ACADÉMICOS",
+    volunteering: "VOLUNTARIADO Y ACTIVIDADES COMUNITARIAS",
+    experience: "EXPERIENCIA LABORAL",
+    skills: "HABILIDADES PROFESIONALES Y PERSONALES",
+    honors: "Honores",
+    technologies: "Tecnologías",
+    languages: "Idiomas",
+    technicalSkills: "Habilidades",
+    softSkills: "Habilidades Blandas",
+    issuedBy: "por",
+  },
+  EN: {
+    achievements: "ACHIEVEMENTS AND RECOGNITION",
+    certifications: "LICENSES AND CERTIFICATIONS",
+    education: "EDUCATION",
+    projects: "ACADEMIC PROJECTS",
+    volunteering: "VOLUNTEERING AND COMMUNITY ACTIVITIES",
+    experience: "WORK EXPERIENCE",
+    skills: "PROFESSIONAL AND PERSONAL SKILLS",
+    honors: "Honors",
+    technologies: "Technologies",
+    languages: "Languages",
+    technicalSkills: "Skills",
+    softSkills: "Soft Skills",
+    issuedBy: "by",
+  }
+};

@@ -34,6 +34,7 @@ export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
   return (
     <PreviewCVComponent
       cv={cvData}
+      language={cv.language || "ES"}
       opportunityType={cv.opportunityType}
       cvId={cv.id}
       cvType={cv.cvType}

@@ -44,10 +44,10 @@ export const cvTypes = [
 ];
 
 export const OPPORTUNITY_MAP: Record<string, string> = {
-  INTERNSHIP: "Pasantía",
+  // INTERNSHIP: "Pasantía",
   SCHOLARSHIP: "Beca",
   EXCHANGE_PROGRAM: "Intercambio",
-  EMPLOYMENT: "Empleo",
+  // EMPLOYMENT: "Empleo",
   STARTUP: "Aceleradora",
 };
 

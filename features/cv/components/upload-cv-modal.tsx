@@ -50,7 +50,7 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
     defaultValues: {
       title: "",
       cvType: "TECHNOLOGY_ENGINEERING",
-      opportunityType: "EMPLOYMENT",
+      opportunityType: "SCHOLARSHIP",
       templateId: "harvard",
     },
   });

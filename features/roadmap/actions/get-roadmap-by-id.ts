@@ -51,7 +51,7 @@ export async function getRoadmapById(roadmapId: string): Promise<RoadmapDetail |
         },
         steps: {
           orderBy: { order: "asc" },
-          take: 1,
+          take: 10,
         },
       },
     });

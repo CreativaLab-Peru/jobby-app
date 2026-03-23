@@ -24,9 +24,19 @@ interface CreateCVPageProps {
   templateId?: string
   saveCv?: (id: string, cvData: CVData) => Promise<{ success: boolean; message?: string; error?: string } | null>
   onCompletePath?: string
+  language?: 'EN' | 'ES'
 }
 
-export default function CreateCVPage({ cv, id, opportunityType, cvType, templateId = "harvard", saveCv, onCompletePath }: CreateCVPageProps) {
+export default function CreateCVPage({
+                                       cv,
+                                       id,
+                                       opportunityType,
+                                       cvType,
+                                       templateId = "harvard",
+                                       saveCv,
+                                       onCompletePath,
+                                       language = "ES",
+}: CreateCVPageProps) {
   const [cvData, setCvData] = useState<CVData>(cv)
   const [activeSection, setActiveSection] = useState(0)
   const [showPreview, setShowPreview] = useState(true)
@@ -198,7 +208,11 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType, template
                         {templateId === "europass" ? (
                           <CVPreviewEuropass data={cvData} sections={sections} />
                         ) : (
-                          <CVPreview data={cvData} sections={sections} />
+                          <CVPreview
+                            data={cvData}
+                            sections={sections}
+                            language={language}
+                          />
                         )}
                       </div>
                     </CardContent>

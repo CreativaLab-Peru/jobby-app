@@ -34,12 +34,21 @@ export async function getRoadmapForOpportunity(
     const user = await getCurrentUser();
     if (!user) return null;
 
+    const route = await prisma.route.findFirst({
+      where: {
+        isActive: true,
+        userId: user.id,
+      }
+    })
+    if (!route) return null;
+
     const roadmap = await prisma.roadmap.findUnique({
       where: {
-        opportunityId_cvId_userId: {
+        opportunityId_cvId_userId_routeId: {
           opportunityId,
           cvId,
           userId: user.id,
+          routeId: route.id,
         },
       },
       include: {

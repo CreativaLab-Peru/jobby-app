@@ -44,8 +44,8 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
   }, [allValues, onValuesChange]);
 
   // Suscripción a valores para lógica condicional y descripciones
-  const selectedOpportunity = watch("opportunityType");
-  const selectedTemplate = watch("templateId");
+  // const selectedOpportunity = watch("opportunityType");
+  // const selectedTemplate = watch("templateId");
 
   return (
     <form className="space-y-6 py-4">
@@ -63,7 +63,7 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
         label="Diseño del CV"
         value={watch("templateId")}
         options={[
-          { key: "harvard", value: "Harvard (Clásico)" },
+          { key: "harvard", value: "Harvard (Recomendado)" },
           { key: "europass", value: "Europass Modern" },
         ]}
         onChange={(v) => setValue("templateId", v as any, { shouldValidate: true })}

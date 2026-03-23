@@ -1,7 +1,10 @@
+import type { EvaluateCvSectionsPayload } from "@/features/cv/helpers/types";
+
 export const getPromptToEvaluateCv = (
-  text: string,
+  sections: EvaluateCvSectionsPayload,
   cvType?: string | null,
   opportunityType?: string | null,
+  lang?: 'ES' | 'EN'
 ) => {
   const contextBlock = [
     cvType && `- CV Category: ${cvType}`,
@@ -27,7 +30,7 @@ Analyze the provided CV and generate:
 All improvements MUST be tailored to the CV category and target opportunity type above.
 
 ### INPUT DATA (JSON)
-${JSON.stringify(text)}
+${JSON.stringify(sections)}
 
 ### OUTPUT FORMAT
 Return a valid JSON object following this schema:
@@ -35,24 +38,24 @@ Return a valid JSON object following this schema:
   "overallScore": number,
   "summary": "Spanish text, max 200 chars",
   "sectionScores": [
-    { "sectionType": "SUMMARY | EXPERIENCE | EDUCATION | SKILLS | PROJECTS | VOLUNTEERING | CERTIFICATIONS | COMPLEMENTS | ACHIEVEMENTS | CONTACT", "score": number, "details": object }
+    { "sectionType": one of them "SUMMARY | EXPERIENCE | EDUCATION | SKILLS | PROJECTS | VOLUNTEERING | CERTIFICATIONS | COMPLEMENTS | ACHIEVEMENTS | CONTACT", "score": number, "details": object }
   ],
   "recommendations": [
-    { "sectionType": "string", "text": "Advice in Spanish", "severity": "LOW | MEDIUM | HIGH" }
+    { "sectionType": one of them "SUMMARY | EXPERIENCE | EDUCATION | SKILLS | PROJECTS | VOLUNTEERING | CERTIFICATIONS | COMPLEMENTS | ACHIEVEMENTS | CONTACT", "text": "Advice in Spanish", "severity": "LOW | MEDIUM | HIGH" }
   ],
   "improvedTexts": [
     {
-      "sectionType": "string",
-      "originalSnippet": "Brief excerpt of what the user currently has (Language of the cv, max 80 chars)",
-      "improvedText": "The full improved version of this section content in the language of the cv. Must be ready to copy-paste.",
+      "sectionType": one of them "SUMMARY | EXPERIENCE | EDUCATION | SKILLS | PROJECTS | VOLUNTEERING | CERTIFICATIONS | COMPLEMENTS | ACHIEVEMENTS | CONTACT",
+      "originalSnippet": "Brief excerpt of what the user currently has (Language of the cv (${lang}), max 80 chars)",
+      "improvedText": "The full improved version of this section content in the language of the cv (${lang}). Must be ready to copy-paste.(not json, just plain text)",
       "changeReason": "Short explanation in language of the cv of why this change improves the CV"
     }
   ],
   "suggestedAdditions": [
     {
-      "sectionType": "string",
+      "sectionType": one of them "SUMMARY | EXPERIENCE | EDUCATION | SKILLS | PROJECTS | VOLUNTEERING | CERTIFICATIONS | COMPLEMENTS | ACHIEVEMENTS | CONTACT",
       "title": "Short title in Spanish",
-      "suggestedText": "The content to add, written in Spanish, ready to copy-paste",
+      "suggestedText": "The content to add, written in Spanish, ready to copy-paste (not json, just plain text)",
       "impact": "LOW | MEDIUM | HIGH",
       "reason": "Why adding this improves the CV (Spanish)"
     }

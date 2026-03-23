@@ -27,15 +27,15 @@ interface PaymentMethodOption {
 const PAYMENT_METHODS: PaymentMethodOption[] = [
   {
     id: PaymentMethod.MERCADOPAGO,
-    name: "Mercado Pago",
-    description: "Tarjeta, transferencia bancaria o efectivo",
+    name: "Pago en soles",
+    description: "Mercado Pago",
     icon: Wallet,
     available: true,
   },
   {
     id: PaymentMethod.PADDLE,
-    name: "Tarjeta Internacional",
-    description: "Visa, Mastercard, American Express",
+    name: "Pago en dolares",
+    description: "Paddle",
     icon: CreditCard,
     available: true,
   },

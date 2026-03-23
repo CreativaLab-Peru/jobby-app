@@ -3,24 +3,32 @@
 import { Eye } from "lucide-react"
 import { CVData, CVSection } from "@/types/cv"
 import { linkedinHref, linkedinDisplay } from "@/lib/utils"
+import {i18n} from "@/const/i18n";
 
 interface CVPreviewProps {
   data: CVData
   sections: CVSection[]
+  language: 'ES' | 'EN'
 }
 
-export function CVPreview({ data, sections }: CVPreviewProps) {
+export function CVPreview({
+                            data,
+                            sections,
+                            language = 'ES'
+}: CVPreviewProps) {
   // Estilos comunes para consistencia con cv-document.tsx
   const sectionTitleClasses = "text-[12px] font-bold uppercase mb-1.5"
   const sectionDividerClasses = "border-b border-black mb-2"
   const itemTitleClasses = "text-[11px] font-bold text-[#111]"
   const bodyTextClasses = "text-[10.5px] text-[#111] leading-[1.35]"
 
+  const t = i18n[language] || i18n.ES;
+
   const sectionRenderers: Record<string, () => React.ReactElement | null> = {
     achievements: () =>
       data.achievements?.items?.length ? (
         <div className="mt-1.5 mb-0">
-          <h2 className={sectionTitleClasses}>Logros y Reconocimientos</h2>
+          <h2 className={sectionTitleClasses}>{t.achievements}</h2>
           <div className={sectionDividerClasses} />
           <div>
             {data.achievements.items.map((achievement, index) => (
@@ -39,7 +47,7 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
     certifications: () =>
       data.certifications?.items?.length ? (
         <div className="mt-1.5 mb-0">
-          <h2 className={sectionTitleClasses}>Licencias y Certificaciones</h2>
+          <h2 className={sectionTitleClasses}>{t.certifications}</h2>
           <div className={sectionDividerClasses} />
           <div>
             {data.certifications.items.map((cert, index) => (
@@ -54,7 +62,7 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
     education: () =>
       data.education?.items?.length ? (
         <div className="mt-1.5 mb-0">
-          <h2 className={sectionTitleClasses}>Educación</h2>
+          <h2 className={sectionTitleClasses}>{t.education}</h2>
           <div className={sectionDividerClasses} />
           {data.education.items.map((edu, index) => (
             <div key={edu.id || index} className="mb-1.5">
@@ -67,7 +75,7 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
                 <span className="text-[10.5px] italic">{edu.year}</span>
               </div>
               {edu.honors && (
-                <p className="text-[10.5px]">Honores: {edu.honors}</p>
+                <p className="text-[10.5px]">{t.honors}: {edu.honors}</p>
               )}
             </div>
           ))}
@@ -77,7 +85,7 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
     projects: () =>
       data.projects?.items?.length ? (
         <div className="mt-1.5 mb-0">
-          <h2 className={sectionTitleClasses}>Proyectos Académicos</h2>
+          <h2 className={sectionTitleClasses}>{t.projects}</h2>
           <div className={sectionDividerClasses} />
           {data.projects.items.map((project, index) => (
             <div key={project.id || index} className="mb-1.5">
@@ -90,7 +98,7 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
               )}
               {project.technologies && (
                 <p className="text-[10.5px]">
-                  <span className="font-bold">Tecnologías:</span> {project.technologies}
+                  <span className="font-bold">{t.softSkills}:</span> {project.technologies}
                 </p>
               )}
             </div>
@@ -101,7 +109,7 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
     volunteering: () =>
       data.volunteering?.items?.length ? (
         <div className="mt-1.5 mb-0">
-          <h2 className={sectionTitleClasses}>Voluntariado y Actividades Comunitarias</h2>
+          <h2 className={sectionTitleClasses}>{t.volunteering}</h2>
           <div className={sectionDividerClasses} />
           {data.volunteering.items.map((vol, index) => (
             <div key={vol.id || index} className="mb-1.5">
@@ -134,7 +142,7 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
     experience: () =>
       data.experience?.items?.length ? (
         <div className="mt-1.5 mb-0">
-          <h2 className={sectionTitleClasses}>Experiencia Laboral</h2>
+          <h2 className={sectionTitleClasses}>{t.experience}</h2>
           <div className={sectionDividerClasses} />
           {data.experience.items.map((exp, index) => (
             <div key={exp.id || index} className="mb-1.5">
@@ -171,24 +179,24 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
         data.skills.languages.length > 0
       ) ? (
         <div className="mt-1.5 mb-0">
-          <h2 className={sectionTitleClasses}>Habilidades Profesionales y Personales</h2>
+          <h2 className={sectionTitleClasses}>{t.skills}</h2>
           <div className={sectionDividerClasses} />
           <div>
             {data.skills.languages?.length > 0 && (
               <p className="text-[10.5px] mb-1">
-                <span className="font-bold mr-1.5">Idiomas:</span>
+                <span className="font-bold mr-1.5">{t.languages}:</span>
                 {data.skills.languages.join(", ")}
               </p>
             )}
             {data.skills.technical?.length > 0 && (
               <p className="text-[10.5px] mb-1">
-                <span className="font-bold mr-1.5">Habilidades Técnicas:</span>
+                <span className="font-bold mr-1.5">{t.technicalSkills}:</span>
                 {data.skills.technical.join(", ")}
               </p>
             )}
             {data.skills.soft?.length > 0 && (
               <p className="text-[10.5px] mb-1">
-                <span className="font-bold mr-1.5">Habilidades Blandas:</span>
+                <span className="font-bold mr-1.5">{t.softSkills}:</span>
                 {data.skills.soft.join(", ")}
               </p>
             )}
@@ -237,7 +245,7 @@ export function CVPreview({ data, sections }: CVPreviewProps) {
       )}
 
       {/* Divider line */}
-      <div className="border-b border-black my-1.5" />
+      {data.personal?.summary && <div className="border-b border-black my-1.5" /> }
 
       {/* Summary */}
       {data.personal?.summary && (

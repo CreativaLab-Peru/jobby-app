@@ -1,5 +1,21 @@
 import { OpportunityType } from "@prisma/client"
 
+export const MAPPED_CV_SECTIONS = [
+  "personal",
+  "projects",
+  "experience",
+  "education",
+  "achievements",
+  "skills",
+  "languages",
+  "certifications",
+  "volunteering",
+] as const
+
+export type MappedCvSection = (typeof MAPPED_CV_SECTIONS)[number]
+
+export type EvaluateCvSectionsPayload = Partial<Record<MappedCvSection, unknown>>
+
 /**
  * Configuración de ejemplos personalizados por campo
  */
@@ -26,7 +42,7 @@ export interface FieldRequiredConfig {
  */
 export interface SectionConfig {
   // Qué secciones mostrar y en qué orden
-  sections: string[] // ["personal", "projects", "experience", "education", "achievements", "skills"]
+  sections: MappedCvSection[] // ["personal", "projects", "experience", "education", "achievements", "skills"]
 
   // Ejemplos personalizados por campo
   examples: FieldExampleConfig

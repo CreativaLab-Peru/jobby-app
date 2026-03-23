@@ -40,7 +40,7 @@ export function CreateCVModal() {
   const [formData, setFormData] = useState<CVFormData>({
     title: "",
     cvType: "TECHNOLOGY_ENGINEERING",
-    opportunityType: "INTERNSHIP",
+    opportunityType: "SCHOLARSHIP",
     templateId: "harvard",
     language: Language.ES,
   });

@@ -192,7 +192,7 @@ function BulletList({ text }: { text: string }) {
   );
 }
 
-export function CvDocumentEuropass({ data, sections }: { data: CVData; sections: CVSection[] }) {
+export function CvDocumentEuropass({ data, sections }: { data: CVData; sections: CVSection[], lang?: "ES" | "EN" }) {
   const sectionRenderers: Record<string, () => React.ReactElement | null> = {
     experience: () =>
       data.experience?.items?.length ? (

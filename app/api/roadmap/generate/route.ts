@@ -34,6 +34,7 @@ export async function POST(request: Request) {
     const route = await prisma.route.findFirst({
       where: {
         isActive: true,
+        userId: currentUser.id,
       }
     })
     if (!route) {

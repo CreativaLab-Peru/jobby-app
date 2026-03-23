@@ -27,7 +27,7 @@ export const createBasicCredits = async (userId: string) => {
       type: CreditBalanceType.SEARCH_OPPORTUNITIES
     }
 
-    prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       await rechargeCredits(bodyManageCvs, tx);
       await rechargeCredits(bodyAIActions, tx);
       await rechargeCredits(bodyOpp, tx);

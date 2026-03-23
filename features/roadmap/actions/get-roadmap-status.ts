@@ -17,6 +17,7 @@ export async function getRoadmapStatus(
     const route = await prisma.route.findFirst({
       where: {
         isActive: true,
+        userId: user.id,
       }
     })
     if (!route) return { status: null, roadmapId: null };

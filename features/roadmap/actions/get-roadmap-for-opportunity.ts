@@ -37,6 +37,7 @@ export async function getRoadmapForOpportunity(
     const route = await prisma.route.findFirst({
       where: {
         isActive: true,
+        userId: user.id,
       }
     })
     if (!route) return null;

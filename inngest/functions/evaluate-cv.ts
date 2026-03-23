@@ -50,14 +50,13 @@ export const evaluateCv = inngest.createFunction(
     });
 
     if (Object.keys(filteredSections).length === 0) {
-      await refundCredits(userId, 1, "ERROR_IN_EVALUATION", CreditBalanceType.AI_ACTIONS);
       throw new Error("CV insufficient data for evaluation type");
     }
 
     // 3. Gestión de la Evaluación (Registro)
     const evaluation = await step.run("get-or-create-evaluation", async () => {
       if (evaluationId) return prisma.cvEvaluation.findUnique({ where: { id: evaluationId } });
-      return prisma.cvEvaluation.create({ data: { cvId, status: JobStatus.IN_PROGRESS } });
+      // return prisma.cvEvaluation.create({ data: { cvId, status: JobStatus.IN_PROGRESS } });
     });
 
     try {

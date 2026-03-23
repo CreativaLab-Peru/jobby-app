@@ -1,4 +1,4 @@
-# WIP
+# v1.1.29 - 2026-03-23
 
 ## Features
 - Updated `/credits` offers to read limits from plan-linked credit packages (no hardcoded credit amounts in cards).
@@ -14,6 +14,9 @@
 - Include templateId when we upload a CV
 - Refactor in the creating and uploading cv
 - Fix issue for improved text in the language of the CV
+- Hidde opp type EMPLOYMENT AND INTERNSHIP for the moment
+- Title of section to show preview and edit CV
+- Update prompt to generate roadmap
 ---
 
 # v1.1.28 - 2026-03-12

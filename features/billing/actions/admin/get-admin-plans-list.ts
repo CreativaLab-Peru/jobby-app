@@ -22,8 +22,7 @@ export type AdminPlanListResult =
 
 export interface GetAdminPlansListOptions {
   query?: string;
-  paymentType?: string | null;
-  sortBy?: "createdAt" | "name" | "priceCents";
+  sortBy?: "createdAt" | "name" | "priceCentsUSD";
   sortOrder?: "asc" | "desc";
 }
 
@@ -46,10 +45,6 @@ export const getAdminPlansList = async (
         { slug: { contains: options.query, mode: "insensitive" } },
         { description: { contains: options.query, mode: "insensitive" } },
       ];
-    }
-
-    if (options?.paymentType) {
-      where.paymentType = options.paymentType as never;
     }
 
     const sortBy = options?.sortBy || "createdAt";

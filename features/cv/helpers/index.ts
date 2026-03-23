@@ -72,10 +72,12 @@ function applyCustomization(
  * Función principal que genera las secciones del CV
  * @param opportunityType - Tipo de oportunidad (INTERNSHIP, FULL_TIME, etc.)
  * @param cvType - Tipo de CV (TECHNOLOGY_ENGINEERING, DESIGN_CREATIVITY, etc.)
+ * @param templateId - ID del template (e.g. "europass" agrega campos específicos)
  */
 export function getSections(
   opportunityType: OpportunityType,
-  cvType: CvType = CvType.TECHNOLOGY_ENGINEERING
+  cvType: CvType = CvType.TECHNOLOGY_ENGINEERING,
+  templateId?: string
 ): CVSection[] {
   // Obtener configuración específica
   const config = getConfig(cvType, opportunityType);
@@ -89,6 +91,49 @@ export function getSections(
     if (baseSection) {
       const customizedSection = applyCustomization(baseSection, config);
       sections.push(customizedSection);
+    }
+  }
+
+  // Ajustes por template: campos adicionales específicos
+  if (templateId === "europass") {
+    const personalIdx = sections.findIndex((s) => s.id === "personal");
+    if (personalIdx !== -1) {
+      const hasNationality = sections[personalIdx].fields.some((f) => f.name === "nationality");
+      const hasImage = sections[personalIdx].fields.some((f) => f.name === "image");
+
+      let fields = [...sections[personalIdx].fields];
+
+      // Insertar "image" justo después de fullName (índice 0)
+      if (!hasImage) {
+        const afterFullName = fields.findIndex((f) => f.name === "fullName");
+        fields.splice(afterFullName + 1, 0, {
+          name: "image",
+          label: "Foto de perfil (Europass)",
+          type: "photo" as const,
+          required: false,
+          tip: "El formato Europass recomienda incluir una foto profesional. Sube una imagen JPG o PNG de hasta 2MB.",
+          example: "",
+        });
+      }
+
+      // Insertar "nationality" justo después de "address"
+      if (!hasNationality) {
+        const afterAddress = fields.findIndex((f) => f.name === "address");
+        const insertAt = afterAddress >= 0 ? afterAddress + 1 : fields.length;
+        fields.splice(insertAt, 0, {
+          name: "nationality",
+          label: "Nacionalidad",
+          type: "text" as const,
+          required: false,
+          tip: "Requerido por el formato Europass. Ej: Peruana, Colombiana...",
+          example: "Peruana",
+        });
+      }
+
+      sections[personalIdx] = {
+        ...sections[personalIdx],
+        fields,
+      };
     }
   }
 

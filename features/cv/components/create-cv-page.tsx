@@ -9,6 +9,7 @@ import {getSections} from "@/features/cv/helpers";
 import { NavigationButtons } from "@/features/cv/components/navigation-buttons"
 import { CVSectionForm, CVSectionFormRef } from "@/features/cv/components/cv-section-form"
 import { CVPreview } from "@/features/cv/components/cv-preview"
+import { CVPreviewEuropass } from "@/features/cv/components/cv-preview-europass"
 import { CVData } from "@/types/cv";
 import { updateCvAndSections } from "@/features/cv/actions/update-cv-and-sections";
 import { OpportunityType, CvType } from "@prisma/client"
@@ -20,11 +21,22 @@ interface CreateCVPageProps {
   id: string
   opportunityType: OpportunityType
   cvType: CvType
+  templateId?: string
   saveCv?: (id: string, cvData: CVData) => Promise<{ success: boolean; message?: string; error?: string } | null>
   onCompletePath?: string
+  language?: 'EN' | 'ES'
 }
 
-export default function CreateCVPage({ cv, id, opportunityType, cvType, saveCv, onCompletePath }: CreateCVPageProps) {
+export default function CreateCVPage({
+                                       cv,
+                                       id,
+                                       opportunityType,
+                                       cvType,
+                                       templateId = "harvard",
+                                       saveCv,
+                                       onCompletePath,
+                                       language = "ES",
+}: CreateCVPageProps) {
   const [cvData, setCvData] = useState<CVData>(cv)
   const [activeSection, setActiveSection] = useState(0)
   const [showPreview, setShowPreview] = useState(true)
@@ -32,7 +44,7 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType, saveCv, 
   const router = useRouter()
   const formRef = useRef<CVSectionFormRef>(null)
 
-  const sections = getSections(opportunityType, cvType)
+  const sections = getSections(opportunityType, cvType, templateId)
 
   const submit = async () => {
     if (isSaving) return false
@@ -144,7 +156,7 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType, saveCv, 
                         />
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-6 space-y-6">
+                    <CardContent className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
                       <CVSectionForm
                         ref={formRef}
                         section={currentSection}
@@ -193,7 +205,15 @@ export default function CreateCVPage({ cv, id, opportunityType, cvType, saveCv, 
                       {/* Nota: CVPreview suele requerir fondo blanco para simular papel A4,
                           pero el contenedor es el que respeta el modo oscuro */}
                       <div className="max-h-[75vh] overflow-y-auto custom-scrollbar">
-                        <CVPreview data={cvData} sections={sections} />
+                        {templateId === "europass" ? (
+                          <CVPreviewEuropass data={cvData} sections={sections} />
+                        ) : (
+                          <CVPreview
+                            data={cvData}
+                            sections={sections}
+                            language={language}
+                          />
+                        )}
                       </div>
                     </CardContent>
                   </Card>

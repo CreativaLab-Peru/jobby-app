@@ -3,6 +3,9 @@ import {getOpportunityDetails} from "@/features/opportunities/actions/get-opport
 import {
   OpportunityDetailsScreen
 } from "@/features/opportunities/screens/opportunities-details-screen";
+import { getRoadmapForOpportunity } from "@/features/roadmap/actions/get-roadmap-for-opportunity";
+import { canViewFullRoadmap } from "@/features/roadmap/actions/can-view-full-roadmap";
+import { getRoadmapGenerationPermission } from "@/features/roadmap/actions/get-roadmap-generation-permission";
 
 interface PageProps {
   params: Promise<{
@@ -14,7 +17,13 @@ interface PageProps {
 export default async function OpportunityDetailsPage({ params }: PageProps) {
   const { opportunityId, cvId } = await params;
 
-  const opportunity = await getOpportunityDetails(opportunityId, cvId);
+  const [opportunity, roadmap, canViewFull, generationPermission] = await Promise.all([
+    getOpportunityDetails(opportunityId, cvId),
+    getRoadmapForOpportunity(opportunityId, cvId),
+    canViewFullRoadmap(),
+    getRoadmapGenerationPermission(opportunityId, cvId),
+  ]);
+
   if (!opportunity){
     notFound();
   }
@@ -26,6 +35,10 @@ export default async function OpportunityDetailsPage({ params }: PageProps) {
       isHighMatch={opportunity.isHighMatch}
       requirements={opportunity.requirements}
       formattedDeadline={opportunity.formattedDeadline}
+      roadmap={roadmap}
+      canViewFullRoadmap={canViewFull}
+      canGenerateRoadmap={generationPermission.canGenerate}
+      roadmapBlockedMessage={generationPermission.message}
     />
   );
 }

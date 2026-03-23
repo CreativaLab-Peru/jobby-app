@@ -1,26 +1,30 @@
 "use server";
 
-import {getCurrentUser} from "@/features/share/actions/get-current-user";
-import {prisma} from "@/lib/prisma";
-import {CvType, Language, OpportunityType, CvSectionType, CreditBalanceType} from "@prisma/client";
-import {JsonObject} from "@prisma/client/runtime/library";
-import {consumeCredits} from "@/features/credits/actions/consume-credits";
+import { getCurrentUser } from "@/features/share/actions/get-current-user";
+import { prisma } from "@/lib/prisma";
+import { CvType, Language, OpportunityType, CvSectionType, CreditBalanceType, RouteStatus } from "@prisma/client";
+import { JsonObject } from "@prisma/client/runtime/library";
+import { consumeCredits } from "@/features/credits/actions/consume-credits";
 
-/**
- * Create a CV and its default sections in one atomic operation.
- */
-export const createCVByTitleAndType = async (
-  title: string,
-  cvType: CvType,
-  opportunityType?: OpportunityType
-) => {
+// Definimos la interfaz del body para mejor tipado
+export interface CreateCvBody {
+  title: string;
+  cvType: CvType;
+  opportunityType: OpportunityType;
+  templateId: string;
+  language: Language;
+}
+
+export const createCVByTitleAndType = async (body: CreateCvBody) => {
+  const { title, cvType, opportunityType, templateId, language } = body;
+
   try {
     const currentUser = await getCurrentUser();
     if (!currentUser) {
-      return {success: false, message: "User not found."};
+      return { success: false, message: "Usuario no encontrado." };
     }
 
-    // Verify user has credits to create a CV
+    // Verificar balance de créditos
     const creditLimits = await prisma.userCreditBalance.findUnique({
       where: {
         userId_type: {
@@ -31,110 +35,72 @@ export const createCVByTitleAndType = async (
     });
 
     if (!creditLimits || creditLimits.amount <= 0) {
-      return {success: false, message: "Insufficient credits to create a CV."};
+      return { success: false, message: "Créditos insuficientes para crear un CV." };
     }
 
-    // Validate opportunityType is correct
-    // if (!Object.values(OpportunityType).includes(opportunityType)) {
-    //   return {success: false, message: "Invalid opportunity type."};
-    // }
+    // Traducción básica de títulos de secciones según el idioma seleccionado
+    const isEs = language === Language.ES;
 
-    // Default sections with minimal structured contentJson
     const defaultSections = [
-      {
-        sectionType: CvSectionType.SUMMARY,
-        title: "Summary",
-        order: 0,
-        contentJson: {text: ""} as JsonObject,
-      },
+      { sectionType: CvSectionType.SUMMARY, title: isEs ? "Resumen" : "Summary", order: 0, contentJson: { text: "" } },
       {
         sectionType: CvSectionType.CONTACT,
-        title: "Contact",
+        title: isEs ? "Contacto" : "Contact",
         order: 1,
-        contentJson: {
-          fullName: "",
-          email: "",
-          phone: "",
-          linkedin: "",
-          address: "",
-        },
+        contentJson: { fullName: "", email: "", phone: "", linkedin: "", address: "" }
       },
-      {
-        sectionType: CvSectionType.EXPERIENCE,
-        title: "Work Experience",
-        order: 2,
-        contentJson: [], // array of experience items
-      },
-      {
-        sectionType: CvSectionType.EDUCATION,
-        title: "Education",
-        order: 3,
-        contentJson: [], // array of education items
-      },
-      {
-        sectionType: CvSectionType.SKILLS,
-        title: "Skills",
-        order: 4,
-        contentJson: [
-          // you may store { name, category } objects or simple strings
-        ],
-      },
-      {
-        sectionType: CvSectionType.PROJECTS,
-        title: "Projects",
-        order: 5,
-        contentJson: [],
-      },
-      {
-        sectionType: CvSectionType.CERTIFICATIONS,
-        title: "Certifications",
-        order: 6,
-        contentJson: [],
-      },
-      {
-        sectionType: CvSectionType.LANGUAGES,
-        title: "Languages",
-        order: 7,
-        contentJson: [],
-      },
+      { sectionType: CvSectionType.EXPERIENCE, title: isEs ? "Experiencia Laboral" : "Work Experience", order: 2, contentJson: [] },
+      { sectionType: CvSectionType.EDUCATION, title: isEs ? "Educación" : "Education", order: 3, contentJson: [] },
+      { sectionType: CvSectionType.SKILLS, title: isEs ? "Habilidades" : "Skills", order: 4, contentJson: [] },
+      { sectionType: CvSectionType.PROJECTS, title: isEs ? "Proyectos" : "Projects", order: 5, contentJson: [] },
+      { sectionType: CvSectionType.CERTIFICATIONS, title: isEs ? "Certificaciones" : "Certifications", order: 6, contentJson: [] },
+      { sectionType: CvSectionType.LANGUAGES, title: isEs ? "Idiomas" : "Languages", order: 7, contentJson: [] },
     ];
 
-    // Create the CV and the default sections in one operation so it's atomic.
+    // Operación Atómica
     const newCv = await prisma.cv.create({
       data: {
         title,
         cvType,
         opportunityType,
-        language: Language.EN,
+        templateId,
+        language, // Ahora dinámico
         userId: currentUser.id,
         sections: {
           create: defaultSections.map((s) => ({
             sectionType: s.sectionType,
             title: s.title,
-            contentJson: s.contentJson,
+            contentJson: s.contentJson as JsonObject,
             order: s.order,
           })),
         },
       }
     });
 
-    if (!newCv) {
-      return {success: false, message: "Error creating CV."};
-    }
-
+    // Consumir crédito
     await consumeCredits({
       userId: currentUser.id,
       type: CreditBalanceType.MANAGE_CVS,
       amount: 1,
-      description: `Add new CV ${currentUser.id}`,
+      description: `Creación de CV: ${title}`,
     });
 
-    return {
-      success: true,
-      data: newCv,
-    };
+    // Vincular a la ruta activa si existe
+    const activeRoute = await prisma.route.findFirst({
+      where: { userId: currentUser.id, isActive: true, cvId: null },
+    });
+
+    if (activeRoute) {
+      await prisma.route.update({
+        where: { id: activeRoute.id },
+        data: { cvId: newCv.id, status: RouteStatus.CV_CREATED },
+      });
+    }
+
+    return { success: true, data: newCv };
+
   } catch (error) {
-    console.error("[ERROR_CREATE_CV_BY_TITLE_AND_TYPE]", error);
-    return {success: false, message: "Error creating the CV."};
+    console.error("[ERROR_CREATE_CV]", error);
+    return { success: false, message: "Error interno al crear el CV." };
   }
 };

@@ -1,17 +1,22 @@
+import {rechargeCredits, RechargeCreditsBody} from "@/features/credits/actions/recharge-credits";
+import {CreditBalanceType} from "@prisma/client";
+
 /**
  * DEVOLUCIÓN (REFUND)
  * Crítico si la API de IA falla tras haber cobrado.
  */
-export const refundCredits = async (userId: string, amount: number, reason: string) => {
+export const refundCredits = async (
+  userId: string,
+  amount: number,
+  reason: string,
+  type: CreditBalanceType
+) => {
 
-  // TODO: Implementar la lógica de reembolso
-  // const body: RechargeCreditsBody = {
-  //   userId,
-  //   amount,
-  //   description: `REFUND: ${reason}`,
-  //   type: "", // Asumimos que el reembolso es al balance principal
-  // }
-  // return await rechargeCredits(userId, amount, `REFUND: ${reason}`, { reason });
-
-  return null;
+  const body: RechargeCreditsBody = {
+    userId,
+    amount,
+    description: `REFUND: ${reason}`,
+    type,
+  }
+  return await rechargeCredits(body);
 };

@@ -134,18 +134,6 @@ export function AdminCreditPackageEditForm({ pkg, plans }: AdminCreditPackageEdi
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-semibold">Moneda</Label>
-                  <Select value={currency} onValueChange={setCurrency} disabled={isLoading}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="USD">USD</SelectItem>
-                      <SelectItem value="PEN">PEN</SelectItem>
-                      <SelectItem value="EUR">EUR</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
                   <Label className="text-sm font-semibold">Creditos</Label>
                   <Input type="number" min={0} value={credits} onChange={(e) => setCredits(parseInt(e.target.value) || 0)} disabled={isLoading} />
                 </div>

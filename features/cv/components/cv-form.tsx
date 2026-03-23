@@ -1,131 +1,117 @@
 "use client"
 
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { CvType, OpportunityType } from "@prisma/client";
-import {cvTypes} from "@/const";
-
-interface CVFormData {
-  title: string
-  cvType: CvType
-  opportunityType: OpportunityType
-}
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FormField } from "@/components/form-field";
+import { CVFormData, cvFormSchema } from "@/features/cv/schema";
+import {cvTypes, languages, opportunities} from "@/const";
+import {useEffect, useRef} from "react";
+import {FormSelect} from "@/components/form/select-input";
 
 interface CVFormProps {
-  formData: CVFormData
-  onFormDataChange: (data: CVFormData) => void
+  defaultValues?: Partial<CVFormData>;
+  onValuesChange: (data: CVFormData) => void;
 }
 
-export const opportunityTypes = [
-  { key: OpportunityType.INTERNSHIP, value: "Pasantía" },
-  { key: OpportunityType.SCHOLARSHIP, value: "Beca" },
-  { key: OpportunityType.EXCHANGE_PROGRAM, value: "Intercambio" },
-  { key: OpportunityType.EMPLOYMENT, value: "Empleo" },
-  { key: OpportunityType.STARTUP, value: "Aceleradora" },
-]
+export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
+  const {
+    register,
+    setValue,
+    watch,
+    formState: { errors},
+  } = useForm<CVFormData>({
+    resolver: zodResolver(cvFormSchema),
+    defaultValues: {
+      title: "",
+      templateId: "harvard",
+      ...defaultValues,
+    },
+  });
 
-export function CVForm({ formData, onFormDataChange }: CVFormProps) {
-  const updateFormData = (updates: Partial<CVFormData>) => {
-    onFormDataChange({ ...formData, ...updates })
-  }
+  const allValues = watch();
+  const prevValuesRef = useRef<string>("");
+
+  useEffect(() => {
+    const currentValuesStr = JSON.stringify(allValues);
+
+    // Solo notificamos al padre si los datos realmente cambiaron
+    if (prevValuesRef.current !== currentValuesStr) {
+      prevValuesRef.current = currentValuesStr;
+      onValuesChange(allValues);
+    }
+  }, [allValues, onValuesChange]);
+
+  // Suscripción a valores para lógica condicional y descripciones
+  // const selectedOpportunity = watch("opportunityType");
+  // const selectedTemplate = watch("templateId");
 
   return (
-    <div className="space-y-6 py-4">
-      <div className="space-y-2">
-        <Label htmlFor="title" className="text-sm font-medium text-gray-700 dark:text-gray-400">
-          Título del documento
-        </Label>
-        <Input
-          id="title"
-          placeholder="Ejemplo: CV Ingeniero de Software"
-          value={formData.title}
-          onChange={(e) => updateFormData({ title: e.target.value })}
-        />
-        <p>
-          <span className="text-sm text-gray-500 dark:text-gray-400">
-            El título ayudará a identificar este currículum en tu lista de CVs.
-          </span>
-        </p>
-      </div>
+    <form className="space-y-6 py-4">
 
+      {/* 1. Título - Usando tu FormField Custom con register */}
+      <FormField
+        label="Nombre del CV"
+        placeholder="Ejemplo: CV Ingeniero de Software"
+        register={register("title")}
+        error={errors.title?.message}
+      />
+
+      {/* 1. Diseño del CV */}
+      <FormSelect
+        label="Diseño del CV"
+        value={watch("templateId")}
+        options={[
+          { key: "harvard", value: "Harvard (Recomendado)" },
+          { key: "europass", value: "Europass Modern" },
+        ]}
+        onChange={(v) => setValue("templateId", v as any, { shouldValidate: true })}
+        error={errors.templateId?.message}
+      />
+
+      {/* 3. Tipo de Oportunidad - Select (Manual porque Radix no usa ref) */}
+      <FormSelect
+        label="Tipo de Oportunidad"
+        placeholder="Selecciona el tipo"
+        value={watch("opportunityType")}
+        options={opportunities}
+        onChange={(v) => setValue("opportunityType", v as any, { shouldValidate: true })}
+        error={errors.opportunityType?.message}
+      />
+
+      {/* 4. Perfil Profesional */}
       <div className="space-y-2">
-        <Label htmlFor="opportunity" className="text-sm font-medium text-gray-700 dark:text-gray-400">
-          Tipo de Oportunidad
-        </Label>
+        <Label className={errors.cvType ? "text-destructive" : ""}>Perfil profesional</Label>
         <Select
-          value={formData.opportunityType}
-          onValueChange={(value) => updateFormData({ opportunityType: value as OpportunityType })}
+          onValueChange={(v) => setValue("cvType", v as any, { shouldValidate: true })}
+          defaultValue={defaultValues?.cvType}
         >
-          <SelectTrigger className="bg-white text-black w-full border-gray-200 focus:border-gray-400 focus:ring-1 focus:ring-gray-400 dark:bg-[#2d333b] dark:text-white dark:border-gray-600 dark:focus:border-gray-500 dark:focus:ring-gray-500">
-            <SelectValue placeholder="Selecciona el tipo de oportunidad" />
+          <SelectTrigger className={errors.cvType ? "border-destructive" : ""}>
+            <SelectValue placeholder="Selecciona tu perfil" />
           </SelectTrigger>
-          <SelectContent className="bg-white text-black border-gray-200 dark:bg-[#2d333b] dark:text-white dark:border-gray-600">
-            {opportunityTypes.map((item) => (
-              <SelectItem
-                className="focus:bg-gray-100 focus:text-black dark:focus:bg-gray-700 dark:focus:text-white"
-                key={item.key}
-                value={item.key}
-              >
-                {item.value}
-              </SelectItem>
+          <SelectContent>
+            {cvTypes.map((t) => (
+              <SelectItem key={t.key} value={t.key}>{t.value}</SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <p>
-          <span className="text-sm text-gray-500">
-            {formData.opportunityType === OpportunityType.INTERNSHIP && "Oportunidades de prácticas profesionales."}
-            {formData.opportunityType === OpportunityType.SCHOLARSHIP && "Oportunidades de becas académicas."}
-            {formData.opportunityType === OpportunityType.EXCHANGE_PROGRAM && "Oportunidades de programas de intercambio."}
-            {formData.opportunityType === OpportunityType.EMPLOYMENT && "Oportunidades de empleo y trabajo."}
-            {!formData.opportunityType && "Selecciona un tipo de oportunidad para ver su descripción."}
-          </span>
-        </p>
+        {errors.cvType && (
+          <p className="text-xs font-semibold text-destructive">{errors.cvType.message}</p>
+        )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="type" className="text-sm font-medium text-gray-700 dark:text-gray-400">
-          Selecciona tu perfil profesional
-        </Label>
-        <Select
-          value={formData.cvType}
-          onValueChange={(value) => updateFormData({ cvType: value as CvType })}
-        >
-          <SelectTrigger className="bg-white text-black w-full border-gray-200 focus:border-gray-400 focus:ring-1 focus:ring-gray-400 dark:bg-[#2d333b] dark:text-white dark:border-gray-600 dark:focus:border-gray-500 dark:focus:ring-gray-500">
-            <SelectValue placeholder="Selecciona el tipo de CV" />
-          </SelectTrigger>
-          <SelectContent className="bg-white text-black border-gray-200 dark:bg-[#2d333b] dark:text-white dark:border-gray-600">
-            {cvTypes.map((item) => (
-              <SelectItem
-                className="focus:bg-gray-100 focus:text-black dark:focus:bg-gray-700 dark:focus:text-white"
-                key={item.key}
-                value={item.key}
-              >
-                {item.value}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <p>
-          <span className="text-sm text-gray-500 dark:text-gray-400">
-            {formData.cvType === CvType.TECHNOLOGY_ENGINEERING && "Ideal para perfiles en sistemas, software, innovación o data."}
-            {formData.cvType === CvType.DESIGN_CREATIVITY && "Para creativos visuales, diseñadores gráficos, UX/UI o artistas digitales."}
-            {formData.cvType === CvType.MARKETING_STRATEGY && "Para marketers, comunicadores o estrategas de contenido."}
-            {formData.cvType === CvType.MANAGEMENT_BUSINESS && "Para administración, emprendimiento o desarrollo comercial."}
-            {formData.cvType === CvType.FINANCE_PROJECTS && "Para gestión financiera, análisis económico o PMO."}
-            {formData.cvType === CvType.SOCIAL_MEDIA && "Para community managers, creadores de contenido o influencers."}
-            {formData.cvType === CvType.EDUCATION && "Para docentes, formadores, capacitadores o coaches."}
-            {formData.cvType === CvType.SCIENCE && "Para perfiles STEM, sostenibilidad, impacto o proyectos de investigación."}
-            {!formData.cvType && "Selecciona un perfil profesional para ver su descripción."}
-          </span>
-        </p>
-      </div>
-    </div>
+      {/* 5. Idioma del CV */}
+      <FormSelect
+        label="Idioma del Currículum"
+        placeholder="Selecciona el idioma"
+        value={watch("language")}
+        options={languages}
+        onChange={(v) => setValue("language", v as any, { shouldValidate: true })}
+        error={errors.language?.message}
+        description="El contenido del CV se generará en este idioma."
+      />
+
+    </form>
   )
 }

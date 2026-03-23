@@ -25,10 +25,12 @@ interface Props {
       title: string;
     }
   };
+  blurred?: boolean;
 }
 
 export default function OpportunityCard({
                                           opportunity
+                                          , blurred
                                         }: Props) {
   const rawMatch = opportunity.match ?? 0;
   const matchValue = Math.round(rawMatch > 1 ? rawMatch : rawMatch * 100);
@@ -36,10 +38,11 @@ export default function OpportunityCard({
   const isHighMatch = matchValue >= 80;
 
   const router = useRouter();
+  const blurClass = blurred ? "filter blur-sm grayscale-[40%]" : "";
 
   return (
     <Card
-      className="group relative overflow-hidden border-border/40 bg-card rounded-[2rem] hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 flex flex-col">
+      className={`group relative overflow-hidden border-border/40 bg-card rounded-[2rem] hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 flex flex-col ${blurClass}`}>
 
       {isHighMatch && (
         <div className="absolute top-0 right-0 p-3">
@@ -138,6 +141,19 @@ export default function OpportunityCard({
           </a>
         </Button>
       </CardFooter>
+      {blurred && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-background/70">
+          <div className="text-center p-6 rounded-2xl">
+            <p className="font-bold text-foreground mb-2">Contenido bloqueado</p>
+            <p className="text-sm text-muted-foreground mb-4">Actualiza a Starter o Pro para ver todas las oportunidades.</p>
+            <div className="flex justify-center">
+              <Button size="sm" onClick={() => router.push('/billing')}>
+                Ver planes
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </Card>
   );
 }

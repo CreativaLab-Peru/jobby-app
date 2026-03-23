@@ -23,13 +23,15 @@ interface CvListProps {
   canCreate: boolean;
   hasMoreProp?: boolean;
   totalCount?: number;
+  routeId?: string | null;
 }
 
 export function CvListScreen({
                                initialCvs,
                                canCreate,
                                hasMoreProp = false,
-                               totalCount = 0
+                               totalCount = 0,
+                               routeId,
                              }: CvListProps) {
   const {onOpenCreate, onOpenUpload} = useCvModalStore();
 

@@ -1,5 +1,6 @@
 import {rechargeCredits, RechargeCreditsBody} from "@/features/credits/actions/recharge-credits";
 import {CreditBalanceType} from "@prisma/client";
+import {prisma} from "@/lib/prisma";
 
 export const createBasicCredits = async (userId: string) => {
   try {
@@ -19,11 +20,18 @@ export const createBasicCredits = async (userId: string) => {
       type: CreditBalanceType.AI_ACTIONS
     }
 
-    const result = await rechargeCredits(bodyManageCvs);
-    if (!result) throw new Error("Failed to create basic credits");
+    const bodyOpp: RechargeCreditsBody = {
+      userId,
+      amount: 1,
+      description: "Créditos básicos iniciales al registrarse",
+      type: CreditBalanceType.SEARCH_OPPORTUNITIES
+    }
 
-    const resultAI = await rechargeCredits(bodyAIActions);
-    if (!resultAI) throw new Error("Failed to create basic AI action credits");
+    await prisma.$transaction(async (tx) => {
+      await rechargeCredits(bodyManageCvs, tx);
+      await rechargeCredits(bodyAIActions, tx);
+      await rechargeCredits(bodyOpp, tx);
+    })
 
     return true;
   } catch (e){

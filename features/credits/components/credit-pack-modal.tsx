@@ -10,7 +10,7 @@ import {
 import { CreditPackCard } from "./credit-pack-card"
 import { Zap } from "lucide-react"
 import {useCreditModal} from "@/features/credits/hooks/use-credit-modal";
-import {CREDIT_PACKS} from "@/features/credits/consts";
+import {CreditPackOffer} from "@/features/credits/consts";
 import {useState, useTransition} from "react";
 import {
   createPreferenceForNewUser
@@ -20,7 +20,11 @@ import { PaymentMethod } from "@/features/credits/components/payment-method-moda
 import { createCheckoutForNewUserPaddle } from "@/features/billing/actions/create-checkout-for-new-user-paddle";
 import { usePaddle } from "@/features/billing/components/paddle-provider";
 
-export function CreditPackModal() {
+interface CreditPackModalProps {
+  packs: CreditPackOffer[];
+}
+
+export function CreditPackModal({ packs }: CreditPackModalProps) {
   const { isOpen, onClose } = useCreditModal()
   const {userId} = useAnalysisStore();
 
@@ -71,7 +75,7 @@ export function CreditPackModal() {
 
           <div className="p-8 pt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {CREDIT_PACKS.map((pack) => (
+              {packs.map((pack) => (
                 <CreditPackCard
                   key={pack.id}
                   pack={pack}

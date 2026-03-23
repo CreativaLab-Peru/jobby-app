@@ -15,15 +15,15 @@ interface PreviewCVPageProps {
 export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
   const { cvId } = await params;
   if (!cvId) {
-    return redirect('/cv')
+    return redirect('/my-cv')
   }
   const cv = await getCvById(cvId);
   if (!cv) {
-    return redirect('/cv')
+    return redirect('/my-cv')
   }
 
   const cvData: CVData = transformCVToDTO(cv);
-  const sections = getSections(cv.opportunityType, cv.cvType);
+  const sections = getSections(cv.opportunityType, cv.cvType, cv.templateId);
   // Extraer solo los IDs de las secciones (sin los iconos/funciones)
   const sectionIds = sections.map(s => s.id);
 
@@ -34,9 +34,11 @@ export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
   return (
     <PreviewCVComponent
       cv={cvData}
+      language={cv.language || "ES"}
       opportunityType={cv.opportunityType}
       cvId={cv.id}
       cvType={cv.cvType}
+      templateId={cv.templateId}
       sectionIds={sectionIds}
       canAnalyze={hasCredits}
       analysisTokens={creditLimits.aiActionsLimit}

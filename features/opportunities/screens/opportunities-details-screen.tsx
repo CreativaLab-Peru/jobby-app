@@ -12,6 +12,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { RoadmapSection } from "@/features/roadmap/components/roadmap-section";
+import type { RoadmapData } from "@/features/roadmap/actions/get-roadmap-for-opportunity";
 
 interface Props {
   opportunity: any;
@@ -22,6 +24,10 @@ interface Props {
     optional: string | null;
   };
   formattedDeadline: string | null;
+  roadmap?: RoadmapData;
+  canViewFullRoadmap?: boolean;
+  canGenerateRoadmap?: boolean;
+  roadmapBlockedMessage?: string | null;
 }
 
 // Sub-componente interno para limpieza visual
@@ -41,7 +47,11 @@ export function OpportunityDetailsScreen({
                                            matchValue,
                                            isHighMatch,
                                            requirements,
-                                           formattedDeadline
+                                           formattedDeadline,
+                                           roadmap = null,
+                                           canViewFullRoadmap = false,
+                                           canGenerateRoadmap = true,
+                                           roadmapBlockedMessage = null,
                                          }: Props) {
 
   const { required, optional } = requirements;
@@ -184,6 +194,28 @@ export function OpportunityDetailsScreen({
             </CardContent>
           </Card>
         </motion.div>
+
+        {/* Roadmap Section */}
+        {opportunity.cv?.id && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <Card className="rounded-[2.5rem] border-border/40 overflow-hidden bg-card">
+              <CardContent className="p-8 md:p-14">
+                <RoadmapSection
+                  opportunityId={opportunity.id}
+                  cvId={opportunity.cv.id}
+                  initialRoadmap={roadmap}
+                  canViewFull={canViewFullRoadmap}
+                  canGenerate={canGenerateRoadmap}
+                  blockedMessage={roadmapBlockedMessage}
+                />
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
       </div>
     </main>
   );

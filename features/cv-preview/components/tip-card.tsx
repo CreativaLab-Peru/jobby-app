@@ -1,31 +1,30 @@
 import { Card, CardContent } from "@/components/ui/card"
+import { Lightbulb } from "lucide-react"
 
 interface TipCardProps {
-  opportunityType: string
+  description: string;      // Texto principal (ej: "Tu CV está optimizado para")
+  highlightedText: string;  // Lo que irá en negrita (ej: "Desarrollador Frontend")
+  footer?: string;          // Texto opcional que va después (ej: ". El análisis te ayudará.")
 }
 
-export function TipCard({ opportunityType }: TipCardProps) {
+export function TipCard({ description, highlightedText, footer }: TipCardProps) {
   return (
     <Card className="shadow-card border-border bg-muted/50 overflow-hidden relative">
-      {/* Decoración sutil: Un toque del gradiente de marca en el borde izquierdo */}
+      {/* El gradiente de marca que ya tienes definido */}
       <div className="absolute left-0 top-0 bottom-0 w-1 ai-gradient" />
 
-      <CardContent className="p-6">
-        {/* Usamos foreground para el texto principal para asegurar contraste */}
+      <CardContent className="p-5">
         <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
-          <span>💡</span> Consejo
+          <Lightbulb className="w-5 h-5 text-primary" />
+          <span className="text-xs uppercase tracking-wider opacity-70">Consejo</span>
         </h4>
 
-        {/* Usamos muted-foreground para el texto secundario */}
         <p className="text-sm text-muted-foreground leading-relaxed">
-          Tu CV está optimizado para{" "}
+          {description}{" "}
           <span className="font-bold text-foreground">
-            {opportunityType === "INTERNSHIP" && "Pasantía"}
-            {opportunityType === "SCHOLARSHIP" && "Beca"}
-            {opportunityType === "EXCHANGE_PROGRAM" && "Intercambio"}
-            {opportunityType === "EMPLOYMENT" && "Empleo"}
-            {!opportunityType && <span className="text-muted italic">No especificado</span>}
-          </span>. El análisis te mostrará cómo mejorarlo aún más.
+            {highlightedText}
+          </span>
+          {footer && ` ${footer}`}
         </p>
       </CardContent>
     </Card>

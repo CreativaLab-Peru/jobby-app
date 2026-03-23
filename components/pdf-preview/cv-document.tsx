@@ -5,17 +5,7 @@ import { Document, Page, View, Text, StyleSheet, Font } from "@react-pdf/rendere
 import path from "path";
 import type { CVData, CVSection } from "@/types/cv";
 import { linkedinDisplay } from "@/lib/utils";
-
-// OPTIONAL: register a custom font if you host one in /public/fonts
-// Font.register({
-//   family: "Inter",
-//   fonts: [
-//     { src: path.resolve("/fonts/Inter/Inter_18pt-Regular.ttf"), fontWeight: "normal", fontStyle: "normal" },
-//     { src: path.resolve("/fonts/Inter/Inter_18pt-Italic.ttf"), fontWeight: "normal", fontStyle: "italic" },
-//     { src: path.resolve("/fonts/Inter/Inter_18pt-Bold.ttf"), fontWeight: "bold", fontStyle: "normal" },
-//     { src: path.resolve("/fonts/Inter/Inter_18pt-BoldItalic.ttf"), fontWeight: "bold", fontStyle: "italic" },
-//   ],
-// });
+import {i18n} from "@/const/i18n";
 
 // Font Arial
 Font.register({
@@ -129,13 +119,14 @@ const styles = StyleSheet.create({
   sectionSpace: { marginBottom: 0 },
 });
 
-export function CvDocument({ data, sections }: { data: CVData; sections: CVSection[] }) {
+export function CvDocument({ data, sections, lang = "ES" }: { data: CVData; sections: CVSection[], lang?: "ES" | "EN" }) {
+  const t = i18n[lang] || i18n.ES;
   // Mapeo de renderizadores para cada tipo de sección (para PDF)
   const sectionRenderers: Record<string, () => React.ReactElement | null> = {
     achievements: () =>
       data.achievements?.items?.length ? (
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>LOGROS Y RECONOCIMIENTOS</Text>
+          <Text style={styles.sectionTitle}>{t.achievements}</Text>
           <View style={styles.sectionDivider} />
           <View>
             {data.achievements.items.map((ach, idx) => {
@@ -159,7 +150,7 @@ export function CvDocument({ data, sections }: { data: CVData; sections: CVSecti
     certifications: () =>
       data.certifications?.items?.length ? (
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>LICENCIAS Y CERTIFICACIONES</Text>
+          <Text style={styles.sectionTitle}>{t.certifications}</Text>
           <View style={styles.sectionDivider} />
           <View>
             {data.certifications.items.map((c, index) => {
@@ -175,7 +166,7 @@ export function CvDocument({ data, sections }: { data: CVData; sections: CVSecti
               }
               return (
                 <Text key={c.id ?? index} style={styles.simpleList}>
-                  {c.name ?? ""} {c.issuer ? `by ${c.issuer}` : ""}
+                  {c.name ?? ""} {c.issuer ? `${t.issuedBy} ${c.issuer}` : ""}
                   {yearText}
                 </Text>
               );
@@ -187,7 +178,7 @@ export function CvDocument({ data, sections }: { data: CVData; sections: CVSecti
     education: () =>
       data.education?.items?.length ? (
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>EDUCACIÓN</Text>
+          <Text style={styles.sectionTitle}>{t.education}</Text>
           <View style={styles.sectionDivider} />
           {data.education.items.map((edu, index) => (
             <View key={edu.id ?? index} style={styles.eduRow}>
@@ -201,7 +192,7 @@ export function CvDocument({ data, sections }: { data: CVData; sections: CVSecti
               </View>
               {edu.honors ? (
                 <View>
-                  <Text style={{ fontSize: 10.5 }}>Honores: {edu.honors}</Text>
+                  <Text style={{ fontSize: 10.5 }}>{t.honors}: {edu.honors}</Text>
                 </View>
               ) : null}
             </View>
@@ -212,7 +203,7 @@ export function CvDocument({ data, sections }: { data: CVData; sections: CVSecti
     projects: () =>
       data.projects?.items?.length ? (
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>PROYECTOS ACADÉMICOS</Text>
+          <Text style={styles.sectionTitle}>{t.projects}</Text>
           <View style={styles.sectionDivider} />
           {data.projects.items.map((proj, index) => (
             <View key={proj.id ?? index} style={{ marginBottom: 6 }}>
@@ -233,7 +224,7 @@ export function CvDocument({ data, sections }: { data: CVData; sections: CVSecti
               ) : null}
               {proj.technologies ? (
                 <Text style={{ fontSize: 10.5 }}>
-                  <Text style={{ fontWeight: "bold" }}>Tecnologías:</Text> {proj.technologies}
+                  <Text style={{ fontWeight: "bold" }}>{t.softSkills}:</Text> {proj.technologies}
                 </Text>
               ) : null}
             </View>
@@ -244,7 +235,7 @@ export function CvDocument({ data, sections }: { data: CVData; sections: CVSecti
     volunteering: () =>
       data.volunteering?.items?.length ? (
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>VOLUNTARIADO Y ACTIVIDADES COMUNITARIAS</Text>
+          <Text style={styles.sectionTitle}>{t.volunteering}</Text>
           <View style={styles.sectionDivider} />
           {data.volunteering.items.map((vol, index) => (
             <View key={vol.id ?? index} style={{ marginBottom: 6 }}>
@@ -290,7 +281,7 @@ export function CvDocument({ data, sections }: { data: CVData; sections: CVSecti
     experience: () =>
       data.experience?.items?.length ? (
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>EXPERIENCIA LABORAL</Text>
+          <Text style={styles.sectionTitle}>{t.experience}</Text>
           <View style={styles.sectionDivider} />
           {data.experience.items.map((exp, index) => (
             <View key={exp.id ?? index} style={{ marginBottom: 6 }}>
@@ -339,24 +330,24 @@ export function CvDocument({ data, sections }: { data: CVData; sections: CVSecti
         (data.skills.technical?.length ?? 0) > 0 ||
         (data.skills.soft?.length ?? 0) > 0) ? (
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>HABILIDADES PROFESIONALES Y PERSONALES</Text>
+          <Text style={styles.sectionTitle}>{t.skills}</Text>
           <View style={styles.sectionDivider} />
           <View>
             {data.skills.languages?.length ? (
               <Text style={styles.skillsLine}>
-                <Text style={styles.skillsLineLabel}>Idiomas:</Text>
+                <Text style={styles.skillsLineLabel}>{t.languages}:</Text>
                 {data.skills.languages.join(", ")}
               </Text>
             ) : null}
             {data.skills.technical?.length ? (
               <Text style={styles.skillsLine}>
-                <Text style={styles.skillsLineLabel}>Habilidades Técnicas:</Text>
+                <Text style={styles.skillsLineLabel}>{t.technicalSkills}:</Text>
                 {data.skills.technical.join(", ")}
               </Text>
             ) : null}
             {data.skills.soft?.length ? (
               <Text style={styles.skillsLine}>
-                <Text style={styles.skillsLineLabel}>Habilidades Blandas:</Text>
+                <Text style={styles.skillsLineLabel}>{t.softSkills}:</Text>
                 {data.skills.soft.join(", ")}
               </Text>
             ) : null}
@@ -392,7 +383,7 @@ export function CvDocument({ data, sections }: { data: CVData; sections: CVSecti
           </Text>
         </View>
 
-        <View style={styles.thinRule} />
+        {data.personal?.summary && <View style={styles.thinRule} />}
 
         {/* Summary */}
         {data.personal?.summary ? (

@@ -164,6 +164,8 @@ function buildSections(cvData: CVData) {
         phone: cvData.personal.phone,
         address: cvData.personal.address,
         linkedin: cvData.personal.linkedin,
+        nationality: cvData.personal.nationality ?? "",
+        image: cvData.personal.image ?? "",
       },
     });
   }

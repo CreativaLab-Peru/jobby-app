@@ -1,4 +1,14 @@
-export const CREDIT_PACKS = [
+export type CreditPackOffer = {
+  id: string;
+  name: string;
+  price: number;
+  limits: { manageCvsLimit: number; aiActionsLimit: number; opportunitiesActionsLimit: number };
+  features: { text: string; included: boolean }[];
+  highlight: boolean;
+  variant: "outline" | "default";
+};
+
+export const CREDIT_PACKS: CreditPackOffer[] = [
   {
     id: "STARTER",
     name: "Starter",

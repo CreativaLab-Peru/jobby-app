@@ -43,7 +43,7 @@ export function AdminPaymentDetailScreen({ payment }: AdminPaymentDetailScreenPr
   const isActive = payment.active;
   const isExpired = payment.expiresAt && new Date(payment.expiresAt) < new Date();
   const userLabel = `${payment.user.name} (${payment.user.email})`;
-  const price = formatCurrency(payment.plan.priceCents as unknown as number, payment.plan.currency);
+  const price = `${formatCurrency(Number(payment.plan.priceCentsPEN), "PEN")} / ${formatCurrency(Number(payment.plan.priceCentsUSD), "USD")}`;
 
   const handleDeactivate = async () => {
     setIsDeactivating(true);

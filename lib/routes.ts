@@ -8,6 +8,14 @@ export const routes = {
   app: {
     dashboard: "/dashboard",
 
+    routes: {
+      new: "/routes/new",
+    },
+
+    myCv: "/my-cv",
+    myEvaluation: "/my-evaluation",
+    myOpportunities: "/my-opportunities",
+
     cv: {
       root: "/cv",
       detail: (cvId: string) => `/cv/${cvId}`,

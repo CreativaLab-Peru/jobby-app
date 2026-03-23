@@ -57,6 +57,7 @@ Preferencias profesionales del usuario para búsqueda de empleo y matching con o
 Documento principal que puede ser de diferentes categorías (`CvType`) e idiomas (`Language`).
 - **`extractedJson`**: Almacena la data estructurada resultante del parseo inicial.
 - **`fullTextSearch`**: Campo optimizado para búsquedas globales de texto.
+- **`templateId`**: FK hacia `CvTemplate` (`@default("harvard")`). Define la plantilla visual utilizada para renderizar el CV. Plantillas disponibles: `harvard`, `europass`, `stem`, `fullbright`.
 
 ### `cv_section`
 Representa los bloques modulares de un CV (Experiencia, Educación, etc.).
@@ -104,8 +105,9 @@ Contenedor de resultados de IA para un CV específico.
 
 ### `subscription_plan` (Mapeado como `subscription_plan` — modelo `PaymentPlan`)
 Planes de pago disponibles en la plataforma.
-- **Campos:** `id`, `slug` (unique), `name`, `description?`, `paymentType` (SUBSCRIPTION | ONE_TIME | REFUND | FREE), `priceCents`, `currency`, `features?` (Json), `manualCvLimit`, `uploadCvLimit`.
-- **Relación:** Tiene muchos `UserPayment`.
+- **Campos:** `id`, `slug` (unique), `name`, `description?`, `paymentType` (SUBSCRIPTION | ONE_TIME | REFUND | FREE), `priceCentsPEN` (Mercado Pago), `priceCentsUSD` (Paddle), `paddleProductId?`, `paddlePriceIdUSD?`, `features?` (Json), `manualCvLimit`, `uploadCvLimit`.
+- **Relaciones:** Tiene muchos `UserPayment` y muchos `CreditPackage`.
+- **Notas de integración:** precios se almacenan en centavos; para Mercado Pago se convierten a monto PEN al generar la preferencia (`unit_price`).
 
 ### `user_subscription` (Mapeado como `user_subscription` — modelo `UserPayment`)
 Registro de pagos/suscripciones de usuarios a planes.
@@ -121,6 +123,7 @@ Sistema de créditos flexible.
 Paquetes de créditos disponibles para compra.
 - **Campos:** `id`, `code`, `name`, `credits`, `priceCents`, `currency`, `active`, `type` (`CreditBalanceType`), `planId?` (FK a `subscription_plan`).
 - **Relación:** Tiene muchos `Invoice`. Opcionalmente pertenece a un `PaymentPlan` — permite agrupar paquetes por plan en el panel de administración.
+- **Convención actual:** al crear/editar un plan admin se sincronizan 3 paquetes por tipo (`MANAGE_CVS`, `AI_ACTIONS`, `SEARCH_OPPORTUNITIES`) asociados por `planId`.
 
 ### `invoice` (Mapeado como `invoice`)
 Facturas de pagos realizados por usuarios.
@@ -128,9 +131,9 @@ Facturas de pagos realizados por usuarios.
 - **Relación:** Con `user` y opcionalmente con `CreditPackage`.
 
 ### Flujos de Créditos:
-- **Adquisición de Créditos:** Compra de paquetes de créditos que incrementan `user_credit_balance`.
+- **Adquisición de Créditos:** Compra de plan/paquete que recarga `user_credit_balance` según los `credit_package` asociados al `planId`.
 - **Consumo de Créditos:** Deducción de créditos al procesar CVs para evaluaciones de IA, reflejado en `credit_transaction`.
-- **Recarga Automática:** Si el saldo de créditos cae por debajo de un umbral, se puede activar una recarga automática (si está habilitada).
+- **Fallback de recarga:** si no se encuentran paquetes por plan, el sistema puede usar límites del plan como fallback para evitar pérdida de crédito post-pago.
 
 ---
 
@@ -158,6 +161,51 @@ Almacena los reclamos enviados por usuarios a través del Libro de Reclamaciones
 
 ---
 
+## �️ 8. Dominio de Plantillas y Multimedia
+
+### `cv_template` (Mapeado como `cv_template`)
+Catálogo de plantillas visuales disponibles para generar un CV.
+- **Campos:** `id`, `name`, `description?`, `category`, `isPremium`, `requiresPhoto`, `isActive`, `displayOrder`, `createdAt`, `updatedAt`.
+- **Plantillas iniciales:** `harvard` (profesional), `europass` (europeo), `stem` (técnico), `fullbright` (becas).
+- **Relación:** Un `cv` pertenece a una `cv_template` mediante `templateId` (FK RESTRICT, `@default("harvard")`).
+
+### `cv_photo` (Mapeado como `cv_photo`)
+Almacena la foto de perfil subida por el usuario para incluirla en plantillas que la requieren (e.g. Europass).
+- **Campos:** `id`, `userId`, `url`, `publicId`, `createdAt`.
+- **Índice:** `[userId]`.
+- **Relación:** Cascada con `user` — si el usuario se elimina, su foto también.
+
+---
+
+## 🗺️ 9. Dominio de Rutas Guiadas
+
+### `route` (Mapeado como `route`)
+Representa una ruta guiada del usuario que agrupa un CV, su análisis y oportunidades en un flujo paso a paso.
+- **Campos:** `id`, `userId`, `cvId?` (unique, nullable hasta que se cree un CV), `name`, `status` (`RouteStatus`), `isActive`, `createdAt`, `updatedAt`.
+- **Índices:** `[userId]`, `[userId, isActive]`.
+- **Relaciones:** Pertenece a `user` (CASCADE), opcionalmente vincula a `cv` (1:1).
+- **Flujo:** CV_PENDING → CV_CREATED → ANALYSIS_PENDING → ANALYSIS_DONE → OPPORTUNITIES_PENDING → OPPORTUNITIES_DONE → ROADMAP_PENDING → ROADMAP_DONE.
+
+---
+
+## 🗺️ 10. Dominio de Roadmaps
+
+### `roadmap` (Mapeado como `roadmap`)
+Roadmap generado por IA para una oportunidad específica. Contiene los pasos que el usuario debe seguir para conseguir esa oportunidad.
+- **Campos:** `id`, `userId`, `cvId`, `opportunityId`, `status` (`JobStatus`), `title?`, `summary?` (Text), `createdByJobId?`, `createdAt`, `updatedAt`.
+- **Constraint único:** `[opportunityId, cvId, userId]` — máximo un roadmap por oportunidad+cv+usuario.
+- **Índices:** `[userId]`, `[cvId]`.
+- **Relaciones:** Pertenece a `user` (CASCADE), pertenece a `opportunity` (CASCADE, compuesto por `[opportunityId, cvId]`), tiene muchos `roadmap_step`.
+
+### `roadmap_step` (Mapeado como `roadmap_step`)
+Paso individual dentro de un roadmap. Cada paso es accionable y ordenado cronológicamente.
+- **Campos:** `id`, `roadmapId`, `order`, `title`, `description` (Text), `actionItems` (Json — array de strings), `estimatedDays?`, `resources?` (Json — array de `{ title, url?, type }`), `isFree` (boolean, default false), `createdAt`.
+- **`isFree`:** Determina si el paso es visible para usuarios sin plan de pago. Solo el primer paso es gratuito por defecto.
+- **Índice:** `[roadmapId, order]`.
+- **Relación:** Pertenece a `roadmap` (CASCADE).
+
+---
+
 ## 🚦 Diccionario de Tipos (Enums Clave)
 
 | Enum | Propósito |
@@ -174,6 +222,7 @@ Almacena los reclamos enviados por usuarios a través del Libro de Reclamaciones
 | `PaymentStatus` | Estado de factura: PENDING, PAID, FAILED, REFUNDED. |
 | `CreditBalanceType` | Tipo de saldo de créditos: AI_ACTIONS, UPLOADS, MANAGE_CVS, SEARCH_OPPORTUNITIES. |
 | `TransactionType` | Tipo de transacción de créditos: RECHARGE, CONSUMPTION, REFUND, BONUS. |
+| `RouteStatus` | Ciclo de vida de la ruta guiada: CV_PENDING, CV_CREATED, ANALYSIS_PENDING, ANALYSIS_DONE, OPPORTUNITIES_PENDING, OPPORTUNITIES_DONE, ROADMAP_PENDING, ROADMAP_DONE. |
 
 ---
 

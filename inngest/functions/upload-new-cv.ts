@@ -4,227 +4,135 @@ import {
   CreditBalanceType,
   CvType,
   JobStatus,
-  LogAction,
-  LogLevel,
-  OpportunityType
+  OpportunityType,
+  RouteStatus
 } from "@prisma/client";
 import { getTextFromPdfApi } from "@/utils/get-text-from-pdf-api";
-import { logsService } from "@/features/share/services/logs-service";
-import {getPromptToGetCv} from "@/features/cv/prompts/get-prompt-to-get-cv";
-import {queryGemini} from "@/features/cv/queries/query-gemini";
-import {consumeCredits} from "@/features/credits/actions/consume-credits";
+import { getPromptToGetCv } from "@/features/cv/prompts/get-prompt-to-get-cv";
+import { queryGemini } from "@/features/cv/queries/query-gemini";
+import { consumeCredits } from "@/features/credits/actions/consume-credits";
 
 export const uploadNewCv = inngest.createFunction(
-  { id: "process-uploaded-cv" },
+  { id: "process-uploaded-cv", name: "Process Uploaded CV" },
   { event: "cv/uploaded" },
   async ({ event, step }) => {
     const { cvId, attachmentUrl, userId } = event.data;
 
-    // ✅ Create and mark job as IN_PROGRESS
-    const job = await prisma.queueJob.upsert({
-      where: { jobId: event.id },
-      update: {
-        status: JobStatus.IN_PROGRESS,
-        startedAt: new Date(),
-      },
-      create: {
-        jobId: event.id,
-        type: "UPLOAD_CV",
-        payload: event.data,
-        status: JobStatus.IN_PROGRESS,
-        cvId,
-        startedAt: new Date(),
-      },
-    });
-
-    // ✅ Log: job started
-    await logsService.createLog({
-      userId,
-      action: LogAction.CREATE,
-      level: LogLevel.INFO,
-      entity: "QUEUE_JOB",
-      entityId: job.id,
-      message: "Started processing uploaded CV",
-      metadata: { cvId, attachmentUrl },
+    // 1. Inicialización del Job (Idempotente)
+    const job = await step.run("initialize-job", async () => {
+      return prisma.queueJob.upsert({
+        where: { jobId: event.id },
+        update: { status: JobStatus.IN_PROGRESS, startedAt: new Date() },
+        create: {
+          jobId: event.id,
+          type: "UPLOAD_CV",
+          payload: event.data,
+          status: JobStatus.IN_PROGRESS,
+          cvId,
+          startedAt: new Date(),
+        },
+      });
     });
 
     try {
-      // ✅ Extract data
-      const result = await step.run("Extract data from CV", async () => {
+      // 2. Extracción de Texto y AI (Paso costoso, debe estar en un step)
+      const aiResult = await step.run("extract-cv-data-with-ai", async () => {
         const textFromCv = await getTextFromPdfApi(attachmentUrl);
-
-        await logsService.createLog({
-          userId,
-          action: LogAction.CREATE,
-          level: LogLevel.INFO,
-          entity: "QUEUE_JOB",
-          entityId: job.id,
-          message: "Extracted raw text from uploaded CV",
-          metadata: { textLength: textFromCv?.length },
-        });
+        if (!textFromCv) throw new Error("No se pudo extraer texto del PDF");
 
         const prompt = getPromptToGetCv(textFromCv);
+        const result = await queryGemini({ prompt, type: "JSON" });
 
-        await logsService.createLog({
-          userId,
-          action: LogAction.CREATE,
-          level: LogLevel.INFO,
-          entity: "QUEUE_JOB",
-          entityId: job.id,
-          message: "Prompt generated for CV extraction",
-          metadata: { promptLength: prompt.length },
-        });
+        if (!result.success) throw new Error(result.message || "Gemini falló al extraer datos");
 
-        return await queryGemini({ prompt, type: "JSON" });
+        return result.data;
       });
 
-      // ✅ Gemini failed?
-      if (!result.success) {
-        await logsService.createLog({
-          userId,
-          action: LogAction.CREATE,
-          level: LogLevel.ERROR,
-          entity: "QUEUE_JOB",
-          entityId: job.id,
-          message: "Gemini extraction failed",
-          metadata: {
-            message: result.message,
-            raw: result,
-          },
-        });
+      // 3. Normalización y Limpieza de Datos
+      const processedData = await step.run("normalize-data", async () => {
+        let opportunityType = aiResult.opportunityType || OpportunityType.EMPLOYMENT;
+        let cvType = aiResult.cvType || CvType.TECHNOLOGY_ENGINEERING;
+        let language = aiResult.language || 'ES';
 
-        throw new Error(result.message ?? "Extraction failed");
-      }
-
-      const jsonData = result.data;
-      const textCv = JSON.stringify(jsonData, null, 2);
-
-      await logsService.createLog({
-        userId,
-        action: LogAction.CREATE,
-        level: LogLevel.INFO,
-        entity: "QUEUE_JOB",
-        entityId: job.id,
-        message: "Gemini extracted JSON data from CV",
-        metadata: {
-          sections: jsonData.sections?.length,
-          fields: Object.keys(jsonData || {}).length,
-        },
-      });
-
-      let opportunityType = jsonData.opportunityType || "EMPLOYMENT";
-      let cvType = jsonData.cvType || "TECHNOLOGY_ENGINEERING";
-
-      // Validate the extracted opportunityType and cvType
-      if (opportunityType && !Object.values(OpportunityType).includes(opportunityType as OpportunityType)) {
-        opportunityType = "EMPLOYMENT";
-      }
-
-      if (cvType && !Object.values(CvType).includes(cvType as CvType)) {
-        cvType = "TECHNOLOGY_ENGINEERING";
-      }
-
-      // ✅ Update CV with extracted JSON
-      await prisma.cv.update({
-        where: { id: cvId },
-        data: {
-          opportunityType,
-          cvType,
-          extractedJson: jsonData,
-          fullTextSearch: textCv,
+        // Validar contra Enums de Prisma
+        if (!Object.values(OpportunityType).includes(opportunityType)) {
+          opportunityType = OpportunityType.EMPLOYMENT;
         }
+        if (!Object.values(CvType).includes(cvType)) {
+          cvType = CvType.TECHNOLOGY_ENGINEERING;
+        }
+
+        return { ...aiResult, opportunityType, cvType, language };
       });
 
-      // ✅ Process sections
-      if (Array.isArray(jsonData.sections)) {
-        await prisma.cvSection.deleteMany({ where: { cvId } });
+      // 4. Persistencia en Base de Datos (Transaccional)
+      await step.run("save-cv-to-db", async () => {
+        const textCv = JSON.stringify(processedData, null, 2);
 
-        const sectionsData = jsonData.sections.map((section: any, index: number) => ({
-          cvId,
-          sectionType: section.sectionType,
-          title: section.title ?? null,
-          contentJson: section.contentJson ?? [],
-          order: index,
-        }));
+        await prisma.$transaction(async (tx) => {
+          // Actualizar CV principal
+          await tx.cv.update({
+            where: { id: cvId },
+            data: {
+              // cvType: processedData.cvType,
+              // opportunityType: processedData.opportunityType,
+              extractedJson: processedData,
+              fullTextSearch: textCv,
+              language: processedData.language || "EN",
+            }
+          });
 
-        await prisma.cvSection.createMany({ data: sectionsData });
+          // Procesar secciones (Borrar e insertar para asegurar limpieza)
+          if (Array.isArray(processedData.sections)) {
+            await tx.cvSection.deleteMany({ where: { cvId } });
 
-        await logsService.createLog({
-          userId,
-          action: LogAction.CREATE,
-          level: LogLevel.INFO,
-          entity: "QUEUE_JOB",
-          entityId: job.id,
-          message: "Parsed and stored CV sections",
-          metadata: {
-            count: sectionsData.length,
-          },
+            const sectionsData = processedData.sections.map((section: any, index: number) => ({
+              cvId,
+              sectionType: section.sectionType,
+              title: section.title ?? null,
+              contentJson: section.contentJson ?? [],
+              order: index,
+            }));
+
+            await tx.cvSection.createMany({ data: sectionsData });
+          }
+
+          // Vincular a la ruta activa si no tiene CV
+          const activeRoute = await tx.route.findFirst({
+            where: { userId, isActive: true, cvId: null },
+          });
+
+          if (activeRoute) {
+            await tx.route.update({
+              where: { id: activeRoute.id },
+              data: { cvId, status: RouteStatus.CV_CREATED },
+            });
+          }
         });
-      }
-
-      // ✅ Job success
-      await prisma.queueJob.update({
-        where: { id: job.id },
-        data: {
-          status: JobStatus.SUCCEEDED,
-          finishedAt: new Date(),
-        },
       });
 
-      await consumeCredits({
-        userId,
-        type: CreditBalanceType.MANAGE_CVS,
-        amount: 1,
-        description: `Add new CV ${cvId}`,
-      });
+      // 5. Finalización y Pago
+      await step.run("complete-job-and-billing", async () => {
+        await consumeCredits({
+          userId,
+          type: CreditBalanceType.MANAGE_CVS,
+          amount: 1,
+          description: `Procesamiento exitoso de CV: ${cvId}`,
+        });
 
-      await logsService.createLog({
-        userId,
-        action: LogAction.CREATE,
-        level: LogLevel.INFO,
-        entity: "QUEUE_JOB",
-        entityId: job.id,
-        message: "CV uploaded and processed successfully",
-        metadata: { cvId },
-      });
-
-      await logsService.createLog({
-        userId,
-        action: LogAction.EVALUATION,
-        level: LogLevel.INFO,
-        message: "CV queued for evaluation",
-        entity: "CV",
-        entityId: cvId,
+        await prisma.queueJob.update({
+          where: { id: job.id },
+          data: { status: JobStatus.SUCCEEDED, finishedAt: new Date() },
+        });
       });
 
     } catch (err: any) {
-      console.error("❌ CV processing failed:", err);
-
-      // ✅ Mark job as FAILED
-      await prisma.queueJob.update({
-        where: { id: job.id },
-        data: {
-          status: JobStatus.FAILED,
-          lastError: err.message,
-        },
+      await step.run("handle-process-failure", async () => {
+        await prisma.queueJob.update({
+          where: { id: job.id },
+          data: { status: JobStatus.FAILED, lastError: err.message },
+        });
       });
-
-      // ✅ Log error
-      await logsService.createLog({
-        userId,
-        action: LogAction.CREATE,
-        level: LogLevel.ERROR,
-        entity: "QUEUE_JOB",
-        entityId: job.id,
-        message: "CV processing failed",
-        metadata: {
-          error: err?.message,
-          stack: err?.stack,
-          cvId,
-          attachmentUrl,
-        },
-      });
-
       throw err;
     }
   }

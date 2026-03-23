@@ -24,6 +24,7 @@ You must return **only one valid JSON object** following this structure:
 
 {
   "opportunityType": "one of: INTERNSHIP | SCHOLARSHIP | EXCHANGE_PROGRAM | EMPLOYMENT | STARTUP",
+  "language": "one of: EN, ES",
   "cvType": "one of: TECHNOLOGY_ENGINEERING | DESIGN_CREATIVITY | MARKETING_STRATEGY | MANAGEMENT_BUSINESS | FINANCE_PROJECTS | SOCIAL_MEDIA | EDUCATION | SCIENCE",
   "sections": [
     {
@@ -54,7 +55,7 @@ You must return **only one valid JSON object** following this structure:
    - PROJECTS → [{ title?, duration, description, technologies? }]
    - CERTIFICATIONS → [{ name, issuer?, year?, date? }]
    - LANGUAGES → [{ language, proficiency }]
-   - CONTACT → { fullName?, email?, phone?, linkedin?(just the additional name, not the completed URL), address?, summary? }
+   - CONTACT → { fullName?, email?, phone?, linkedin?, address?, summary? }
    - SUMMARY → { text }
    - VOLUNTEERING → [{ organization?, location?, position?, duration?, responsabilities? }]
    - ACHIEVEMENTS → [{ title?, description?, date? }]
@@ -73,6 +74,6 @@ You must return **only one valid JSON object** following this structure:
 ---
 
 ### Example output (return exactly this format)
-{"sections":[{"sectionType":"SUMMARY","title":"Professional Summary","contentJson":{"text":"Computer Science graduate with experience in backend development."}},{"sectionType":"EXPERIENCE","title":"Experience","contentJson":[{"company":"TechCorp","position":"Software Engineer","startDate":"2023-01","endDate":"Present","description":"Developed scalable APIs."}]}]}
+{"opportunityType":"EMPLOYMENT","language":"EN","cvType":"TECHNOLOGY_ENGINEERING","sections":[{"sectionType":"SUMMARY","title":"Professional Summary","contentJson":{"text":"Computer Science graduate with experience in backend development."}},{"sectionType":"EXPERIENCE","title":"Experience","contentJson":[{"company":"TechCorp","position":"Software Engineer","startDate":"2023-01","endDate":"Present","description":"Developed scalable APIs."}]}]}
 `;
 };

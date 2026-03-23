@@ -1,9 +1,15 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
+import useSWR from "swr";
+import { cn } from "@/lib/utils";
+import { authClient } from "@/lib/auth-client";
+
+// UI Components
 import {
   Sidebar,
   SidebarContent,
@@ -15,34 +21,51 @@ import {
   SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+
+// Icons & Features
 import {
-  LayoutDashboard,
-  FileText,
-  MessageSquare,
-  MessageSquareWarning,
-  Activity,
-  Briefcase,
-  CreditCard,
-  Settings,
-  Users,
-  BarChart3,
-  Tag,
-  Wallet,
-  Mic,
-  Shield,
-  Receipt,
-  Sliders,
+  LayoutDashboard, FileText, MessageSquare, MessageSquareWarning,
+  Activity, Briefcase, CreditCard, Settings, Users, BarChart3,
+  Tag, Wallet, Mic, Shield, Receipt, X, Map, Coins
 } from "lucide-react";
 
-const mainNavItems = [
-  { title: "Mi Panel", href: "/dashboard", icon: LayoutDashboard },
-  { title: "CVs", href: "/cv", icon: FileText },
-  { title: "Evaluaciones", href: "/evaluations", icon: MessageSquare },
-  { title: "Oportunidades", href: "/opportunities", icon: Briefcase },
-  // { title: "Entrevistas", href: "/interviews", icon: Sparkles },
+import { ProfileButton } from "@/components/profile-button";
+import { ThemeToggle } from "@/components/button-toggle-theme";
+import { CreditsIndicator } from "@/features/credits/components/credits-indicator";
+import { RouteSelector } from "@/features/routes/components/route-selector";
+import { CreditLimits } from "@/features/credits/actions/get-current-credits-limits";
+import {Button} from "@/components/ui/button";
+
+// --- Types & Fetcher ---
+export type NavbarUser = {
+  id: string;
+  name: string;
+  email: string;
+  image?: string | null;
+} | null;
+
+const sessionFetcher = (): Promise<NavbarUser> =>
+  authClient.getSession().then((res) => {
+    const u = res?.data?.user;
+    if (!u) return null;
+    return { id: u.id, name: u.name, email: u.email ?? "", image: u.image };
+  });
+
+// --- Nav Items Configuration ---
+const routeNavItems = [
+  { title: "Mi Pasos", href: "/dashboard", icon: LayoutDashboard },
+  { title: "CV", href: "/my-cv", icon: FileText },
+  { title: "Análisis", href: "/my-evaluation", icon: MessageSquare },
+  { title: "Oportunidades", href: "/my-opportunities", icon: Briefcase },
+  { title: "Roadmaps", href: "/my-roadmaps", icon: Map },
+];
+
+const accountNavItems = [
   { title: "Créditos", href: "/credits", icon: CreditCard },
   { title: "Transacciones", href: "/transactions", icon: Receipt },
-  { title: "Preferencias", href: "/preferences", icon: Sliders },
+  // { title: "Preferencias", href: "/preferences", icon: Sliders },
+  { title: "Configuraciones", href: "/settings", icon: Settings },
 ];
 
 const adminNavItems = [
@@ -58,203 +81,172 @@ const adminNavItems = [
   { title: "Entrevistas", href: "/admin/interviews", icon: Mic },
 ];
 
-const communityItems = [{ title: "Networking", href: "/networking", icon: Users }];
-
-const bottomItems = [
-  { title: "Configuración", href: "/settings", icon: Settings },
-];
-
-export default function AppSidebar({ userRole }: { userRole?: string }) {
+export default function AppSidebar({
+                                     userRole,
+                                     initialUser,
+                                     creditLimits
+                                   }: {
+  userRole?: string;
+  initialUser: NavbarUser;
+  creditLimits: CreditLimits;
+}) {
   const pathname = usePathname();
-  const { state } = useSidebar();
+  const { state, isMobile, setOpenMobile } = useSidebar();
   const collapsed = state === "collapsed";
   const isAdmin = userRole === "ADMIN";
 
-  const isActive = (path: string) => {
-    if (path === "/dashboard") {
-      return pathname === "/dashboard";
+  // Logic from NavbarPrivate
+  const { data: sessionUser } = useSWR("session", sessionFetcher, {
+    fallbackData: initialUser,
+    revalidateOnFocus: true,
+    revalidateOnReconnect: true,
+  });
+
+  const user = sessionUser ?? initialUser;
+
+  useEffect(() => {
+    if (isMobile) {
+      setOpenMobile(false);
     }
+  }, [pathname, isMobile, setOpenMobile]);
+
+  const isActive = (path: string) => {
+    if (path === "/dashboard") return pathname === "/dashboard";
     if (path === "/admin/plans") {
       return pathname.startsWith("/admin/plans") || pathname.startsWith("/admin/credit-packages");
     }
     return pathname.startsWith(path);
   };
 
-  // Placeholder para plan y progreso de perfil
-  const planName = "Starter";
-  const profileProgress = 65;
+  const renderNavItem = (
+    item: { title: string; href: string; icon: any },
+    activeStyle: string,
+    inactiveStyle: string
+  ) => (
+    <SidebarMenuItem key={item.title}>
+      <SidebarMenuButton asChild tooltip={item.title}>
+        <Link
+          href={item.href}
+          className={cn(
+            "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200",
+            isActive(item.href) ? activeStyle : inactiveStyle
+          )}
+        >
+          <item.icon className="h-5 w-5 shrink-0" />
+          {!collapsed && <span>{item.title}</span>}
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+
+  const primaryActive = "bg-primary text-secondary font-semibold shadow-sm hover:bg-primary";
+  const primaryInactive = "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground";
+  const adminActive = "bg-amber-500/15 text-amber-700 dark:text-amber-300 font-semibold shadow-sm border border-amber-500/20";
+  const adminInactive = "text-muted-foreground hover:bg-amber-500/10 hover:text-amber-700 dark:hover:text-amber-300";
 
   return (
-    <Sidebar className={cn("border-r border-border z-30", collapsed ? "w-16" : "w-64")}>
-      <SidebarContent className="flex flex-col h-full">
-        {/* Logo */}
-        <div className="flex items-center justify-center mt-3">
-          <Link href="/dashboard" className="relative h-16 w-36">
-            <Image
-              src="/logo_light.png"
-              alt="Levely"
-              fill
-              priority
-              className="object-contain dark:hidden"
-            />
-            <Image
-              src="/logo_dark.png"
-              alt="Levely dark"
-              fill
-              priority
-              className="hidden object-contain dark:block"
-            />
+    <Sidebar
+      collapsible="icon"
+      className={cn("border-r border-border z-30 transition-all duration-300", collapsed ? "w-16" : "w-64")}>
+      <SidebarContent className="flex flex-col h-full overflow-x-hidden">
+
+        {/* LOGO SECTION */}
+        <div className="flex items-center justify-center py-6 px-4 relative">
+          <Link href="/dashboard" className="relative h-12 w-full max-w-[140px]">
+            <Image src="/logo_light.png" alt="Levely" fill priority className="object-contain dark:hidden" />
+            <Image src="/logo_dark.png" alt="Levely dark" fill priority className="hidden object-contain dark:block" />
           </Link>
+
+          {/* Botón de cierre: solo visible en mobile */}
+          {isMobile && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute right-2 top-2 h-8 w-8 hover:bg-accent"
+              onClick={() => setOpenMobile(false)}
+            >
+              <X className="h-5 w-5 text-muted-foreground" />
+              <span className="sr-only">Cerrar sidebar</span>
+            </Button>
+          )}
         </div>
 
-        {/* Main Navigation */}
-        <SidebarGroup className="flex-1 mt-2 border-0">
-          <SidebarGroupLabel
-            className={cn(
-              "px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider",
-              collapsed && "sr-only",
-            )}
+        {/* WELCOME MESSAGE (From Navbar) */}
+        {!collapsed && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="px-6 mb-4"
           >
-            Carrera Profesional
-          </SidebarGroupLabel>
+            <h2 className="text-xl font-bold truncate">
+              Hola, <span className="text-primary dark:text-levely-green">{user?.name?.split(" ")[0]}</span>
+            </h2>
+            <p className="text-xs text-muted-foreground leading-tight">
+              IA de Levely lista para ti.
+            </p>
+          </motion.div>
+        )}
+
+        <div className="px-2">
+          <RouteSelector />
+        </div>
+
+        {/* ROUTE-SCOPED NAV */}
+        <SidebarGroup className="mt-2">
+          <SidebarGroupLabel className={cn(collapsed && "sr-only")}>Mi ruta</SidebarGroupLabel>
           <SidebarMenu>
-            {mainNavItems.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild>
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200",
-                      isActive(item.href)
-                        ? "bg-primary text-secondary font-semibold shadow-sm hover:bg-primary"
-                        : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground"
-                    )}
-                  >
-                    <item.icon className="h-5 w-5 shrink-0" />
-                    {!collapsed && <span>{item.title}</span>}
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
+            {routeNavItems.map((item) => renderNavItem(item, primaryActive, primaryInactive))}
           </SidebarMenu>
         </SidebarGroup>
 
-        {/* Admin Navigation */}
+        {/* CREDITS INDICATOR (From Navbar) */}
+        <div className={cn("px-4 py-2 transition-all", collapsed ? "flex justify-center" : "w-full")}>
+          <CreditsIndicator limits={creditLimits} />
+        </div>
+
+
+
+        {/* ADMIN NAV */}
         {isAdmin && (
-          <SidebarGroup className="border-0">
-            <SidebarGroupLabel
-              className={cn(
-                "px-4 py-2 text-xs font-semibold uppercase tracking-wider flex items-center gap-2",
-                collapsed ? "sr-only" : "text-amber-600 dark:text-amber-400",
-              )}
-            >
+          <SidebarGroup>
+            <SidebarGroupLabel className={cn(collapsed ? "sr-only" : "text-amber-600 dark:text-amber-400 flex items-center gap-2")}>
               <Shield className="h-3.5 w-3.5" />
               Administración
             </SidebarGroupLabel>
-            {!collapsed && (
-              <div className="mx-3 mb-1 h-px bg-amber-500/20 dark:bg-amber-400/20" />
-            )}
             <SidebarMenu>
-              {adminNavItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link
-                      href={item.href}
-                      className={cn(
-                        "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200",
-                        isActive(item.href)
-                          ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 font-semibold shadow-sm border border-amber-500/20 hover:bg-amber-500/15"
-                          : "text-muted-foreground hover:bg-amber-500/10 hover:text-amber-700 dark:hover:text-amber-300"
-                      )}
-                    >
-                      <item.icon className="h-5 w-5 shrink-0" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {adminNavItems.map((item) => renderNavItem(item, adminActive, adminInactive))}
             </SidebarMenu>
           </SidebarGroup>
         )}
-
-        {/* Comunidad (placeholder, descomentar si hay lógica de plan) */}
-        {/*<SidebarGroup>*/}
-        {/*  <SidebarGroupLabel*/}
-        {/*    className={cn(*/}
-        {/*      "px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider",*/}
-        {/*      collapsed && "sr-only",*/}
-        {/*    )}*/}
-        {/*  >*/}
-        {/*    Comunidad*/}
-        {/*  </SidebarGroupLabel>*/}
-        {/*  <SidebarMenu>*/}
-        {/*    {communityItems.map((item) => (*/}
-        {/*      <SidebarMenuItem key={item.title}>*/}
-        {/*        <SidebarMenuButton asChild>*/}
-        {/*          <Link*/}
-        {/*            href={item.href}*/}
-        {/*            className={cn(*/}
-        {/*              "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200",*/}
-        {/*              isActive(item.href)*/}
-        {/*                ? "bg-levely-blue dark:bg-levely-green text-white dark:text-levely-dark font-semibold"*/}
-        {/*                : "text-muted-foreground hover:text-levely-blue hover:bg-levely-blue dark:hover:bg-secondary",*/}
-        {/*            )}*/}
-        {/*          >*/}
-        {/*            <item.icon className="h-5 w-5 shrink-0" />*/}
-        {/*            {!collapsed && <span>{item.title}</span>}*/}
-        {/*          </Link>*/}
-        {/*        </SidebarMenuButton>*/}
-        {/*      </SidebarMenuItem>*/}
-        {/*    ))}*/}
-        {/*  </SidebarMenu>*/}
-        {/*</SidebarGroup>*/}
-
-        {/* Plan Badge y progreso (placeholder) */}
-        {/*{!collapsed && (*/}
-        {/*  <div className="mx-4 mb-4 p-4 rounded-xl bg-secondary/50 border border-border">*/}
-        {/*    <div className="flex items-center gap-2 mb-2">*/}
-        {/*      <div className="p-1.5 rounded-lg bg-levely-blue/10 dark:bg-levely-green/20">*/}
-        {/*        <Sparkles className="h-4 w-4 text-levely-blue dark:text-levely-green" />*/}
-        {/*      </div>*/}
-        {/*      <span className="text-sm font-semibold uppercase tracking-wide">{planName}</span>*/}
-        {/*    </div>*/}
-        {/*    <p className="text-xs text-muted-foreground mb-2">Completa tu perfil al 100%</p>*/}
-        {/*    <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">*/}
-        {/*      <div*/}
-        {/*        className="h-full rounded-full transition-all duration-700"*/}
-        {/*        style={{*/}
-        {/*          width: `${profileProgress}%`,*/}
-        {/*          background: "linear-gradient(90deg, #3b82f6 0%, #22c55e 100%)"*/}
-        {/*        }}*/}
-        {/*      />*/}
-        {/*    </div>*/}
-        {/*  </div>*/}
-        {/*)}*/}
-
-        {/* Bottom Navigation */}
-        <SidebarFooter className="border-t border-border">
-          <SidebarMenu>
-            {bottomItems.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild>
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200",
-                      isActive(item.href)
-                        ? "bg-levely-green text-levely-dark font-semibold"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary",
-                    )}
-                  >
-                    <item.icon className="h-5 w-5 shrink-0" />
-                    {!collapsed && <span>{item.title}</span>}
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarFooter>
       </SidebarContent>
+
+      {/* FOOTER (Profile & Theme Toggle) */}
+      <SidebarFooter className="flex flex-col overflow-x-hidden">
+        <SidebarGroup>
+          <SidebarGroupLabel className={cn(collapsed && "sr-only")}>Mi Cuenta</SidebarGroupLabel>
+          <SidebarMenu>
+            {accountNavItems.map((item) => renderNavItem(item, primaryActive, primaryInactive))}
+          </SidebarMenu>
+        </SidebarGroup>
+
+        <div className="border-t border-border bg-muted/10">
+          <div className={cn("flex items-center justify-between gap-2 mt-2", collapsed ? "flex-col" : "flex-row")}>
+            <div className="flex items-center gap-3 min-w-0">
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <ProfileButton user={user} />
+              </motion.div>
+              {!collapsed && (
+                <div className="flex flex-col min-w-0">
+                  <p className="text-sm font-semibold truncate text-foreground">{user?.name || "Nombre"}</p>
+                  <p className="text-xs text-muted-foreground truncate">{user?.email || "nombre@gmail.com"}</p>
+                </div>
+              )}
+            </div>
+            <ThemeToggle />
+          </div>
+        </div>
+        {/* ACCOUNT NAV */}
+      </SidebarFooter>
     </Sidebar>
   );
 }

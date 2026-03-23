@@ -3,7 +3,8 @@
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/features/share/actions/require-admin";
 import { revalidatePath } from "next/cache";
-import { PaymentType, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import { syncPlanToPaddle } from "@/features/billing/actions/admin/sync-plan-to-paddle";
 
 export type CreateAdminPlanResult =
   | { success: true; data: { id: string }; message: string }
@@ -13,12 +14,12 @@ export interface CreateAdminPlanInput {
   slug: string;
   name: string;
   description?: string | null;
-  paymentType: PaymentType;
-  priceCents: number;
-  currency?: string;
-  manualCvLimit: number;
-  uploadCvLimit: number;
-  features?: unknown;
+  priceCentsPEN: number;
+  priceCentsUSD: number;
+  manageCvsCredits: number;
+  aiAnalysisCredits: number;
+  opportunitiesCredits: number;
+  features?: Prisma.InputJsonObject | null;
 }
 
 export const createAdminPlan = async (
@@ -49,18 +50,70 @@ export const createAdminPlan = async (
         slug: input.slug.trim(),
         name: input.name.trim(),
         description: input.description?.trim() || null,
-        paymentType: input.paymentType,
-        priceCents: input.priceCents,
-        currency: input.currency || "USD",
-        manualCvLimit: input.manualCvLimit,
-        uploadCvLimit: input.uploadCvLimit,
-        features: (input.features as Prisma.InputJsonValue) ?? null,
+        paymentType: "ONE_TIME",
+        priceCentsPEN: input.priceCentsPEN,
+        priceCentsUSD: input.priceCentsUSD,
+        manualCvLimit: input.manageCvsCredits,
+        uploadCvLimit: 0,
+        features: input.features ?? Prisma.JsonNull,
       },
     });
 
+    const packageCode = input.slug.trim().toUpperCase();
+
+    await prisma.creditPackage.createMany({
+      data: [
+        {
+          code: packageCode,
+          name: `${input.name.trim()} MANAGE CVS`,
+          credits: input.manageCvsCredits,
+          priceCents: 0,
+          currency: "USD",
+          active: true,
+          type: "MANAGE_CVS",
+          planId: plan.id,
+        },
+        {
+          code: packageCode,
+          name: `${input.name.trim()} AI ACTIONS`,
+          credits: input.aiAnalysisCredits,
+          priceCents: 0,
+          currency: "USD",
+          active: true,
+          type: "AI_ACTIONS",
+          planId: plan.id,
+        },
+        {
+          code: packageCode,
+          name: `${input.name.trim()} OPPORTUNITIES`,
+          credits: input.opportunitiesCredits,
+          priceCents: 0,
+          currency: "USD",
+          active: true,
+          type: "SEARCH_OPPORTUNITIES",
+          planId: plan.id,
+        },
+      ],
+    });
+
+    let message = "Plan creado exitosamente";
+    try {
+      await syncPlanToPaddle({
+        planId: plan.id,
+        slug: plan.slug,
+        name: plan.name,
+        description: plan.description,
+        priceCentsUSD: Number(plan.priceCentsUSD),
+        paddleProductId: plan.paddleProductId,
+      });
+    } catch (error) {
+      console.error("[ADMIN_CREATE_PLAN_PADDLE_SYNC_ERROR]", error);
+      message = "Plan creado, pero no se pudo sincronizar el precio en Paddle";
+    }
+
     revalidatePath("/admin/plans");
 
-    return { success: true, data: { id: plan.id }, message: "Plan creado exitosamente" };
+    return { success: true, data: { id: plan.id }, message };
   } catch (error) {
     console.error("[ADMIN_CREATE_PLAN_ERROR]", error);
     return { success: false, error: "Error creando plan" };

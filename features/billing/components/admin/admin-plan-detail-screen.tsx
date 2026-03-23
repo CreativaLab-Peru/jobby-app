@@ -27,6 +27,7 @@ import { cn } from "@/lib/utils";
 import { AdminPlanDetail } from "@/features/billing/actions/admin/get-admin-plan-by-id";
 import { deleteAdminPlan } from "@/features/billing/actions/admin/delete-admin-plan";
 import { routes } from "@/lib/routes";
+import type { Prisma } from "@prisma/client";
 
 interface AdminPlanDetailScreenProps {
   plan: AdminPlanDetail;
@@ -49,7 +50,7 @@ export function AdminPlanDetailScreen({ plan }: AdminPlanDetailScreenProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
-  const price = formatCurrency(plan.priceCents as unknown as number, plan.currency);
+  const price = `${formatCurrency(Number(plan.priceCentsPEN), "PEN")} / ${formatCurrency(Number(plan.priceCentsUSD), "USD")}`;
   const typeLabel = PAYMENT_TYPE_LABELS[plan.paymentType] || plan.paymentType;
   const paymentsCount = plan._count.payments;
 
@@ -72,6 +73,7 @@ export function AdminPlanDetailScreen({ plan }: AdminPlanDetailScreenProps) {
     { label: "CVs Manuales", value: plan.manualCvLimit, icon: FileText },
     { label: "CVs Upload", value: plan.uploadCvLimit, icon: Upload },
   ];
+  const featureItems = extractFeatureLines(plan.features);
 
   return (
     <main className="min-h-[90vh] p-4 md:p-8">
@@ -136,11 +138,15 @@ export function AdminPlanDetailScreen({ plan }: AdminPlanDetailScreenProps) {
             )}
           </Card>
 
-          {/* Features JSON */}
-          {plan.features && (
+          {/* Features */}
+          {featureItems.length > 0 && (
             <Card className="rounded-2xl border border-border/60 p-6">
-              <h3 className="text-lg font-bold tracking-tight mb-3">Caracteristicas (features)</h3>
-              <pre className="text-xs bg-secondary/20 rounded-lg p-3 overflow-auto max-h-40">{JSON.stringify(plan.features, null, 2)}</pre>
+              <h3 className="text-lg font-bold tracking-tight mb-3">Items del card</h3>
+              <ul className="space-y-2">
+                {featureItems.map((item, index) => (
+                  <li key={`${item}-${index}`} className="text-sm text-muted-foreground">• {item}</li>
+                ))}
+              </ul>
             </Card>
           )}
 
@@ -190,10 +196,6 @@ export function AdminPlanDetailScreen({ plan }: AdminPlanDetailScreenProps) {
                 <span className="text-muted-foreground">ID:</span>
                 <span className="ml-2 font-mono text-xs text-foreground">{plan.id}</span>
               </div>
-              <div>
-                <span className="text-muted-foreground">Moneda:</span>
-                <span className="ml-2 font-medium text-foreground">{plan.currency}</span>
-              </div>
             </div>
           </Card>
         </motion.div>
@@ -202,5 +204,20 @@ export function AdminPlanDetailScreen({ plan }: AdminPlanDetailScreenProps) {
       <ConfirmModal isOpen={showDeleteDialog} onOpenChange={setShowDeleteDialog} onConfirm={handleDelete} loading={isDeleting} title="Eliminar plan" description={<>Se eliminara permanentemente el plan <strong>{plan.name}</strong>. Esta accion no se puede deshacer.</>} />
     </main>
   );
+}
+
+function extractFeatureLines(features: Prisma.JsonValue | null): string[] {
+  if (!features || typeof features !== "object" || Array.isArray(features)) {
+    return [];
+  }
+
+  const featureRecord = features as Record<string, Prisma.JsonValue>;
+  const rawItems = Array.isArray(featureRecord.items)
+    ? featureRecord.items
+    : Array.isArray(featureRecord.caracteristics)
+      ? featureRecord.caracteristics
+      : [];
+
+  return rawItems.filter((item): item is string => typeof item === "string");
 }
 

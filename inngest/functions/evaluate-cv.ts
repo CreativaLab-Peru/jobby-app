@@ -1,331 +1,143 @@
-import {inngest} from "./client";
-import {prisma} from "@/lib/prisma";
-import {CreditBalanceType, CvSectionType, JobStatus, LogAction, LogLevel} from "@prisma/client";
-import {logsService} from "@/features/share/services/logs-service";
-import {getPromptToEvaluateCv} from "@/features/cv/prompts/get-prompt-to-evaluate-cv";
-import {queryGemini} from "@/features/cv/queries/query-gemini";
-import {consumeCredits} from "@/features/credits/actions/consume-credits";
-
-type EvaluateCvResponse = {
-  overallScore: number;
-  summary: string;
-  sectionScores: Array<{
-    sectionType: CvSectionType;
-    score: number;
-    details: Record<string, number>;
-  }>;
-  recommendations: Array<{
-    sectionType: CvSectionType;
-    text: string;
-    severity: "LOW" | "MEDIUM" | "HIGH";
-  }>;
-};
-
-/**
- * Builds CV data from sections when extractedJson is not available (manual CVs)
- */
-function buildCvDataFromSections(sections: any[]): Record<string, any> {
-  const cvData: Record<string, any> = {};
-
-  for (const section of sections) {
-    const sectionType = section.sectionType?.toLowerCase() || "";
-    const content = section.contentJson;
-
-    if (!content) continue;
-
-    switch (section.sectionType) {
-      case CvSectionType.SUMMARY:
-        cvData.summary = content.text || content;
-        break;
-      case CvSectionType.EXPERIENCE:
-        cvData.experience = Array.isArray(content) ? content : [content];
-        break;
-      case CvSectionType.EDUCATION:
-        cvData.education = Array.isArray(content) ? content : [content];
-        break;
-      case CvSectionType.SKILLS:
-        cvData.skills = content;
-        break;
-      case CvSectionType.PROJECTS:
-        cvData.projects = Array.isArray(content) ? content : [content];
-        break;
-      case CvSectionType.CERTIFICATIONS:
-        cvData.certifications = Array.isArray(content) ? content : [content];
-        break;
-      case CvSectionType.LANGUAGES:
-        cvData.languages = Array.isArray(content) ? content : [content];
-        break;
-      case CvSectionType.CONTACT:
-        cvData.contact = content;
-        break;
-      case CvSectionType.ACHIEVEMENTS:
-        cvData.achievements = Array.isArray(content) ? content : [content];
-        break;
-      case CvSectionType.VOLUNTEERING:
-        cvData.volunteering = Array.isArray(content) ? content : [content];
-        break;
-    }
-  }
-
-  return cvData;
-}
-
-/**
- * Refunds the analysis token when evaluation fails
- */
-async function refundAnalysisToken(userId: string): Promise<void> {
-  try {
-    const userPayment = await prisma.userPayment.findFirst({
-      where: {
-        userId,
-        uploadCvsUsed: {gt: 0}
-      },
-      orderBy: {updatedAt: "desc"},
-    });
-
-    if (userPayment && userPayment.uploadCvsUsed > 0) {
-      await prisma.userPayment.update({
-        where: {id: userPayment.id},
-        data: {uploadCvsUsed: userPayment.uploadCvsUsed - 1},
-      });
-    }
-  } catch (error) {
-    console.error("Failed to refund analysis token:", error);
-  }
-}
+import { inngest } from "./client";
+import { prisma } from "@/lib/prisma";
+import { CreditBalanceType, JobStatus, RouteStatus } from "@prisma/client";
+import { getPromptToEvaluateCv } from "@/features/cv/prompts/get-prompt-to-evaluate-cv";
+import { queryGemini } from "@/features/cv/queries/query-gemini";
+import {consumeCredits, ConsumeCreditsParams} from "@/features/credits/actions/consume-credits";
+import {
+  buildCvPayloadForEvaluation,
+  filterSectionsByOpportunity, sanitizeSectionType
+} from "../utils/cv-evaluation-helper";
+import {refundCredits} from "@/features/credits/actions/refund-credits";
 
 export const evaluateCv = inngest.createFunction(
-  {id: "evaluate-cv"},
-  {event: "cv/ready-for-evaluation"},
-  async ({event}) => {
-    const {cvId, userId, evaluationId} = event.data;
+  { id: "evaluate-cv", name: "Evaluate CV with AI" },
+  { event: "cv/ready-for-evaluation" },
+  async ({ event, step }) => {
+    const { cvId, userId, evaluationId } = event.data;
 
-    // ✅ Create and mark job as IN_PROGRESS
-    const job = await prisma.queueJob.upsert({
-      where: { jobId: event.id },
-      update: {
-        status: JobStatus.IN_PROGRESS,
-        startedAt: new Date(),
-      },
-      create: {
-        jobId: event.id,
-        type: "EVALUATE_CV",
-        payload: event.data,
-        status: JobStatus.IN_PROGRESS,
-        cvId,
-        startedAt: new Date(),
-      },
+    // 1. Inicialización del Job
+    const job = await step.run("initialize-job", async () => {
+      return prisma.queueJob.upsert({
+        where: { jobId: event.id },
+        update: { status: JobStatus.IN_PROGRESS, startedAt: new Date() },
+        create: {
+          jobId: event.id,
+          type: "EVALUATE_CV",
+          payload: event.data,
+          status: JobStatus.IN_PROGRESS,
+          cvId,
+          startedAt: new Date(),
+        },
+      });
     });
 
-    // ✅ Log: job started
-    await logsService.createLog({
-      userId,
-      action: LogAction.EVALUATION,
-      level: LogLevel.INFO,
-      entity: "QUEUE_JOB",
-      entityId: job.id,
-      message: "Started evaluate-cv job",
-      metadata: { cvId, evaluationId },
-    });
-
-    // Fetch CV with sections for manual CVs support
-    const cv = await prisma.cv.findUnique({
-      where: {id: cvId},
-      include: {sections: true}
-    });
-
-    // Build CV data from extractedJson OR sections
-    let cvDataForEvaluation: any;
-
-    if (cv?.extractedJson) {
-      // Uploaded CV with extracted data
-      cvDataForEvaluation = cv.extractedJson;
-    } else if (cv?.sections && cv.sections.length > 0) {
-      // Manual CV - build data from sections
-      cvDataForEvaluation = buildCvDataFromSections(cv.sections);
-    } else {
-      // Refund token and fail
-      await refundAnalysisToken(userId);
-      throw new Error("CV data not available - no extractedJson or sections found");
-    }
-    let evaluation: any = null;
-
-    // ✅ Create evaluation record
-    if (evaluationId) {
-      evaluation = await prisma.cvEvaluation.findUnique({
-        where: {id: evaluationId},
+    // 2. Preparación de Datos
+    const { filteredSections, cv } = await step.run("prepare-data", async () => {
+      const cvData = await prisma.cv.findUnique({
+        where: { id: cvId },
+        include: { sections: true }
       });
 
-      if (!evaluation) {
-        await refundAnalysisToken(userId);
-        throw new Error("Evaluation record not found for provided evaluationId");
-      }
-    } else {
-      evaluation = await prisma.cvEvaluation.create({
-        data: {cvId, status: JobStatus.IN_PROGRESS},
+      const fullPayload = buildCvPayloadForEvaluation({
+        sections: cvData?.sections,
+        extractedJson: cvData?.extractedJson,
       });
+
+      const filtered = filterSectionsByOpportunity(fullPayload, cvData?.opportunityType ?? null);
+
+      return { filteredSections: filtered, cv: cvData };
+    });
+
+    if (Object.keys(filteredSections).length === 0) {
+      throw new Error("CV insufficient data for evaluation type");
     }
 
-    // ✅ Log: Evaluation started
-    await logsService.createLog({
-      userId,
-      action: LogAction.EVALUATION,
-      level: LogLevel.INFO,
-      entity: "CV_EVALUATION",
-      entityId: evaluation.id,
-      message: "Started evaluating CV",
-      metadata: {cvId},
+    // 3. Gestión de la Evaluación (Registro)
+    const evaluation = await step.run("get-or-create-evaluation", async () => {
+      if (evaluationId) return prisma.cvEvaluation.findUnique({ where: { id: evaluationId } });
+      // return prisma.cvEvaluation.create({ data: { cvId, status: JobStatus.IN_PROGRESS } });
     });
 
     try {
-      // ✅ Generate prompt using the appropriate CV data
-      const promptToEvaluateCv = getPromptToEvaluateCv(cvDataForEvaluation);
-
-      await logsService.createLog({
-        userId,
-        action: LogAction.EVALUATION,
-        level: LogLevel.INFO,
-        entity: "CV_EVALUATION",
-        entityId: evaluation.id,
-        message: "Prompt generated for CV evaluation",
-        metadata: {promptLength: promptToEvaluateCv.length},
+      // 4. Inteligencia Artificial
+      const aiResult = await step.run("query-ai-evaluator", async () => {
+        const prompt = getPromptToEvaluateCv(filteredSections, cv?.cvType, cv?.opportunityType, cv?.language);
+        return queryGemini({ prompt, type: "JSON" });
       });
 
-      // ✅ Query Gemini
-      const result = await queryGemini<EvaluateCvResponse>({
-        prompt: promptToEvaluateCv,
-        type: "JSON",
+      if (!aiResult.success) throw new Error(aiResult.message);
+
+      // 5. Persistencia de Resultados (Transacción)
+      await step.run("persist-evaluation-results", async () => {
+        const { data } = aiResult;
+
+        // 1. Mapeamos y sanitizamos los scores
+        const scoresToCreate = (data.sectionScores || []).map((score: any) => ({
+          evaluationId: evaluation!.id,
+          sectionType: sanitizeSectionType(score.sectionType),
+          score: Number(score.score) || 0,
+          detailsJson: score.details || {},
+        }));
+
+        // 2. Mapeamos y sanitizamos los textos mejorados (dentro del JSON)
+        const improvedTexts = (data.improvedTexts || []).map((item: any) => ({
+          ...item,
+          sectionType: sanitizeSectionType(item.sectionType),
+        }));
+
+        const suggestedAdditions = (data.suggestedAdditions || []).map((item: any) => ({
+          ...item,
+          sectionType: sanitizeSectionType(item.sectionType),
+        }));
+
+        // 3. Ejecutamos la transacción con datos limpios
+        await prisma.$transaction([
+          // Actualizar la evaluación principal
+          prisma.cvEvaluation.update({
+            where: { id: evaluation!.id },
+            data: {
+              status: JobStatus.SUCCEEDED,
+              overallScore: data.overallScore,
+              summary: data.summary,
+              improvementsJson: {
+                improvedTexts,
+                suggestedAdditions,
+              },
+            },
+          }),
+
+          // Crear todos los scores de una vez
+          ...scoresToCreate.map(scoreData =>
+            prisma.evaluationScore.create({ data: scoreData })
+          )
+        ]);
       });
 
-      // ✅ Handle model failure
-      if (!result.success) {
-        await logsService.createLog({
+      // 6. Finalización y Créditos
+      await step.run("finalize-process", async () => {
+        const consumeCreditBody: ConsumeCreditsParams = {
           userId,
-          action: LogAction.EVALUATION,
-          level: LogLevel.ERROR,
-          entity: "CV_EVALUATION",
-          entityId: evaluation.id,
-          message: "Gemini evaluation failed",
-          metadata: {
-            cvId,
-            errorMessage: result.message,
-            rawResponse: result,
-          },
-        });
-
-        throw new Error(result.message ?? "Evaluation failed");
-      }
-
-      // ✅ Log: Successful Gemini result received
-      await logsService.createLog({
-        userId,
-        action: LogAction.EVALUATION,
-        level: LogLevel.INFO,
-        entity: "CV_EVALUATION",
-        entityId: evaluation.id,
-        message: "Gemini returned successful evaluation response",
-        metadata: {
-          overallScore: result.data.overallScore,
-          sections: result.data.sectionScores.length,
-          recommendations: result.data.recommendations.length,
-        },
-      });
-
-      // ✅ Save everything inside a transaction
-      await prisma.$transaction(async (tx) => {
-        await tx.cvEvaluation.update({
-          where: {id: evaluation.id},
-          data: {
-            status: JobStatus.SUCCEEDED,
-            overallScore: result.data.overallScore,
-            summary: result.data.summary,
-          },
-        });
-
-        for (const score of result.data.sectionScores) {
-          await tx.evaluationScore.create({
-            data: {
-              evaluationId: evaluation.id,
-              sectionType: score.sectionType,
-              score: score.score,
-              detailsJson: score.details,
-            },
-          });
+          type: CreditBalanceType.AI_ACTIONS,
+          amount: 1,
+          description: aiResult.data.description,
         }
+        await consumeCredits(consumeCreditBody);
+        await prisma.queueJob.update({ where: { id: job.id }, data: { status: JobStatus.SUCCEEDED, finishedAt: new Date() } });
 
-        for (const rec of result.data.recommendations) {
-          await tx.recommendation.create({
-            data: {
-              evaluationId: evaluation.id,
-              sectionType: rec.sectionType,
-              text: rec.text,
-              severity: rec.severity,
-            },
-          });
-        }
-      });
-
-      await consumeCredits({
-        userId,
-        type: CreditBalanceType.AI_ACTIONS,
-        amount: 1,
-        description: `Evaluación para CV ${cvId}`,
-      });
-
-      // ✅ Log: Evaluation completed successfully
-      await logsService.createLog({
-        userId,
-        action: LogAction.EVALUATION,
-        level: LogLevel.INFO,
-        entity: "CV_EVALUATION",
-        entityId: evaluation.id,
-        message: "CV evaluation completed successfully",
-        metadata: {
-          cvId,
-          overallScore: result.data.overallScore,
-        },
-      });
-
-      // ✅ Mark job as SUCCEEDED
-      await prisma.queueJob.update({
-        where: { id: job.id },
-        data: {
-          status: JobStatus.SUCCEEDED,
-          finishedAt: new Date(),
-        },
+        // Update Route Status
+        await prisma.route.updateMany({
+          where: { cvId, userId, status: { in: [RouteStatus.CV_CREATED, RouteStatus.ANALYSIS_PENDING] } },
+          data: { status: RouteStatus.ANALYSIS_DONE }
+        });
       });
 
     } catch (error: any) {
-      // ✅ Update evaluation record
-      await prisma.cvEvaluation.update({
-        where: {id: evaluation.id},
-        data: {status: JobStatus.FAILED},
+      await step.run("handle-failure", async () => {
+        await prisma.cvEvaluation.update({ where: { id: evaluation!.id }, data: { status: JobStatus.FAILED } });
+        await prisma.queueJob.update({ where: { id: job.id }, data: { status: JobStatus.FAILED, lastError: error.message } });
+        await refundCredits(userId, 1, "ERROR_IN_EVALUATION", CreditBalanceType.AI_ACTIONS);
       });
-
-      // ✅ Mark job as FAILED
-      await prisma.queueJob.update({
-        where: { id: job.id },
-        data: {
-          status: JobStatus.FAILED,
-          lastError: error?.message ?? "Unknown error",
-          finishedAt: new Date(),
-        },
-      });
-
-      await logsService.createLog({
-        userId,
-        action: LogAction.EVALUATION,
-        level: LogLevel.ERROR,
-        entity: "CV_EVALUATION",
-        entityId: evaluation.id,
-        message: "CV evaluation failed - token refunded",
-        metadata: {
-          cvId,
-          error: error?.message,
-          stack: error?.stack,
-        },
-      });
-
       throw error;
     }
   }

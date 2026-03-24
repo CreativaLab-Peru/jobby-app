@@ -6,6 +6,11 @@
 - Added roadmap step statuses to support completing the roadmap.
 - Redirect and update the current route in the dashboard is not working
 - It's impossible to download CV in English language
+- Fixed redirect when we click on different or same route
+- Show tags in the opportunities
+
+## Features
+- Rich text added for opportunities description in the admin panel and updated the display in the opportunity detail page for end users.
 
 # v1.1.29 - 2026-03-23
 

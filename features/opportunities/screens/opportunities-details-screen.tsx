@@ -14,6 +14,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { RoadmapSection } from "@/features/roadmap/components/roadmap-section";
 import type { RoadmapData } from "@/features/roadmap/actions/get-roadmap-for-opportunity";
+import {RichTextViewer} from "@/components/rich-text/rich-text-viewer";
+import {MODALITIES_MAP} from "@/const";
 
 interface Props {
   opportunity: any;
@@ -55,6 +57,8 @@ export function OpportunityDetailsScreen({
                                          }: Props) {
 
   const { required, optional } = requirements;
+
+  const mappedModality = MODALITIES_MAP[opportunity.modality] || MODALITIES_MAP.ON_SITE;
 
   return (
     <main className="min-h-[90vh] p-4 md:p-8">
@@ -125,7 +129,7 @@ export function OpportunityDetailsScreen({
           className="grid grid-cols-2 md:grid-cols-4 gap-4"
         >
           <StatCard icon={MapPin} label="Ubicación" value={opportunity.location || "Remoto"} />
-          <StatCard icon={Briefcase} label="Jornada" value={opportunity.modality || "Full-time"} />
+          <StatCard icon={Briefcase} label="Jornada" value={mappedModality || "Full-time"} />
           <StatCard icon={DollarSign} label="Salario" value={opportunity.salary || "A convenir"} />
           <StatCard icon={Calendar} label="Deadline" value={formattedDeadline} />
         </motion.div>
@@ -142,9 +146,9 @@ export function OpportunityDetailsScreen({
               {/* Descripción */}
               <section className="space-y-4">
                 <h2 className="text-sm font-black uppercase tracking-[0.2em] text-primary/80">Descripción</h2>
-                <p className="text-sm md:text-md text-foreground/90 font-medium leading-relaxed italic">
-                  "{opportunity.description}"
-                </p>
+                <RichTextViewer
+                  value={opportunity.description || "No hay descripción disponible."}
+                />
               </section>
 
               {/* Requisitos split */}

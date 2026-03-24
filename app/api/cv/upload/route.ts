@@ -136,7 +136,7 @@ export async function POST(req: Request) {
           },
         },
         sections: {
-          create: Array.isArray(jsonData.sections) 
+          create: Array.isArray(jsonData.sections)
             ? jsonData.sections.map((section: any, index: number) => ({
                 sectionType: section.sectionType,
                 title: section.title ?? null,
@@ -174,15 +174,15 @@ export async function POST(req: Request) {
     }
 
     // Trigger evaluation and opportunity matching
-    await inngest.send({
-      name: "cv/ready-for-evaluation",
-      data: { cvId: cv.id, userId: currentUser.id },
-    });
-
-    await inngest.send({
-      name: "get.and.save.opportunities",
-      data: { cvId: cv.id, userId: currentUser.id },
-    });
+    // await inngest.send({
+    //   name: "cv/ready-for-evaluation",
+    //   data: { cvId: cv.id, userId: currentUser.id },
+    // });
+    //
+    // await inngest.send({
+    //   name: "get.and.save.opportunities",
+    //   data: { cvId: cv.id, userId: currentUser.id },
+    // });
 
     return Response.json({success: true, cvId: cv.id});
   } catch (error) {

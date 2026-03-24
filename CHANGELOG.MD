@@ -1,3 +1,10 @@
+# WIP
+
+## Fixes
+- It's impossible to analyze CVs
+- The url of roadmap step are not good
+- We need a state of roadmap steps to complete the roadmap
+
 # v1.1.29 - 2026-03-23
 
 ## Features

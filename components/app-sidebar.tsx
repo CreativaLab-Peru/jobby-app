@@ -36,6 +36,7 @@ import { CreditsIndicator } from "@/features/credits/components/credits-indicato
 import { RouteSelector } from "@/features/routes/components/route-selector";
 import { CreditLimits } from "@/features/credits/actions/get-current-credits-limits";
 import {Button} from "@/components/ui/button";
+import {PendingStepInfo} from "@/features/roadmap/actions/get-pending-roadmap-step";
 
 // --- Types & Fetcher ---
 export type NavbarUser = {

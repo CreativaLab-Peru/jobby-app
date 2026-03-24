@@ -4,6 +4,7 @@
 - It's impossible to analyze CVs
 - The url of roadmap step are not good
 - We need a state of roadmap steps to complete the roadmap
+- Redirect and update the current route in the dashboard is not working
 
 # v1.1.29 - 2026-03-23
 

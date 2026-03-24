@@ -34,14 +34,30 @@ const JOURNEY_STEPS: RouteStatus[] = [
   "ROADMAP_DONE",
 ];
 
-function getProgressFraction(status: RouteStatus): number {
-  const idx = JOURNEY_STEPS.findIndex((s) => s === status);
-  if (idx !== -1) return (idx + 1) / JOURNEY_STEPS.length;
-  // In-between statuses
-  if (status === "CV_PENDING") return 0;
-  if (status === "ANALYSIS_PENDING") return 0.25;
-  if (status === "OPPORTUNITIES_PENDING") return 0.5;
-  if (status === "ROADMAP_PENDING") return 0.75;
+function getProgressFraction(route: RouteWithCvSummary): number {
+  const { status, roadmapProgress } = route;
+
+  // Hitos base antes del roadmap
+  if (status === "CV_PENDING") return 0.05;
+  if (status === "CV_CREATED") return 0.25;
+  if (status === "ANALYSIS_PENDING") return 0.35;
+  if (status === "ANALYSIS_DONE") return 0.50;
+  if (status === "OPPORTUNITIES_PENDING") return 0.60;
+  if (status === "OPPORTUNITIES_DONE") return 0.75;
+
+  // Fase de Roadmap (Aquí es donde ocurre la magia)
+  if (status === "ROADMAP_PENDING" || status === "ROADMAP_DONE") {
+    if (!roadmapProgress || roadmapProgress.totalActions === 0) {
+      return status === "ROADMAP_DONE" ? 1 : 0.80;
+    }
+
+    // Calculamos el tramo final (del 75% al 100%) basado en acciones reales
+    const roadmapWeight = 0.25; // El roadmap representa el último 25%
+    const internalProgress = roadmapProgress.completedActions / roadmapProgress.totalActions;
+
+    return 0.75 + (internalProgress * roadmapWeight);
+  }
+
   return 0;
 }
 
@@ -69,33 +85,48 @@ function getProgressLabel(status: RouteStatus): string {
 }
 
 // ── Mini progress bar ──────────────────────────────────
-function MiniProgress({ status }: { status: RouteStatus }) {
-  const pct = getProgressFraction(status) * 100;
-  const isComplete = status === "ROADMAP_DONE";
+function MiniProgress({ route }: { route: RouteWithCvSummary }) {
+  const pct = getProgressFraction(route) * 100;
+  const isComplete = pct >= 100;
+
+  // Label dinámico para el roadmap
+  const getDynamicLabel = () => {
+    if (route.status === "ROADMAP_DONE" || route.status === "ROADMAP_PENDING") {
+      if (route.roadmapProgress && route.roadmapProgress.totalActions > 0) {
+        const { completedActions, totalActions } = route.roadmapProgress;
+        return `Pasos: ${completedActions}/${totalActions}`;
+      }
+    }
+    return getProgressLabel(route.status);
+  };
 
   return (
-    <div className="flex items-center gap-2 w-full">
-      <div className="flex-1 h-1 rounded-full bg-border overflow-hidden">
-        <div
+    <div className="flex flex-col gap-1 w-full">
+      <div className="flex items-center gap-2">
+        <div className="flex-1 h-1 rounded-full bg-border overflow-hidden">
+          <div
+            className={cn(
+              "h-full rounded-full transition-all duration-700 ease-out",
+              isComplete ? "bg-green-500" : "bg-primary",
+            )}
+            style={{ width: `${Math.max(pct, 5)}%` }}
+          />
+        </div>
+        <span
           className={cn(
-            "h-full rounded-full transition-all duration-500",
-            isComplete ? "bg-green-500" : "bg-primary",
+            "text-[9px] font-bold shrink-0 min-w-[30px] text-right",
+            isComplete ? "text-green-600" : "text-muted-foreground",
           )}
-          style={{ width: `${Math.max(pct, 5)}%` }}
-        />
+        >
+          {Math.round(pct)}%
+        </span>
       </div>
-      <span
-        className={cn(
-          "text-[9px] font-bold shrink-0",
-          isComplete ? "text-green-600" : "text-muted-foreground",
-        )}
-      >
-        {getProgressLabel(status)}
+      <span className="text-[8px] text-muted-foreground/70 font-medium">
+        {getDynamicLabel()}
       </span>
     </div>
   );
 }
-
 // ── Route item in dropdown ─────────────────────────────
 function RouteItem({
   route,
@@ -131,7 +162,7 @@ function RouteItem({
           >
             {route.name}
           </p>
-          <MiniProgress status={route.status} />
+          <MiniProgress route={route} />
         </div>
       </div>
     </button>
@@ -238,7 +269,7 @@ export function RouteSelector() {
               {activeRoute?.name ?? "Sin ruta"}
             </p>
             {activeRoute && (
-              <MiniProgress status={activeRoute.status} />
+              <MiniProgress route={activeRoute} />
             )}
           </div>
           <ChevronDown

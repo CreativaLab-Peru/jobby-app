@@ -5,6 +5,7 @@ import { getPromptToEvaluateCv } from "@/features/cv/prompts/get-prompt-to-evalu
 import { queryGemini } from "@/features/cv/queries/query-gemini";
 import {consumeCredits, ConsumeCreditsParams} from "@/features/credits/actions/consume-credits";
 import {
+  AiEvaluationResult,
   buildCvPayloadForEvaluation,
   filterSectionsByOpportunity,
   sanitizeSectionType
@@ -15,7 +16,11 @@ export const evaluateCv = inngest.createFunction(
   { id: "evaluate-cv", name: "Evaluate CV with AI" },
   { event: "cv/ready-for-evaluation" },
   async ({ event, step }) => {
-    const { cvId, userId, evaluationId } = event.data;
+    const { cvId, userId, evaluationId } = event.data as {
+      cvId: string;
+      userId: string;
+      evaluationId?: string
+    };
 
     // 1. Inicialización del Job
     const job = await step.run("initialize-job", async () => {
@@ -57,14 +62,15 @@ export const evaluateCv = inngest.createFunction(
     // 3. Gestión de la Evaluación (Registro)
     const evaluation = await step.run("get-or-create-evaluation", async () => {
       if (evaluationId) return prisma.cvEvaluation.findUnique({ where: { id: evaluationId } });
-      // return prisma.cvEvaluation.create({ data: { cvId, status: JobStatus.IN_PROGRESS } });
+      return prisma.cvEvaluation.create({ data: { cvId, status: JobStatus.IN_PROGRESS } });
     });
 
     try {
       // 4. Inteligencia Artificial
       const aiResult = await step.run("query-ai-evaluator", async () => {
         const prompt = getPromptToEvaluateCv(filteredSections, cv?.cvType, cv?.opportunityType, cv?.language);
-        return queryGemini({ prompt, type: "JSON" });
+        const response = await queryGemini({ prompt, type: "JSON" });
+        return response as { success: boolean; data: AiEvaluationResult; message?: string };
       });
 
       if (!aiResult.success) throw new Error(aiResult.message);
@@ -74,20 +80,20 @@ export const evaluateCv = inngest.createFunction(
         const { data } = aiResult;
 
         // 1. Mapeamos y sanitizamos los scores
-        const scoresToCreate = (data.sectionScores || []).map((score: any) => ({
-          evaluationId: evaluation!.id,
+        const scoresToCreate = (data.sectionScores || []).map((score) => ({
+          evaluationId: evaluation!.id as string,
           sectionType: sanitizeSectionType(score.sectionType),
           score: Number(score.score) || 0,
           detailsJson: score.details || {},
         }));
 
         // 2. Mapeamos y sanitizamos los textos mejorados (dentro del JSON)
-        const improvedTexts = (data.improvedTexts || []).map((item: any) => ({
+        const improvedTexts = (data.improvedTexts || []).map((item) => ({
           ...item,
           sectionType: sanitizeSectionType(item.sectionType),
         }));
 
-        const suggestedAdditions = (data.suggestedAdditions || []).map((item: any) => ({
+        const suggestedAdditions = (data.suggestedAdditions || []).map((item) => ({
           ...item,
           sectionType: sanitizeSectionType(item.sectionType),
         }));
@@ -101,6 +107,7 @@ export const evaluateCv = inngest.createFunction(
               status: JobStatus.SUCCEEDED,
               overallScore: data.overallScore,
               summary: data.summary,
+              extractorOutput: JSON.stringify(data),
               improvementsJson: {
                 improvedTexts,
                 suggestedAdditions,
@@ -110,7 +117,15 @@ export const evaluateCv = inngest.createFunction(
 
           // Crear todos los scores de una vez
           ...scoresToCreate.map(scoreData =>
-            prisma.evaluationScore.create({ data: scoreData })
+            prisma.evaluationScore.create({
+              data: {
+                evaluationId: scoreData.evaluationId,
+                sectionType: scoreData.sectionType,
+                score: scoreData.score,
+                detailsJson: JSON.stringify(scoreData.detailsJson),
+
+              }
+            })
           )
         ]);
       });

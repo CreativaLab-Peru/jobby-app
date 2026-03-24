@@ -46,8 +46,8 @@ Return a valid JSON object following this schema:
   "improvedTexts": [
     {
       "sectionType": one of them "SUMMARY | EXPERIENCE | EDUCATION | SKILLS | PROJECTS | VOLUNTEERING | CERTIFICATIONS | COMPLEMENTS | ACHIEVEMENTS | CONTACT",
-      "originalSnippet": "Brief excerpt of what the user currently has (Language of the cv (${lang}), max 80 chars)",
-      "improvedText": "The full improved version of this section content in the language of the cv (${lang}). Must be ready to copy-paste.(not json, just plain text)",
+      "originalSnippet": "Brief excerpt of what the user currently has  in ${lang} language (max 80 chars)",
+      "improvedText": "The full improved version of this section content in  ${lang} language . Must be ready to copy-paste.(not json, just plain text)",
       "changeReason": "Short explanation in language of the cv of why this change improves the CV"
     }
   ],

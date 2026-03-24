@@ -26,13 +26,6 @@ import { cn } from "@/lib/utils";
 import { RouteStatus } from "@prisma/client";
 import {routes as  routesLib} from "@/lib/routes";
 
-// ── Progress helpers ───────────────────────────────────
-const JOURNEY_STEPS: RouteStatus[] = [
-  "CV_CREATED",
-  "ANALYSIS_DONE",
-  "OPPORTUNITIES_DONE",
-  "ROADMAP_DONE",
-];
 
 function getProgressFraction(route: RouteWithCvSummary): number {
   const { status, roadmapProgress } = route;

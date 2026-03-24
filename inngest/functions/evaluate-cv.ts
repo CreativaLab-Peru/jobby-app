@@ -47,7 +47,6 @@ export const evaluateCv = inngest.createFunction(
 
       const fullPayload = buildCvPayloadForEvaluation({
         sections: cvData?.sections,
-        extractedJson: cvData?.extractedJson,
       });
 
       const filtered = filterSectionsByOpportunity(fullPayload, cvData?.opportunityType ?? null);

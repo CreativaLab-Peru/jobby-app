@@ -224,7 +224,7 @@ export function CvDocument({ data, sections, lang = "ES" }: { data: CVData; sect
               ) : null}
               {proj.technologies ? (
                 <Text style={{ fontSize: 10.5 }}>
-                  <Text style={{ fontWeight: "bold" }}>{t.softSkills}:</Text> {proj.technologies}
+                  <Text style={{ fontWeight: "bold" }}>{t.skills}:</Text> {proj.technologies}
                 </Text>
               ) : null}
             </View>

@@ -85,7 +85,6 @@ export const generateRoadmap = inngest.createFunction(
         // Usamos la lógica centralizada de evaluación
         const fullPayload = buildCvPayloadForEvaluation({
           sections: cvDoc?.sections,
-          extractedJson: cvDoc?.extractedJson,
         });
 
         // Filtramos según el tipo de oportunidad (Beca, Startup, etc.)

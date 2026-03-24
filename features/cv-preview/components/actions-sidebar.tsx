@@ -250,21 +250,6 @@ export function ActionsSidebar({
             {downloading ? "Descargando..." : "Descargar PDF"}
           </Button>
 
-          {showMatchButton && (
-            <Button
-              disabled={isDisabled || matching}
-              className="w-full"
-              onClick={()=>handleExecuteAction("match")}
-            >
-              {matching ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Rocket className="w-4 h-4 mr-2" />
-              )}
-              {matching ? "Buscando..." : "Hacer Match"}
-            </Button>
-          )}
-
           {showAnalyzeButton && (
             <Button
               disabled={isDisabled || analyzing || !canAnalyze}
@@ -277,6 +262,21 @@ export function ActionsSidebar({
                 <Sparkles className="w-4 h-4 mr-2" />
               )}
               {analyzing ? "Analizando..." : "Analizar CV"}
+            </Button>
+          )}
+
+          {showMatchButton && (
+            <Button
+              disabled={isDisabled || matching}
+              className="w-full"
+              onClick={()=>handleExecuteAction("match")}
+            >
+              {matching ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Rocket className="w-4 h-4 mr-2" />
+              )}
+              {matching ? "Buscando..." : "Hacer Match"}
             </Button>
           )}
 

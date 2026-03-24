@@ -87,8 +87,11 @@ export async function POST(request: Request) {
     // Send event to trigger CV evaluation (correct event name)
     await inngest.send({
       name: "cv/ready-for-evaluation",
-      data: { cvId, userId: currentUser.id },
-      evaluationId: newEvaluation.id
+      data: {
+        cvId,
+        userId: currentUser.id,
+        evaluationId: newEvaluation.id
+      },
     });
 
     // Send event to get and save opportunities

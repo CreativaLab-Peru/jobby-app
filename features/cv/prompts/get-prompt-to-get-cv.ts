@@ -51,7 +51,7 @@ You must return **only one valid JSON object** following this structure:
 3. **contentJson** should contain **structured objects** describing the specific details found in each section (Object or List of objects):
    - EXPERIENCE → [{ position, company, location, duration, responsibilities(type string) }]
    - EDUCATION → [{ level, title, institution, location, year, honors? }]
-   - SKILLS → { soft:[], languages:[], technical:[] }
+   - SKILLS → { soft: string[], languages: string[], technical: string[] }
    - PROJECTS → [{ title?, duration, description, technologies? }]
    - CERTIFICATIONS → [{ name, issuer?, year?, date? }]
    - LANGUAGES → [{ language, proficiency }]

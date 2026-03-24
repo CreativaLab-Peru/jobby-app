@@ -4,11 +4,14 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import {ArrowLeft, Home, Download, Loader2, Sparkles, Rocket, Edit} from "lucide-react"
+import {ArrowLeft, Home, Download, Loader2, Sparkles, Rocket, Edit, Languages} from "lucide-react"
 import { CVData, CVSection } from "@/types/cv"
 import { toast } from "sonner"
 import { useCreditsStore } from "@/store/use-credits-store"
 import {ConfirmModal} from "@/components/shared/confirm-modal";
+import {Language} from "@prisma/client";
+import {updateCvLanguage} from "@/features/cv/actions/update-cv-language";
+import {cn} from "@/lib/utils";
 
 interface ActionsSidebarProps {
   cvData: CVData
@@ -21,7 +24,13 @@ interface ActionsSidebarProps {
   canAnalyze: boolean
   analysisTokens: number
   opportunitiesActionTokens?: number
+  language: Language
 }
+
+const SUPPORTED_LANGUAGES = [
+  { label: "ES", value: Language.ES },
+  { label: "EN", value: Language.EN },
+];
 
 export function ActionsSidebar({
   cvData,
@@ -33,7 +42,8 @@ export function ActionsSidebar({
   isDisabled,
   canAnalyze,
   analysisTokens,
-  opportunitiesActionTokens = 0
+  opportunitiesActionTokens = 0,
+  language = Language.ES
 }: ActionsSidebarProps) {
   const [downloading, setDownloading] = useState(false)
   const [analyzing, setAnalyzing] = useState(false)
@@ -45,6 +55,23 @@ export function ActionsSidebar({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
+  const [updatingLang, setUpdatingLang] = useState(false);
+  const [lang, setLang] = useState<Language>(language);
+
+  const handleLanguageChange = async (newLang: Language) => {
+    if (!cvId || newLang === lang) return;
+
+    setUpdatingLang(true);
+    const result = await updateCvLanguage(cvId, newLang);
+
+    if (result.success) {
+      setLang(newLang);
+      toast.success(`Idioma cambiado a ${newLang}`);
+    } else {
+      toast.error("No se pudo cambiar el idioma");
+    }
+    setUpdatingLang(false);
+  };
 
   const handleDownloadPdf = async () => {
     setDownloading(true)
@@ -58,7 +85,12 @@ export function ActionsSidebar({
         ? CvDocumentEuropass
         : CvDocument
 
-      const blob = await pdf(<DocumentComponent data={cvData} sections={sections} />).toBlob()
+      const blob = await pdf(
+        <DocumentComponent
+          data={cvData}
+          sections={sections}
+          lang={language}
+        />).toBlob()
       const url = URL.createObjectURL(blob)
       const link = document.createElement("a")
       link.href = url
@@ -218,21 +250,6 @@ export function ActionsSidebar({
             {downloading ? "Descargando..." : "Descargar PDF"}
           </Button>
 
-          {showMatchButton && (
-            <Button
-              disabled={isDisabled || matching}
-              className="w-full"
-              onClick={()=>handleExecuteAction("match")}
-            >
-              {matching ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Rocket className="w-4 h-4 mr-2" />
-              )}
-              {matching ? "Buscando..." : "Hacer Match"}
-            </Button>
-          )}
-
           {showAnalyzeButton && (
             <Button
               disabled={isDisabled || analyzing || !canAnalyze}
@@ -248,6 +265,47 @@ export function ActionsSidebar({
             </Button>
           )}
 
+          {showMatchButton && (
+            <Button
+              disabled={isDisabled || matching}
+              className="w-full"
+              onClick={()=>handleExecuteAction("match")}
+            >
+              {matching ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Rocket className="w-4 h-4 mr-2" />
+              )}
+              {matching ? "Buscando..." : "Hacer Match"}
+            </Button>
+          )}
+
+          <div className="space-y-3 mt-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm flex items-center gap-2">
+                <Languages className="w-3 h-3" /> El idioma de mi cv esta en
+              </label>
+              {updatingLang && <Loader2 className="w-3 h-3 animate-spin text-primary" />}
+            </div>
+
+            <div className="flex p-1 bg-secondary/50 rounded-lg border border-border">
+              {SUPPORTED_LANGUAGES.map((item) => (
+                <button
+                  key={item.value}
+                  disabled={isDisabled || updatingLang}
+                  onClick={() => handleLanguageChange(item.value)}
+                  className={cn(
+                    "flex-1 py-1.5 text-xs font-bold rounded-md transition-all",
+                    lang === item.value
+                      ? "bg-background text-primary shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </CardContent>
       </Card>
       <ConfirmModal

@@ -121,7 +121,7 @@ export default function RouteStepper({
     },
     {
       id: 4,
-      title: "Conoce tu ruta profesional",
+      title: "Conoce tu ruta personalizada",
       description: hasRoadmap
         ? "Tienes un roadmap generado. Revisa los pasos para alcanzar tu meta."
         : "Recibe un roadmap personalizado con los pasos necesarios para acceder a oportunidades globales.",
@@ -162,7 +162,7 @@ export default function RouteStepper({
         >
           <PageHeader
             title={routeName}
-            description="Sigue estos pasos para completar tu ruta profesional."
+            description="Sigue estos pasos para completar tu ruta personalizada."
             actions={
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Sparkles className="h-4 w-4 text-primary" />

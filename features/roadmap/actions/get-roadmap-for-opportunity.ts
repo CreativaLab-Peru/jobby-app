@@ -8,7 +8,7 @@ export type RoadmapStepData = {
   order: number;
   title: string;
   description: string;
-  actionItems: string[];
+  actionItems: { done: boolean, action: string }[];
   estimatedDays: number | null;
   resources: { title: string; url?: string; type: string }[];
   isFree: boolean;
@@ -71,7 +71,7 @@ export async function getRoadmapForOpportunity(
         order: s.order,
         title: s.title,
         description: s.description,
-        actionItems: (s.actionItems as string[]) || [],
+        actionItems: (s.actionItems as {done: boolean, action: string}[]) || [],
         estimatedDays: s.estimatedDays,
         resources: (s.resources as { title: string; url?: string; type: string }[]) || [],
         isFree: s.isFree,

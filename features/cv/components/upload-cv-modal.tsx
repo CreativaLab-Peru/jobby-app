@@ -204,6 +204,7 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
                       errors.title && "ring-2 ring-destructive"
                     )}
                     placeholder="Ej: CV Senior Frontend"
+                    disabled={isUploading}
                   />
                   {errors.title && <p className="text-[10px] text-destructive font-bold ml-1">{errors.title.message}</p>}
                 </div>
@@ -216,6 +217,7 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
                     { key: "europass", value: "Europass Modern" },
                   ]}
                   onChange={(v) => setValue("templateId", v as any, { shouldValidate: true })}
+                  disabled={isUploading}
                   error={errors.templateId?.message}
                 />
 
@@ -224,6 +226,7 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
                   value={watch("cvType")}
                   options={cvTypeOptions.map(({ value, label }) => ({ key:value, value:label }))}
                   onChange={(v) => setValue("cvType", v as CvType, { shouldValidate: true })}
+                  disabled={isUploading}
                   error={errors.cvType?.message}
                 />
 
@@ -232,6 +235,7 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
                   value={watch("opportunityType")}
                   options={opportunities}
                   onChange={(v) => setValue("opportunityType", v as OpportunityType, { shouldValidate: true })}
+                  disabled={isUploading}
                   error={errors.opportunityType?.message}
                 />
 

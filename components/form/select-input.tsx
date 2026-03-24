@@ -23,6 +23,7 @@ interface FormSelectProps {
   onChange: (value: string) => void;
   description?: string;
   className?: string;
+  disabled?: boolean;
 }
 
 export function FormSelect({
@@ -34,6 +35,7 @@ export function FormSelect({
                              onChange,
                              description,
                              className,
+                             disabled
                            }: FormSelectProps) {
   return (
     <div className={cn("space-y-2 animate-in fade-in slide-in-from-top-2", className)}>
@@ -42,6 +44,7 @@ export function FormSelect({
       <Select
         onValueChange={onChange}
         value={value}
+        disabled={disabled}
       >
         <SelectTrigger className={error ? "border-destructive" : ""}>
           <SelectValue placeholder={placeholder} />

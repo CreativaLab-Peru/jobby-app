@@ -39,7 +39,6 @@ export const OnboardingAfterPayment = ({ user, token }: OnboardingAfterPaymentPr
     startTransition(async () => {
       try {
         // 1. Auth inicial con password temporal del sistema
-        console.log("[credentials]", { email: user.email, password: FIRST_PASSWORD });
         const login = await authClient.signIn.email({
           email: user.email,
           password: FIRST_PASSWORD,

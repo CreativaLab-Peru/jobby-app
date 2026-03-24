@@ -7,6 +7,30 @@ export type CvSectionInput = {
   contentJson?: unknown;
 };
 
+export interface AiEvaluationResult {
+  overallScore: number;
+  summary: string;
+  sectionScores: {
+    sectionType: string;
+    score: number;
+    details: Record<string, any>;
+  }[];
+  improvedTexts: {
+    sectionType: string;
+    originalSnippet: string;
+    improvedText: string;
+    changeReason: string;
+  }[];
+  suggestedAdditions: {
+    sectionType: string;
+    title: string;
+    suggestedText: string;
+    impact: "LOW" | "MEDIUM" | "HIGH";
+    reason: string;
+  }[];
+  description?: string; // Para el consumo de créditos
+}
+
 // Mapa de configuración para secciones requeridas (Mantenible y escalable)
 const REQUIRED_SECTIONS_BY_OPPORTUNITY: Record<OpportunityType, string[]> = {
   [OpportunityType.SCHOLARSHIP]: ["personal", "education", "projects", "achievements", "skills", "volunteering"],

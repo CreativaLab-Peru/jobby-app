@@ -7,12 +7,16 @@ import { Route, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createRoute } from "@/features/routes/actions/create-route";
+import {useRouteStore} from "@/store/use-route-store";
+import {getRoutesForUser} from "@/features/routes/actions/get-routes-for-user";
 
 export default function CreateRouteForm() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
+
+  const {hydrate} = useRouteStore();
 
   const handleSubmit = () => {
     if (!name.trim()) {
@@ -22,12 +26,19 @@ export default function CreateRouteForm() {
     setError("");
     startTransition(async () => {
       const result = await createRoute(name.trim());
-      if (result.success) {
-        router.refresh();
-        router.push("/dashboard");
-      } else {
+      if (!result.success) {
         setError(result.message || "Error al crear la ruta.");
+        return
       }
+
+      const routesResult = await getRoutesForUser();
+      if (!routesResult.success) {
+        setError(routesResult.message || "Ruta creada, pero no se pudieron cargar las rutas.");
+        return;
+      }
+      hydrate(routesResult.routes);
+      router.refresh();
+      router.push("/dashboard");
     });
   };
 

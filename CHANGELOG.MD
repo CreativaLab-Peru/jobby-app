@@ -1,3 +1,12 @@
+# WIP
+
+## Fixes
+- Fixed issue preventing CV analysis.
+- Fixed incorrect roadmap step URLs.
+- Added roadmap step statuses to support completing the roadmap.
+- Redirect and update the current route in the dashboard is not working
+- It's impossible to download CV in English language
+
 # v1.1.29 - 2026-03-23
 
 ## Features
@@ -16,7 +25,7 @@
 - Fix issue for improved text in the language of the CV
 - Hidde opp type EMPLOYMENT AND INTERNSHIP for the moment
 - Title of section to show preview and edit CV
-- Update prompt to generate roadmap
+  - Update prompt to generate roadmap
 ---
 
 # v1.1.28 - 2026-03-12

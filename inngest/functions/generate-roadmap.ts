@@ -7,6 +7,10 @@ import {
   getPromptToGenerateRoadmap,
   PromptToGenerateRoadmap
 } from "@/features/roadmap/prompts/get-prompt-to-evaluate-cv";
+import {
+  buildCvPayloadForEvaluation,
+  filterSectionsByOpportunity
+} from "@/inngest/utils/cv-evaluation-helper";
 
 type RoadmapStepAI = {
   order: number;
@@ -71,26 +75,26 @@ export const generateRoadmap = inngest.createFunction(
 
     try {
       // 1. Fetch CV + Opportunity data
-      const { cv, opportunity, userPrefs } = await step.run("fetch-data", async () => {
-        const [cvData, oppData, prefsData] = await Promise.all([
-          prisma.cv.findUnique({
-            where: { id: cvId },
-            include: { sections: true },
-          }),
-          prisma.opportunity.findFirst({
-            where: { id: opportunityId, cvId },
-          }),
+      const { cv, filteredSections, opportunity, userPrefs } = await step.run("fetch-data", async () => {
+        const [cvDoc, oppData, prefsData] = await Promise.all([
+          prisma.cv.findUnique({ where: { id: cvId }, include: { sections: true } }),
+          prisma.opportunity.findFirst({ where: { id: opportunityId, cvId } }),
           prisma.userPreference.findUnique({ where: { userId } }),
         ]);
+
+        // Usamos la lógica centralizada de evaluación
+        const fullPayload = buildCvPayloadForEvaluation({
+          sections: cvDoc?.sections,
+        });
+
+        // Filtramos según el tipo de oportunidad (Beca, Startup, etc.)
+        const filtered = filterSectionsByOpportunity(fullPayload, cvDoc?.opportunityType ?? null);
+
         return {
-          cv: cvData,
-          opportunity: oppData
-            ? {
-                ...oppData,
-                match: Number(oppData.match),
-              }
-            : null,
-          userPrefs: prefsData,
+          cv: cvDoc,
+          filteredSections: filtered,
+          opportunity: oppData ? { ...oppData, match: Number(oppData.match) } : null,
+          userPrefs: prefsData
         };
       });
 
@@ -106,35 +110,6 @@ export const generateRoadmap = inngest.createFunction(
         return { message: "CV or Opportunity not found" };
       }
 
-      // 2. Build CV summary for the prompt
-      const cvSummary = await step.run("build-cv-summary", () => {
-        const sections = cv.sections || [];
-        const parts: string[] = [];
-
-        for (const section of sections) {
-          const content = section.contentJson;
-          if (!content) continue;
-          if (section.sectionType === "SUMMARY") {
-            parts.push(`RESUMEN: ${(content as any).text || JSON.stringify(content)}`);
-          } else if (section.sectionType === "EXPERIENCE") {
-            const items = Array.isArray(content) ? content : [content];
-            parts.push(`EXPERIENCIA: ${items.map((i: any) => `${i.title || ""} en ${i.company || ""}`).join(", ")}`);
-          } else if (section.sectionType === "EDUCATION") {
-            const items = Array.isArray(content) ? content : [content];
-            parts.push(`EDUCACIÓN: ${items.map((i: any) => `${i.degree || i.title || ""} en ${i.institution || ""}`).join(", ")}`);
-          } else if (section.sectionType === "SKILLS") {
-            const json = content as any;
-            const skills: string[] = [];
-            if (json.technical) skills.push(...json.technical);
-            if (json.soft) skills.push(...json.soft);
-            if (Array.isArray(json)) skills.push(...json.map((s: any) => (typeof s === "string" ? s : s.name)));
-            parts.push(`HABILIDADES: ${skills.join(", ")}`);
-          }
-        }
-
-        return parts.join("\n");
-      });
-
       // 3. Call Gemini to generate roadmap
       const aiResult = await step.run("generate-with-ai", async () => {
         const prompt = getPromptToGenerateRoadmap({
@@ -145,7 +120,7 @@ export const generateRoadmap = inngest.createFunction(
             requirements: opportunity.requirements,
             match: opportunity.match,
           },
-          cvSummary,
+          sections: filteredSections,
           userPrefs,
         });
 

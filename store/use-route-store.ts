@@ -10,6 +10,12 @@ export type RouteWithCvSummary = Route & {
     evaluations: { id: string; status: string; overallScore: number | null }[];
     _count: { opportunities: number };
   } | null;
+  roadmapProgress?: {
+    totalSteps: number;
+    completedSteps: number;
+    totalActions: number;
+    completedActions: number;
+  };
 };
 
 interface RouteState {

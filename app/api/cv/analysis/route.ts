@@ -81,7 +81,10 @@ export async function POST(request: Request) {
       }
     })
     if (!newEvaluation) {
-      return { success: false, message: "Error al construir la evaluacion." };
+      return NextResponse.json(
+        { success: false, message: "Error al construir la evaluación." },
+        { status: 500 }
+      );
     }
 
     // Send event to trigger CV evaluation (correct event name)

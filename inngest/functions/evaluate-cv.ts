@@ -6,7 +6,8 @@ import { queryGemini } from "@/features/cv/queries/query-gemini";
 import {consumeCredits, ConsumeCreditsParams} from "@/features/credits/actions/consume-credits";
 import {
   buildCvPayloadForEvaluation,
-  filterSectionsByOpportunity, sanitizeSectionType
+  filterSectionsByOpportunity,
+  sanitizeSectionType
 } from "../utils/cv-evaluation-helper";
 import {refundCredits} from "@/features/credits/actions/refund-credits";
 

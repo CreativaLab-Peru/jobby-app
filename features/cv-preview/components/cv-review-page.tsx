@@ -117,6 +117,7 @@ export function PreviewCVComponent({
                 opportunitiesActionTokens={opportunitiesActionTokens}
                 onHome={() => router.push('/dashboard')}
                 onEditCV={() => router.push(cvId ? `/cv/${cvId}/edit` : '/my-cv')}
+                language={language}
               />
               <div className="space-y-4">
                 {activeTips.map((tip) => (

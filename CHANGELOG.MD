@@ -23,7 +23,7 @@
 - Fix issue for improved text in the language of the CV
 - Hidde opp type EMPLOYMENT AND INTERNSHIP for the moment
 - Title of section to show preview and edit CV
-- Update prompt to generate roadmap
+  - Update prompt to generate roadmap
 ---
 
 # v1.1.28 - 2026-03-12

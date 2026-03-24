@@ -38,7 +38,7 @@ function getProgressFraction(route: RouteWithCvSummary): number {
   const { status, roadmapProgress } = route;
 
   // Hitos base antes del roadmap
-  if (status === "CV_PENDING") return 0.05;
+  if (status === "CV_PENDING") return 0;
   if (status === "CV_CREATED") return 0.25;
   if (status === "ANALYSIS_PENDING") return 0.35;
   if (status === "ANALYSIS_DONE") return 0.50;

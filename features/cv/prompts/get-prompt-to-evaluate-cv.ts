@@ -9,6 +9,7 @@ export const getPromptToEvaluateCv = (
   const contextBlock = [
     cvType && `- CV Category: ${cvType}`,
     opportunityType && `- Target Opportunity: ${opportunityType}`,
+    `- CV Language: ${lang === 'EN' ? 'English' : 'Spanish'}`,
   ]
     .filter(Boolean)
     .join("\n");
@@ -46,18 +47,18 @@ Return a valid JSON object following this schema:
   "improvedTexts": [
     {
       "sectionType": one of them "SUMMARY | EXPERIENCE | EDUCATION | SKILLS | PROJECTS | VOLUNTEERING | CERTIFICATIONS | COMPLEMENTS | ACHIEVEMENTS | CONTACT",
-      "originalSnippet": "Brief excerpt of what the user currently has  in ${lang} language (max 80 chars)",
-      "improvedText": "The full improved version of this section content in  ${lang} language . Must be ready to copy-paste.(not json, just plain text)",
-      "changeReason": "Short explanation in language of the cv of why this change improves the CV"
+      "originalSnippet": "Brief excerpt of what the user currently has  ${lang} (max 80 chars)",
+      "improvedText": The full improved version of this section content IN ${lang === 'EN' ? 'ENGLISH' : 'SPANISH'}. Must be ready to copy-paste.(not json, just plain text)",
+      "changeReason": "Short explanation in SPANISH why this change improves the CV"
     }
   ],
   "suggestedAdditions": [
     {
       "sectionType": one of them "SUMMARY | EXPERIENCE | EDUCATION | SKILLS | PROJECTS | VOLUNTEERING | CERTIFICATIONS | COMPLEMENTS | ACHIEVEMENTS | CONTACT",
       "title": "Short title in Spanish",
-      "suggestedText": "The content to add, written in Spanish, ready to copy-paste (not json, just plain text)",
+      "suggestedText": "The content to add, written IN ${lang === 'EN' ? 'ENGLISH' : 'SPANISH'}, ready to copy-paste (not json, just plain text)",
       "impact": "LOW | MEDIUM | HIGH",
-      "reason": "Why adding this improves the CV (Spanish)"
+      "reason": "Why adding this improves the CV in SPANISH"
     }
   ]
 }
@@ -65,7 +66,9 @@ Return a valid JSON object following this schema:
 ### STRICT CONSTRAINTS
 1. ONLY return the JSON object. No prose, no markdown code blocks.
 2. If a section is missing in the CV, OMIT it from "sectionScores" and "improvedTexts", but you CAN suggest it in "suggestedAdditions".
-3. Use Spanish for ALL feedback, advice, improved texts, and suggestions.
+3. 3. LANGUAGE SEPARATION (CRITICAL):
+   - **Spanish**: Use for "summary", "recommendations.text", "changeReason", "suggestedAdditions.title", and "suggestedAdditions.reason".
+   - **${lang === 'EN' ? 'English' : 'Spanish'}**: Use ONLY for "improvedText" and "suggestedText". These will be copied directly into a ${lang} CV.
 4. "improvedTexts" must contain at least one entry for every section that scores below 80.
 5. "suggestedAdditions" should recommend missing sections or content gaps. Max 5 items.
 6. Ensure all strings are properly escaped to maintain valid JSON integrity.

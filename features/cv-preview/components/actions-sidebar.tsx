@@ -85,7 +85,12 @@ export function ActionsSidebar({
         ? CvDocumentEuropass
         : CvDocument
 
-      const blob = await pdf(<DocumentComponent data={cvData} sections={sections} />).toBlob()
+      const blob = await pdf(
+        <DocumentComponent
+          data={cvData}
+          sections={sections}
+          lang={language}
+        />).toBlob()
       const url = URL.createObjectURL(blob)
       const link = document.createElement("a")
       link.href = url

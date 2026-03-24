@@ -1,9 +1,9 @@
 # WIP
 
 ## Fixes
-- It's impossible to analyze CVs
-- The url of roadmap step are not good
-- We need a state of roadmap steps to complete the roadmap
+- Fixed issue preventing CV analysis.
+- Fixed incorrect roadmap step URLs.
+- Added roadmap step statuses to support completing the roadmap.
 - Redirect and update the current route in the dashboard is not working
 - It's impossible to download CV in English language
 

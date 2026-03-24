@@ -3,11 +3,20 @@
 import { prisma } from "@/lib/prisma";
 import { Language } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import {getCurrentUser} from "@/features/share/actions/get-current-user";
 
 export async function updateCvLanguage(cvId: string, language: Language) {
   try {
+    const currentUser = await getCurrentUser();
+    if (!currentUser) {
+      return { success: false, error: "No autorizado" };
+    }
+
     await prisma.cv.update({
-      where: { id: cvId },
+      where: {
+        id: cvId,
+        userId: currentUser.id,
+      },
       data: { language },
     });
 

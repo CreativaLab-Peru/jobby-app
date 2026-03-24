@@ -54,19 +54,6 @@ export async function POST(request: Request) {
     }
 
     // Update user credit balance
-    // await prisma.userCreditBalance.update({
-    //   where: {
-    //     userId_type: { // Prisma busca este campo autogenerado para llaves compuestas
-    //       userId: currentUser.id,
-    //       type: CreditBalanceType.AI_ACTIONS
-    //     },
-    //   },
-    //   data: {
-    //     amount: {
-    //       decrement: 1,
-    //     }
-    //   },
-    // })
     await consumeCredits({
       userId: currentUser.id,
       type: CreditBalanceType.AI_ACTIONS,

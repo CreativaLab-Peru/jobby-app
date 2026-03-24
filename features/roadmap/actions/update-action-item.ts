@@ -11,7 +11,7 @@ export async function toggleActionItem(
   const step = await prisma.roadmapStep.findUnique({ where: { id: stepId } });
   if (!step) return;
 
-  const items = [...(step.actionItems as any[])];
+  const items = [...(step.actionItems as {done: boolean, action: string}[])];
   items[actionIndex].done = isDone;
 
   await prisma.roadmapStep.update({
@@ -19,5 +19,5 @@ export async function toggleActionItem(
     data: { actionItems: items },
   });
 
-  revalidatePath("/roadmap"); // Ajusta a tu ruta
+  revalidatePath("/my-roadmaps");
 }

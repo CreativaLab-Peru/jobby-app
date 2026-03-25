@@ -1,12 +1,38 @@
 import { redirect } from "next/navigation";
 import { getActiveRoute } from "@/features/routes/actions/get-active-route";
-import { getOpportunitiesForActiveRoute } from "@/features/routes/actions/get-opportunities-for-active-route";
 import MyOpportunitiesScreen from "@/features/routes/components/my-opportunities-screen";
+import {getCvHasEvaluations} from "@/features/cv/actions/get-cv-has-evaluations";
+import {Briefcase} from "lucide-react";
+import {EmptyPlaceholder} from "@/components/shared/empty-placeholder";
+import {PageHeader} from "@/components/shared/page-header";
+import {
+  getOpportunitiesForActiveRoute
+} from "@/features/routes/actions/get-opportunities-for-active-route";
 import {getFirstUserPayment} from "@/features/billing/actions/get-first-user-payment";
 
 export default async function MyOpportunitiesPage() {
   const activeRoute = await getActiveRoute();
   if (!activeRoute) return redirect("/routes/new");
+
+  const cvHasEvaluations = await getCvHasEvaluations(activeRoute.cvId);
+  if (!cvHasEvaluations) {
+    return (
+      <main className="min-h-[90vh] p-4 md:p-8">
+        <div className="mx-auto max-w-7xl">
+          <PageHeader
+            title="Oportunidades de mi Ruta"
+            description="Vacantes recomendadas por IA para el CV de tu ruta activa."
+            actions={null}
+          />
+          <EmptyPlaceholder
+            icon={Briefcase}
+            title="Tu ruta aún no tiene una evaluación de CV"
+            description="Para ver oportunidades recomendadas, primero debes evaluar el CV asociado a tu ruta activa."
+          />
+        </div>
+        </main>
+    )
+  }
 
   const data = await getOpportunitiesForActiveRoute({ skip: 0, take: 6 });
   const userPayment = await getFirstUserPayment();

@@ -11,30 +11,11 @@ function parseDeadline(value?: string | Date): Date | null {
 export const saveOpportunities = async (cv: Cv, opportunities: MatchAnalysis[]) => {
   try {
     if (opportunities.length === 0) return true;
-
     // 1. Transformamos los datos en un array de objetos planos
     const dataToInsert = opportunities.map((opp, index) => {
       const details = opp.details;
-
-      // Lógica de requisitos (la mantenemos limpia)
-      const reqParts = [];
-      if (details?.requiredSkills?.length) {
-        reqParts.push(`${details.requiredSkills.join(",")}`);
-      }
-      if (details?.optionalSkills?.length) {
-        reqParts.push(`${details.optionalSkills.join(",")}`);
-      }
-      const requirements = reqParts.join(",") || "Ver detalle para más información";
-
-      // Formateo de salario
-      let salary = null;
-      if (details?.salary) {
-        const { min, max, currency } = details.salary;
-        const code = currency || "USD";
-        salary = min && max ? `${code} ${min} - ${max}` : min ? `${code} ${min}+` : null;
-      }
-
-      // Retornamos el objeto con la estructura de la base de datos
+      const minSalary = Number(details?.salary?.min || 0).toString();
+      const maxSalary = Number(details?.salary?.max || 0).toString();
       return {
         id: opp.opportunity_id || `${cv.id}-${index}-${Date.now()}`,
         type: cv.opportunityType,
@@ -46,11 +27,23 @@ export const saveOpportunities = async (cv: Cv, opportunities: MatchAnalysis[]) 
         company: details?.organization?.organization_name || null,
         location: details?.ubication || null,
         modality: details?.modality || null,
-        salary: salary,
+
+        // Deprecated
+        // salary: salary,
+
         description: details?.description || null,
         benefits: details?.benefits || null,
         cvId: cv.id,
-        requirements: requirements,
+
+        // Deprecated
+        // requirements: requirements,
+        requiredRequirements: details?.requiredSkills || [],
+        optionalRequirements: details?.optionalSkills || [],
+
+        companyLogoUrl: details?.organization?.organization_logo || null,
+        minSalary,
+        maxSalary,
+
       };
     }).filter((item) => Boolean(item.id && item.title && item.linkUrl));
 

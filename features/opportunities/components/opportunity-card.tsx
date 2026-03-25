@@ -9,14 +9,7 @@ import Link from "next/link";
 import {Opportunity} from "@prisma/client";
 import {useRouter} from "next/navigation";
 import {RichTextViewer} from "@/components/rich-text/rich-text-viewer";
-
-const opportunityMapped: Record<string, string> = {
-  INTERNSHIP: "Pasantía",
-  SCHOLARSHIP: "Beca",
-  EXCHANGE_PROGRAM: "Intercambio",
-  EMPLOYMENT: "Empleo",
-  STARTUP: "Aceleradora",
-};
+import {OPPORTUNITY_MAP} from "@/const";
 
 interface Props {
   opportunity: Opportunity & {
@@ -41,12 +34,10 @@ export default function OpportunityCard({
   const router = useRouter();
   const blurClass = blurred ? "filter blur-sm grayscale-[40%]" : "";
 
-  const requirementTags = opportunity.requirements
-    ? opportunity.requirements
-      .split(",")
-      .map((req) => req.trim())
-      .filter(Boolean)
-    : [];
+  const requirements = [
+    ...(opportunity.requiredRequirements ?? []),
+    ...(opportunity.optionalRequirements ?? []),
+  ];
 
   return (
     <Card
@@ -63,7 +54,7 @@ export default function OpportunityCard({
           <div className="flex flex-col gap-2"> {/* Contenedor para los Badges */}
             <Badge variant="secondary"
                    className="w-fit font-bold rounded-lg text-[10px] uppercase tracking-wider">
-              {opportunityMapped[opportunity.type] || "Oportunidad"}
+              {OPPORTUNITY_MAP[opportunity.type] || "Oportunidad"}
             </Badge>
           </div>
           <div className="flex items-center gap-1 text-[10px] text-muted-foreground/70 font-medium">
@@ -107,20 +98,20 @@ export default function OpportunityCard({
         />
 
         {/* Requerimientos como etiquetas limpias */}
-        {requirementTags.length > 0 && (
+        {requirements.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
-            {requirementTags.slice(0, 4).map((tag, index) => (
+            {requirements.slice(0, 4).map((tag, index) => (
               <Badge
                 key={`${tag}-${index}`}
                 variant="secondary"
-                className="bg-primary/5 text-primary border-none text-[10px] font-bold px-2.5 py-0.5 rounded-full lowercase first-letter:uppercase"
+                className="bg-primary/5 text-primary border-none text-[10px] font-bold px-2.5 py-0.5 rounded-full"
               >
-                {tag}
+                {tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()}
               </Badge>
             ))}
-            {requirementTags.length > 4 && (
+            {requirements.length > 4 && (
               <span className="text-[10px] text-muted-foreground/60 font-bold self-center">
-          +{requirementTags.length - 4}
+          +{requirements.length - 4}
         </span>
             )}
           </div>

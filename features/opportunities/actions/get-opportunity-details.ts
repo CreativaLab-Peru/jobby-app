@@ -52,8 +52,8 @@ export async function getOpportunityDetails(opportunityId: string, cvId: string)
       formattedDeadline: opportunity.deadline
         ? new Date(opportunity.deadline).toLocaleDateString('es-ES')
         : null,
-      requiredRequirements: opportunity.requiredRequirements,
-      optionalRequirements: opportunity.optionalRequirements,
+      requiredRequirements: opportunity.requiredRequirements || [],
+      optionalRequirements: opportunity.optionalRequirements || [],
 
       cv: {
         id: opportunity.cv.id,

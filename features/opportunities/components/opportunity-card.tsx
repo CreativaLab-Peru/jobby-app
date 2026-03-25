@@ -34,7 +34,10 @@ export default function OpportunityCard({
   const router = useRouter();
   const blurClass = blurred ? "filter blur-sm grayscale-[40%]" : "";
 
-  const requirements = [...opportunity.requiredRequirements, ...opportunity.optionalRequirements]
+  const requirements = [
+    ...(opportunity.requiredRequirements ?? []),
+    ...(opportunity.optionalRequirements ?? []),
+  ];
 
   return (
     <Card

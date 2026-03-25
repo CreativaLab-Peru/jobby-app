@@ -40,7 +40,7 @@ export const saveOpportunities = async (cv: Cv, opportunities: MatchAnalysis[]) 
         requiredRequirements: details?.requiredSkills || [],
         optionalRequirements: details?.optionalSkills || [],
 
-        companyLogoUrl: details.organization.organization_logo || null,
+        companyLogoUrl: details?.organization?.organization_logo || null,
         minSalary,
         maxSalary,
 

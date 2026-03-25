@@ -134,7 +134,7 @@ export function OpportunityDetailsScreen({
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
                     <StatCard icon={MapPin} label="Ubicación" value={opportunity.location || "Remoto"} />
                     <StatCard icon={Briefcase} label="Modalidad" value={MODALITIES_MAP[opportunity.modality] || "Full-time"} colorClass="text-blue-500/60" />
-                    { opportunity.minSalary && opportunity.maxSalary && (
+                    { salaryLabel && salaryLabel.trim() !== "" && (
                       <StatCard icon={DollarSign} label="Salario" value={salaryLabel} colorClass="text-emerald-500/60" />
                     )}
                     <StatCard icon={Calendar} label="Deadline" value={formattedDeadline || "Abierta"} colorClass="text-orange-500/60" />

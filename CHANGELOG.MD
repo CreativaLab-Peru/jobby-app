@@ -8,6 +8,7 @@
 - It's impossible to download CV in English language
 - Fixed redirect when we click on different or same route
 - Show tags in the opportunities
+- Get current plans for opportunities page and delete tags of required or optional for tags of opportunities
 
 ## Features
 - Rich text added for opportunities description in the admin panel and updated the display in the opportunity detail page for end users.

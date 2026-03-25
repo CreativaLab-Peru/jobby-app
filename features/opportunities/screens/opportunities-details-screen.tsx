@@ -67,7 +67,7 @@ export function OpportunityDetailsScreen({
       )}>
         <div className="flex items-center gap-2 mb-4">
           {isReq ? <CheckCircle2 className="w-4 h-4 text-primary" /> : <PlusCircle className="w-4 h-4 text-muted-foreground" />}
-          <span className="text-xs font-black uppercase tracking-widest">
+          <span className="text-md font-bold text-primary">
             {isReq ? "Requisitos Clave" : "Extras Deseables"}
           </span>
         </div>
@@ -164,7 +164,7 @@ export function OpportunityDetailsScreen({
           {/* Main Content (Left) */}
           <div className="lg:col-span-2 space-y-8">
             <Card className="rounded-[2.5rem] border-border/40 bg-card p-8 md:p-12">
-              <h2 className="text-sm text-primary mb-8">Descripción del Puesto</h2>
+              <h2 className="text-md text-primary mb-8">Descripción del Puesto</h2>
               <RichTextViewer
                 value={opportunity.description || "No hay descripción disponible."}
                 className="text-lg leading-relaxed text-foreground/80"

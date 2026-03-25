@@ -12,6 +12,7 @@
 
 ## Features
 - Rich text added for opportunities description in the admin panel and updated the display in the opportunity detail page for end users.
+- Popover to accept the cookies added
 
 # v1.1.29 - 2026-03-23
 

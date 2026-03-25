@@ -20,14 +20,19 @@ export const addAdminCredits = async (
     if (!admin.success) return { success: false, error: "Acceso denegado." };
 
     if (!userId) return { success: false, error: "Usuario invalido" };
+    if (amountDelta === 0) return { success: false, error: "El ajuste no puede ser 0" };
 
     // Find existing balance for user+type
     let balance = await prisma.userCreditBalance.findFirst({ where: { userId, type } });
 
     if (!balance) {
+      if (amountDelta < 0) {
+        return { success: false, error: "No se puede consumir créditos desde 0" };
+      }
+
       // Create new balance
       balance = await prisma.userCreditBalance.create({
-        data: { userId, type, amount: Math.max(0, amountDelta) },
+        data: { userId, type, amount: amountDelta },
       });
 
       if (amountDelta !== 0) {
@@ -44,6 +49,10 @@ export const addAdminCredits = async (
     } else {
       // Update existing amount
       const newAmount = balance.amount + amountDelta;
+      if (newAmount < 0) {
+        return { success: false, error: "El balance final no puede ser negativo" };
+      }
+
       await prisma.$transaction(async (tx) => {
         await tx.userCreditBalance.update({ where: { id: balance!.id }, data: { amount: newAmount } });
         if (amountDelta !== 0) {

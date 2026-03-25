@@ -23,6 +23,10 @@ export const updateAdminBalance = async (
       return { success: false, error: "Acceso denegado." };
     }
 
+    if (input.amount < 0) {
+      return { success: false, error: "El balance final no puede ser negativo" };
+    }
+
     const existing = await prisma.userCreditBalance.findUnique({
       where: { id: balanceId },
       select: { id: true, amount: true },

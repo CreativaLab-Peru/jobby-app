@@ -98,7 +98,8 @@ export function CVPreview({
               )}
               {project.technologies && (
                 <p className="text-[10.5px]">
-                  <span className="font-bold">{t.softSkills}:</span> {project.technologies}
+                  {/*<span className="font-bold">{t.softSkills}:</span>*/}
+                  {project.technologies}
                 </p>
               )}
             </div>

@@ -16,6 +16,7 @@ import type { RoadmapStepData } from "@/features/roadmap/actions/get-roadmap-for
 import { toggleActionItem } from "@/features/roadmap/actions/update-action-item"; // Importa la acción
 import { useTransition } from "react";
 import {toast} from "sonner";
+import {useRouter} from "next/navigation";
 
 interface RoadmapDisplayProps {
   title: string | null;
@@ -30,6 +31,7 @@ export function RoadmapDisplay({
                                  steps,
                                  canViewFull,
                                }: RoadmapDisplayProps) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const handleToggle = (stepId: string, index: number, currentDone: boolean) => {
@@ -40,6 +42,7 @@ export function RoadmapDisplay({
     startTransition(async () => {
       await toggleActionItem(stepId, index, !currentDone);
       toast.success("¡Acción actualizada!");
+      router.refresh();
     });
   };
 

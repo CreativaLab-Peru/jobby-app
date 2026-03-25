@@ -49,20 +49,44 @@ export async function toggleActionItem(
       // 5. Lógica de verificación de completitud
       const allDone = items.every(item => item.done);
 
-      if (allDone) {
-        const activeRoute = await tx.route.findFirst({
-          where: {
-            isActive: true,
-            userId: currentUser.id,
-          }
-        });
+      if (!allDone) {
+        return { success: true }
+      }
 
-        if (activeRoute) {
-          await tx.route.update({
-            where: { id: activeRoute.id },
-            data: { status: RouteStatus.ROADMAP_DONE }
-          });
+      const roadmap = await tx.roadmap.findFirst({
+        where: {
+          id: step.roadmapId,
+          userId: currentUser.id
+        },
+        include: {
+          steps: {
+            select: {
+              id: true,
+              actionItems: true,
+            }
+          }
         }
+      })
+      console.log(JSON.stringify(roadmap));
+
+      const allDoneRoadmap = roadmap.steps.every(s => (s.actionItems as unknown as ActionItem[]).every(ai => ai.done));
+      console.log(JSON.stringify(allDoneRoadmap));
+      if (!allDoneRoadmap) {
+        return { success: true }
+      }
+
+      const activeRoute = await tx.route.findFirst({
+        where: {
+          isActive: true,
+          userId: currentUser.id,
+        }
+      });
+
+      if (activeRoute) {
+        await tx.route.update({
+          where: { id: activeRoute.id },
+          data: { status: RouteStatus.ROADMAP_DONE }
+        });
       }
 
       revalidatePath("/my-roadmaps");

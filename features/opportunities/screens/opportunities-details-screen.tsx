@@ -58,7 +58,11 @@ export function OpportunityDetailsScreen({
 
   const { required, optional } = requirements;
 
-  const mappedModality = MODALITIES_MAP[opportunity.modality] || MODALITIES_MAP.ON_SITE;
+  const rawModality = opportunity?.modality;
+  const mappedModality =
+    (rawModality && MODALITIES_MAP[rawModality]) ||
+    rawModality ||
+    MODALITIES_MAP.ON_SITE;
 
   return (
     <main className="min-h-[90vh] p-4 md:p-8">

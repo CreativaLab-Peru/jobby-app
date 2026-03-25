@@ -1,16 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 
-// Importamos el CSS antes de la carga dinámica
 import 'react-quill-new/dist/quill.snow.css';
 
 const ReactQuill = dynamic(
   async () => {
     const { default: RQ } = await import('react-quill-new');
-    // En react-quill-new no solemos necesitar el wrapper de forwardedRef
-    // a menos que necesites manipular el DOM de Quill directamente.
     return RQ;
   },
   {
@@ -36,14 +33,6 @@ const QUILL_MODULES = {
     ['clean']
   ],
 };
-
-// IMPORTANTE: Si Quill se queja de "bullet", a veces es mejor dejar que
-// use sus formatos por defecto eliminando la propiedad 'formats' o
-// asegurándonos de que los nombres coincidan exactamente.
-const QUILL_FORMATS = [
-  'header', 'bold', 'italic', 'underline', 'strike',
-  'list', 'bullet', 'blockquote', 'code-block', 'link'
-];
 
 export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
   const [mounted, setMounted] = useState(false);

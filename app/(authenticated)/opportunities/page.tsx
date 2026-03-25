@@ -43,7 +43,7 @@ export default async function OpportunitiesPage({
       hasMoreProp={hasMore}
       totalCount={data?.totalCount || 0}
       currentFilterCvId={cvId || null}
-      hasSubscription={hasSubscription}
+      hasSubscription={true}
     />
   );
 }

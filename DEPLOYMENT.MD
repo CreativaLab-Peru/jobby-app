@@ -1,3 +1,8 @@
+# WIP
+
+## Enhancements
+- `requiredRequirements, optionalRequirements, companyLogoUrl, minSalary and maxSalary` added in opportunities table
+
 # v1.1.29 - 2026-03-23
 
 ### CURRENT DEPLOYMENT NOTES (Billing + Credits)

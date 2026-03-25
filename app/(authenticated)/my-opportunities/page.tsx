@@ -19,7 +19,7 @@ export default async function MyOpportunitiesPage() {
       totalCount={data?.totalCount ?? 0}
       hasCv={data?.hasCv ?? false}
       cvId={activeRoute.cvId ?? null}
-      hasSubscription={hasSubscription}
+      hasSubscription={false}
     />
   );
 }

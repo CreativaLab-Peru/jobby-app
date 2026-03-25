@@ -22,17 +22,7 @@ export default async function DashboardPage() {
     });
     hasRoadmap = roadmapCount > 0;
   }
-
-  // Check if the user has an active subscription
-  // const activePayment = await prisma.userPayment.findFirst({
-  //   where: {
-  //     userId: activeRoute.userId,
-  //     plan: { isNot: null },
-  //   },
-  //   select: { id: true },
-  // });
-
-  const hasSubscription = false;
+  const hasSubscription = true;
 
   return (
     <RouteStepper

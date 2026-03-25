@@ -7,6 +7,29 @@ import type { CVData, CVSection } from "@/types/cv";
 import { linkedinDisplay } from "@/lib/utils";
 import {i18n} from "@/const/i18n";
 
+type ProjectItem = NonNullable<NonNullable<CVData["projects"]>["items"]>[number];
+type CertificationItem = NonNullable<NonNullable<CVData["certifications"]>["items"]>[number];
+type VolunteeringItem = NonNullable<NonNullable<CVData["volunteering"]>["items"]>[number];
+
+const hasText = (value: string | null): boolean => value !== null && value.trim().length > 0;
+
+const getNonEmptyProjectItems = (items: ProjectItem[] | null): ProjectItem[] =>
+  (items ?? []).filter((item) =>
+    [item.title, item.description, item.technologies, item.duration].some((value) => hasText(value ?? null))
+  );
+
+const getNonEmptyCertificationItems = (items: CertificationItem[] | null): CertificationItem[] =>
+  (items ?? []).filter((item) =>
+    [item.name, item.issuer, item.date].some((value) => hasText(value ?? null))
+  );
+
+const getNonEmptyVolunteeringItems = (items: VolunteeringItem[] | null): VolunteeringItem[] =>
+  (items ?? []).filter((item) =>
+    [item.organization, item.location, item.position, item.duration, item.responsibilities].some((value) =>
+      hasText(value ?? null)
+    )
+  );
+
 // Font Arial
 Font.register({
   family: "Arial",
@@ -121,6 +144,10 @@ const styles = StyleSheet.create({
 
 export function CvDocument({ data, sections, lang = "ES" }: { data: CVData; sections: CVSection[], lang?: "ES" | "EN" }) {
   const t = i18n[lang] || i18n.ES;
+  const certificationsItems = getNonEmptyCertificationItems(data.certifications?.items ?? null);
+  const projectsItems = getNonEmptyProjectItems(data.projects?.items ?? null);
+  const volunteeringItems = getNonEmptyVolunteeringItems(data.volunteering?.items ?? null);
+
   // Mapeo de renderizadores para cada tipo de sección (para PDF)
   const sectionRenderers: Record<string, () => React.ReactElement | null> = {
     achievements: () =>
@@ -148,12 +175,12 @@ export function CvDocument({ data, sections, lang = "ES" }: { data: CVData; sect
       ) : null,
 
     certifications: () =>
-      data.certifications?.items?.length ? (
+      certificationsItems.length ? (
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>{t.certifications}</Text>
           <View style={styles.sectionDivider} />
           <View>
-            {data.certifications.items.map((c, index) => {
+            {certificationsItems.map((c, index) => {
               let yearText = "";
               if (c.date) {
                 try {
@@ -201,11 +228,11 @@ export function CvDocument({ data, sections, lang = "ES" }: { data: CVData; sect
       ) : null,
 
     projects: () =>
-      data.projects?.items?.length ? (
+      projectsItems.length ? (
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>{t.projects}</Text>
           <View style={styles.sectionDivider} />
-          {data.projects.items.map((proj, index) => (
+          {projectsItems.map((proj, index) => (
             <View key={proj.id ?? index} style={{ marginBottom: 6 }}>
               <View style={styles.entryRow}>
                 <View style={styles.entryLeft}>
@@ -233,11 +260,11 @@ export function CvDocument({ data, sections, lang = "ES" }: { data: CVData; sect
       ) : null,
 
     volunteering: () =>
-      data.volunteering?.items?.length ? (
+      volunteeringItems.length ? (
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>{t.volunteering}</Text>
           <View style={styles.sectionDivider} />
-          {data.volunteering.items.map((vol, index) => (
+          {volunteeringItems.map((vol, index) => (
             <View key={vol.id ?? index} style={{ marginBottom: 6 }}>
               <View style={styles.entryRow}>
                 <View style={styles.entryLeft}>

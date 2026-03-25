@@ -5,6 +5,29 @@ import { CVData, CVSection } from "@/types/cv"
 import { linkedinHref, linkedinDisplay } from "@/lib/utils"
 import { Phone, Mail, Linkedin, MapPin } from "lucide-react"
 
+type ProjectItem = NonNullable<NonNullable<CVData["projects"]>["items"]>[number]
+type CertificationItem = NonNullable<NonNullable<CVData["certifications"]>["items"]>[number]
+type VolunteeringItem = NonNullable<NonNullable<CVData["volunteering"]>["items"]>[number]
+
+const hasText = (value: string | null): boolean => value !== null && value.trim().length > 0
+
+const getNonEmptyProjectItems = (items: ProjectItem[] | null): ProjectItem[] =>
+  (items ?? []).filter((item) =>
+    [item.title, item.description, item.technologies, item.duration].some((value) => hasText(value ?? null))
+  )
+
+const getNonEmptyCertificationItems = (items: CertificationItem[] | null): CertificationItem[] =>
+  (items ?? []).filter((item) =>
+    [item.name, item.issuer, item.date].some((value) => hasText(value ?? null))
+  )
+
+const getNonEmptyVolunteeringItems = (items: VolunteeringItem[] | null): VolunteeringItem[] =>
+  (items ?? []).filter((item) =>
+    [item.organization, item.location, item.position, item.duration, item.responsibilities].some((value) =>
+      hasText(value ?? null)
+    )
+  )
+
 interface CVPreviewEuropassProps {
   data: CVData
   sections: CVSection[]
@@ -86,6 +109,10 @@ function BulletList({ text }: { text: string }) {
 }
 
 export function CVPreviewEuropass({ data, sections }: CVPreviewEuropassProps) {
+  const certificationsItems = getNonEmptyCertificationItems(data.certifications?.items ?? null)
+  const projectsItems = getNonEmptyProjectItems(data.projects?.items ?? null)
+  const volunteeringItems = getNonEmptyVolunteeringItems(data.volunteering?.items ?? null)
+
   const sectionRenderers: Record<string, () => React.ReactElement | null> = {
     experience: () =>
       data.experience?.items?.length ? (
@@ -190,10 +217,10 @@ export function CVPreviewEuropass({ data, sections }: CVPreviewEuropassProps) {
       ) : null,
 
     projects: () =>
-      data.projects?.items?.length ? (
+      projectsItems.length ? (
         <div>
           <SectionTitle>PROYECTOS</SectionTitle>
-          {data.projects.items.map((p, i) => (
+          {projectsItems.map((p, i) => (
             <div key={p.id || i} className="mb-[6px]">
               {p.title && (
                 <p className="text-[10px] font-bold" style={{ color: EU_BLUE }}>
@@ -231,10 +258,10 @@ export function CVPreviewEuropass({ data, sections }: CVPreviewEuropassProps) {
       ) : null,
 
     certifications: () =>
-      data.certifications?.items?.length ? (
+      certificationsItems.length ? (
         <div>
           <SectionTitle>CERTIFICACIONES</SectionTitle>
-          {data.certifications.items.map((cert, i) => (
+          {certificationsItems.map((cert, i) => (
             <div key={cert.id || i} className="mb-[5px]">
               {cert.name && (
                 <p className="text-[10px] font-bold" style={{ color: EU_BLUE }}>
@@ -249,10 +276,10 @@ export function CVPreviewEuropass({ data, sections }: CVPreviewEuropassProps) {
       ) : null,
 
     volunteering: () =>
-      data.volunteering?.items?.length ? (
+      volunteeringItems.length ? (
         <div>
           <SectionTitle>VOLUNTARIADO</SectionTitle>
-          {data.volunteering.items.map((vol, i) => (
+          {volunteeringItems.map((vol, i) => (
             <div key={vol.id || i} className="mb-[6px]">
               {vol.position && (
                 <p className="text-[10px] font-bold" style={{ color: EU_BLUE }}>

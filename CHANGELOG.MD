@@ -9,6 +9,8 @@
 - Fixed redirect when we click on different or same route
 - Show tags in the opportunities
 - Get current plans for opportunities page and delete tags of required or optional for tags of opportunities
+- Mis pasos screen is considering the tasks for roadmap
+- Validation in opportunities page for avoid issues in the guide step
 
 ## Features
 - Rich text added for opportunities description in the admin panel and updated the display in the opportunity detail page for end users.

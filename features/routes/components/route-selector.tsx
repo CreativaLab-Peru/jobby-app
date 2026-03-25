@@ -39,7 +39,7 @@ function getProgressFraction(route: RouteWithCvSummary): number {
   if (status === "OPPORTUNITIES_DONE") return 0.75;
 
   // Fase de Roadmap (Aquí es donde ocurre la magia)
-  if (status === "ROADMAP_PENDING" || status === "ROADMAP_DONE") {
+  if (status === "ROADMAP_PENDING" || status === "ROADMAP_IN_PROGRESS" || status === "ROADMAP_DONE") {
     if (!roadmapProgress || roadmapProgress.totalActions === 0) {
       return status === "ROADMAP_DONE" ? 1 : 0.80;
     }
@@ -70,6 +70,8 @@ function getProgressLabel(status: RouteStatus): string {
       return "Oportunidades";
     case "ROADMAP_PENDING":
       return "Generando roadmap...";
+    case "ROADMAP_IN_PROGRESS":
+      return "Roadmap en progreso...";
     case "ROADMAP_DONE":
       return "Ruta completa ✓";
     default:

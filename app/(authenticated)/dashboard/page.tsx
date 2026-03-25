@@ -16,13 +16,15 @@ export default async function DashboardPage() {
 
   // Check if the user has any roadmap for this route's CV
   let hasRoadmap = false;
+  let roadmapId = null;
   if (cv?.id) {
-    const roadmapCount = await prisma.roadmap.count({
+    const roadmap = await prisma.roadmap.findFirst({
       where: { cvId: cv.id, userId: activeRoute.userId, status: "SUCCEEDED" },
     });
-    hasRoadmap = roadmapCount > 0;
+    hasRoadmap = roadmap !== null;
+    roadmapId = roadmap?.id ?? null;
   }
-  const hasSubscription = true;
+  // const hasSubscription = true;
 
   return (
     <RouteStepper
@@ -33,7 +35,7 @@ export default async function DashboardPage() {
       evaluationScore={latestEval?.overallScore ?? null}
       opportunitiesCount={cv?._count?.opportunities ?? 0}
       hasRoadmap={hasRoadmap}
-      hasSubscription={hasSubscription}
+      roadmapId={roadmapId}
     />
   );
 }

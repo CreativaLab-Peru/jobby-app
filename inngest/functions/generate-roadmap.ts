@@ -172,7 +172,7 @@ export const generateRoadmap = inngest.createFunction(
         ) {
           await prisma.route.update({
             where: { id: route.id },
-            data: { status: RouteStatus.ROADMAP_DONE },
+            data: { status: RouteStatus.ROADMAP_IN_PROGRESS },
           });
         }
       });

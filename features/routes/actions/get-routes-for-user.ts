@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import {Route} from "@prisma/client";
+import {ActionItem} from "@/features/roadmap/actions/update-action-item";
 
 export type CvSummaryInRoute = {
   id: string;
@@ -99,9 +100,25 @@ export const getRoutesForUser = async (): Promise<{
         let completedSteps = 0;
 
         roadmap.steps.forEach((step) => {
-          const items = (step.actionItems as any[]) || [];
+          const parseActionItems = (data: any): ActionItem[] => {
+            if (!data) return [];
+            // Si ya es un array, lo devolvemos
+            if (Array.isArray(data)) return data;
+            // Si es un string (común en SQLite/LibSQL), intentamos parsearlo
+            if (typeof data === "string") {
+              try {
+                const parsed = JSON.parse(data);
+                return Array.isArray(parsed) ? parsed : [];
+              } catch {
+                return [];
+              }
+            }
+            return [];
+          };
+          const items = parseActionItems(step.actionItems);
+
           const stepTotal = items.length;
-          const stepDone = items.filter((i) => i.done).length;
+          const stepDone = items.filter((item) => item.done).length;
 
           totalActions += stepTotal;
           completedActions += stepDone;

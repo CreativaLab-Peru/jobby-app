@@ -1,5 +1,7 @@
 "use client";
 
+import {useEffect, useState} from "react";
+import {createPortal} from "react-dom";
 import {motion, AnimatePresence} from "framer-motion";
 import {
   Sparkles,
@@ -114,23 +116,31 @@ export function SelectCvModal({
                                 cvs,
                                 onConfirm
                               }: SelectCvModalProps) {
+  const [mounted, setMounted] = useState(false);
   const {isOpen, onClose, selectedCvId, setSelectedCvId, isAnalyzing} = useEvaluationModalStore();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleConfirm = async () => {
     if (!selectedCvId) return;
     await onConfirm(selectedCvId);
   };
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
+    (
     <AnimatePresence>
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          className="fixed inset-0 min-h-dvh bg-black/50 flex items-center justify-center p-4 pb-[max(1rem,env(safe-area-inset-bottom))] z-[100] backdrop-blur-sm">
           <motion.div
             initial={{opacity: 0, scale: 0.95, y: 20}}
             animate={{opacity: 1, scale: 1, y: 0}}
             exit={{opacity: 0, scale: 0.95, y: 20}}
-            className="bg-background rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col border border-border"
+            className="bg-background rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85dvh] overflow-hidden flex flex-col border border-border"
           >
             {/* Header */}
             <div className="sticky top-0 p-6 border-b bg-background z-10">
@@ -275,5 +285,7 @@ export function SelectCvModal({
         </div>
       )}
     </AnimatePresence>
+    ),
+    document.body,
   );
 }

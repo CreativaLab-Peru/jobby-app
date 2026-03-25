@@ -19,12 +19,12 @@ export const saveOpportunities = async (cv: Cv, opportunities: MatchAnalysis[]) 
       // Lógica de requisitos (la mantenemos limpia)
       const reqParts = [];
       if (details?.requiredSkills?.length) {
-        reqParts.push(`Habilidades requeridas: ${details.requiredSkills.join(", ")}`);
+        reqParts.push(`${details.requiredSkills.join(",")}`);
       }
       if (details?.optionalSkills?.length) {
-        reqParts.push(`Habilidades opcionales: ${details.optionalSkills.join(", ")}`);
+        reqParts.push(`${details.optionalSkills.join(",")}`);
       }
-      const requirements = reqParts.join("\n") || "Ver detalle para más información";
+      const requirements = reqParts.join(",") || "Ver detalle para más información";
 
       // Formateo de salario
       let salary = null;

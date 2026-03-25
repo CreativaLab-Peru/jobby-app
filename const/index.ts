@@ -69,38 +69,13 @@ export const languages = [
   { key: Language.EN, value: "Inglés" },
 ];
 
+export const MODALITIES_MAP = {
+  ON_SITE: "Presencial",
+  REMOTE: "Remoto",
+  HYBRID: "Híbrido"
+}
+
+export const MODALITIES: {key: string, value: string}[]  = Object.entries(MODALITIES_MAP).map(([key, value]) => ({ key, value }));
+
 export const opportunities: {key: string, value: string}[] = Object.entries(OPPORTUNITY_MAP).map(([key, value]) => ({ key, value }));
 
-// const OPPORTUNITY_DESCRIPTIONS: Record<string, string> = {
-//   [OpportunityType.INTERNSHIP]: "Oportunidades de prácticas profesionales.",
-//   [OpportunityType.SCHOLARSHIP]: "Oportunidades de becas académicas.",
-//   [OpportunityType.EXCHANGE_PROGRAM]: "Oportunidades de programas de intercambio.",
-//   [OpportunityType.EMPLOYMENT]: "Oportunidades de empleo y trabajo.",
-//   default: "Selecciona un tipo de oportunidad para ver su descripción."
-// };
-//
-// const TEMPLATE_DESCRIPTIONS: Record<string, string> = {
-//   harvard: "Diseño clásico y profesional, reconocido internacionalmente.",
-//   europass: "Diseño europeo estructurado, ideal para becas de movilidad y Erasmus+.",
-//   default: "Elige un diseño que se adapte a tu perfil y oportunidad."
-// };
-//
-// const CV_TYPE_DESCRIPTIONS: Record<string, string> = {
-//   [CvType.TECHNOLOGY_ENGINEERING]: "Ideal para perfiles en sistemas, software, innovación o data.",
-//   [CvType.DESIGN_CREATIVITY]: "Para creativos visuales, diseñadores gráficos, UX/UI o artistas digitales.",
-//   [CvType.MARKETING_STRATEGY]: "Para marketers, comunicadores o estrategas de contenido.",
-//   [CvType.MANAGEMENT_BUSINESS]: "Para administración, emprendimiento o desarrollo comercial.",
-//   [CvType.FINANCE_PROJECTS]: "Para gestión financiera, análisis económico o PMO.",
-//   [CvType.SOCIAL_MEDIA]: "Para community managers, creadores de contenido o influencers.",
-//   [CvType.EDUCATION]: "Para docentes, formadores, capacitadores o coaches.",
-//   [CvType.SCIENCE]: "Para perfiles STEM, sostenibilidad, impacto o proyectos de investigación.",
-//   default: "Selecciona un perfil profesional para ver su descripción."
-// };
-//
-// export const opportunityTypes = [
-//   { key: OpportunityType.INTERNSHIP, value: "Pasantía" },
-//   { key: OpportunityType.SCHOLARSHIP, value: "Beca" },
-//   { key: OpportunityType.EXCHANGE_PROGRAM, value: "Intercambio" },
-//   { key: OpportunityType.EMPLOYMENT, value: "Empleo" },
-//   { key: OpportunityType.STARTUP, value: "Aceleradora" },
-// ]

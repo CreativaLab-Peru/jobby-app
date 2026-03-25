@@ -198,6 +198,7 @@ export function RouteSelector() {
 
   const handleSelect = (route: RouteWithCvSummary) => {
     if (route.id === activeRoute?.id) {
+      router.push(routesLib.app.dashboard);
       setOpen(false);
       return;
     }

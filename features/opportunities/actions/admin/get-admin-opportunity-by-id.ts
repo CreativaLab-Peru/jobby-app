@@ -43,7 +43,9 @@ export const getAdminOpportunityById = async (
       return { success: false, error: "Oportunidad no encontrada" };
     }
 
-    return { success: true, data: opportunity as AdminOpportunityDetail };
+    const parsedOpp = JSON.parse(JSON.stringify(opportunity));
+
+    return { success: true, data: parsedOpp as AdminOpportunityDetail };
   } catch (error) {
     console.error("[ADMIN_GET_OPPORTUNITY_BY_ID_ERROR]", error);
     return { success: false, error: "Error obteniendo oportunidad" };

@@ -1,3 +1,27 @@
+# v1.1.30 - 2026-03-26
+
+## Fixes
+- Fixed form in admin monetization.
+- Added the modal redirect for analyze a CV.
+- New roadmap button for select Opportunities and generate roadmap after validation.
+- Now, volunteering, projects and achievements are optional.
+- Updated plan information (in production).
+- Redirect button into cv preview for see all CVs.
+- Fixed issue preventing CV analysis.
+- Fixed incorrect roadmap step URLs.
+- Added roadmap step statuses to support completing the roadmap.
+- Redirect and update the current route in the dashboard is not working
+- It's impossible to download CV in English language
+- Fixed redirect when we click on different or same route
+- Show tags in the opportunities
+- Get current plans for opportunities page and delete tags of required or optional for tags of opportunities
+- Mis pasos screen is considering the tasks for roadmap
+- Validation in opportunities page for avoid issues in the guide step
+
+## Features
+- Rich text added for opportunities description in the admin panel and updated the display in the opportunity detail page for end users.
+- Popover to accept the cookies added
+
 # v1.1.29 - 2026-03-23
 
 ## Features
@@ -16,7 +40,7 @@
 - Fix issue for improved text in the language of the CV
 - Hidde opp type EMPLOYMENT AND INTERNSHIP for the moment
 - Title of section to show preview and edit CV
-- Update prompt to generate roadmap
+  - Update prompt to generate roadmap
 ---
 
 # v1.1.28 - 2026-03-12

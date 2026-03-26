@@ -1,3 +1,5 @@
+import type {EvaluateCvSectionsPayload} from "@/features/cv/helpers/types";
+
 export type PromptToGenerateRoadmap = {
   opportunity: {
     title: string;
@@ -6,7 +8,7 @@ export type PromptToGenerateRoadmap = {
     requirements?: string | null;
     match: number;
   };
-  cvSummary: string;
+  sections: EvaluateCvSectionsPayload,
   userPrefs?: {
     country?: string | null;
     expLevel?: string | null;
@@ -15,7 +17,7 @@ export type PromptToGenerateRoadmap = {
 
 export const getPromptToGenerateRoadmap = ({
                                              opportunity,
-                                             cvSummary,
+                                             sections,
                                              userPrefs,
                                            }: PromptToGenerateRoadmap) => {
   return `Eres un experto senior en movilidad global y selección de talento para la plataforma Levely. [cite: 64]
@@ -29,7 +31,7 @@ Tu misión es actuar como un estratega que diseña un plan de acción para que e
 - Match Actual: ${Math.round(opportunity.match * 100)}% (Usa esto para priorizar tareas donde el match es bajo).
 
 ## 2. PERFIL DEL CANDIDATO (CV)
-${cvSummary}
+${JSON.stringify(sections)}
 
 ## 3. PREFERENCIAS DEL USUARIO
 - País de interés: ${userPrefs?.country || "No especificado"}
@@ -56,7 +58,7 @@ Debes generar exactamente estos 4 bloques en orden cronológico, adaptando el co
 - Etiquetas (tags): Usa minúsculas y guiones (ej: ielts, impact, startup-mvp, leadership). [cite: 43, 54]
 
 ## 6. FORMATO DE SALIDA (JSON ESTRICTO)
-No incluyas prosa fuera del JSON. Si el campo "url" de un recurso no se conoce, déjalo vacío "".
+No incluyas prosa fuera del JSON. Que la "url" sea vacio "".
 
 {
   "title": "Hoja de ruta: ${opportunity.title}",
@@ -66,7 +68,7 @@ No incluyas prosa fuera del JSON. Si el campo "url" de un recurso no se conoce, 
       "order": 1,
       "title": "Define tu perfil/proyecto",
       "description": "Breve explicación de por qué este bloque es crítico para el éxito de la aplicación.",
-      "actionItems": [],
+      "actionItems": [{"done":false, "action":"Redactar un propósito claro que conecte el perfil del candidato con los objetivos de ${opportunity.title}."}],
       "sourceInsights": [],
       "examples": {
         "weak": "Descripción de un enfoque débil o común.",

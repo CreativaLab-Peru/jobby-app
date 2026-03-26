@@ -20,7 +20,10 @@ export default async function RoadmapDetailPage({ params }: PageProps) {
   }
 
   return (
-    <RoadmapDetailScreen roadmap={roadmap} canViewFull={true} />
+    <RoadmapDetailScreen
+      roadmap={roadmap}
+      canViewFull={canViewFull}
+    />
   );
 }
 

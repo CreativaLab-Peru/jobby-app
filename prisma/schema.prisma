@@ -263,27 +263,38 @@ model Cv {
 }
 
 model Opportunity {
-  id                String
-  cvId              String
-  routeId           String?
-  title             String
-  type              OpportunityType
-  deadline          DateTime?
-  match             Decimal            @db.Decimal(8, 4)
-  requirements      String
-  linkUrl           String
-  company           String?
-  location          String?
-  modality          String?
-  salary            String?
-  description       String?
-  benefits          String?
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  cv                Cv                 @relation(fields: [cvId], references: [id], onDelete: Cascade)
-  route             Route?             @relation(fields: [routeId], references: [id], onDelete: Cascade)
-  interviewSessions InterviewSession[]
-  roadmaps          Roadmap[]
+  id                   String
+  cvId                 String
+  routeId              String?
+  title                String
+  type                 OpportunityType
+  deadline             DateTime?
+  match                Decimal            @db.Decimal(8, 4)
+
+  // requirements is deprecated, we will use requiredRequirements and optionalRequirements for matching and display purposes. However, we keep it here for legacy data and potential future use.
+  requirements         String?
+  requiredRequirements String[]
+  optionalRequirements String[]
+
+  linkUrl              String
+  company              String?
+  companyLogoUrl       String?
+  location             String?
+  modality             String?
+
+  // Salary is deprecated, we will use minSalary and maxSalary from UserPreference for matching and display purposes. However, we keep it here for legacy data and potential future use.
+  salary               String?
+  minSalary            String?
+  maxSalary            String?
+
+  description          String?
+  benefits             String?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  cv                   Cv                 @relation(fields: [cvId], references: [id], onDelete: Cascade)
+  route                Route?             @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  interviewSessions    InterviewSession[]
+  roadmaps             Roadmap[]
 
   @@id([id, cvId])
   @@map("opportunity")
@@ -621,30 +632,30 @@ model Roadmap {
 
 // Paso individual del roadmap
 model RoadmapStep {
-  id            String   @id @default(uuid())
-  roadmapId     String
-  order         Int      // Seguirá el orden 1-4 de los bloques base [cite: 32]
-  title         String   // Ejemplo: "Define tu perfil/proyecto" [cite: 33]
-  description   String   @db.Text
+  id          String @id @default(uuid())
+  roadmapId   String
+  order       Int // Seguirá el orden 1-4 de los bloques base [cite: 32]
+  title       String // Ejemplo: "Define tu perfil/proyecto" [cite: 33]
+  description String @db.Text
 
   // Datos dinámicos del sistema inteligente
-  actionItems   Json     // Array de strings (Máximo 3 tareas) [cite: 39, 50]
-  sourceInsights Json?    // Array de strings (Máximo 3 datos reales del programa)
+  actionItems    Json // Array de strings (Máximo 3 tareas) [cite: 39, 50]
+  sourceInsights Json? // Array de strings (Máximo 3 datos reales del programa)
 
   // Comparativa de competitividad
-  exampleWeak   String?  @db.Text // Perfil débil [cite: 42, 53]
-  exampleStrong String?  @db.Text // Perfil competitivo [cite: 42, 53]
+  exampleWeak   String? @db.Text // Perfil débil [cite: 42, 53]
+  exampleStrong String? @db.Text // Perfil competitivo [cite: 42, 53]
 
   // Metadatos para IA y Matching
-  tags          String[] // Categorías: ielts, leadership, mvp, etc. [cite: 43, 54]
+  tags String[] // Categorías: ielts, leadership, mvp, etc. [cite: 43, 54]
 
   // Configuración y recursos
   estimatedDays Int?
-  resources     Json?    // Array de { title, url, type }
-  isFree        Boolean  @default(false)
+  resources     Json? // Array de { title, url, type }
+  isFree        Boolean @default(false)
 
-  createdAt     DateTime @default(now())
-  roadmap       Roadmap  @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  roadmap   Roadmap  @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
 
   @@index([roadmapId, order])
   @@map("roadmap_step")
@@ -658,7 +669,11 @@ enum RouteStatus {
   OPPORTUNITIES_PENDING
   OPPORTUNITIES_DONE
   ROADMAP_PENDING
+  ROADMAP_IN_PROGRESS
   ROADMAP_DONE
+  PROGRAM_PENDING
+  PROGRAM_IN_PROGRESS
+  PROGRAM_DONE
 }
 
 enum CreditBalanceType {

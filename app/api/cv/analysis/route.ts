@@ -2,8 +2,9 @@ import { inngest } from "@/inngest/functions/client";
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import { prisma } from "@/lib/prisma";
-import { CreditBalanceType } from "@prisma/client";
+import {CreditBalanceType, JobStatus} from "@prisma/client";
 import {getCurrentCreditLimits} from "@/features/credits/actions/get-current-credits-limits";
+import {consumeCredits} from "@/features/credits/actions/consume-credits";
 
 interface CvBody {
   cvId: string;
@@ -53,24 +54,34 @@ export async function POST(request: Request) {
     }
 
     // Update user credit balance
-    await prisma.userCreditBalance.update({
-      where: {
-        userId_type: { // Prisma busca este campo autogenerado para llaves compuestas
-          userId: currentUser.id,
-          type: CreditBalanceType.AI_ACTIONS
-        },
-      },
-      data: {
-        amount: {
-          decrement: 1,
-        }
-      },
+    await consumeCredits({
+      userId: currentUser.id,
+      type: CreditBalanceType.AI_ACTIONS,
+      amount: 1,
+      description: "Análisis de CV",
     })
+
+    const newEvaluation = await prisma.cvEvaluation.create({
+      data: {
+        cvId: cvId,
+        status: JobStatus.IN_PROGRESS
+      }
+    })
+    if (!newEvaluation) {
+      return NextResponse.json(
+        { success: false, message: "Error al construir la evaluación." },
+        { status: 500 }
+      );
+    }
 
     // Send event to trigger CV evaluation (correct event name)
     await inngest.send({
       name: "cv/ready-for-evaluation",
-      data: { cvId, userId: currentUser.id },
+      data: {
+        cvId,
+        userId: currentUser.id,
+        evaluationId: newEvaluation.id
+      },
     });
 
     // Send event to get and save opportunities

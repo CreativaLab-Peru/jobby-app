@@ -4,6 +4,11 @@ import { Eye } from "lucide-react"
 import { CVData, CVSection } from "@/types/cv"
 import { linkedinHref, linkedinDisplay } from "@/lib/utils"
 import {i18n} from "@/const/i18n";
+import {
+  getNonEmptyCertificationItems,
+  getNonEmptyProjectItems,
+  getNonEmptyVolunteeringItems,
+} from "@/features/cv/helpers/non-empty-section-items"
 
 interface CVPreviewProps {
   data: CVData
@@ -23,6 +28,9 @@ export function CVPreview({
   const bodyTextClasses = "text-[10.5px] text-[#111] leading-[1.35]"
 
   const t = i18n[language] || i18n.ES;
+  const certificationsItems = getNonEmptyCertificationItems(data.certifications?.items ?? null)
+  const projectsItems = getNonEmptyProjectItems(data.projects?.items ?? null)
+  const volunteeringItems = getNonEmptyVolunteeringItems(data.volunteering?.items ?? null)
 
   const sectionRenderers: Record<string, () => React.ReactElement | null> = {
     achievements: () =>
@@ -45,12 +53,12 @@ export function CVPreview({
       ) : null,
 
     certifications: () =>
-      data.certifications?.items?.length ? (
+      certificationsItems.length ? (
         <div className="mt-1.5 mb-0">
           <h2 className={sectionTitleClasses}>{t.certifications}</h2>
           <div className={sectionDividerClasses} />
           <div>
-            {data.certifications.items.map((cert, index) => (
+            {certificationsItems.map((cert, index) => (
               <p key={cert.id || index} className={`${bodyTextClasses} mb-1.5`}>
                 {cert.name} {cert.issuer ? `by ${cert.issuer}` : ""} ({new Date(cert.date).getFullYear()})
               </p>
@@ -83,11 +91,11 @@ export function CVPreview({
       ) : null,
 
     projects: () =>
-      data.projects?.items?.length ? (
+      projectsItems.length ? (
         <div className="mt-1.5 mb-0">
           <h2 className={sectionTitleClasses}>{t.projects}</h2>
           <div className={sectionDividerClasses} />
-          {data.projects.items.map((project, index) => (
+          {projectsItems.map((project, index) => (
             <div key={project.id || index} className="mb-1.5">
               <div className="flex justify-between items-baseline mb-1">
                 <h3 className={itemTitleClasses}>{project.title}</h3>
@@ -98,7 +106,8 @@ export function CVPreview({
               )}
               {project.technologies && (
                 <p className="text-[10.5px]">
-                  <span className="font-bold">{t.softSkills}:</span> {project.technologies}
+                  {/*<span className="font-bold">{t.softSkills}:</span>*/}
+                  {project.technologies}
                 </p>
               )}
             </div>
@@ -107,11 +116,11 @@ export function CVPreview({
       ) : null,
 
     volunteering: () =>
-      data.volunteering?.items?.length ? (
+      volunteeringItems.length ? (
         <div className="mt-1.5 mb-0">
           <h2 className={sectionTitleClasses}>{t.volunteering}</h2>
           <div className={sectionDividerClasses} />
-          {data.volunteering.items.map((vol, index) => (
+          {volunteeringItems.map((vol, index) => (
             <div key={vol.id || index} className="mb-1.5">
               <div className="flex justify-between items-baseline">
                 <h3 className={itemTitleClasses}>{vol.organization}</h3>

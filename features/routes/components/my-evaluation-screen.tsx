@@ -1,10 +1,10 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { BarChart3, XCircle } from "lucide-react";
 import { toast } from "sonner";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
@@ -47,12 +47,28 @@ export default function MyEvaluationScreen({
   const [isPending, startTransition] = useTransition();
   const [justSuccessful, setJustSuccessful] = useState(true);
 
-  const { onOpen, setIsAnalyzing } = useEvaluationModalStore();
+  const { onOpen, setIsAnalyzing, setSelectedCvId } = useEvaluationModalStore();
   const { refreshCredits } = useCreditsStore();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const hasOpenedFromAnalyzeParamRef = useRef(false);
 
   // Build the list of CVs for the modal (just the one from the active route)
   const cvList = cv ? [cv] : [];
+
+  // Auto-open modal when arriving from stepper with ?analyze=true
+  useEffect(() => {
+    if (hasOpenedFromAnalyzeParamRef.current) return;
+    if (!hasCv || !cv) return;
+    if (searchParams.get("analyze") !== "true") return;
+
+    hasOpenedFromAnalyzeParamRef.current = true;
+    setSelectedCvId(cv.id);
+    onOpen();
+
+    // Clean URL query param without full reload
+    router.replace("/my-evaluation", { scroll: false });
+  }, [hasCv, cv, searchParams, onOpen, setSelectedCvId, router]);
 
   const handleFilterChange = (onlySuccess: boolean) => {
     setJustSuccessful(onlySuccess);
@@ -121,6 +137,9 @@ export default function MyEvaluationScreen({
 
   return (
     <main className="min-h-[90vh] p-4 md:p-8">
+      {/* Select CV Modal */}
+      <SelectCvModal cvs={cvList} onConfirm={handleAnalyzeConfirm} />
+
       <div className="mx-auto max-w-7xl">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
           <PageHeader
@@ -140,9 +159,6 @@ export default function MyEvaluationScreen({
               )
             }
           />
-
-          {/* Select CV Modal */}
-          <SelectCvModal cvs={cvList} onConfirm={handleAnalyzeConfirm} />
 
           {!hasCv ? (
             <EmptyPlaceholder

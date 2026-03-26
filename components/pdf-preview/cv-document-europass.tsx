@@ -5,6 +5,7 @@ import { Document, Page, View, Text, StyleSheet, Font, Image, Svg, Path, Rect } 
 import path from "path";
 import type { CVData, CVSection } from "@/types/cv";
 import { linkedinDisplay } from "@/lib/utils";
+import {i18n} from "@/const/i18n";
 
 // Font Arial
 Font.register({
@@ -192,12 +193,13 @@ function BulletList({ text }: { text: string }) {
   );
 }
 
-export function CvDocumentEuropass({ data, sections }: { data: CVData; sections: CVSection[], lang?: "ES" | "EN" }) {
+export function CvDocumentEuropass({ data, sections, lang }: { data: CVData; sections: CVSection[], lang?: "ES" | "EN" }) {
+  const t = i18n[lang] || i18n.ES;
   const sectionRenderers: Record<string, () => React.ReactElement | null> = {
     experience: () =>
       data.experience?.items?.length ? (
         <View>
-          <Text style={styles.sectionTitle}>EXPERIENCIA LABORAL</Text>
+          <Text style={styles.sectionTitle}>{t.experience}</Text>
           {data.experience.items.map((exp, i) => (
             <View key={exp.id ?? i} style={styles.entry} wrap={false}>
               {exp.position && <Text style={styles.jobTitle}>{exp.position}</Text>}
@@ -208,7 +210,7 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
               )}
               {exp.location && (
                 <Text style={styles.metaLine}>
-                  <Text style={styles.metaLabel}>Población: </Text>
+                  <Text style={styles.metaLabel}>{t.location}: </Text>
                   {exp.location}
                 </Text>
               )}
@@ -221,7 +223,7 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
     education: () =>
       data.education?.items?.length ? (
         <View>
-          <Text style={styles.sectionTitle}>EDUCACIÓN Y FORMACIÓN</Text>
+          <Text style={styles.sectionTitle}>{t.education}</Text>
           {data.education.items.map((edu, i) => (
             <View key={edu.id ?? i} style={styles.entry} wrap={false}>
               {edu.title && <Text style={styles.degreeTitle}>{edu.title}</Text>}
@@ -232,13 +234,13 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
               )}
               {edu.location && (
                 <Text style={styles.itemBody}>
-                  <Text style={styles.metaLabel}>Población: </Text>
+                  <Text style={styles.metaLabel}>{t.location}: </Text>
                   {edu.location}
                 </Text>
               )}
               {edu.honors && (
                 <Text style={styles.itemBody}>
-                  <Text style={styles.metaLabel}>Logro Clave: </Text>
+                  <Text style={styles.metaLabel}>{t.keyAchievement}: </Text>
                   {edu.honors}
                 </Text>
               )}
@@ -251,10 +253,10 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
       data.skills &&
       (data.skills.technical?.length || data.skills.soft?.length || data.skills.languages?.length) ? (
         <View>
-          <Text style={styles.sectionTitle}>COMPETENCIAS</Text>
+          <Text style={styles.sectionTitle}>{t.skills}</Text>
           {data.skills.technical?.length ? (
             <View>
-              <Text style={styles.skillCat}>Competencias técnicas</Text>
+              <Text style={styles.skillCat}>{t.technicalSkills}</Text>
               {data.skills.technical.map((s, i) => (
                 <Text key={i} style={styles.skillItem}>
                   · {s}
@@ -264,7 +266,7 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
           ) : null}
           {data.skills.soft?.length ? (
             <View>
-              <Text style={styles.skillCat}>Competencias transversales</Text>
+              <Text style={styles.skillCat}>{t.softSkills}</Text>
               {data.skills.soft.map((s, i) => (
                 <Text key={i} style={styles.skillItem}>
                   · {s}
@@ -274,7 +276,7 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
           ) : null}
           {data.skills.languages?.length ? (
             <View>
-              <Text style={styles.skillCat}>Idiomas</Text>
+              <Text style={styles.skillCat}>{t.languages}</Text>
               {data.skills.languages.map((lang, i) => {
                 const [name, level] = lang.split(":").map((s) => s.trim());
                 return (
@@ -292,7 +294,7 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
     projects: () =>
       data.projects?.items?.length ? (
         <View>
-          <Text style={styles.sectionTitle}>PROYECTOS</Text>
+          <Text style={styles.sectionTitle}>{t.projects}</Text>
           {data.projects.items.map((p, i) => (
             <View key={p.id ?? i} style={styles.entry} wrap={false}>
               {p.title && <Text style={styles.itemTitle}>{p.title}</Text>}
@@ -312,7 +314,7 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
     achievements: () =>
       data.achievements?.items?.length ? (
         <View>
-          <Text style={styles.sectionTitle}>LOGROS Y RECONOCIMIENTOS</Text>
+          <Text style={styles.sectionTitle}>{t.achievements}</Text>
           {data.achievements.items.map((ach, i) => (
             <View key={ach.id ?? i} style={styles.itemSection} wrap={false}>
               <Text style={styles.itemBody}>
@@ -327,11 +329,11 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
     certifications: () =>
       data.certifications?.items?.length ? (
         <View>
-          <Text style={styles.sectionTitle}>CERTIFICACIONES</Text>
+          <Text style={styles.sectionTitle}>{t.certifications}</Text>
           {data.certifications.items.map((cert, i) => (
             <View key={cert.id ?? i} style={styles.itemSection} wrap={false}>
               {cert.name && <Text style={styles.itemTitle}>{cert.name}</Text>}
-              {cert.issuer && <Text style={styles.itemBody}>por {cert.issuer}</Text>}
+              {cert.issuer && <Text style={styles.itemBody}>{t.issuedBy} {cert.issuer}</Text>}
               {cert.date && <Text style={styles.itemBody}>{cert.date}</Text>}
             </View>
           ))}
@@ -341,7 +343,7 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
     volunteering: () =>
       data.volunteering?.items?.length ? (
         <View>
-          <Text style={styles.sectionTitle}>VOLUNTARIADO</Text>
+          <Text style={styles.sectionTitle}>{t.volunteering}</Text>
           {data.volunteering.items.map((vol, i) => (
             <View key={vol.id ?? i} style={styles.entry} wrap={false}>
               {vol.position && <Text style={styles.jobTitle}>{vol.position}</Text>}
@@ -394,7 +396,7 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
             <View style={styles.contactRow}>
               {data.personal?.nationality && (
                 <>
-                  <Text style={styles.cLabel}>Nacionalidad:</Text>
+                  <Text style={styles.cLabel}>{t.nationality}:</Text>
                   <Text style={styles.cValue}>{data.personal.nationality}</Text>
                   <View style={styles.cSpacer} />
                 </>
@@ -402,7 +404,7 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
               {data.personal?.phone && (
                 <>
                   <PhoneIcon />
-                  <Text style={styles.cLabel}>Número de teléfono:</Text>
+                  <Text style={styles.cLabel}>{t.phoneNumber}:</Text>
                   <Text style={styles.cValue}>{data.personal.phone}</Text>
                 </>
               )}
@@ -412,7 +414,7 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
             {data.personal?.email && (
               <View style={styles.contactRow}>
                 <MailIcon />
-                <Text style={styles.cLabel}>Dirección de correo electrónico:</Text>
+                <Text style={styles.cLabel}>{t.emailAddress}:</Text>
                 <Text style={styles.cValueLink}>{data.personal.email}</Text>
               </View>
             )}
@@ -430,7 +432,7 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
             {data.personal?.address && (
               <View style={styles.contactRow}>
                 <MapPinIcon />
-                <Text style={styles.cLabel}>Domicilio:</Text>
+                <Text style={styles.cLabel}>{t.address}:</Text>
                 <Text style={styles.cValue}>{data.personal.address}</Text>
               </View>
             )}
@@ -440,7 +442,7 @@ export function CvDocumentEuropass({ data, sections }: { data: CVData; sections:
         {/* SOBRE MÍ */}
         {data.personal?.summary && (
           <View>
-            <Text style={styles.sectionTitle}>SOBRE MÍ</Text>
+            <Text style={styles.sectionTitle}>{t.aboutMe}</Text>
             <Text style={styles.summaryText}>{data.personal.summary}</Text>
           </View>
         )}

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useRouteStore, RouteWithCvSummary } from "@/store/use-route-store";
+import { useRouteStore } from "@/store/use-route-store";
+import {RouteWithCvSummary} from "@/features/routes/actions/get-routes-for-user";
 
 interface RouteProviderProps {
   routes: RouteWithCvSummary[];

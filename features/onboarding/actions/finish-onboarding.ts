@@ -27,8 +27,6 @@ export async function finishOnboarding(data: FinishOnboardingData): Promise<{suc
         user: true
       }
     });
-    console.log("[record]:", record);
-
     if (!record) {
       return {success: false, error: "invalid or expired token"};
     }

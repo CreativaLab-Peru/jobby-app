@@ -57,7 +57,6 @@ export const useOnboardingStore = create<OnboardingStore>()(
 
       validateCurrentStep: () => {
         const { step, formData } = get();
-        console.log(step);
 
         if (step === 1) {
           return { success: true }; // No hay datos que validar en el paso 0

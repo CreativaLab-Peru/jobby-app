@@ -51,6 +51,31 @@ export async function getRoadmapGenerationPermissionByUser(
     };
   }
 
+  if (planTier === "STARTER") {
+    const generatedCount = await prisma.roadmap.count({
+      where: {
+        userId,
+        status: "SUCCEEDED",
+      },
+    });
+
+    if (generatedCount >= 1) {
+      return {
+        canGenerate: false,
+        planTier,
+        isFirstOpportunity,
+        message: "Con Starter puedes generar 1 roadmap. Mejora a Pro para generar más.",
+      };
+    }
+
+    return {
+      canGenerate: true,
+      planTier,
+      isFirstOpportunity,
+      message: null,
+    };
+  }
+
   if (isFirstOpportunity) {
     return {
       canGenerate: true,
@@ -64,10 +89,7 @@ export async function getRoadmapGenerationPermissionByUser(
     canGenerate: false,
     planTier,
     isFirstOpportunity,
-    message:
-      planTier === "STARTER"
-        ? "Con Starter solo puedes generar roadmap para tu primera oportunidad. Mejora a Pro para desbloquear las demás."
-        : "Con Free solo puedes generar roadmap para tu primera oportunidad.",
+    message: "Con Free solo puedes generar roadmap para tu primera oportunidad. Mejora a Starter o Pro para desbloquear más.",
   };
 }
 

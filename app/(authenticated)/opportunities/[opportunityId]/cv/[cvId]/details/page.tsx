@@ -33,7 +33,10 @@ export default async function OpportunityDetailsPage({ params }: PageProps) {
       opportunity={opportunity}
       matchValue={opportunity.matchValue}
       isHighMatch={opportunity.isHighMatch}
-      requirements={opportunity.requirements}
+      requirements={{
+        required: opportunity.requiredRequirements,
+        optional: opportunity.optionalRequirements
+      }}
       formattedDeadline={opportunity.formattedDeadline}
       roadmap={roadmap}
       canViewFullRoadmap={canViewFull}

@@ -4,29 +4,11 @@ import React from "react"
 import { CVData, CVSection } from "@/types/cv"
 import { linkedinHref, linkedinDisplay } from "@/lib/utils"
 import { Phone, Mail, Linkedin, MapPin } from "lucide-react"
-
-type ProjectItem = NonNullable<NonNullable<CVData["projects"]>["items"]>[number]
-type CertificationItem = NonNullable<NonNullable<CVData["certifications"]>["items"]>[number]
-type VolunteeringItem = NonNullable<NonNullable<CVData["volunteering"]>["items"]>[number]
-
-const hasText = (value: string | null): boolean => value !== null && value.trim().length > 0
-
-const getNonEmptyProjectItems = (items: ProjectItem[] | null): ProjectItem[] =>
-  (items ?? []).filter((item) =>
-    [item.title, item.description, item.technologies, item.duration].some((value) => hasText(value ?? null))
-  )
-
-const getNonEmptyCertificationItems = (items: CertificationItem[] | null): CertificationItem[] =>
-  (items ?? []).filter((item) =>
-    [item.name, item.issuer, item.date].some((value) => hasText(value ?? null))
-  )
-
-const getNonEmptyVolunteeringItems = (items: VolunteeringItem[] | null): VolunteeringItem[] =>
-  (items ?? []).filter((item) =>
-    [item.organization, item.location, item.position, item.duration, item.responsibilities].some((value) =>
-      hasText(value ?? null)
-    )
-  )
+import {
+  getNonEmptyCertificationItems,
+  getNonEmptyProjectItems,
+  getNonEmptyVolunteeringItems,
+} from "@/features/cv/helpers/non-empty-section-items"
 
 interface CVPreviewEuropassProps {
   data: CVData

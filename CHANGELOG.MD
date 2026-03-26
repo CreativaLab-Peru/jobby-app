@@ -1,7 +1,7 @@
 # WIP
 
 ## Fixes
-- Fixed form in admin monetization, addign the modal for analyze a CV and styles errors.
+- Fixed form in admin monetization, addign the modal for analyze a CV, new roadmap button and styles errors.
 - Fixed issue preventing CV analysis.
 - Fixed incorrect roadmap step URLs.
 - Added roadmap step statuses to support completing the roadmap.

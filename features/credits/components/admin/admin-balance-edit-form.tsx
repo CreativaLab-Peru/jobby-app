@@ -31,7 +31,7 @@ interface AdminBalanceEditFormProps {
 
 export function AdminBalanceEditForm({ balance }: AdminBalanceEditFormProps) {
   const [amount, setAmount] = useState(balance.amount);
-  const [selectedType, setSelectedType] = useState<CreditBalanceType>(balance.type as CreditBalanceType);
+  const selectedType = balance.type as CreditBalanceType;
   const [isAddMode, setIsAddMode] = useState(true);
   const [reason, setReason] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -40,9 +40,17 @@ export function AdminBalanceEditForm({ balance }: AdminBalanceEditFormProps) {
   const typeLabel = BALANCE_TYPE_LABELS[balance.type] || balance.type;
   const userLabel = `${balance.user.name} (${balance.user.email})`;
   const diff = amount - balance.amount;
+  const nextAmount = isAddMode ? balance.amount + amount : amount;
+  const submitDisabled = isLoading || amount === 0 || nextAmount < 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (nextAmount < 0) {
+      toast.error("El balance final no puede ser negativo");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -108,7 +116,9 @@ export function AdminBalanceEditForm({ balance }: AdminBalanceEditFormProps) {
 
               {/* Amount */}
               <div className="space-y-2">
-                <Label htmlFor="amount" className="text-sm font-semibold">Nuevo monto de creditos</Label>
+                <Label htmlFor="amount" className="text-sm font-semibold">
+                  {isAddMode ? "Monto a agregar/quitar" : "Nuevo balance total"}
+                </Label>
                 <div className="flex gap-2">
                   <Input
                     id="amount"
@@ -116,22 +126,26 @@ export function AdminBalanceEditForm({ balance }: AdminBalanceEditFormProps) {
                     value={amount}
                     onChange={(e) => setAmount(parseInt(e.target.value) || 0)}
                     disabled={isLoading}
+                    min={isAddMode ? undefined : 0}
                   />
-                  <select className="px-3 rounded-lg border" value={selectedType} onChange={(e) => setSelectedType(e.target.value as CreditBalanceType)}>
-                    {Object.entries(BALANCE_TYPE_LABELS).map(([key, label]) => (
-                      <option key={key} value={key}>{label}</option>
-                    ))}
-                  </select>
                 </div>
                 <div className="flex items-center gap-2">
                   <input id="addMode" type="checkbox" checked={isAddMode} onChange={(e) => setIsAddMode(e.target.checked)} />
-                  <label htmlFor="addMode" className="text-xs">Agregar al balance seleccionado (si está marcado). Si no, reemplaza el balance actual.</label>
+                  <label htmlFor="addMode" className="text-xs">Modo agregar (marcado): suma o resta sobre el balance actual. Desmarcado: reemplaza el balance total.</label>
                 </div>
-                {diff !== 0 && (
-                  <p className={`text-xs font-semibold ${diff > 0 ? "text-green-600" : "text-red-600"}`}>
-                    {diff > 0 ? `+${diff}` : diff} creditos ({diff > 0 ? "recarga" : "consumo"})
+                {isAddMode && amount !== 0 && (
+                  <p className={`text-xs font-semibold ${amount > 0 ? "text-green-600" : "text-red-600"}`}>
+                    {amount > 0 ? `+${amount}` : amount} créditos ({amount > 0 ? "recarga" : "consumo"})
                   </p>
                 )}
+                {!isAddMode && diff !== 0 && (
+                  <p className={`text-xs font-semibold ${diff > 0 ? "text-green-600" : "text-red-600"}`}>
+                    {diff > 0 ? `+${diff}` : diff} créditos ({diff > 0 ? "recarga" : "consumo"})
+                  </p>
+                )}
+                <p className={`text-xs ${nextAmount < 0 ? "text-red-600 font-semibold" : "text-muted-foreground"}`}>
+                  Balance resultante: {nextAmount}
+                </p>
               </div>
 
               {/* Reason */}
@@ -150,9 +164,9 @@ export function AdminBalanceEditForm({ balance }: AdminBalanceEditFormProps) {
 
               <div className="flex items-center justify-end gap-3 border-t border-border/40 pt-6">
                 <Button type="button" variant="outline" onClick={() => router.push(routes.app.admin.balances.detail(balance.id))} disabled={isLoading} className="rounded-lg font-bold">Cancelar</Button>
-                <Button type="submit" disabled={isLoading || diff === 0} className="rounded-lg font-bold shadow-sm">
+                <Button type="submit" disabled={submitDisabled} className="rounded-lg font-bold shadow-sm">
                   {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-                  Guardar cambios
+                  {isAddMode ? "Aplicar ajuste" : "Guardar cambios"}
                 </Button>
               </div>
             </form>

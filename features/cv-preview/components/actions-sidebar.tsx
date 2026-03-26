@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import {ArrowLeft, Home, Download, Loader2, Sparkles, Rocket, Edit, Languages} from "lucide-react"
+import {ArrowLeft, Home, Download, Loader2, Sparkles, Rocket, Edit, Languages, FileText} from "lucide-react"
 import { CVData, CVSection } from "@/types/cv"
 import { toast } from "sonner"
 import { useCreditsStore } from "@/store/use-credits-store"
@@ -216,14 +216,24 @@ export function ActionsSidebar({
             Acciones
           </h3>
 
+
           <Button
             disabled={isDisabled}
             variant={'secondary'}
-            className="w-full"
+            className="w-full mb-2"
             onClick={onHome}
           >
             <Home className="w-4 h-4 mr-2" />
-              Mi progreso
+            Mi progreso
+          </Button>
+
+          <Button
+            variant="secondary"
+            className="w-full mb-2"
+            onClick={() => { window.location.href = '/my-cvs'; }}
+          >
+            <FileText className="w-4 h-4 mr-2" />
+            Ver todos mis CVs
           </Button>
 
           <Button

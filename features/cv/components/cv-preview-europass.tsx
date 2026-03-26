@@ -4,6 +4,11 @@ import React from "react"
 import { CVData, CVSection } from "@/types/cv"
 import { linkedinHref, linkedinDisplay } from "@/lib/utils"
 import { Phone, Mail, Linkedin, MapPin } from "lucide-react"
+import {
+  getNonEmptyCertificationItems,
+  getNonEmptyProjectItems,
+  getNonEmptyVolunteeringItems,
+} from "@/features/cv/helpers/non-empty-section-items"
 
 interface CVPreviewEuropassProps {
   data: CVData
@@ -86,6 +91,10 @@ function BulletList({ text }: { text: string }) {
 }
 
 export function CVPreviewEuropass({ data, sections }: CVPreviewEuropassProps) {
+  const certificationsItems = getNonEmptyCertificationItems(data.certifications?.items ?? null)
+  const projectsItems = getNonEmptyProjectItems(data.projects?.items ?? null)
+  const volunteeringItems = getNonEmptyVolunteeringItems(data.volunteering?.items ?? null)
+
   const sectionRenderers: Record<string, () => React.ReactElement | null> = {
     experience: () =>
       data.experience?.items?.length ? (
@@ -190,10 +199,10 @@ export function CVPreviewEuropass({ data, sections }: CVPreviewEuropassProps) {
       ) : null,
 
     projects: () =>
-      data.projects?.items?.length ? (
+      projectsItems.length ? (
         <div>
           <SectionTitle>PROYECTOS</SectionTitle>
-          {data.projects.items.map((p, i) => (
+          {projectsItems.map((p, i) => (
             <div key={p.id || i} className="mb-[6px]">
               {p.title && (
                 <p className="text-[10px] font-bold" style={{ color: EU_BLUE }}>
@@ -231,10 +240,10 @@ export function CVPreviewEuropass({ data, sections }: CVPreviewEuropassProps) {
       ) : null,
 
     certifications: () =>
-      data.certifications?.items?.length ? (
+      certificationsItems.length ? (
         <div>
           <SectionTitle>CERTIFICACIONES</SectionTitle>
-          {data.certifications.items.map((cert, i) => (
+          {certificationsItems.map((cert, i) => (
             <div key={cert.id || i} className="mb-[5px]">
               {cert.name && (
                 <p className="text-[10px] font-bold" style={{ color: EU_BLUE }}>
@@ -249,10 +258,10 @@ export function CVPreviewEuropass({ data, sections }: CVPreviewEuropassProps) {
       ) : null,
 
     volunteering: () =>
-      data.volunteering?.items?.length ? (
+      volunteeringItems.length ? (
         <div>
           <SectionTitle>VOLUNTARIADO</SectionTitle>
-          {data.volunteering.items.map((vol, i) => (
+          {volunteeringItems.map((vol, i) => (
             <div key={vol.id || i} className="mb-[6px]">
               {vol.position && (
                 <p className="text-[10px] font-bold" style={{ color: EU_BLUE }}>

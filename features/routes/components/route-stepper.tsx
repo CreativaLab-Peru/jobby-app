@@ -100,7 +100,7 @@ export default function RouteStepper({
         evaluationScore !== null
           ? `Última puntuación: ${evaluationScore}/100`
           : "Nuestra IA analiza tu CV y te muestra cómo hacerlo más competitivo.",
-      href: "/my-evaluation",
+      href: evaluationScore !== null ? "/my-evaluation" : "/my-evaluation?analyze=true",
       icon: BarChart3,
       status: getStepStatus("CV_CREATED", "ANALYSIS_DONE", routeStatus),
       cta: evaluationScore !== null ? "Ver análisis" : "Analizar CV",

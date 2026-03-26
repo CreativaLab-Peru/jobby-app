@@ -1,5 +1,6 @@
 import { User, Briefcase, GraduationCap, Award, Code, Languages, Heart } from "lucide-react"
 import type { CVSection } from "@/types/cv"
+import { fa } from "zod/v4/locales"
 
 
 export const personalSection: CVSection = {
@@ -70,7 +71,7 @@ export const projectsSection: CVSection = {
       name: "title",
       label: "Título del Proyecto",
       type: "text",
-      required: true,
+      required: false,
       tip: "Usa un título claro y descriptivo que refleje el objetivo del proyecto",
       example: "Sistema de Gestión de Inventario con IA",
     },
@@ -78,7 +79,7 @@ export const projectsSection: CVSection = {
       name: "description",
       label: "Descripción",
       type: "textarea",
-      required: true,
+      required: false,
       tip: "Explica qué hiciste, cómo lo hiciste y qué resultados obtuviste. Usa verbos de acción",
       example: "Desarrollé una aplicación web...",
     },
@@ -250,7 +251,7 @@ export const certificationsSection: CVSection = {
       name: "name",
       label: "Nombre de la Certificación",
       type: "text",
-      required: true,
+      required: false,
       tip: "Nombre oficial completo de la certificación",
       example: "AWS Certified Cloud Practitioner",
     },
@@ -258,7 +259,7 @@ export const certificationsSection: CVSection = {
       name: "issuer",
       label: "Emisor",
       type: "text",
-      required: true,
+      required: false,
       tip: "Organización que otorgó la certificación",
       example: "Amazon Web Services",
     },
@@ -283,7 +284,7 @@ export const volunteeringSection: CVSection = {
       name: "organization",
       label: "Organización",
       type: "text",
-      required: true,
+      required: false,
       tip: "Nombre completo de la organización, ONG o comunidad",
       example: "Cruz Roja Peruana",
     },
@@ -291,7 +292,7 @@ export const volunteeringSection: CVSection = {
       name: "location",
       label: "Ubicación",
       type: "text",
-      required: true,
+      required: false,
       tip: "Ciudad y país donde se realiza el voluntariado",
       example: "Cusco, Perú",
     },
@@ -299,7 +300,7 @@ export const volunteeringSection: CVSection = {
       name: "position",
       label: "Rol o Cargo",
       type: "text",
-      required: true,
+      required: false,
       tip: "Describe tu rol en la organización",
       example: "Coordinador de Voluntarios",
     },
@@ -307,7 +308,7 @@ export const volunteeringSection: CVSection = {
       name: "duration",
       label: "Duración",
       type: "text",
-      required: true,
+      required: false,
       tip: "Formato: Mes Año - Mes Año o 'Presente' si continúas",
       example: "Marzo 2023 - Presente",
     },
@@ -315,7 +316,7 @@ export const volunteeringSection: CVSection = {
       name: "responsibilities",
       label: "Actividades y Responsabilidades",
       type: "textarea",
-      required: true,
+      required: false,
       tip: "Describe las actividades realizadas y el impacto generado. Usa verbos de acción y métricas si es posible.",
       example:
         "• Coordiné eventos de recaudación de fondos que generaron S/. 20,000 para programas comunitarios.\n• Lideré un equipo de 15 voluntarios en campañas de ayuda social.\n• Organicé talleres educativos para 200+ beneficiarios en comunidades vulnerables.",

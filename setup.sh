@@ -14,7 +14,8 @@ echo "Database is ready."
 cd ../../
 
 echo "Running Prisma migrations..."
-bun prisma db push
+# bun prisma db push
+bunx prisma migrate dev --skip-seed
 
 echo "Seeding database..."
 node prisma/seed/init.js

@@ -137,6 +137,9 @@ export default function MyEvaluationScreen({
 
   return (
     <main className="min-h-[90vh] p-4 md:p-8">
+      {/* Select CV Modal */}
+      <SelectCvModal cvs={cvList} onConfirm={handleAnalyzeConfirm} />
+
       <div className="mx-auto max-w-7xl">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
           <PageHeader
@@ -156,9 +159,6 @@ export default function MyEvaluationScreen({
               )
             }
           />
-
-          {/* Select CV Modal */}
-          <SelectCvModal cvs={cvList} onConfirm={handleAnalyzeConfirm} />
 
           {!hasCv ? (
             <EmptyPlaceholder

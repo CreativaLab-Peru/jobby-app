@@ -1,7 +1,5 @@
 "use client";
 
-import {useEffect, useState} from "react";
-import {createPortal} from "react-dom";
 import {motion, AnimatePresence} from "framer-motion";
 import {
   Sparkles,
@@ -116,22 +114,14 @@ export function SelectCvModal({
                                 cvs,
                                 onConfirm
                               }: SelectCvModalProps) {
-  const [mounted, setMounted] = useState(false);
   const {isOpen, onClose, selectedCvId, setSelectedCvId, isAnalyzing} = useEvaluationModalStore();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const handleConfirm = async () => {
     if (!selectedCvId) return;
     await onConfirm(selectedCvId);
   };
 
-  if (!mounted) return null;
-
-  return createPortal(
-    (
+  return (
     <AnimatePresence>
       {isOpen && (
         <div
@@ -285,7 +275,5 @@ export function SelectCvModal({
         </div>
       )}
     </AnimatePresence>
-    ),
-    document.body,
   );
 }

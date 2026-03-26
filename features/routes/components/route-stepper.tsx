@@ -11,7 +11,6 @@ import {
   Lock,
   Sparkles,
   Map,
-  Rocket,
   Trophy,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -39,7 +38,7 @@ interface RouteStepperProps {
   evaluationScore: number | null;
   opportunitiesCount: number;
   hasRoadmap?: boolean;
-  hasSubscription?: boolean;
+  roadmapId: string;
 }
 
 const STATUS_ORDER: RouteStatus[] = [
@@ -50,6 +49,7 @@ const STATUS_ORDER: RouteStatus[] = [
   "OPPORTUNITIES_PENDING",
   "OPPORTUNITIES_DONE",
   "ROADMAP_PENDING",
+  "ROADMAP_IN_PROGRESS",
   "ROADMAP_DONE",
 ];
 
@@ -68,18 +68,18 @@ function getStepStatus(
 }
 
 export default function RouteStepper({
-  routeName,
-  routeStatus,
-  cvId,
-  cvTitle,
-  evaluationScore,
-  opportunitiesCount,
-  hasRoadmap = false,
-  hasSubscription = false,
-}: RouteStepperProps) {
+                                       routeName,
+                                       routeStatus,
+                                       cvId,
+                                       cvTitle,
+                                       evaluationScore,
+                                       opportunitiesCount,
+                                       hasRoadmap = false,
+                                       roadmapId,
+                                     }: RouteStepperProps) {
   const router = useRouter();
 
-  const isRouteCompleted = routeStatus === "ROADMAP_DONE";
+  const isRoadmapDone = routeStatus === "ROADMAP_DONE";
 
   const steps: Step[] = [
     {
@@ -125,29 +125,20 @@ export default function RouteStepper({
       description: hasRoadmap
         ? "Tienes un roadmap generado. Revisa los pasos para alcanzar tu meta."
         : "Recibe un roadmap personalizado con los pasos necesarios para acceder a oportunidades globales.",
-      href: hasRoadmap ? "/my-roadmaps" : "/my-opportunities",
+      href: hasRoadmap && roadmapId ? `/my-roadmaps/${roadmapId}` : "/my-opportunities",
       icon: Map,
       status: getStepStatus("OPPORTUNITIES_DONE", "ROADMAP_DONE", routeStatus),
       cta: hasRoadmap ? "Ver roadmap" : "Generar roadmap",
     },
     {
       id: 5,
-      title: "Programa Talento Global",
-      description:
-        "Mentoría estratégica 1:1 para acelerar tu perfil y prepararte para oportunidades internacionales.",
-      href: "/billing",
-      icon: Rocket,
-      status: isRouteCompleted && hasSubscription ? "completed" : isRouteCompleted ? "current" : "locked",
-      cta: hasSubscription ? "Ver mi plan" : "Conocer programa",
-    },
-    {
-      id: 6,
       title: "Logra tu oportunidad global",
       description:
         "Has optimizado tu perfil, aplicado a oportunidades y avanzado en tu carrera. Tu copiloto de carrera te ayudó a llegar aquí.",
       href: "/dashboard",
       icon: Trophy,
-      status: isRouteCompleted && hasSubscription ? "current" : "locked",
+      // Se activa como 'current' solo cuando el Roadmap está completado
+      status: isRoadmapDone ? "current" : "locked",
       cta: "Ver mi progreso",
     },
   ];
@@ -171,7 +162,6 @@ export default function RouteStepper({
             }
           />
 
-          {/* Stepper Cards */}
           <div className="grid grid-cols-1 gap-6">
             {steps.map((step, i) => (
               <motion.div
@@ -184,14 +174,13 @@ export default function RouteStepper({
                   className={cn(
                     "relative flex items-start gap-5 p-6 rounded-2xl border transition-all",
                     step.status === "completed" &&
-                      "bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800",
+                    "bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800",
                     step.status === "current" &&
-                      "bg-primary/5 border-primary/30 shadow-md ring-1 ring-primary/10",
+                    "bg-primary/5 border-primary/30 shadow-md ring-1 ring-primary/10",
                     step.status === "locked" &&
-                      "bg-muted/30 border-border/50 opacity-60",
+                    "bg-muted/30 border-border/50 opacity-60",
                   )}
                 >
-                  {/* Step number / status */}
                   <div
                     className={cn(
                       "flex items-center justify-center h-12 w-12 rounded-xl shrink-0",
@@ -209,7 +198,6 @@ export default function RouteStepper({
                     )}
                   </div>
 
-                  {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-xs font-semibold text-muted-foreground uppercase">
@@ -222,7 +210,7 @@ export default function RouteStepper({
                       )}
                       {step.status === "current" && (
                         <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                          Activo
+                          {step.id === 4 && routeStatus === "ROADMAP_IN_PROGRESS" ? "En progreso" : "Activo"}
                         </span>
                       )}
                       {step.status === "locked" && (
@@ -237,7 +225,6 @@ export default function RouteStepper({
                     </p>
                   </div>
 
-                  {/* Action */}
                   {step.status !== "locked" && (
                     <Button
                       variant={step.status === "current" ? "default" : "outline"}
@@ -251,7 +238,6 @@ export default function RouteStepper({
                   )}
                 </div>
 
-                {/* Connector line */}
                 {i < steps.length - 1 && (
                   <div className="flex justify-start pl-10 py-1">
                     <div
@@ -272,5 +258,3 @@ export default function RouteStepper({
     </main>
   );
 }
-
-

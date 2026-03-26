@@ -15,6 +15,8 @@ import Link from "next/link";
 import type { RoadmapStepData } from "@/features/roadmap/actions/get-roadmap-for-opportunity";
 import { toggleActionItem } from "@/features/roadmap/actions/update-action-item"; // Importa la acción
 import { useTransition } from "react";
+import {toast} from "sonner";
+import {useRouter} from "next/navigation";
 
 interface RoadmapDisplayProps {
   title: string | null;
@@ -29,14 +31,18 @@ export function RoadmapDisplay({
                                  steps,
                                  canViewFull,
                                }: RoadmapDisplayProps) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const handleToggle = (stepId: string, index: number, currentDone: boolean) => {
     if (isPending) {
+      toast.info("Tu acción se está procesando. Por favor espera un momento.");
       return;
     }
     startTransition(async () => {
       await toggleActionItem(stepId, index, !currentDone);
+      toast.success("¡Acción actualizada!");
+      router.refresh();
     });
   };
 
@@ -98,6 +104,7 @@ export function RoadmapDisplay({
                             "flex items-start gap-2 text-xs cursor-pointer transition-colors group",
                             item.done ? "text-muted-foreground/70" : "text-foreground"
                           )}
+                          aria-disabled={isPending || isLocked}
                         >
                           {item.done ? (
                             <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />

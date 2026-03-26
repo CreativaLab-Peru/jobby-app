@@ -265,20 +265,20 @@ export function ActionsSidebar({
             </Button>
           )}
 
-          {showMatchButton && (
-            <Button
-              disabled={isDisabled || matching}
-              className="w-full"
-              onClick={()=>handleExecuteAction("match")}
-            >
-              {matching ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Rocket className="w-4 h-4 mr-2" />
-              )}
-              {matching ? "Buscando..." : "Hacer Match"}
-            </Button>
-          )}
+          {/*{showMatchButton && (*/}
+          {/*  <Button*/}
+          {/*    disabled={isDisabled || matching}*/}
+          {/*    className="w-full"*/}
+          {/*    onClick={()=>handleExecuteAction("match")}*/}
+          {/*  >*/}
+          {/*    {matching ? (*/}
+          {/*      <Loader2 className="w-4 h-4 mr-2 animate-spin" />*/}
+          {/*    ) : (*/}
+          {/*      <Rocket className="w-4 h-4 mr-2" />*/}
+          {/*    )}*/}
+          {/*    {matching ? "Buscando..." : "Hacer Match"}*/}
+          {/*  </Button>*/}
+          {/*)}*/}
 
           <div className="space-y-3 mt-2">
             <div className="flex items-center justify-between">

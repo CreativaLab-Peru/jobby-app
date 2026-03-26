@@ -8,14 +8,8 @@ import {cn} from "@/lib/utils";
 import Link from "next/link";
 import {Opportunity} from "@prisma/client";
 import {useRouter} from "next/navigation";
-
-const opportunityMapped: Record<string, string> = {
-  INTERNSHIP: "Pasantía",
-  SCHOLARSHIP: "Beca",
-  EXCHANGE_PROGRAM: "Intercambio",
-  EMPLOYMENT: "Empleo",
-  STARTUP: "Aceleradora",
-};
+import {RichTextViewer} from "@/components/rich-text/rich-text-viewer";
+import {OPPORTUNITY_MAP} from "@/const";
 
 interface Props {
   opportunity: Opportunity & {
@@ -40,6 +34,11 @@ export default function OpportunityCard({
   const router = useRouter();
   const blurClass = blurred ? "filter blur-sm grayscale-[40%]" : "";
 
+  const requirements = [
+    ...(opportunity.requiredRequirements ?? []),
+    ...(opportunity.optionalRequirements ?? []),
+  ];
+
   return (
     <Card
       className={`group relative overflow-hidden border-border/40 bg-card rounded-[2rem] hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 flex flex-col ${blurClass}`}>
@@ -55,7 +54,7 @@ export default function OpportunityCard({
           <div className="flex flex-col gap-2"> {/* Contenedor para los Badges */}
             <Badge variant="secondary"
                    className="w-fit font-bold rounded-lg text-[10px] uppercase tracking-wider">
-              {opportunityMapped[opportunity.type] || "Oportunidad"}
+              {OPPORTUNITY_MAP[opportunity.type] || "Oportunidad"}
             </Badge>
           </div>
           <div className="flex items-center gap-1 text-[10px] text-muted-foreground/70 font-medium">
@@ -90,24 +89,44 @@ export default function OpportunityCard({
         )}
       </CardHeader>
 
-      <CardContent className="flex-1">
-        {opportunity.requirements && (
-          <p className="text-sm text-muted-foreground/80 line-clamp-3 leading-relaxed mb-6">
-            {opportunity.requirements}
-          </p>
+      <CardContent className="flex-1 flex flex-col gap-4">
+        {/* Descripción con Rich Text (limitada a 3 líneas) */}
+        <RichTextViewer
+          lineClamp={3}
+          value={opportunity.description || "No hay descripción disponible."}
+          className="mb-2"
+        />
+
+        {/* Requerimientos como etiquetas limpias */}
+        {requirements.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {requirements.slice(0, 4).map((tag, index) => (
+              <Badge
+                key={`${tag}-${index}`}
+                variant="secondary"
+                className="bg-primary/5 text-primary border-none text-[10px] font-bold px-2.5 py-0.5 rounded-full"
+              >
+                {tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()}
+              </Badge>
+            ))}
+            {requirements.length > 4 && (
+              <span className="text-[10px] text-muted-foreground/60 font-bold self-center">
+          +{requirements.length - 4}
+        </span>
+            )}
+          </div>
         )}
 
+        {/* Metadatos (Ubicación y Fecha) empujados al final */}
         <div className="flex flex-wrap gap-4 mt-auto">
           {opportunity.location && (
-            <div
-              className="flex items-center gap-1.5 text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest">
+            <div className="flex items-center gap-1.5 text-[10px] font-black text-muted-foreground/60 uppercase">
               <MapPin className="w-3.5 h-3.5 text-primary/60"/>
               <span>{opportunity.location}</span>
             </div>
           )}
           {opportunity.deadline && (
-            <div
-              className="flex items-center gap-1.5 text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest">
+            <div className="flex items-center gap-1.5 text-[10px] font-black text-muted-foreground/60 uppercase">
               <Calendar className="w-3.5 h-3.5"/>
               <span>Cierra: {new Date(opportunity.deadline).toLocaleDateString('es-ES', {
                 day: '2-digit',

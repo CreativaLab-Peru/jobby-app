@@ -29,6 +29,7 @@ import { OPPORTUNITY_CONFIG } from "@/features/cv/consts";
 import { AdminOpportunityDetail } from "@/features/opportunities/actions/admin/get-admin-opportunity-by-id";
 import { deleteAdminOpportunity } from "@/features/opportunities/actions/admin/delete-admin-opportunity";
 import { routes } from "@/lib/routes";
+import {RichTextViewer} from "@/components/rich-text/rich-text-viewer";
 
 interface AdminOpportunityDetailScreenProps {
   opportunity: AdminOpportunityDetail;
@@ -176,7 +177,7 @@ export function AdminOpportunityDetailScreen({ opportunity }: AdminOpportunityDe
           {opportunity.description && (
             <Card className="rounded-2xl border border-border/60 p-6">
               <h3 className="text-lg font-bold tracking-tight mb-3">Descripcion</h3>
-              <p className="text-sm text-muted-foreground whitespace-pre-wrap">{opportunity.description}</p>
+              <RichTextViewer value={opportunity.description} />
             </Card>
           )}
 

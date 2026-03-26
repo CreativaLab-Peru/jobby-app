@@ -23,6 +23,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { AdminOpportunityDetail } from "@/features/opportunities/actions/admin/get-admin-opportunity-by-id";
 import { updateAdminOpportunity } from "@/features/opportunities/actions/admin/update-admin-opportunity";
 import { routes } from "@/lib/routes";
+import {RichTextEditor} from "@/components/rich-text/rich-text-editor";
 
 const TYPE_OPTIONS: { value: OpportunityType; label: string }[] = [
   { value: "INTERNSHIP", label: "Pasantia" },
@@ -166,7 +167,11 @@ export function AdminOpportunityEditForm({ opportunity }: AdminOpportunityEditFo
 
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="description" className="text-sm font-semibold">Descripcion</Label>
-                  <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} rows={3} disabled={isLoading} />
+                  <RichTextEditor
+                    value={description}
+                    onChange={setDescription}
+                    placeholder="Describe la oportunidad, responsabilidades, etc."
+                  />
                 </div>
 
                 <div className="space-y-2 md:col-span-2">

@@ -1,8 +1,8 @@
-# WIP
+# v1.1.30 - 2026-03-26
 
 ## Fixes
-- Fixed form in admin monetization. 
-- Added the modal redirect for analyze a CV. 
+- Fixed form in admin monetization.
+- Added the modal redirect for analyze a CV.
 - New roadmap button for select Opportunities and generate roadmap after validation.
 - Now, volunteering, projects and achievements are optional.
 - Updated plan information (in production).

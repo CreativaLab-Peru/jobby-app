@@ -53,7 +53,7 @@ export default async function RootLayout({
         <NavbarWrapper />
       </div>
       <div className="md:pl-64">
-        <div className="mx-auto w-full max-w-8xl pl-0 pr-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-8xl pl-0 pr-4 sm:px-6 lg:px-8">
           {children}
         </div>
       </div>

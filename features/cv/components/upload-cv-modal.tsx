@@ -1,40 +1,49 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Upload, CheckCircle, ChevronRight, FileIcon, X } from "lucide-react";
-import { CvType, OpportunityType } from "@prisma/client";
-import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import {useState, useRef, useEffect} from "react";
+import {useRouter} from "next/navigation";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {Upload, CheckCircle, ChevronRight, FileIcon, X} from "lucide-react";
+import {CvType, OpportunityType} from "@prisma/client";
+import {toast} from "sonner";
+import {cn} from "@/lib/utils";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from "@/components/ui/dialog";
 
-import { useCredits } from "@/features/credits/hooks/use-credits";
-import { useCvModalStore } from "../hooks/use-cv-modal-store";
-import { cvTypeOptions } from "@/features/cv/consts";
-import { FormSelect } from "@/components/form/select-input";
+import {useCredits} from "@/features/credits/hooks/use-credits";
+import {useCvModalStore} from "../hooks/use-cv-modal-store";
+import {cvTypeOptions} from "@/features/cv/consts";
+import {FormSelect} from "@/components/form/select-input";
 import {UploadCvFormValues, uploadCvSchema} from "@/features/cv/schema";
-import {opportunities} from "@/const";
-
+import {opportunities, RECOMMENDATIONS_BY_OPPORTUNITY} from "@/const";
+import {CvSectionSelector} from "@/features/cv/components/cv-section-selector";
+import {createCvFromPdfAction} from "@/features/cv/actions/create-cv-from-pdf";
 
 interface UploadCVModalProps {
   initialFile?: File | Blob | null;
   reset: () => void;
 }
 
-export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModalProps) {
-  const { isUploadOpen, onCloseUpload } = useCvModalStore();
+export function UploadCVModal({initialFile, reset: resetParent}: UploadCVModalProps) {
   const router = useRouter();
-  const { refreshCredits, credits, isLoading: isLoadingCredits } = useCredits();
+  const {refreshCredits, credits, isLoading: isLoadingCredits} = useCredits();
 
   const [isUploading, setIsUploading] = useState(false);
   const [step, setStep] = useState(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const {isUploadOpen, onCloseUpload} = useCvModalStore();
 
   // --- Form Setup ---
   const {
@@ -43,7 +52,7 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
     setValue,
     watch,
     reset,
-    formState: { errors, isValid },
+    formState: {errors, isValid},
   } = useForm<UploadCvFormValues>({
     resolver: zodResolver(uploadCvSchema as any),
     mode: "onChange",
@@ -52,23 +61,41 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
       cvType: "TECHNOLOGY_ENGINEERING",
       opportunityType: "SCHOLARSHIP",
       templateId: "harvard",
+      sections: ['EDUCATION', 'PROJECTS', 'VOLUNTEERING', 'ACHIEVEMENTS', 'SKILLS'],
     },
   });
 
   const currentFile = watch("file");
   const currentTitle = watch("title");
 
+  const currentOpportunity = watch("opportunityType");
+  const currentSections = watch("sections") || [];
+
   // Sync initial file with Form State
   useEffect(() => {
     if (initialFile && isUploadOpen) {
       const fileToSet = initialFile instanceof File
         ? initialFile
-        : new File([initialFile], "Mi_CV.pdf", { type: "application/pdf" });
+        : new File([initialFile], "Mi_CV.pdf", {type: "application/pdf"});
 
-      setValue("file", fileToSet, { shouldValidate: true });
-      setValue("title", fileToSet.name.replace(/\.pdf$/i, ""), { shouldValidate: true });
+      setValue("file", fileToSet, {shouldValidate: true});
+      setValue("title", fileToSet.name.replace(/\.pdf$/i, ""), {shouldValidate: true});
     }
   }, [initialFile, isUploadOpen, setValue]);
+
+  useEffect(() => {
+    const suggested = RECOMMENDATIONS_BY_OPPORTUNITY["SCHOLARSHIP"] || [];
+    // Actualizamos el valor en el formulario
+    setValue("sections", suggested, {shouldValidate: true});
+  }, []);
+
+  useEffect(() => {
+    if (currentOpportunity) {
+      const suggested = RECOMMENDATIONS_BY_OPPORTUNITY[currentOpportunity] || [];
+      // Actualizamos el valor en el formulario
+      setValue("sections", suggested, {shouldValidate: true});
+    }
+  }, [currentOpportunity, setValue]);
 
   const handleClose = () => {
     if (isUploading) return;
@@ -80,9 +107,9 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (f) {
-      setValue("file", f, { shouldValidate: true });
+      setValue("file", f, {shouldValidate: true});
       if (!currentTitle) {
-        setValue("title", f.name.replace(/\.pdf$/i, ""), { shouldValidate: true });
+        setValue("title", f.name.replace(/\.pdf$/i, ""), {shouldValidate: true});
       }
     }
   };
@@ -101,11 +128,14 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
       formData.append("cvType", data.cvType);
       formData.append("opportunityType", data.opportunityType);
       formData.append("templateId", data.templateId);
+      formData.append("sections", JSON.stringify(data.sections));
 
-      const response = await fetch("/api/cv/create-from-pdf", { method: "POST", body: formData });
-      const result = await response.json();
+      const result = await createCvFromPdfAction(formData);
 
-      if (!response.ok) throw new Error(result.message || "Error al procesar");
+      if (result?.error) {
+        toast.error(result.error || 'No se pudo agregar tu CV');
+        return;
+      }
 
       toast.success("Procesando tu CV...");
       handleClose();
@@ -121,19 +151,20 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
 
   return (
     <Dialog open={isUploadOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[440px] rounded-[2rem] border-border/40 bg-background/95 backdrop-blur-xl p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-[510px] overflow-hidden">
         {/* Progress Bar */}
         <div className="absolute top-0 left-0 w-full h-1 bg-secondary z-50">
           <div
             className="h-full bg-accent transition-all duration-500 ease-in-out"
-            style={{ width: isUploading ? '100%' : (step === 1 ? '50%' : '100%') }}
+            style={{width: isUploading ? '100%' : (step === 1 ? '50%' : '100%')}}
           />
         </div>
 
-        <div className="p-8">
+        <div className="p-8 max-h-[70vh] overflow-y-auto">
           <DialogHeader className="items-center text-center space-y-4 mb-8">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary text-accent shadow-inner">
-              {step === 1 ? <Upload className="h-7 w-7" /> : <CheckCircle className="h-7 w-7" />}
+            <div
+              className="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary text-accent shadow-inner">
+              {step === 1 ? <Upload className="h-7 w-7"/> : <CheckCircle className="h-7 w-7"/>}
             </div>
             <div className="space-y-1">
               <DialogTitle className="text-2xl font-black tracking-tight">
@@ -160,22 +191,28 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
                       errors.file && "border-destructive/50 bg-destructive/5"
                     )}
                   >
-                    <input type="file" ref={fileInputRef} className="hidden" accept=".pdf" onChange={onFileChange} />
-                    <div className="rounded-full bg-background p-4 shadow-sm group-hover:scale-110 transition-transform duration-300">
-                      <Upload className="h-6 w-6 text-muted-foreground group-hover:text-accent" />
+                    <input type="file" ref={fileInputRef} className="hidden" accept=".pdf"
+                           onChange={onFileChange}/>
+                    <div
+                      className="rounded-full bg-background p-4 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                      <Upload className="h-6 w-6 text-muted-foreground group-hover:text-accent"/>
                     </div>
                     <p className="mt-4 text-sm font-bold">Seleccionar archivo</p>
-                    <p className="text-[11px] text-muted-foreground font-medium">Solo PDF (máx. 5MB)</p>
+                    <p className="text-[11px] text-muted-foreground font-medium">Solo PDF (máx.
+                      5MB)</p>
                   </div>
                 ) : (
-                  <div className="flex items-center justify-between p-4 rounded-2xl bg-accent/5 border border-accent/10 animate-in slide-in-from-bottom-2">
+                  <div
+                    className="flex items-center justify-between p-4 rounded-2xl bg-accent/5 border border-accent/10 animate-in slide-in-from-bottom-2">
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-background rounded-lg shadow-sm text-accent">
-                        <FileIcon className="h-5 w-5" />
+                        <FileIcon className="h-5 w-5"/>
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-sm font-bold truncate max-w-[180px]">{currentFile.name}</span>
-                        <span className="text-[10px] text-muted-foreground">Listo para procesar</span>
+                        <span
+                          className="text-sm font-bold truncate max-w-[180px]">{currentFile.name}</span>
+                        <span
+                          className="text-[10px] text-muted-foreground">Listo para procesar</span>
                       </div>
                     </div>
                     <Button
@@ -184,11 +221,12 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
                       onClick={() => setValue("file", null as any)}
                       className="rounded-full hover:bg-destructive/10 hover:text-destructive"
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-4 w-4"/>
                     </Button>
                   </div>
                 )}
-                {errors.file && <p className="text-xs text-center text-destructive font-bold">{errors.file.message}</p>}
+                {errors.file && <p
+                  className="text-xs text-center text-destructive font-bold">{errors.file.message}</p>}
               </div>
             ) : (
               /* --- PASO 2: CONFIGURACIÓN --- */
@@ -206,17 +244,18 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
                     placeholder="Ej: CV Senior Frontend"
                     disabled={isUploading}
                   />
-                  {errors.title && <p className="text-[10px] text-destructive font-bold ml-1">{errors.title.message}</p>}
+                  {errors.title && <p
+                    className="text-[10px] text-destructive font-bold ml-1">{errors.title.message}</p>}
                 </div>
 
                 <FormSelect
                   label="Diseño del CV"
                   value={watch("templateId")}
                   options={[
-                    { key: "harvard", value: "Harvard (Recomendado)" },
-                    { key: "europass", value: "Europass Modern" },
+                    {key: "harvard", value: "Harvard (Recomendado)"},
+                    {key: "europass", value: "Europass Modern"},
                   ]}
-                  onChange={(v) => setValue("templateId", v as any, { shouldValidate: true })}
+                  onChange={(v) => setValue("templateId", v as any, {shouldValidate: true})}
                   disabled={isUploading}
                   error={errors.templateId?.message}
                 />
@@ -224,8 +263,8 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
                 <FormSelect
                   label="Perfil profesional"
                   value={watch("cvType")}
-                  options={cvTypeOptions.map(({ value, label }) => ({ key:value, value:label }))}
-                  onChange={(v) => setValue("cvType", v as CvType, { shouldValidate: true })}
+                  options={cvTypeOptions.map(({value, label}) => ({key: value, value: label}))}
+                  onChange={(v) => setValue("cvType", v as CvType, {shouldValidate: true})}
                   disabled={isUploading}
                   error={errors.cvType?.message}
                 />
@@ -234,20 +273,29 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
                   label="Tipo de Oportunidad"
                   value={watch("opportunityType")}
                   options={opportunities}
-                  onChange={(v) => setValue("opportunityType", v as OpportunityType, { shouldValidate: true })}
+                  onChange={(v) => setValue("opportunityType", v as OpportunityType, {shouldValidate: true})}
                   disabled={isUploading}
                   error={errors.opportunityType?.message}
                 />
 
+                <CvSectionSelector
+                  opportunityType={currentOpportunity}
+                  selectedSections={currentSections}
+                  onChange={(newSections) => setValue("sections", newSections, {shouldValidate: true})}
+                />
+
                 {/* Info Créditos */}
-                <div className="mt-4 p-4 rounded-2xl bg-secondary/20 border border-border/50 flex items-start gap-3">
+                <div
+                  className="mt-4 p-4 rounded-2xl bg-secondary/20 border border-border/50 flex items-start gap-3">
                   <div className="mt-0.5 p-1 bg-accent/10 rounded text-accent">
-                    <Upload className="h-3 w-3" />
+                    <Upload className="h-3 w-3"/>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[11px] font-black uppercase tracking-wider text-accent">Créditos</p>
+                    <p
+                      className="text-[11px] font-black uppercase tracking-wider text-accent">Créditos</p>
                     <p className="text-[10px] text-muted-foreground/60 leading-tight">
-                      Tienes <span className="font-bold text-foreground">{credits.manageCvsLimit}</span> disponibles.
+                      Tienes <span
+                      className="font-bold text-foreground">{credits.manageCvsLimit}</span> disponibles.
                     </p>
                   </div>
                 </div>
@@ -271,7 +319,7 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
                 variant="accent"
               >
                 Continuar
-                <ChevronRight className="ml-2 h-4 w-4" />
+                <ChevronRight className="ml-2 h-4 w-4"/>
               </Button>
             ) : (
               <>

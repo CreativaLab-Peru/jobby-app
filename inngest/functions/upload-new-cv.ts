@@ -2,9 +2,7 @@ import { inngest } from "./client";
 import { prisma } from "@/lib/prisma";
 import {
   CreditBalanceType,
-  CvType,
   JobStatus,
-  OpportunityType,
   RouteStatus
 } from "@prisma/client";
 import { getTextFromPdfApi } from "@/utils/get-text-from-pdf-api";
@@ -16,7 +14,8 @@ export const uploadNewCv = inngest.createFunction(
   { id: "process-uploaded-cv", name: "Process Uploaded CV" },
   { event: "cv/uploaded" },
   async ({ event, step }) => {
-    const { cvId, attachmentUrl, userId } = event.data;
+    // Ahora recibimos targetSections desde el evento
+    const { cvId, attachmentUrl, userId, targetSections } = event.data;
 
     // 1. Inicialización del Job (Idempotente)
     const job = await step.run("initialize-job", async () => {
@@ -35,12 +34,13 @@ export const uploadNewCv = inngest.createFunction(
     });
 
     try {
-      // 2. Extracción de Texto y AI (Paso costoso, debe estar en un step)
+      // 2. Extracción de Texto y AI
       const aiResult = await step.run("extract-cv-data-with-ai", async () => {
         const textFromCv = await getTextFromPdfApi(attachmentUrl);
         if (!textFromCv) throw new Error("No se pudo extraer texto del PDF");
 
-        const prompt = getPromptToGetCv(textFromCv);
+        // PASO CLAVE: Pasamos targetSections al prompt para que la IA sepa qué buscar
+        const prompt = getPromptToGetCv(textFromCv, targetSections);
         const result = await queryGemini({ prompt, type: "JSON" });
 
         if (!result.success) throw new Error(result.message || "Gemini falló al extraer datos");
@@ -48,56 +48,38 @@ export const uploadNewCv = inngest.createFunction(
         return result.data;
       });
 
-      // 3. Normalización y Limpieza de Datos
-      const processedData = await step.run("normalize-data", async () => {
-        let opportunityType = aiResult.opportunityType || OpportunityType.EMPLOYMENT;
-        let cvType = aiResult.cvType || CvType.TECHNOLOGY_ENGINEERING;
-        let language = aiResult.language || 'ES';
-
-        // Validar contra Enums de Prisma
-        if (!Object.values(OpportunityType).includes(opportunityType)) {
-          opportunityType = OpportunityType.EMPLOYMENT;
-        }
-        if (!Object.values(CvType).includes(cvType)) {
-          cvType = CvType.TECHNOLOGY_ENGINEERING;
-        }
-
-        return { ...aiResult, opportunityType, cvType, language };
-      });
-
-      // 4. Persistencia en Base de Datos (Transaccional)
-      await step.run("save-cv-to-db", async () => {
-        const textCv = JSON.stringify(processedData, null, 2);
-
+      // 3. Persistencia Inteligente (No destructiva)
+      await step.run("update-cv-and-sections", async () => {
         await prisma.$transaction(async (tx) => {
-          // Actualizar CV principal
+          // Actualizamos los datos maestros del CV
           await tx.cv.update({
             where: { id: cvId },
             data: {
-              // cvType: processedData.cvType,
-              // opportunityType: processedData.opportunityType,
-              extractedJson: processedData,
-              fullTextSearch: textCv,
-              language: processedData.language || "EN",
+              extractedJson: aiResult,
+              fullTextSearch: JSON.stringify(aiResult),
+              // El lenguaje lo detecta la IA, pero lo guardamos formalmente
+              language: aiResult.language || "ES",
             }
           });
 
-          // Procesar secciones (Borrar e insertar para asegurar limpieza)
-          if (Array.isArray(processedData.sections)) {
-            await tx.cvSection.deleteMany({ where: { cvId } });
-
-            const sectionsData = processedData.sections.map((section: any, index: number) => ({
-              cvId,
-              sectionType: section.sectionType,
-              title: section.title ?? null,
-              contentJson: section.contentJson ?? [],
-              order: index,
-            }));
-
-            await tx.cvSection.createMany({ data: sectionsData });
+          // HIDRATACIÓN DE SECCIONES:
+          // En lugar de borrar, actualizamos las secciones que ya creamos en el Action
+          if (aiResult.sections && Array.isArray(aiResult.sections)) {
+            for (const section of aiResult.sections) {
+              await tx.cvSection.updateMany({
+                where: {
+                  cvId,
+                  sectionType: section.sectionType
+                },
+                data: {
+                  title: section.title ?? "",
+                  contentJson: section.contentJson ?? [],
+                }
+              });
+            }
           }
 
-          // Vincular a la ruta activa si no tiene CV
+          // 4. Vincular a Ruta Activa (Lógica de negocio existente)
           const activeRoute = await tx.route.findFirst({
             where: { userId, isActive: true, cvId: null },
           });
@@ -111,13 +93,13 @@ export const uploadNewCv = inngest.createFunction(
         });
       });
 
-      // 5. Finalización y Pago
+      // 5. Cobro y Finalización
       await step.run("complete-job-and-billing", async () => {
         await consumeCredits({
           userId,
           type: CreditBalanceType.MANAGE_CVS,
           amount: 1,
-          description: `Procesamiento exitoso de CV: ${cvId}`,
+          description: `CV Procesado: ${cvId}`,
         });
 
         await prisma.queueJob.update({

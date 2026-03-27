@@ -2,6 +2,8 @@
 
 ## Fixes
 - Refresh route after each action of the guided flow
+- Name of temporal user to use Mercado pago integration
+- Select section to store the information of the CV in the database
 
 # v1.1.30 - 2026-03-26
 

@@ -3,7 +3,7 @@
 import {prisma} from "@/lib/prisma";
 import {TemporalUser} from "@prisma/client";
 
-export const sendEmailToPay = async (email: string) => {
+export const sendEmailToPay = async (email: string, name?: string) => {
   try {
     const existingEmail = await prisma.user.findFirst({
       where: { email }
@@ -17,11 +17,11 @@ export const sendEmailToPay = async (email: string) => {
 
     let user: TemporalUser | null;
     user = await prisma.temporalUser.findFirst({
-      where: { email }
+      where: { email, name }
     })
     if (!user) {
       user = await prisma.temporalUser.create({
-        data: { email }
+        data: { email, name }
       })
     }
 

@@ -10,6 +10,7 @@ datasource db {
 model TemporalUser {
   id    String   @id @default(uuid())
   email String   @unique
+  name  String?
   date  DateTime @default(now())
 
   @@map("temporal_user")

@@ -339,6 +339,10 @@ model CvSection {
   title       String?
   contentJson Json?
   order       Int           @default(0)
+
+  isVisible   Boolean       @default(true) // Crucial para la feature
+  isRecommended Boolean     @default(false) // Meta-dato para UI
+
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   cv          Cv            @relation(fields: [cvId], references: [id])

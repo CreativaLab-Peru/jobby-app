@@ -1,4 +1,4 @@
-import {CvType, Language} from "@prisma/client";
+import {CvSectionType, CvType, Language, OpportunityType} from "@prisma/client";
 
 export const cvTypes = [
   {
@@ -62,6 +62,8 @@ export const SECTION_LABELS: Record<string, string> = {
   COMPLEMENTS: "Información Complementaria",
   ACHIEVEMENTS: "Logros",
   CONTACT: "Información de Contacto",
+  LANGUAGES: "Idiomas",
+  INTERESTS: "Intereses",
 };
 
 export const languages = [
@@ -78,4 +80,12 @@ export const MODALITIES_MAP = {
 export const MODALITIES: {key: string, value: string}[]  = Object.entries(MODALITIES_MAP).map(([key, value]) => ({ key, value }));
 
 export const opportunities: {key: string, value: string}[] = Object.entries(OPPORTUNITY_MAP).map(([key, value]) => ({ key, value }));
+
+export const RECOMMENDATIONS_BY_OPPORTUNITY: Record<OpportunityType, CvSectionType[]> = {
+  SCHOLARSHIP: ['CONTACT', 'EDUCATION', 'PROJECTS', 'VOLUNTEERING', 'ACHIEVEMENTS', 'SKILLS'],
+  INTERNSHIP: ['CONTACT', 'EDUCATION', 'PROJECTS', 'SKILLS'],
+  EMPLOYMENT: ['CONTACT', 'SUMMARY', 'EXPERIENCE', 'SKILLS'],
+  STARTUP: ['CONTACT', 'SUMMARY', 'PROJECTS', 'EXPERIENCE', 'SKILLS'],
+  EXCHANGE_PROGRAM: ['CONTACT', 'SUMMARY', 'EDUCATION', 'VOLUNTEERING', 'PROJECTS']
+};
 

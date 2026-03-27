@@ -1,6 +1,6 @@
 import {
   Code2, Palette, Megaphone, BarChart3,
-  Coins, Share2, GraduationCap, Microscope, FileText
+  Coins, Share2, GraduationCap, Microscope
 } from "lucide-react";
 
 export const CV_TYPE_CONFIG: Record<string, { label: string; icon: React.ElementType; colorClass: string }> = {
@@ -12,7 +12,7 @@ export const CV_TYPE_CONFIG: Record<string, { label: string; icon: React.Element
   SOCIAL_MEDIA: { label: "Contenido Digital y Redes Sociales", icon: Share2, colorClass: "text-purple-500" },
   EDUCATION: { label: "Políticas Públicas y Desarrollo Humano", icon: GraduationCap, colorClass: "text-amber-500" },
   SCIENCE: { label: "Salud, BioTech y Sostenibilidad", icon: Microscope, colorClass: "text-indigo-500" },
-  GENERAL: { label: "General", icon: FileText, colorClass: "text-muted-foreground bg-muted" },
+  // GENERAL: { label: "General", icon: FileText, colorClass: "text-muted-foreground bg-muted" },
 };
 
 export const OPPORTUNITY_CONFIG: Record<string, string> = {

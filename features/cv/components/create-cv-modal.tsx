@@ -25,6 +25,8 @@ import {useCvModalStore} from "../hooks/use-cv-modal-store";
 import {cn} from "@/lib/utils";
 import {CVFormData} from "@/features/cv/schema";
 import {Language} from "@prisma/client";
+import {useRouteStore} from "@/store/use-route-store";
+import {getRoutesForUser} from "@/features/routes/actions/get-routes-for-user";
 
 const TEMPLATES = [
   {id: "harvard", label: "Harvard (Clásico)", preview: "/cv_templates/Harvard_template.png"},
@@ -35,6 +37,9 @@ export function CreateCVModal() {
   const router = useRouter();
   const {refreshCredits} = useCreditsStore();
   const {isCreateOpen, onCloseCreate} = useCvModalStore();
+
+  // Upload route
+  const {hydrate} = useRouteStore();
 
   const [isPending, startTransition] = useTransition();
   const [formData, setFormData] = useState<CVFormData>({
@@ -62,6 +67,14 @@ export function CreateCVModal() {
       if (result?.success) {
         onCloseCreate();
         await refreshCredits();
+
+        const routesResult = await getRoutesForUser();
+        if (!routesResult.success) {
+          toast.error(routesResult.message || "CV creado, pero no se pudieron cargar las rutas.");
+          return;
+        }
+        hydrate(routesResult.routes);
+
         router.refresh();
         router.push(`/cv/${result.data.id}/edit`);
         toast.success("¡CV creado con éxito!");

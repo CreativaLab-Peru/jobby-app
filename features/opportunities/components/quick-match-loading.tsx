@@ -4,6 +4,8 @@ import {motion, AnimatePresence} from "framer-motion";
 import {Rocket, Target, Zap, Search} from "lucide-react";
 import {useEffect, useRef, useState, useTransition} from "react";
 import {useRouter} from "next/navigation";
+import {useRouteStore} from "@/store/use-route-store";
+import {getRoutesForUser} from "@/features/routes/actions/get-routes-for-user";
 
 interface QuickMatchLoadingModalProps {
   cvId: string;
@@ -15,6 +17,9 @@ export function QuickMatchLoading({cvId}: QuickMatchLoadingModalProps) {
   const [isPending, startTransition] = useTransition(); // Para una navegación suave
   const hasNavigatedRef = useRef(false);
   const router = useRouter();
+
+  // Update route
+  const {hydrate} = useRouteStore();
 
   const steps = [
     "Analizando perfil del CV...",
@@ -58,9 +63,18 @@ export function QuickMatchLoading({cvId}: QuickMatchLoadingModalProps) {
     if (!cvId || progress < 100 || hasNavigatedRef.current) return;
     hasNavigatedRef.current = true;
 
-    startTransition(() => {
-      router.push(`/opportunities?cvId=${cvId}`);
-    });
+    const finishStep = () => {
+      startTransition( async () => {
+        router.push(`/my-opportunities`);
+        const routesResult = await getRoutesForUser();
+        if (!routesResult.success) {
+          return;
+        }
+        hydrate(routesResult.routes);
+
+      });
+    }
+    finishStep();
   }, [progress, cvId, router, startTransition]);
 
   return (

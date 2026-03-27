@@ -1,6 +1,6 @@
 "use client"
 
-import React, {useEffect, useMemo, useState} from "react"
+import React, {useEffect, useMemo, useRef, useState} from "react"
 import useSWR from "swr"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
@@ -62,6 +62,8 @@ const variants = {
 export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
   const router = useRouter()
   const [isRendering, setIsRendering] = useState(false)
+  const isFinishedRef = useRef(false); // FLAG: Evita ejecuciones dobles
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { data: status } = useSWR<CvStatus | null>(`/api/cv/${cvId}/status`, fetcher, {
     refreshInterval: 3000,
   });
@@ -82,26 +84,39 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
 
   useEffect(() => {
     setIsRendering(true)
+    return () => {
+      // Cleanup: evitar fugas de memoria si el usuario sale antes del timeout
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    }
   }, []);
 
   useEffect(() => {
-    const finishFlow = () => {
-      if (status?.status === "CV_EVALUATION_FINISHED" || status?.status === "CV_EVALUATION_SUCCEEDED") {
-        const evaluateId = (status as any).evaluateId
-        setTimeout(async () => {
-          if (evaluateId) router.push(`/evaluations/${evaluateId}`)
+    const checkStatus = status?.status;
+    const isTerminal = checkStatus === "CV_EVALUATION_FINISHED" || checkStatus === "CV_EVALUATION_SUCCEEDED";
 
+    if (isTerminal && !isFinishedRef.current) {
+      isFinishedRef.current = true; // Bloqueamos entrada inmediata a este bloque
+
+      const evaluateId = (status as any).evaluateId;
+
+      timeoutRef.current = setTimeout(async () => {
+        // Ejecutar hidratación primero para tener data fresca en el store
+        try {
           const routesResult = await getRoutesForUser();
-          if (!routesResult.success) {
-            return;
+          if (routesResult.success) {
+            hydrate(routesResult.routes);
           }
-          hydrate(routesResult.routes);
+        } catch (e) {
+          console.error("Hydration failed", e);
+        }
 
-        }, 800)
-      }
+        // Navegación final
+        if (evaluateId) {
+          router.push(`/evaluations/${evaluateId}`);
+        }
+      }, 1000); // Un poco más de tiempo para que la animación de "Completado" se vea
     }
-    finishFlow()
-  }, [status, router])
+  }, [status, router, hydrate]);
 
   if (!isRendering) {
     return (

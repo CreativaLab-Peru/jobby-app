@@ -41,7 +41,7 @@ export function CvSectionSelector({
         </Label>
 
         <p className="text-[10px] text-muted-foreground/60 px-1">
-          * Puedes agregar mas secciones si deseas.
+          * Puedes agregar más secciones si deseas.
         </p>
 
         <div className="flex flex-wrap gap-2 p-3 rounded-3xl bg-secondary/20 border border-border/40">
@@ -83,7 +83,7 @@ export function CvSectionSelector({
       </div>
 
       <p className="text-[10px] text-muted-foreground/60 px-1">
-        * Las secciones seleccinadas son las que te recomendamos <b>{OPPORTUNITY_MAP[opportunityType] || opportunityType}</b>
+        * Las secciones seleccionadas son las que te recomendamos para  <b>{OPPORTUNITY_MAP[opportunityType] || opportunityType}</b>
       </p>
     </div>
   );

@@ -61,7 +61,7 @@ export function UploadCVModal({initialFile, reset: resetParent}: UploadCVModalPr
       cvType: "TECHNOLOGY_ENGINEERING",
       opportunityType: "SCHOLARSHIP",
       templateId: "harvard",
-      sections: ['EDUCATION', 'PROJECTS', 'VOLUNTEERING', 'ACHIEVEMENTS', 'SKILLS'],
+      sections: [],
     },
   });
 
@@ -85,14 +85,12 @@ export function UploadCVModal({initialFile, reset: resetParent}: UploadCVModalPr
 
   useEffect(() => {
     const suggested = RECOMMENDATIONS_BY_OPPORTUNITY["SCHOLARSHIP"] || [];
-    // Actualizamos el valor en el formulario
     setValue("sections", suggested, {shouldValidate: true});
   }, []);
 
   useEffect(() => {
     if (currentOpportunity) {
       const suggested = RECOMMENDATIONS_BY_OPPORTUNITY[currentOpportunity] || [];
-      // Actualizamos el valor en el formulario
       setValue("sections", suggested, {shouldValidate: true});
     }
   }, [currentOpportunity, setValue]);
@@ -138,10 +136,12 @@ export function UploadCVModal({initialFile, reset: resetParent}: UploadCVModalPr
       }
 
       toast.success("Procesando tu CV...");
-      handleClose();
-      refreshCredits();
-      resetParent();
-      router.push(`/cv/${result.cvId}/processing`);
+      setTimeout(()=> {
+        handleClose();
+        refreshCredits();
+        resetParent();
+        router.push(`/cv/${result.cvId}/processing`);
+      }, 1000)
     } catch (error: any) {
       toast.error(error.message || "Ocurrió un error inesperado.");
     } finally {

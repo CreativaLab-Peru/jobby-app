@@ -5,6 +5,8 @@ import { Map, Loader2, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { getRoadmapStatus } from "@/features/roadmap/actions/get-roadmap-status";
+import {useRouteStore} from "@/store/use-route-store";
+import {getRoutesForUser} from "@/features/routes/actions/get-routes-for-user";
 
 interface GenerateRoadmapButtonProps {
   opportunityId: string;
@@ -29,6 +31,8 @@ export function GenerateRoadmapButton({
   const isProcessing = status === "PENDING" || status === "IN_PROGRESS";
   const showFullscreenLoading = isTriggering || isProcessing;
 
+  const {hydrate} = useRouteStore();
+
   // Poll while processing
   useEffect(() => {
     if (!isProcessing) return;
@@ -39,6 +43,14 @@ export function GenerateRoadmapButton({
 
       if (result.status === "SUCCEEDED") {
         clearInterval(interval);
+
+        const routesResult = await getRoutesForUser();
+        if (!routesResult.success) {
+          toast.error(routesResult.message || "Roadmap generado, pero no se pudieron cargar las rutas.");
+          return;
+        }
+        hydrate(routesResult.routes);
+
         toast.success("¡Roadmap generado!");
         onGenerated();
       } else if (result.status === "FAILED") {

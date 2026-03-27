@@ -1,3 +1,8 @@
+# WIP
+
+## Fixes
+- Refresh route after each action of the guided flow
+
 # v1.1.30 - 2026-03-26
 
 ## Fixes

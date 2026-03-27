@@ -12,6 +12,8 @@ import {
   UploadCloud,
   Sparkles,
 } from "lucide-react"
+import {useRouteStore} from "@/store/use-route-store";
+import {getRoutesForUser} from "@/features/routes/actions/get-routes-for-user";
 
 type CvStatus =
   | { status: "CV_IN_PROGRESS" }
@@ -62,7 +64,10 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
   const [isRendering, setIsRendering] = useState(false)
   const { data: status } = useSWR<CvStatus | null>(`/api/cv/${cvId}/status`, fetcher, {
     refreshInterval: 3000,
-  })
+  });
+
+  // Refresh route
+  const {hydrate} = useRouteStore();
 
   const activeIndex = useMemo(() => {
     if (!status?.status) return -1
@@ -80,12 +85,22 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
   }, []);
 
   useEffect(() => {
-    if (status?.status === "CV_EVALUATION_FINISHED" || status?.status === "CV_EVALUATION_SUCCEEDED") {
-      const evaluateId = (status as any).evaluateId
-      setTimeout(() => {
-        if (evaluateId) router.push(`/evaluations/${evaluateId}`)
-      }, 800)
+    const finishFlow = () => {
+      if (status?.status === "CV_EVALUATION_FINISHED" || status?.status === "CV_EVALUATION_SUCCEEDED") {
+        const evaluateId = (status as any).evaluateId
+        setTimeout(async () => {
+          if (evaluateId) router.push(`/evaluations/${evaluateId}`)
+
+          const routesResult = await getRoutesForUser();
+          if (!routesResult.success) {
+            return;
+          }
+          hydrate(routesResult.routes);
+
+        }, 800)
+      }
     }
+    finishFlow()
   }, [status, router])
 
   if (!isRendering) {

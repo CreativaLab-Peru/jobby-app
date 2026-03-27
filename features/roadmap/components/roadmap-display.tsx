@@ -17,6 +17,8 @@ import { toggleActionItem } from "@/features/roadmap/actions/update-action-item"
 import { useTransition } from "react";
 import {toast} from "sonner";
 import {useRouter} from "next/navigation";
+import {getRoutesForUser} from "@/features/routes/actions/get-routes-for-user";
+import {useRouteStore} from "@/store/use-route-store";
 
 interface RoadmapDisplayProps {
   title: string | null;
@@ -34,6 +36,9 @@ export function RoadmapDisplay({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
+  // Refresh route
+  const {hydrate} = useRouteStore();
+
   const handleToggle = (stepId: string, index: number, currentDone: boolean) => {
     if (isPending) {
       toast.info("Tu acción se está procesando. Por favor espera un momento.");
@@ -41,6 +46,14 @@ export function RoadmapDisplay({
     }
     startTransition(async () => {
       await toggleActionItem(stepId, index, !currentDone);
+
+      const routesResult = await getRoutesForUser();
+      if (!routesResult.success) {
+        toast.error(routesResult.message || "Acción actualizada, pero no se pudieron cargar las rutas.");
+        return;
+      }
+      hydrate(routesResult.routes);
+
       toast.success("¡Acción actualizada!");
       router.refresh();
     });

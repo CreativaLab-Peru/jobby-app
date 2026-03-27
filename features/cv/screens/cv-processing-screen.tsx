@@ -8,6 +8,8 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { getCvProcessingStatus } from "@/features/cv/actions/get-cv-processing-status";
+import {useRouteStore} from "@/store/use-route-store";
+import {getRoutesForUser} from "@/features/routes/actions/get-routes-for-user";
 
 const STEPS = [
   { text: "Analizando el contenido...", icon: FileText },
@@ -25,6 +27,8 @@ export function CvProcessingScreen({ cvId }: CvProcessingScreenProps) {
   const [status, setStatus] = useState<"PENDING" | "IN_PROGRESS" | "SUCCEEDED" | "FAILED">("IN_PROGRESS");
   const [stepIndex, setStepIndex] = useState(0);
 
+  const {hydrate} = useRouteStore();
+
   const poll = useCallback(async () => {
     const result = await getCvProcessingStatus(cvId);
     if (!result.success) return;
@@ -33,7 +37,15 @@ export function CvProcessingScreen({ cvId }: CvProcessingScreenProps) {
 
     if (result.status === "SUCCEEDED" || result.hasExtractedData) {
       toast.success("¡Tu CV está listo!");
-      router.replace(`/cv/${cvId}/edit`);
+
+      const routesResult = await getRoutesForUser();
+      if (!routesResult.success) {
+        toast.error("CV procesado, pero hubo un error cargando tus rutas. Intenta refrescando la página.");
+        return;
+      }
+      hydrate(routesResult.routes);
+
+      router.replace(`/cv/${cvId}/preview`);
     } else if (result.status === "FAILED") {
       toast.error("Hubo un error procesando tu CV.");
     }

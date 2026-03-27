@@ -32,8 +32,9 @@ export function EmailModal({ isOpen, closeModal, onSuccess }: EmailModalProps) {
     setError(null);
     startTransition(async () => {
       try {
+        const {email, name} = result.data;
         // Asumiendo que actualizas el action para recibir el nombre también
-        const res = await sendEmailToPay(result.data.email);
+        const res = await sendEmailToPay(email, name);
 
         if (!res.success) return setError(res.error || "Error al procesar.");
 

@@ -235,6 +235,7 @@ model Cv {
   userId            String?
   createdByJobId    String?
   language          Language           @default(EN)
+  status            JobStatus         @default(PENDING)
   opportunityType   OpportunityType
   cvType            CvType?
   title             String?

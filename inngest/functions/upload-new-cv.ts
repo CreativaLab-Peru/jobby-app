@@ -17,6 +17,34 @@ export const uploadNewCv = inngest.createFunction(
     // Ahora recibimos targetSections desde el evento
     const { cvId, attachmentUrl, userId, targetSections } = event.data;
 
+    const initCvUploading = await step.run("initialize-cv-status", async () => {
+      return prisma.cv.update({
+        where: {
+          id: cvId,
+          userId,
+        },
+        data: {
+          status: JobStatus.IN_PROGRESS,
+        }
+      })
+    });
+
+    if (!initCvUploading) {
+      return step.run("handle-missing-cv", async () => {
+        await prisma.queueJob.create({
+          data: {
+            jobId: event.id,
+            type: "UPLOAD_CV",
+            payload: event.data,
+            status: JobStatus.FAILED,
+            cvId,
+            lastError: "CV no encontrado para procesar.",
+          },
+        });
+      });
+    }
+
+
     // 1. Inicialización del Job (Idempotente)
     const job = await step.run("initialize-job", async () => {
       return prisma.queueJob.upsert({
@@ -106,6 +134,16 @@ export const uploadNewCv = inngest.createFunction(
           where: { id: job.id },
           data: { status: JobStatus.SUCCEEDED, finishedAt: new Date() },
         });
+
+        await prisma.cv.update({
+          where: {
+            id: cvId,
+            userId
+          },
+          data: {
+            status: JobStatus.SUCCEEDED,
+          }
+        })
       });
 
     } catch (err: any) {
@@ -114,6 +152,16 @@ export const uploadNewCv = inngest.createFunction(
           where: { id: job.id },
           data: { status: JobStatus.FAILED, lastError: err.message },
         });
+
+        await prisma.cv.update({
+          where: {
+            id: cvId,
+            userId
+          },
+          data: {
+            status: JobStatus.FAILED,
+          }
+        })
       });
       throw err;
     }

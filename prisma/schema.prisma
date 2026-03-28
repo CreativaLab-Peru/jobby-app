@@ -668,6 +668,21 @@ model RoadmapStep {
   @@map("roadmap_step")
 }
 
+model CvSectionConfiguration {
+  id              String          @id @default(cuid())
+  cvType          CvType
+  opportunityType OpportunityType
+
+  // Almacenaremos el JSON que me pasaste aquí
+  // Usamos Json de Prisma para consultas eficientes y tipado
+  sections        Json
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@unique([cvType, opportunityType]) // Un solo esquema por combinación
+}
+
 enum RouteStatus {
   CV_PENDING
   CV_CREATED

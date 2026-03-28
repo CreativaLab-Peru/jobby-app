@@ -1,6 +1,7 @@
 # WIP
 
 ## Fixes
+- Fixed the 3 steps for analyzing a CV. 
 - Removed double buttons in create/upload CVs.
 - Fixed create a roadpmad for each route.
 - Mapped type of opportunity in roadmap create modal.

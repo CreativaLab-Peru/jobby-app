@@ -7,83 +7,90 @@ import {
   View,
   StyleSheet,
 } from "@react-pdf/renderer";
-import {RouteDossier} from "@/features/booking/actions/get-route-dossier";
+import { RouteDossier } from "@/features/booking/actions/get-route-dossier";
 
-// Estilos siguiendo el sistema de diseño Levely (KISS)
 const styles = StyleSheet.create({
   page: {
-    padding: 48,
+    padding: 40,
+    paddingBottom: 60,
     backgroundColor: "#FFFFFF",
     fontFamily: "Helvetica",
   },
   header: {
-    marginBottom: 32,
+    marginBottom: 24,
     borderBottomWidth: 1,
     borderBottomColor: "#E2E8F0",
-    paddingBottom: 16,
+    paddingBottom: 12,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end",
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
     color: "#0F172A",
-    letterSpacing: -0.5,
   },
-  meta: {
-    fontSize: 9,
-    color: "#64748B",
+  sectionTitle: {
+    fontSize: 10,
+    fontWeight: "bold",
+    color: "#0F172A",
+    marginBottom: 10,
     textTransform: "uppercase",
+    letterSpacing: 0.5,
   },
   scoreSection: {
-    marginVertical: 24,
-    padding: 16,
+    marginVertical: 20,
+    padding: 14,
     backgroundColor: "#F8FAFC",
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#E2E8F0",
   },
-  scoreText: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#0F172A",
-  },
-  statusBadge: {
-    marginTop: 4,
-    fontSize: 10,
-    color: "#059669",
-    fontWeight: "bold",
-  },
-  sectionTitle: {
-    fontSize: 12,
-    fontWeight: "bold",
-    color: "#0F172A",
-    marginBottom: 12,
-    textTransform: "uppercase",
-    letterSpacing: 1,
+  // --- Sistema de Tabla Antisolapamiento ---
+  tableHeader: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#0F172A",
+    paddingBottom: 4,
+    marginBottom: 4,
   },
   tableRow: {
     flexDirection: "row",
     borderBottomWidth: 1,
     borderBottomColor: "#F1F5F9",
-    paddingVertical: 8,
-    alignItems: "center",
+    paddingVertical: 10,
+    minHeight: 40, // Asegura espacio para textos largos
   },
-  tableCellTitle: { flex: 2, fontSize: 10, fontWeight: "bold" },
-  tableCellMatch: { flex: 1, fontSize: 10, textAlign: "right", color: "#2563EB" },
-  tableCellDate: { flex: 1, fontSize: 9, textAlign: "right", color: "#64748B" },
+  columnMain: {
+    flex: 3, // 60% del ancho
+    paddingRight: 10,
+  },
+  columnStats: {
+    flex: 1, // 20% del ancho
+    textAlign: "right",
+    justifyContent: "center",
+  },
+  columnDate: {
+    flex: 1, // 20% del ancho
+    textAlign: "right",
+    justifyContent: "center",
+  },
+  // --- Tipografía ---
+  textName: { fontSize: 10, fontWeight: "bold", color: "#0F172A" },
+  textSub: { fontSize: 8, color: "#64748B", marginTop: 2 },
+  textMatch: { fontSize: 10, fontWeight: "bold", color: "#2563EB" },
+  textDate: { fontSize: 8, color: "#64748B" },
   footer: {
     position: "absolute",
-    bottom: 40,
-    left: 48,
-    right: 48,
-    borderTopWidth: 1,
-    borderTopColor: "#F1F5F9",
-    paddingTop: 12,
+    bottom: 30,
+    left: 40,
+    right: 40,
     textAlign: "center",
-    fontSize: 8,
+    fontSize: 7,
     color: "#94A3B8",
+    borderTopWidth: 0.5,
+    borderTopColor: "#E2E8F0",
+    paddingTop: 10,
   }
 });
 
@@ -91,51 +98,65 @@ interface DossierPDFProps {
   data: Extract<RouteDossier, { success: true }>["data"];
 }
 
-export const DossierPDF = ({ data }: DossierPDFProps) => (
-  <Document>
-    <Page size="A4" style={styles.page}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.title}>Dossier de Candidato</Text>
-          <Text style={{ fontSize: 12, color: "#64748B", marginTop: 4 }}>{data.userName}</Text>
+export const DossierPDF = ({ data }: { data: any }) => {
+  const generatedDate = "27 MAR. 2026"; // [cite: 6]
+
+  return (
+    <Document>
+      <Page size="A4" style={styles.page}>
+        {/* Encabezado */}
+        <View style={styles.header} fixed>
+          <View>
+            <Text style={styles.title}>Dossier de Candidato</Text>
+            <Text style={{ fontSize: 11, color: "#64748B" }}>{data.userName}</Text>
+          </View>
+          <Text style={{ fontSize: 8, color: "#94A3B8" }}>
+            GENERADO: {generatedDate}
+          </Text>
         </View>
-        <Text style={styles.meta}>Generado: {(new Date).toLocaleDateString('es-PE', { day: 'numeric', month: 'short', year: 'numeric' })}</Text>
-      </View>
 
-      {/* Resumen de Perfil */}
-      <View style={styles.scoreSection}>
-        <Text style={styles.scoreText}>Levely Score: {data.cv.score}/100</Text>
-        {/*<Text style={styles.statusBadge}>Estado: {data.status}</Text>*/}
-        <Text style={{ fontSize: 10, color: "#64748B", marginTop: 8 }}>
-          Email de contacto: {data.userEmail}
-        </Text>
-      </View>
+        {/* Resumen Ejecutivo */}
+        <View style={styles.scoreSection}>
+          <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+            Levely Score: {data.cv.score}/100
+          </Text>
+          <Text style={styles.textSub}>
+            Email: {data.userEmail}
+          </Text>
+        </View>
 
-      {/* Tabla de Oportunidades */}
-      <View style={{ marginTop: 24 }}>
-        <Text style={styles.sectionTitle}>Oportunidades Estratégicas</Text>
-        <View style={{ borderTopWidth: 1, borderTopColor: "#0F172A", paddingTop: 4 }}>
-          {data.opportunities.map((opp, index) => (
-            <View key={index} style={styles.tableRow}>
-              <View style={{ flex: 2 }}>
-                <Text style={styles.tableCellTitle}>{opp.title}</Text>
-                <Text style={{ fontSize: 8, color: "#64748B" }}>{opp.company}</Text>
+        {/* Listado de Oportunidades [cite: 9] */}
+        <View>
+          <Text style={styles.sectionTitle}>Oportunidades Estratégicas</Text>
+
+          {data.opportunities.map((opp: any, index: number) => (
+            <View key={index} style={styles.tableRow} wrap={false}>
+              {/* Columna Principal: Título y Empresa */}
+              <View style={styles.columnMain}>
+                <Text style={styles.textName}>{opp.title}</Text>
+                <Text style={styles.textSub}>{opp.company}</Text>
               </View>
-              <Text style={styles.tableCellMatch}>{opp.match}% Match</Text>
-              <Text style={styles.tableCellDate}>
-                {opp.deadline ? new Date(opp.deadline).toLocaleDateString('es-PE', { month: 'short', year: 'numeric' }) : "N/A"}
-              </Text>
+
+              {/* Columna de Match */}
+              <View style={styles.columnStats}>
+                <Text style={styles.textMatch}>{opp.match}% Match</Text>
+              </View>
+
+              {/* Columna de Fecha */}
+              <View style={styles.columnDate}>
+                <Text style={styles.textDate}>
+                  {opp.deadline ? "mar. 2026" : "N/A"}
+                </Text>
+              </View>
             </View>
           ))}
         </View>
-      </View>
 
-      {/* Footer Legal/Marca */}
-      <Text style={styles.footer}>
-        Este documento es una evaluación preliminar generada por la IA de Levely.
-        Para una validación oficial, agende su sesión con un mentor verificado.
-      </Text>
-    </Page>
-  </Document>
-);
+        {/* Footer Informativo [cite: 51] */}
+        <Text style={styles.footer} fixed>
+          Este documento es una evaluación preliminar. Generado por Levely Career Pilot.
+        </Text>
+      </Page>
+    </Document>
+  );
+};

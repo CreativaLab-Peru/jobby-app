@@ -133,7 +133,7 @@ export function AgendaScreen({ dossier }: AgendaScreenProps) {
             </div>
           </div>
 
-         < DownloadDossierButton dossier={dossier} />
+         <DownloadDossierButton dossier={dossier} />
         </div>
 
       </main>

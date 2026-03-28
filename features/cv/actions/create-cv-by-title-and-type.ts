@@ -6,78 +6,81 @@ import { CvType, Language, OpportunityType, CvSectionType, CreditBalanceType, Ro
 import { JsonObject } from "@prisma/client/runtime/library";
 import { consumeCredits } from "@/features/credits/actions/consume-credits";
 
-// Definimos la interfaz del body para mejor tipado
 export interface CreateCvBody {
   title: string;
   cvType: CvType;
   opportunityType: OpportunityType;
   templateId: string;
   language: Language;
+  sections: CvSectionType[]; // Las secciones elegidas por el usuario
 }
 
+// Diccionario de títulos para mantener el código limpio
+const SECTION_TITLES: Record<CvSectionType, { ES: string; EN: string }> = {
+  SUMMARY: { ES: "Resumen", EN: "Summary" },
+  CONTACT: { ES: "Contacto", EN: "Contact" },
+  EXPERIENCE: { ES: "Experiencia Laboral", EN: "Work Experience" },
+  EDUCATION: { ES: "Educación", EN: "Education" },
+  SKILLS: { ES: "Habilidades", EN: "Skills" },
+  PROJECTS: { ES: "Proyectos", EN: "Projects" },
+  CERTIFICATIONS: { ES: "Certificaciones", EN: "Certifications" },
+  LANGUAGES: { ES: "Idiomas", EN: "Languages" },
+  VOLUNTEERING: { ES: "Voluntariado", EN: "Volunteer Work" }, // Añadida por si acaso
+  INTERESTS: { ES: "Intereses", EN: "Interests" },
+  ACHIEVEMENTS: { ES: "Logros", EN: "Achievements" },
+  COMPLEMENTS: { ES: "Complements", EN: "Complements" },
+};
+
 export const createCVByTitleAndType = async (body: CreateCvBody) => {
-  const { title, cvType, opportunityType, templateId, language } = body;
+  const { title, cvType, opportunityType, templateId, language, sections } = body;
 
   try {
     const currentUser = await getCurrentUser();
-    if (!currentUser) {
-      return { success: false, message: "Usuario no encontrado." };
-    }
+    if (!currentUser) return { success: false, message: "Usuario no encontrado." };
 
-    // Verificar balance de créditos
-    const creditLimits = await prisma.userCreditBalance.findUnique({
-      where: {
-        userId_type: {
-          userId: currentUser.id,
-          type: CreditBalanceType.MANAGE_CVS
-        }
-      },
+    // 1. Verificar créditos (Mejorado: usando findFirst por tipo)
+    const balance = await prisma.userCreditBalance.findFirst({
+      where: { userId: currentUser.id, type: CreditBalanceType.MANAGE_CVS },
     });
 
-    if (!creditLimits || creditLimits.amount <= 0) {
-      return { success: false, message: "Créditos insuficientes para crear un CV." };
+    if (!balance || balance.amount <= 0) {
+      return { success: false, message: "Créditos insuficientes." };
     }
 
-    // Traducción básica de títulos de secciones según el idioma seleccionado
+    // 2. Preparar secciones dinámicas basadas en la selección del usuario
     const isEs = language === Language.ES;
 
-    const defaultSections = [
-      { sectionType: CvSectionType.SUMMARY, title: isEs ? "Resumen" : "Summary", order: 0, contentJson: { text: "" } },
-      {
-        sectionType: CvSectionType.CONTACT,
-        title: isEs ? "Contacto" : "Contact",
-        order: 1,
-        contentJson: { fullName: "", email: "", phone: "", linkedin: "", address: "" }
-      },
-      { sectionType: CvSectionType.EXPERIENCE, title: isEs ? "Experiencia Laboral" : "Work Experience", order: 2, contentJson: [] },
-      { sectionType: CvSectionType.EDUCATION, title: isEs ? "Educación" : "Education", order: 3, contentJson: [] },
-      { sectionType: CvSectionType.SKILLS, title: isEs ? "Habilidades" : "Skills", order: 4, contentJson: [] },
-      { sectionType: CvSectionType.PROJECTS, title: isEs ? "Proyectos" : "Projects", order: 5, contentJson: [] },
-      { sectionType: CvSectionType.CERTIFICATIONS, title: isEs ? "Certificaciones" : "Certifications", order: 6, contentJson: [] },
-      { sectionType: CvSectionType.LANGUAGES, title: isEs ? "Idiomas" : "Languages", order: 7, contentJson: [] },
-    ];
+    // Mapeamos solo las secciones que el usuario envió desde el modal
+    const sectionsToCreate = sections.map((sectionType, index) => {
+      const titles = SECTION_TITLES[sectionType] || { ES: sectionType, EN: sectionType };
 
-    // Operación Atómica
+      return {
+        sectionType,
+        title: isEs ? titles.ES : titles.EN,
+        order: index,
+        // Inicializamos contenido vacío según el tipo
+        contentJson: (sectionType === "CONTACT"
+          ? { fullName: "", email: "", phone: "", linkedin: "", address: "" }
+          : sectionType === "SUMMARY" ? { text: "" } : []) as JsonObject,
+      };
+    });
+
+    // 3. Operación Atómica: Crear CV y Secciones
     const newCv = await prisma.cv.create({
       data: {
         title,
         cvType,
         opportunityType,
         templateId,
-        language, // Ahora dinámico
+        language,
         userId: currentUser.id,
         sections: {
-          create: defaultSections.map((s) => ({
-            sectionType: s.sectionType,
-            title: s.title,
-            contentJson: s.contentJson as JsonObject,
-            order: s.order,
-          })),
+          create: sectionsToCreate,
         },
       }
     });
 
-    // Consumir crédito
+    // 4. Consumir crédito
     await consumeCredits({
       userId: currentUser.id,
       type: CreditBalanceType.MANAGE_CVS,
@@ -85,7 +88,7 @@ export const createCVByTitleAndType = async (body: CreateCvBody) => {
       description: `Creación de CV: ${title}`,
     });
 
-    // Vincular a la ruta activa si existe
+    // 5. Vincular a la ruta activa y actualizar progreso
     const activeRoute = await prisma.route.findFirst({
       where: { userId: currentUser.id, isActive: true, cvId: null },
     });
@@ -93,7 +96,10 @@ export const createCVByTitleAndType = async (body: CreateCvBody) => {
     if (activeRoute) {
       await prisma.route.update({
         where: { id: activeRoute.id },
-        data: { cvId: newCv.id, status: RouteStatus.CV_CREATED },
+        data: {
+          cvId: newCv.id,
+          status: RouteStatus.CV_CREATED // Esto moverá la barra de progreso al 25%
+        },
       });
     }
 

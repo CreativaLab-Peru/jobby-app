@@ -6,9 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormField } from "@/components/form-field";
 import { CVFormData, cvFormSchema } from "@/features/cv/schema";
-import {cvTypes, languages, opportunities} from "@/const";
-import {useEffect, useRef} from "react";
-import {FormSelect} from "@/components/form/select-input";
+import { cvTypes, languages, opportunities, RECOMMENDATIONS_BY_OPPORTUNITY } from "@/const";
+import { useEffect, useRef } from "react";
+import { FormSelect } from "@/components/form/select-input";
+import { CvSectionSelector } from "@/features/cv/components/cv-section-selector";
+import {cn} from "@/lib/utils";
 
 interface CVFormProps {
   defaultValues?: Partial<CVFormData>;
@@ -20,37 +22,41 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
     register,
     setValue,
     watch,
-    formState: { errors},
+    formState: { errors },
   } = useForm<CVFormData>({
     resolver: zodResolver(cvFormSchema),
     defaultValues: {
       title: "",
       templateId: "harvard",
+      sections: [],
       ...defaultValues,
     },
   });
 
   const allValues = watch();
+  const selectedOpportunity = watch("opportunityType");
   const prevValuesRef = useRef<string>("");
 
+  // 1. Notificar cambios al padre (Modal)
   useEffect(() => {
     const currentValuesStr = JSON.stringify(allValues);
-
-    // Solo notificamos al padre si los datos realmente cambiaron
     if (prevValuesRef.current !== currentValuesStr) {
       prevValuesRef.current = currentValuesStr;
       onValuesChange(allValues);
     }
   }, [allValues, onValuesChange]);
 
-  // Suscripción a valores para lógica condicional y descripciones
-  // const selectedOpportunity = watch("opportunityType");
-  // const selectedTemplate = watch("templateId");
+  // 2. Lógica de Recomendación Automática de Secciones
+  useEffect(() => {
+    if (selectedOpportunity) {
+      const suggested = RECOMMENDATIONS_BY_OPPORTUNITY[selectedOpportunity] || [];
+      setValue("sections", suggested, { shouldValidate: true });
+    }
+  }, [selectedOpportunity, setValue]);
 
   return (
-    <form className="space-y-6 py-4">
-
-      {/* 1. Título - Usando tu FormField Custom con register */}
+    <div className="space-y-6 py-4">
+      {/* Nombre del CV */}
       <FormField
         label="Nombre del CV"
         placeholder="Ejemplo: CV Ingeniero de Software"
@@ -58,36 +64,47 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
         error={errors.title?.message}
       />
 
-      {/* 1. Diseño del CV */}
-      <FormSelect
-        label="Diseño del CV"
-        value={watch("templateId")}
-        options={[
-          { key: "harvard", value: "Harvard (Recomendado)" },
-          { key: "europass", value: "Europass Modern" },
-        ]}
-        onChange={(v) => setValue("templateId", v as any, { shouldValidate: true })}
-        error={errors.templateId?.message}
-      />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Diseño del CV */}
+        <FormSelect
+          label="Diseño"
+          value={watch("templateId")}
+          options={[
+            { key: "harvard", value: "Harvard (Clásico)" },
+            { key: "europass", value: "Europass Modern" },
+          ]}
+          onChange={(v) => setValue("templateId", v as any, { shouldValidate: true })}
+          error={errors.templateId?.message}
+        />
 
-      {/* 3. Tipo de Oportunidad - Select (Manual porque Radix no usa ref) */}
+        {/* Idioma */}
+        <FormSelect
+          label="Idioma"
+          value={watch("language")}
+          options={languages}
+          onChange={(v) => setValue("language", v as any, { shouldValidate: true })}
+          error={errors.language?.message}
+        />
+      </div>
+
+      {/* Tipo de Oportunidad */}
       <FormSelect
         label="Tipo de Oportunidad"
-        placeholder="Selecciona el tipo"
-        value={watch("opportunityType")}
+        placeholder="¿A qué aplicas?"
+        value={selectedOpportunity}
         options={opportunities}
         onChange={(v) => setValue("opportunityType", v as any, { shouldValidate: true })}
         error={errors.opportunityType?.message}
       />
 
-      {/* 4. Perfil Profesional */}
+      {/* Perfil Profesional */}
       <div className="space-y-2">
         <Label className={errors.cvType ? "text-destructive" : ""}>Perfil profesional</Label>
         <Select
           onValueChange={(v) => setValue("cvType", v as any, { shouldValidate: true })}
-          defaultValue={defaultValues?.cvType}
+          value={watch("cvType")}
         >
-          <SelectTrigger className={errors.cvType ? "border-destructive" : ""}>
+          <SelectTrigger className={cn("rounded-xl h-11 bg-secondary/30 border-none font-medium", errors.cvType && "ring-2 ring-destructive")}>
             <SelectValue placeholder="Selecciona tu perfil" />
           </SelectTrigger>
           <SelectContent>
@@ -97,21 +114,23 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
           </SelectContent>
         </Select>
         {errors.cvType && (
-          <p className="text-xs font-semibold text-destructive">{errors.cvType.message}</p>
+          <p className="text-[10px] font-bold text-destructive ml-1">{errors.cvType.message}</p>
         )}
       </div>
 
-      {/* 5. Idioma del CV */}
-      <FormSelect
-        label="Idioma del Currículum"
-        placeholder="Selecciona el idioma"
-        value={watch("language")}
-        options={languages}
-        onChange={(v) => setValue("language", v as any, { shouldValidate: true })}
-        error={errors.language?.message}
-        description="El contenido del CV se generará en este idioma."
-      />
-
-    </form>
+      {/* --- SECCIÓN NUEVA: Selector de Secciones --- */}
+      <div className="pt-4 border-t border-secondary/10">
+        <CvSectionSelector
+          selectedSections={watch("sections") || []}
+          onChange={(newSections) => setValue("sections", newSections, { shouldValidate: true })}
+          opportunityType={watch("opportunityType") as any}
+        />
+        {errors.sections && (
+          <p className="text-[10px] font-bold text-destructive mt-2 ml-1">
+            {errors.sections.message}
+          </p>
+        )}
+      </div>
+    </div>
   )
 }

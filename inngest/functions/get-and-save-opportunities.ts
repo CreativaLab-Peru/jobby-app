@@ -136,11 +136,23 @@ export const getAndSaveOpportunities = inngest.createFunction(
         return { message: "No matches found" };
       }
 
+      const route = await prisma.route.findFirst({
+        where: { cvId, userId },
+      });
+
+      if (!route) {
+        return { message: "No matches found" };
+      }
+
       // 4. Guardado y Consumo (Paso Atómico)
       const result = await step.run("save-and-consume", async () => {
         await prisma.opportunity.deleteMany({ where: { cvId } });
 
-        const saved = await saveOpportunities(cv as any, opportunities.matches as MatchAnalysis[]);
+        const saved = await saveOpportunities(
+          cv as any,
+          opportunities.matches as MatchAnalysis[],
+          route.id,
+        );
         if (saved) {
           await consumeCredits({
             userId,
@@ -187,10 +199,6 @@ export const getAndSaveOpportunities = inngest.createFunction(
         data: { status: JobStatus.SUCCEEDED, finishedAt: new Date() },
       });
 
-      // ✅ Advance route status to OPPORTUNITIES_DONE
-      const route = await prisma.route.findFirst({
-        where: { cvId, userId },
-      });
       if (route && (
         route.status === RouteStatus.ANALYSIS_DONE ||
         route.status === RouteStatus.OPPORTUNITIES_PENDING

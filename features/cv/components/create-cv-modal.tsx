@@ -48,6 +48,7 @@ export function CreateCVModal() {
     opportunityType: "SCHOLARSHIP",
     templateId: "harvard",
     language: Language.ES,
+    sections: []
   });
 
   const currentIndex = TEMPLATES.findIndex(t => t.id === formData.templateId);
@@ -62,6 +63,7 @@ export function CreateCVModal() {
         templateId: formData.templateId,
         opportunityType: formData.opportunityType,
         language: formData.language,
+        sections: formData.sections
       }
       const result = await createCVByTitleAndType(body)
       if (result?.success) {

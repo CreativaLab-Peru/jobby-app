@@ -33,6 +33,7 @@ model User {
   acceptedPrivacyPolicyAt    DateTime?
   acceptedCookiePolicy       Boolean             @default(false)
   acceptedSecurityPolicy     Boolean             @default(false)
+  phoneNumber                String?
   acceptedSecurityPolicyAt   DateTime?
   birthday                   DateTime?
   createdAt                  DateTime

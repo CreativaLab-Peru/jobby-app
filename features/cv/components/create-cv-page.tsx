@@ -1,20 +1,19 @@
 "use client"
 
-import { useState, useCallback, useRef } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { useRouter } from "next/navigation"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Eye, CloudCheck, CloudUpload } from "lucide-react"
-import {getSections} from "@/features/cv/helpers";
-import { NavigationButtons } from "@/features/cv/components/navigation-buttons"
-import { CVSectionForm, CVSectionFormRef } from "@/features/cv/components/cv-section-form"
-import { CVPreview } from "@/features/cv/components/cv-preview"
-import { CVPreviewEuropass } from "@/features/cv/components/cv-preview-europass"
-import { CVData } from "@/types/cv";
-import { updateCvAndSections } from "@/features/cv/actions/update-cv-and-sections";
-import { OpportunityType, CvType } from "@prisma/client"
+import {useState, useCallback, useRef, useMemo} from "react"
+import {motion, AnimatePresence} from "framer-motion"
+import {useRouter} from "next/navigation"
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
+import {Eye, CloudCheck, CloudUpload} from "lucide-react"
+import {NavigationButtons} from "@/features/cv/components/navigation-buttons"
+import {CVSectionForm, CVSectionFormRef} from "@/features/cv/components/cv-section-form"
+import {CVPreview} from "@/features/cv/components/cv-preview"
+import {CVPreviewEuropass} from "@/features/cv/components/cv-preview-europass"
+import {CVData} from "@/types/cv";
+import {updateCvAndSections} from "@/features/cv/actions/update-cv-and-sections";
+import {OpportunityType, CvType} from "@prisma/client"
 import {routes} from "@/lib/routes";
-import { toast } from "sonner";
+import {toast} from "sonner";
 
 interface CreateCVPageProps {
   cv: CVData
@@ -22,9 +21,30 @@ interface CreateCVPageProps {
   opportunityType: OpportunityType
   cvType: CvType
   templateId?: string
-  saveCv?: (id: string, cvData: CVData) => Promise<{ success: boolean; message?: string; error?: string } | null>
+  saveCv?: (id: string, cvData: CVData) => Promise<{
+    success: boolean;
+    message?: string;
+    error?: string
+  } | null>
   onCompletePath?: string
   language?: 'EN' | 'ES'
+  initialSections: any[]
+}
+
+const SECTION_ID_TO_CV_KEY: Record<string, keyof CVData> = {
+  CONTACT: "personal",
+  EXPERIENCE: "experience",
+  EDUCATION: "education",
+  PROJECTS: "projects",
+  ACHIEVEMENTS: "achievements",
+  SKILLS: "skills",
+  CERTIFICATIONS: "certifications",
+  VOLUNTEERING: "volunteering",
+}
+
+function getCvDataKey(sectionId: string): keyof CVData {
+  const normalizedId = String(sectionId || "").toUpperCase()
+  return SECTION_ID_TO_CV_KEY[normalizedId] ?? (String(sectionId || "").toLowerCase() as keyof CVData)
 }
 
 export default function CreateCVPage({
@@ -36,7 +56,8 @@ export default function CreateCVPage({
                                        saveCv,
                                        onCompletePath,
                                        language = "ES",
-}: CreateCVPageProps) {
+                                       initialSections,
+                                     }: CreateCVPageProps) {
   const [cvData, setCvData] = useState<CVData>(cv)
   const [activeSection, setActiveSection] = useState(0)
   const [showPreview, setShowPreview] = useState(true)
@@ -44,7 +65,18 @@ export default function CreateCVPage({
   const router = useRouter()
   const formRef = useRef<CVSectionFormRef>(null)
 
-  const sections = getSections(opportunityType, cvType, templateId)
+  const sections = useMemo(() => {
+    return initialSections.map((section) => {
+      const normalizedId = getCvDataKey(section.id)
+      const sectionData = cvData[normalizedId] || {}
+
+      return {
+        ...section,
+        id: normalizedId,
+        data: sectionData,
+      };
+    });
+  }, [initialSections, cvData]);
 
   const submit = async () => {
     if (isSaving) return false
@@ -108,22 +140,27 @@ export default function CreateCVPage({
   }
 
   const updateCVData = useCallback((sectionId: string, data: Record<string, unknown>) => {
-    setCvData((prev) => ({
-      ...prev,
-      [sectionId]: data,
-    }))
+    setCvData((prev) => {
+      const newData = {
+        ...prev,
+        [sectionId]: data,
+      };
+      return newData;
+    });
   }, [])
 
-  const currentSection = sections[activeSection]
+  const currentSection = sections[activeSection];
 
   return (
     // CAMBIO: Fondo usando la variable de background y un toque sutil de tu gradiente IA
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Decoración de fondo sutil para dar profundidad */}
-      <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none ai-gradient" />
+      <div
+        className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none ai-gradient"/>
 
       <div className="container py-8 relative z-10">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-7xl mx-auto">
+        <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}
+                    className="max-w-7xl mx-auto">
 
           <div className={`grid gap-6 ${showPreview ? "lg:grid-cols-2" : "lg:grid-cols-1"}`}>
 
@@ -132,22 +169,23 @@ export default function CreateCVPage({
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeSection}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.3 }}
+                  initial={{opacity: 0, x: 20}}
+                  animate={{opacity: 1, x: 0}}
+                  exit={{opacity: 0, x: -20}}
+                  transition={{duration: 0.3}}
                 >
                   {/* CAMBIO: Card con shadow-card y border-border */}
                   <Card className="shadow-card border-border bg-card/50 backdrop-blur-md">
                     <CardHeader className="border-b border-border/50">
                       <CardTitle className="flex items-center text-2xl text-foreground">
                         <div className="flex items-center flex-1">
-                          {(() => {
-                            const Icon = currentSection.icon
-                            return <Icon className="w-8 h-8 mr-3 text-primary" />
-                          })()}
-                          <span className="font-bold text-primary">{currentSection.title}</span>
+                          {/*{(() => {*/}
+                          {/*  const Icon = currentSection.icon*/}
+                          {/*  return <Icon className="w-8 h-8 mr-3 text-primary" />*/}
+                          {/*})()}*/}
+                          <span className="font-bold text-primary">{currentSection?.title || "No titulo"}</span>
                         </div>
+
                         <NavigationButtons
                           currentStep={activeSection}
                           totalSteps={sections.length}
@@ -173,28 +211,30 @@ export default function CreateCVPage({
             <AnimatePresence>
               {showPreview && (
                 <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.3 }}
+                  initial={{opacity: 0, x: 20}}
+                  animate={{opacity: 1, x: 0}}
+                  exit={{opacity: 0, x: -20}}
+                  transition={{duration: 0.3}}
                   className="sticky top-8"
                 >
                   {/* CAMBIO: Card de Preview más limpia con el sistema de marca */}
                   <Card className="shadow-card border-border bg-card overflow-hidden">
                     <CardHeader className="bg-muted/30 border-b border-border">
                       <CardTitle className="flex items-center text-lg text-primary">
-                        <Eye className="w-5 h-5 mr-2 text-primary" />
+                        <Eye className="w-5 h-5 mr-2 text-primary"/>
                         Vista Previa
 
                         <div className="ml-auto">
                           {isSaving ? (
-                            <div className="flex items-center gap-2 text-xs font-medium text-primary animate-pulse">
-                              <CloudUpload className="w-4 h-4" />
+                            <div
+                              className="flex items-center gap-2 text-xs font-medium text-primary animate-pulse">
+                              <CloudUpload className="w-4 h-4"/>
                               Sincronizando...
                             </div>
                           ) : (
-                            <div className="flex items-center gap-2 text-xs font-medium text-primary">
-                              <CloudCheck className="w-4 h-4" />
+                            <div
+                              className="flex items-center gap-2 text-xs font-medium text-primary">
+                              <CloudCheck className="w-4 h-4"/>
                               Cambios guardados
                             </div>
                           )}
@@ -206,7 +246,11 @@ export default function CreateCVPage({
                           pero el contenedor es el que respeta el modo oscuro */}
                       <div className="max-h-[75vh] overflow-y-auto custom-scrollbar">
                         {templateId === "europass" ? (
-                          <CVPreviewEuropass data={cvData} sections={sections} />
+                          <CVPreviewEuropass
+                            data={cvData}
+                            sections={sections}
+                            language={language}
+                          />
                         ) : (
                           <CVPreview
                             data={cvData}

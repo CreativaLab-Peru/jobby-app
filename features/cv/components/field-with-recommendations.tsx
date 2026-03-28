@@ -72,7 +72,7 @@ export function FieldWithRecommendations({
                   <div className="flex items-start gap-2">
                     <Lightbulb className="w-5 h-5  mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
-                      <p className="text-xs font-medium mb-1">💡 Consejo:</p>
+                      <p className="text-xs font-medium mb-1">Consejo:</p>
                       <p className="text-sm leading-relaxed">{field.tip}</p>
                     </div>
                   </div>
@@ -109,7 +109,7 @@ export function FieldWithRecommendations({
                   <div className="flex items-start gap-2">
                     <Info className="w-5 h-5  mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
-                      <p className="text-xs font-medium mb-1 text-secondary-foreground/80">📝 Ejemplo:</p>
+                      <p className="text-xs font-medium mb-1 text-secondary-foreground/80">Ejemplo:</p>
                       <p className="text-sm italic leading-relaxed">{field.example}</p>
                     </div>
                   </div>

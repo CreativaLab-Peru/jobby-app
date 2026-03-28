@@ -52,6 +52,7 @@ export const createCVByTitleAndType = async (body: CreateCvBody) => {
 
     // Mapeamos solo las secciones que el usuario envió desde el modal
     const sectionsToCreate = sections.map((sectionType, index) => {
+      console.log("[sectionType_to_create]", sectionType)
       const titles = SECTION_TITLES[sectionType] || { ES: sectionType, EN: sectionType };
 
       return {
@@ -77,8 +78,16 @@ export const createCVByTitleAndType = async (body: CreateCvBody) => {
         sections: {
           create: sectionsToCreate,
         },
+      },
+      include: {
+        sections: true,
       }
     });
+
+    console.log("[SECCIONES CREADAS]")
+    for (const section of newCv.sections) {
+      console.log("[SECTION]", section.sectionType);
+    }
 
     // 4. Consumir crédito
     await consumeCredits({

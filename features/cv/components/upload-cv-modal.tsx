@@ -21,7 +21,6 @@ import {
   DialogTitle
 } from "@/components/ui/dialog";
 
-import {useCredits} from "@/features/credits/hooks/use-credits";
 import {useCvModalStore} from "../hooks/use-cv-modal-store";
 import {cvTypeOptions} from "@/features/cv/consts";
 import {FormSelect} from "@/components/form/select-input";
@@ -29,6 +28,7 @@ import {UploadCvFormValues, uploadCvSchema} from "@/features/cv/schema";
 import {opportunities, RECOMMENDATIONS_BY_OPPORTUNITY} from "@/const";
 import {CvSectionSelector} from "@/features/cv/components/cv-section-selector";
 import {createCvFromPdfAction} from "@/features/cv/actions/create-cv-from-pdf";
+import {useCreditsStore} from "@/store/use-credits-store";
 
 interface UploadCVModalProps {
   initialFile?: File | Blob | null;
@@ -37,7 +37,7 @@ interface UploadCVModalProps {
 
 export function UploadCVModal({initialFile, reset: resetParent}: UploadCVModalProps) {
   const router = useRouter();
-  const {refreshCredits, credits, isLoading: isLoadingCredits} = useCredits();
+  const {refreshCredits, credits} = useCreditsStore();
 
   const [isUploading, setIsUploading] = useState(false);
   const [step, setStep] = useState(1);
@@ -312,8 +312,7 @@ export function UploadCVModal({initialFile, reset: resetParent}: UploadCVModalPr
                 disabled={
                   !currentFile ||
                   !!errors.file ||
-                  isLoadingCredits ||
-                  (!isLoadingCredits && credits.manageCvsLimit <= 0)
+                  (credits.manageCvsLimit <= 0)
                 }
                 className="w-full rounded-xl h-12 font-bold transition-all active:scale-95"
                 variant="accent"

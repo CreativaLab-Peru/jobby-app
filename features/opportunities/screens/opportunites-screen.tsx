@@ -12,11 +12,11 @@ import {LoadMoreButton} from "@/components/shared/load-more-button";
 import {Button} from "@/components/ui/button";
 import {QuickMatchCvModal} from "@/features/opportunities/components/quick-match-cv-modal";
 import {useQuickMatchModalStore} from "@/features/opportunities/hooks/use-quick-match-modal-store";
-import {CvWithRelations, getCvForCurrentUser} from "@/features/cv/actions/get-cv-for-current-user";
-import {useCredits} from "@/features/credits/hooks/use-credits";
+import {CvWithRelations} from "@/features/cv/actions/get-cv-for-current-user";
 import {SearchableSelect} from "@/components/shared/searchable-select";
 import {Opportunity} from ".prisma/client";
 import {getAllCvForCurrentUser} from "@/features/cv/actions/get-all-cv-for-current-user";
+import {useCreditsStore} from "@/store/use-credits-store";
 
 interface Props {
   initialData: (
@@ -62,7 +62,7 @@ export default function OpportunitiesScreen({
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const {onOpen, setSelectedCvId} = useQuickMatchModalStore();
-  const {credits} = useCredits();
+  const {credits} = useCreditsStore();
 
   useEffect(() => {
     if (!hasSubscription && opportunities.length > 1) {

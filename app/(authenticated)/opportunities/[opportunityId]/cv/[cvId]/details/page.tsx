@@ -14,19 +14,22 @@ interface PageProps {
   }>;
 }
 
+
 export default async function OpportunityDetailsPage({ params }: PageProps) {
   const { opportunityId, cvId } = await params;
 
-  const [opportunity, roadmap, canViewFull, generationPermission] = await Promise.all([
-    getOpportunityDetails(opportunityId, cvId),
-    getRoadmapForOpportunity(opportunityId, cvId),
-    canViewFullRoadmap(),
-    getRoadmapGenerationPermission(opportunityId, cvId),
-  ]);
 
-  if (!opportunity){
+  // Obtener la oportunidad primero para extraer el routeId correcto
+  const opportunity = await getOpportunityDetails(opportunityId, cvId);
+  if (!opportunity) {
     notFound();
   }
+
+  const [roadmap, canViewFull, generationPermission] = await Promise.all([
+    getRoadmapForOpportunity(opportunityId, cvId),
+    canViewFullRoadmap(),
+    getRoadmapGenerationPermission(opportunityId, cvId, opportunity.routeId ?? ""),
+  ]);
 
   return (
     <OpportunityDetailsScreen

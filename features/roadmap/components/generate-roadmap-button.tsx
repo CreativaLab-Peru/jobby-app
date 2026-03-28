@@ -11,6 +11,7 @@ import {getRoutesForUser} from "@/features/routes/actions/get-routes-for-user";
 interface GenerateRoadmapButtonProps {
   opportunityId: string;
   cvId: string;
+  routeId?: string | null;
   existingStatus: string | null;
   onGenerated: () => void;
   canGenerate?: boolean;
@@ -20,6 +21,7 @@ interface GenerateRoadmapButtonProps {
 export function GenerateRoadmapButton({
   opportunityId,
   cvId,
+  routeId = null,
   existingStatus,
   onGenerated,
   canGenerate = true,
@@ -38,7 +40,7 @@ export function GenerateRoadmapButton({
     if (!isProcessing) return;
 
     const interval = setInterval(async () => {
-      const result = await getRoadmapStatus(opportunityId, cvId);
+      const result = await getRoadmapStatus(opportunityId, cvId, routeId);
       setStatus(result.status);
 
       if (result.status === "SUCCEEDED") {
@@ -68,7 +70,7 @@ export function GenerateRoadmapButton({
       const res = await fetch("/api/roadmap/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ opportunityId, cvId }),
+        body: JSON.stringify({ opportunityId, cvId, routeId }),
       });
       const data = await res.json();
 

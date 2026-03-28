@@ -81,7 +81,7 @@ export function SelectOpportunityRoadmapModal({
         setCheckingRoadmap(false);
         return;
       }
-      const roadmap = await getRoadmapForOpportunity(opp.id, opp.cvId);
+      const roadmap = await getRoadmapForOpportunity(opp.id, opp.cvId, opp.routeId);
       if (!cancelled) {
         if (roadmap && roadmap.id) {
           setExistingRoadmap({ id: roadmap.id, status: roadmap.status });
@@ -274,6 +274,7 @@ export function SelectOpportunityRoadmapModal({
                   <GenerateRoadmapButton
                     opportunityId={selectedOpportunity.id}
                     cvId={selectedOpportunity.cvId}
+                    routeId={selectedOpportunity.routeId}
                     existingStatus={null}
                     onGenerated={onGenerated}
                     canGenerate={!starterLimitReached && (!isFreePlan || selectableOpportunities[0]?.id === selectedOpportunity.id)}

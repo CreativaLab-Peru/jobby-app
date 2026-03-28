@@ -35,6 +35,7 @@ export async function getOpportunityDetails(opportunityId: string, cvId: string)
     // Evitamos pasar el objeto 'opportunity' directamente para limpiar los Decimals y Dates
     const sanitizedOpportunity = {
       id: opportunity.id,
+      routeId: opportunity.routeId ?? null,
       title: opportunity.title,
       company: opportunity.company,
       location: opportunity.location,

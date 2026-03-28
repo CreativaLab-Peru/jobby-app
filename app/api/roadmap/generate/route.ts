@@ -9,12 +9,13 @@ import {
 interface GenerateRoadmapBody {
   opportunityId: string;
   cvId: string;
+  routeId?: string | null;
 }
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const {opportunityId, cvId}: GenerateRoadmapBody = body;
+    const {opportunityId, cvId, routeId}: GenerateRoadmapBody = body;
 
     if (!opportunityId || !cvId) {
       return NextResponse.json(
@@ -31,17 +32,21 @@ export async function POST(request: Request) {
       );
     }
 
-    const route = await prisma.route.findFirst({
-      where: {
-        isActive: true,
-        userId: currentUser.id,
+    let usedRouteId = routeId;
+    if (!usedRouteId) {
+      const route = await prisma.route.findFirst({
+        where: {
+          isActive: true,
+          userId: currentUser.id,
+        }
+      });
+      if (!route) {
+        return NextResponse.json(
+          {success: false, message: "No tienes una ruta activada."},
+          {status: 404},
+        );
       }
-    })
-    if (!route) {
-      return NextResponse.json(
-        {success: false, message: "No tienes una ruta activada."},
-        {status: 404},
-      );
+      usedRouteId = route.id;
     }
 
     // Verify opportunity belongs to user's CV
@@ -49,6 +54,7 @@ export async function POST(request: Request) {
       where: {
         id: opportunityId,
         cvId,
+        routeId: usedRouteId,
         cv: {userId: currentUser.id},
       },
     });
@@ -66,7 +72,7 @@ export async function POST(request: Request) {
           opportunityId,
           cvId,
           userId: currentUser.id,
-          routeId: route.id,
+          routeId: usedRouteId,
         },
       },
     });
@@ -85,6 +91,7 @@ export async function POST(request: Request) {
       currentUser.id,
       opportunityId,
       cvId,
+      usedRouteId,
     );
 
     if (!permission.canGenerate) {
@@ -103,7 +110,7 @@ export async function POST(request: Request) {
         opportunityId,
         cvId,
         userId: currentUser.id,
-        routeId: route.id
+        routeId: usedRouteId
       },
     });
 

@@ -22,7 +22,7 @@ interface Props {
   matchValue: number;
   isHighMatch: boolean;
   requirements: {
-    required: string[] | string | null; // Soportamos array o string legacy
+    required: string[] | string | null;
     optional: string[] | string | null;
   };
   formattedDeadline: string | null;
@@ -210,6 +210,7 @@ export function OpportunityDetailsScreen({
               <RoadmapSection
                 opportunityId={opportunity.id}
                 cvId={opportunity.cv.id}
+                routeId={opportunity.routeId}
                 initialRoadmap={roadmap}
                 canViewFull={canViewFullRoadmap}
                 canGenerate={canGenerateRoadmap}

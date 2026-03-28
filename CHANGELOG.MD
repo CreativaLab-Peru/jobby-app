@@ -1,6 +1,8 @@
 # WIP
 
 ## Fixes
+- Removed double buttons in create/upload CVs.
+- Fixed create a roadpmad for each route.
 - Mapped type of opportunity in roadmap create modal.
 - Refresh route after each action of the guided flow
 - Name of temporal user to use Mercado pago integration

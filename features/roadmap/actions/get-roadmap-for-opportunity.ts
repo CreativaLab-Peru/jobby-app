@@ -29,18 +29,23 @@ export type RoadmapData = {
 export async function getRoadmapForOpportunity(
   opportunityId: string,
   cvId: string,
+  routeId?: string | null,
 ): Promise<RoadmapData> {
   try {
     const user = await getCurrentUser();
     if (!user) return null;
 
-    const route = await prisma.route.findFirst({
-      where: {
-        isActive: true,
-        userId: user.id,
-      }
-    })
-    if (!route) return null;
+    let usedRouteId = routeId;
+    if (!usedRouteId) {
+      const route = await prisma.route.findFirst({
+        where: {
+          isActive: true,
+          userId: user.id,
+        }
+      });
+      if (!route) return null;
+      usedRouteId = route.id;
+    }
 
     const roadmap = await prisma.roadmap.findUnique({
       where: {
@@ -48,7 +53,7 @@ export async function getRoadmapForOpportunity(
           opportunityId,
           cvId,
           userId: user.id,
-          routeId: route.id,
+          routeId: usedRouteId,
         },
       },
       include: {

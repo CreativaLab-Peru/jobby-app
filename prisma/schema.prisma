@@ -681,6 +681,7 @@ model CvSectionConfiguration {
   updatedAt       DateTime        @updatedAt
 
   @@unique([cvType, opportunityType]) // Un solo esquema por combinación
+  @@map("cv_section_configuration")
 }
 
 enum RouteStatus {

@@ -89,3 +89,18 @@ export const RECOMMENDATIONS_BY_OPPORTUNITY: Record<OpportunityType, CvSectionTy
   EXCHANGE_PROGRAM: ['CONTACT', 'SUMMARY', 'EDUCATION', 'VOLUNTEERING', 'PROJECTS']
 };
 
+
+export const LATAM_COUNTRIES = [
+  { code: "PE", name: "Perú", prefix: "+51" },
+  { code: "MX", name: "México", prefix: "+52" },
+  { code: "CO", name: "Colombia", prefix: "+57" },
+  { code: "AR", name: "Argentina", prefix: "+54" },
+  { code: "CL", name: "Chile", prefix: "+56" },
+  { code: "EC", name: "Ecuador", prefix: "+593" },
+  { code: "BO", name: "Bolivia", prefix: "+591" },
+  { code: "UY", name: "Uruguay", prefix: "+598" },
+  { code: "PY", name: "Paraguay", prefix: "+595" },
+  { code: "CR", name: "Costa Rica", prefix: "+506" },
+  { code: "PA", name: "Panamá", prefix: "+507" },
+  { code: "DO", name: "Dom. Rep.", prefix: "+1" },
+];

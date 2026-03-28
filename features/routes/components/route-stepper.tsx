@@ -135,11 +135,11 @@ export default function RouteStepper({
       title: "Logra tu oportunidad global",
       description:
         "Has optimizado tu perfil, aplicado a oportunidades y avanzado en tu carrera. Tu copiloto de carrera te ayudó a llegar aquí.",
-      href: "/dashboard",
+      href: "/booking",
       icon: Trophy,
       // Se activa como 'current' solo cuando el Roadmap está completado
       status: isRoadmapDone ? "current" : "locked",
-      cta: "Ver mi progreso",
+      cta: "Potenciar mi perfil",
     },
   ];
 

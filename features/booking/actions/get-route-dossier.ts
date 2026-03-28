@@ -1,4 +1,3 @@
-
 "use server";
 
 import { prisma } from "@/lib/prisma";
@@ -11,19 +10,23 @@ export type RouteDossier = {
     routeName: string;
     routeStatus: string;
     userName: string;
+    userEmail: string; // Nuevo: Para el mensaje de WhatsApp y PDF
     cv: {
       id: string;
       title: string;
       score: number;
     };
-    opportunity?: {
+    // Cambiamos a plural para mostrar el listado completo en el PDF
+    opportunities: Array<{
       title: string;
       company: string;
       match: number;
-    };
+      deadline?: string; // Nuevo: Para la lógica de "upcomingDeadlines"
+    }>;
     roadmap?: {
       title: string;
       stepsCount: number;
+      // Podrías incluir los títulos de los pasos si quieres más valor en el PDF
     };
   };
 } | { success: false; error: string };
@@ -34,18 +37,12 @@ export const getRouteDossier = async (): Promise<RouteDossier> => {
     if (!user) return { success: false, error: "No autorizado" };
 
     const activeRoute = await getActiveRoute();
-    if (!activeRoute) return { success: false, error: "No autorizado" };
+    if (!activeRoute || !activeRoute.id) return { success: false, error: "No hay ruta activa" };
 
-    const routeId = activeRoute.id;
-
-    // Partimos desde la Ruta como eje central
     const route = await prisma.route.findUnique({
-      where: {
-        id: routeId,
-        userId: user.id
-      },
+      where: { id: activeRoute.id, userId: user.id },
       include: {
-        user: { select: { name: true } },
+        user: { select: { name: true, email: true } }, // Traemos el email
         cv: {
           include: {
             evaluations: {
@@ -55,14 +52,16 @@ export const getRouteDossier = async (): Promise<RouteDossier> => {
             }
           }
         },
-        // Traemos la oportunidad que hizo match para el roadmap
+        // Traemos todas las oportunidades de esta ruta para el PDF
         opportunities: {
-          where: { roadmaps: { some: { routeId } } },
-          take: 1,
-          select: { title: true, company: true, match: true }
+          select: {
+            title: true,
+            company: true,
+            match: true,
+            deadline: true // Importante para el orden de prioridad
+          }
         },
         roadmaps: {
-          where: { routeId },
           select: {
             title: true,
             _count: { select: { steps: true } }
@@ -71,8 +70,10 @@ export const getRouteDossier = async (): Promise<RouteDossier> => {
       }
     });
 
+    console.log("[OPPORTUNITIES.LENGTH", route.opportunities.length);
+
     if (!route || !route.cv) {
-      return { success: false, error: "No se encontró una ruta activa con CV" };
+      return { success: false, error: "Datos incompletos" };
     }
 
     return {
@@ -81,16 +82,18 @@ export const getRouteDossier = async (): Promise<RouteDossier> => {
         routeName: route.name,
         routeStatus: route.status,
         userName: route.user.name || "Candidato",
+        userEmail: route.user.email || "", // Mapeo del nuevo campo
         cv: {
           id: route.cv.id,
           title: route.cv.title || "CV Principal",
           score: route.cv.evaluations[0]?.overallScore || 0,
         },
-        opportunity: route.opportunities[0] ? {
-          title: route.opportunities[0].title,
-          company: route.opportunities[0].company || "N/A",
-          match: Number(route.opportunities[0].match) * 100, // Convertimos a porcentaje
-        } : undefined,
+        opportunities: route.opportunities.map(opp => ({
+          title: opp.title,
+          company: opp.company || "N/A",
+          match: Math.round(Number(opp.match) * 100),
+          deadline: opp.deadline?.toISOString() // Convertimos a string para el cliente
+        })),
         roadmap: route.roadmaps[0] ? {
           title: route.roadmaps[0].title || "Plan de Carrera",
           stepsCount: route.roadmaps[0]._count.steps
@@ -99,6 +102,6 @@ export const getRouteDossier = async (): Promise<RouteDossier> => {
     };
   } catch (error) {
     console.error("[GET_ROUTE_DOSSIER_ERROR]", error);
-    return { success: false, error: "Error al obtener el dossier de la ruta" };
+    return { success: false, error: "Error de servidor" };
   }
 };

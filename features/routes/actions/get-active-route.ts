@@ -39,6 +39,3 @@ export const getActiveRoute = async () => {
     return null;
   }
 };
-
-export type ActiveRoute = NonNullable<Awaited<ReturnType<typeof getActiveRoute>>>;
-

@@ -80,6 +80,7 @@ export default function RouteStepper({
   const router = useRouter();
 
   const isRoadmapDone = routeStatus === "ROADMAP_DONE";
+  const isFullCompleted = routeStatus === "PROGRAM_DONE";
 
   const steps: Step[] = [
     {
@@ -138,7 +139,7 @@ export default function RouteStepper({
       href: "/booking",
       icon: Trophy,
       // Se activa como 'current' solo cuando el Roadmap está completado
-      status: isRoadmapDone ? "current" : "locked",
+      status: isFullCompleted ? 'completed' : (isRoadmapDone ? "current" : "locked"),
       cta: "Potenciar mi perfil",
     },
   ];

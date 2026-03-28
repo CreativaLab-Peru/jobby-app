@@ -14,14 +14,11 @@ import { Card } from "@/components/ui/card";
 import { BookingModal } from "../components/booking-modal";
 import { MentorBadge } from "@/features/booking/components/mentor-badge";
 import Image from "next/image";
+import {DownloadDossierButton} from "@/features/booking/components/pdf-download-link";
+import {RouteDossier} from "@/features/booking/actions/get-route-dossier";
 
 interface AgendaScreenProps {
-  dossier: {
-    userName: string;
-    cv: { score: number; title: string };
-    opportunity?: { title: string; company: string };
-    roadmap?: { title: string; stepsCount: number };
-  };
+  dossier: Extract<RouteDossier, { success: true }>["data"];
 }
 
 export function AgendaScreen({ dossier }: AgendaScreenProps) {
@@ -136,13 +133,7 @@ export function AgendaScreen({ dossier }: AgendaScreenProps) {
             </div>
           </div>
 
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full md:w-fit border-primary/20 text-primary hover:bg-primary/5 font-bold rounded-lg h-10 px-6"
-          >
-            Descargar PDF
-          </Button>
+         < DownloadDossierButton dossier={dossier} />
         </div>
 
       </main>

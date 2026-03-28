@@ -38,7 +38,8 @@ export function AdminCreateCvModal({ isOpen, onClose, onCreated }: AdminCreateCv
     cvType: undefined,
     // @ts-ignore
     opportunityType: undefined,
-    language: "ES" // Asumiendo un default
+    language: "ES", // Asumiendo un default
+    sections: [],
   });
 
   const handleCreate = () => {

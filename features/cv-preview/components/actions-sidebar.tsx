@@ -227,14 +227,14 @@ export function ActionsSidebar({
             Mi progreso
           </Button>
 
-          <Button
+          {/* <Button
             variant="secondary"
             className="w-full mb-2"
             onClick={() => { window.location.href = '/my-cvs'; }}
           >
             <FileText className="w-4 h-4 mr-2" />
             Ver todos mis CVs
-          </Button>
+          </Button> */}
 
           <Button
             disabled={isDisabled}

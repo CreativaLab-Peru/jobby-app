@@ -1,6 +1,7 @@
 # WIP
 
 ## Fixes
+- Removed button Todos mis CVs from sidebar into CV, and added to the sidebar app.
 - Fixed the 3 steps for analyzing a CV. 
 - Removed double buttons in create/upload CVs.
 - Fixed create a roadpmad for each route.

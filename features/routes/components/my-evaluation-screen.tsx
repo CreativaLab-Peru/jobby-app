@@ -47,7 +47,7 @@ export default function MyEvaluationScreen({
   const [isPending, startTransition] = useTransition();
   const [justSuccessful, setJustSuccessful] = useState(true);
 
-  const { onOpen, setIsAnalyzing, setSelectedCvId } = useEvaluationModalStore();
+  const { onOpen, onClose, setIsAnalyzing, setSelectedCvId } = useEvaluationModalStore();
   const { refreshCredits } = useCreditsStore();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -107,14 +107,17 @@ export default function MyEvaluationScreen({
       const response = await analyzeCvById(cvId);
       if (response.success) {
         toast.success("Análisis iniciado");
-        router.push(`/process/${cvId}`);
-        refreshCredits();
+        setTimeout(() => {
+          onClose();
+          router.push(`/process/${cvId}`);
+          refreshCredits();
+        }, 600);
       } else {
         toast.error(response.message || "Error al procesar el CV");
+        setIsAnalyzing(false);
       }
     } catch {
       toast.error("Error de conexión");
-    } finally {
       setIsAnalyzing(false);
     }
   };

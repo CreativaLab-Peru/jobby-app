@@ -98,8 +98,10 @@ interface DossierPDFProps {
   data: Extract<RouteDossier, { success: true }>["data"];
 }
 
-export const DossierPDF = ({ data }: { data: any }) => {
-  const generatedDate = "27 MAR. 2026"; // [cite: 6]
+export const DossierPDF = ({ data }: DossierPDFProps) => {
+  const generatedDate = new Date()
+    .toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" })
+    .toUpperCase();
 
   return (
     <Document>

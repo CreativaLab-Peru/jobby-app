@@ -59,9 +59,9 @@ export function AgendaScreen({ dossier }: AgendaScreenProps) {
                 />
               </div>
 
-              <div className="flex items-center gap-1.5 px-3 py-1 bg-secundary/10 border border-secundary/20 rounded-lg">
+              <div className="flex items-center gap-1.5 px-3 py-1 bg-primary/10 border border-primary/20 rounded-lg">
                 <ShieldCheck className="w-4 h-4" />
-                <span className="text-[10px] font-black text-secundary uppercase tracking-tight">Mentora calificada</span>
+                <span className="text-[10px] font-black text-primary uppercase tracking-tight">Mentora calificada</span>
               </div>
 
               {/* Badge de disponibilidad alineado a tu sistema de diseño */}

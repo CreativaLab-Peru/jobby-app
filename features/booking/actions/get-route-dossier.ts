@@ -70,8 +70,6 @@ export const getRouteDossier = async (): Promise<RouteDossier> => {
       }
     });
 
-    console.log("[OPPORTUNITIES.LENGTH", route.opportunities.length);
-
     if (!route || !route.cv) {
       return { success: false, error: "Datos incompletos" };
     }

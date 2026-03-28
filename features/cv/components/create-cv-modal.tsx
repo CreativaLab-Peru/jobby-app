@@ -28,9 +28,6 @@ import {Language} from "@prisma/client";
 import {useRouteStore} from "@/store/use-route-store";
 import {getRoutesForUser} from "@/features/routes/actions/get-routes-for-user";
 
-import { RECOMMENDATIONS_BY_OPPORTUNITY } from "@/const";
-import { CvSectionSelector } from "@/features/cv/components/cv-section-selector";
-
 const TEMPLATES = [
   {id: "harvard", label: "Harvard (Clásico)", preview: "/cv_templates/Harvard_template.png"},
   {id: "europass", label: "Europass Modern", preview: "/cv_templates/Europass_template.png"},

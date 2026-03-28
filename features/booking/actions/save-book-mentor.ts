@@ -17,7 +17,7 @@ export async function saveBookMentorAction(formData: {
 
   const activeRoute = await getActiveRoute();
   if (!activeRoute) {
-    return { success: false, message: "Usuario no encontrado" };
+    return { success: false, message: "No hay ruta activa" };
   }
 
   try {
@@ -37,7 +37,7 @@ export async function saveBookMentorAction(formData: {
       })
     })
 
-    revalidatePath("/agenda"); // O la ruta donde esté el componente
+    revalidatePath("/booking"); // O la ruta donde esté el componente
     return { success: true };
   } catch (error) {
     console.error("Booking Error:", error);

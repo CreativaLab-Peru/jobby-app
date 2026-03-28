@@ -140,6 +140,10 @@ export const getAndSaveOpportunities = inngest.createFunction(
         where: { cvId, userId },
       });
 
+      if (!route) {
+        return { message: "No matches found" };
+      }
+
       // 4. Guardado y Consumo (Paso Atómico)
       const result = await step.run("save-and-consume", async () => {
         await prisma.opportunity.deleteMany({ where: { cvId } });

@@ -110,6 +110,7 @@ const baseSectionsMap: Record<string, any> = {
     fields: [
       { name: "technical", label: "Habilidades Técnicas", type: "tags", required: false, example: "React, Node.js, Prisma" },
       { name: "soft", label: "Habilidades Blandas", type: "tags", required: false, example: "Liderazgo, KISS Principle" },
+      { name: "languages", label: "Idiomas", type: "tags", required: false, example: "Español (Nativo), Inglés (Fluido - C1)" },
     ],
   },
   PROJECTS: {

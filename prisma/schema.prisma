@@ -350,6 +350,8 @@ model CvSection {
   updatedAt   DateTime      @updatedAt
   cv          Cv            @relation(fields: [cvId], references: [id])
 
+  @@unique([cvId, sectionType])
+
   @@index([cvId, sectionType])
   @@index([cvId, order])
   @@map("cv_section")

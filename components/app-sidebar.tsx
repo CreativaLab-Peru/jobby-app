@@ -76,8 +76,10 @@ const adminNavItems = [
   { title: "Monetización", href: "/admin/plans", icon: Tag },
   { title: "Balances", href: "/admin/balances", icon: Wallet },
   { title: "Reclamos", href: "/admin/complaints", icon: MessageSquareWarning },
-  { title: "Jobs", href: "/admin/jobs", icon: Activity },
   { title: "Entrevistas", href: "/admin/interviews", icon: Mic },
+  { title: "Conf. Secciones", href: "/admin/cv-configs", icon: Settings },
+  { title: "Jobs", href: "/admin/jobs", icon: Activity },
+
 ];
 
 export default function AppSidebar({

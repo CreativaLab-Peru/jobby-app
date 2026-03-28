@@ -12,14 +12,7 @@ export const cvFormSchema = z.object({
   opportunityType: z.enum(OpportunityType,"Selecciona un tipo de oportunidad"),
   templateId: z.string().optional(),
   language: z.enum(Language, "Selecciona un idioma"),
-}).refine((data) => {
-  if (["INTERNSHIP", "SCHOLARSHIP"].includes(data.opportunityType)) {
-    return !!data.templateId;
-  }
-  return true;
-}, {
-  message: "Debes seleccionar un diseño para este tipo de oportunidad",
-  path: ["templateId"],
+  sections: z.array(z.enum(CvSectionType)),
 });
 
 export const uploadCvSchema = z.object({

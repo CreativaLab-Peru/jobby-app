@@ -47,7 +47,6 @@ export const useCreditsStore = create<CreditsStore>((set) => ({
   refreshCredits: async () => {
     try {
       const response = await getCurrentCreditLimits();
-      console.log("[REFRESH_CREDITS]:", response);
       set({ credits: response });
     } catch (error) {
       console.error('Error refreshing credits:', error);

@@ -98,9 +98,9 @@ export default function AppSidebar({
   const {credits} = useCreditsStore();
 
   const creditsFinal: CreditLimits = {
-    manageCvsLimit: credits.manageCvsLimit || creditLimits.manageCvsLimit,
-    aiActionsLimit: credits.aiActionsLimit || creditLimits.aiActionsLimit,
-    opportunitiesActionsLimit: credits.opportunitiesActionsLimit || creditLimits.opportunitiesActionsLimit,
+    manageCvsLimit: credits?.manageCvsLimit ?? creditLimits.manageCvsLimit,
+    aiActionsLimit: credits?.aiActionsLimit ?? creditLimits.aiActionsLimit,
+    opportunitiesActionsLimit: credits?.opportunitiesActionsLimit ?? creditLimits.opportunitiesActionsLimit,
   }
 
   useEffect(() => {

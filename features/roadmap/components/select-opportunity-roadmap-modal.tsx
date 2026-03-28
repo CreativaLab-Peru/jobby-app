@@ -37,6 +37,14 @@ export function SelectOpportunityRoadmapModal({
   const starterLimitReached = isStarterPlan && generatedRoadmapsCount >= 1;
   const hasLockedByFree = isFreePlan && opportunities.length > 1;
 
+  const OPPORTUNITY_TYPE_LABELS: Record<string, string> = {
+    INTERNSHIP: "Pasantía",
+    SCHOLARSHIP: "Beca",
+    EXCHANGE_PROGRAM: "Intercambio",
+    EMPLOYMENT: "Empleo",
+    STARTUP: "Aceleradora",
+  };
+
   const isOpportunityLocked = (index: number) => {
     if (starterLimitReached) return true;
     if (isFreePlan && index > 0) return true;
@@ -189,7 +197,7 @@ export function SelectOpportunityRoadmapModal({
                           </div>
 
                           <Badge variant="secondary" className="rounded-lg text-[10px] uppercase tracking-wider">
-                            {opportunity.type}
+                            {OPPORTUNITY_TYPE_LABELS[opportunity.type] || opportunity.type}
                           </Badge>
                         </div>
                       </button>

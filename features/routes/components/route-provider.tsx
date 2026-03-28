@@ -22,7 +22,7 @@ export function RouteProvider({ routes, children }: RouteProviderProps) {
       hydrate(routes);
       hydrated.current = true;
     }
-  }, [routes, hydrate]);
+  }, [[routes, hydrate]]);
 
   return <>{children}</>;
 }

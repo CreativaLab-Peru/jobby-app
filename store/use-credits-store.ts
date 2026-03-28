@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import {getCurrentCreditLimits} from "@/features/credits/actions/get-current-credits-limits";
 
 interface CreditLimits {
   manageCvsLimit: number;
@@ -45,11 +46,8 @@ export const useCreditsStore = create<CreditsStore>((set) => ({
     })),
   refreshCredits: async () => {
     try {
-      const response = await fetch('/api/credits/current');
-      if (response.ok) {
-        const data = await response.json();
-        set({ credits: data });
-      }
+      const response = await getCurrentCreditLimits();
+      set({ credits: response });
     } catch (error) {
       console.error('Error refreshing credits:', error);
     }

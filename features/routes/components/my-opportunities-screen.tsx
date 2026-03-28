@@ -12,13 +12,13 @@ import { LoadMoreButton } from "@/components/shared/load-more-button";
 import { Button } from "@/components/ui/button";
 import { QuickMatchCvModal } from "@/features/opportunities/components/quick-match-cv-modal";
 import { useQuickMatchModalStore } from "@/features/opportunities/hooks/use-quick-match-modal-store";
-import { useCredits } from "@/features/credits/hooks/use-credits";
 import {
   RouteOpportunity,
   getOpportunitiesForActiveRoute,
 } from "@/features/routes/actions/get-opportunities-for-active-route";
 import { getAllCvForCurrentUser } from "@/features/cv/actions/get-all-cv-for-current-user";
 import { CvWithRelations } from "@/features/cv/actions/get-cv-for-current-user";
+import {useCreditsStore} from "@/store/use-credits-store";
 
 interface MyOpportunitiesScreenProps {
   initialData: RouteOpportunity[];
@@ -47,7 +47,7 @@ export default function MyOpportunitiesScreen({
   const [isCvsLoading, setIsCvsLoading] = useState(false);
 
   const { onOpen, setSelectedCvId } = useQuickMatchModalStore();
-  const { credits } = useCredits();
+  const { credits } = useCreditsStore();
   const searchParams = useSearchParams();
   const [isLockedMode, setIsLockedMode] = useState(false);
   const router = useRouter();

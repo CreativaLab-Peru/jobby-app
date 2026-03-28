@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Zap, Sparkles, FileText, Plus } from "lucide-react";
 import { CreditLimits } from "@/features/credits/actions/get-current-credits-limits";
 import { useRouter } from "next/navigation";
-import { useCredits } from "@/features/credits/hooks/use-credits";
 import { useSidebar } from "@/components/ui/sidebar"; // Importante para detectar el estado
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -19,12 +18,11 @@ interface CreditsIndicatorProps {
 }
 
 export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
-  const { credits } = useCredits(limits);
   const { state } = useSidebar();
   const router = useRouter();
 
   const collapsed = state === "collapsed";
-  const totalAvailable = credits.manageCvsLimit + credits.aiActionsLimit + credits.opportunitiesActionsLimit;
+  const totalAvailable = limits.manageCvsLimit + limits.aiActionsLimit + limits.opportunitiesActionsLimit;
   const isEmpty = totalAvailable === 0;
 
   const handleRechargeCredits = () => {
@@ -91,17 +89,17 @@ export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
             <CreditRow
               icon={<FileText className="h-4 w-4 text-blue-500" />}
               label="Gestión de CVs"
-              value={credits.manageCvsLimit}
+              value={limits.manageCvsLimit}
             />
             <CreditRow
               icon={<Sparkles className="h-4 w-4 text-purple-500" />}
               label="Acciones IA"
-              value={credits.aiActionsLimit}
+              value={limits.aiActionsLimit}
             />
             <CreditRow
               icon={<Zap className="h-4 w-4 text-yellow-500" />}
               label="Oportunidades"
-              value={credits.opportunitiesActionsLimit}
+              value={limits.opportunitiesActionsLimit}
             />
           </div>
 

@@ -10,43 +10,51 @@ export const updateCvAndSections = async (id: string, cvData: CVData) => {
     const currentUser = await getCurrentUser();
     if (!currentUser) return { success: false, message: "Sesión expirada." };
 
-    // 1. Verificar propiedad del CV
+    // 1. Traemos las secciones que YA existen, incluyendo su orden actual
+    // Suponiendo que tienes un campo 'position' o 'order'
     const existingCv = await prisma.cv.findFirst({
-      where: { id, userId: currentUser.id },
+      where: { id, userId: currentUser.id, deletedAt: null },
+      include: {
+        sections: {
+          select: { sectionType: true },
+          orderBy: { order: 'asc' } // <--- Crucial: Respetar el orden definido
+        }
+      }
     });
+
     if (!existingCv) return { success: false, message: "CV no encontrado." };
 
-    // 2. Preparar el lote de datos a sincronizar
-    const sectionsToSync = buildSectionsPayload(cvData);
+    const allowedSectionTypes = existingCv.sections.map(s => s.sectionType);
+    const allPayload = buildSectionsPayload(cvData);
 
-    // 3. Ejecutar Upserts masivos en una Transacción
-    // Usamos el identificador compuesto cvId_sectionType definido en el schema
+    // 2. Filtramos el payload para que SOLO contenga lo que el CV permite
+    const sectionsToUpdate = allPayload.filter(s =>
+      allowedSectionTypes.includes(s.type)
+    );
+
+    // 3. Ejecutamos la transacción de actualización
     await prisma.$transaction(
-      sectionsToSync.map((section) =>
-        prisma.cvSection.upsert({
+      sectionsToUpdate.map((section) =>
+        prisma.cvSection.update({
           where: {
             cvId_sectionType: {
               cvId: id,
               sectionType: section.type,
             },
           },
-          update: {
+          data: {
             contentJson: section.content as any,
             updatedAt: new Date(),
-          },
-          create: {
-            cvId: id,
-            sectionType: section.type,
-            title: section.defaultTitle,
-            contentJson: section.content as any,
+            // IMPORTANTE: No enviamos 'position' ni 'title' para no sobreescribir
+            // lo que el admin configuró originalmente.
           },
         })
       )
     );
 
-    return { success: true, message: "Sincronización exitosa." };
+    return { success: true, message: "Datos sincronizados manteniendo el orden original." };
   } catch (error) {
-    console.error("[UPSERT_SECTIONS_ERROR]", error);
+    console.error("[UPDATE_SECTIONS_ERROR]", error);
     return { success: false, message: "Error al guardar secciones." };
   }
 };
@@ -57,23 +65,13 @@ export const updateCvAndSections = async (id: string, cvData: CVData) => {
 function buildSectionsPayload(cvData: CVData) {
   const payload: Array<{ type: CvSectionType; content: any; defaultTitle: string }> = [];
 
-  // CONTACT & SUMMARY (Vienen de cvData.personal)
+  // CONTACT (Información Personal)
   if (cvData.personal) {
-    const { summary, ...contactInfo } = cvData.personal;
-
     payload.push({
       type: CvSectionType.CONTACT,
-      content: contactInfo,
+      content: cvData.personal,
       defaultTitle: "Información de Contacto",
     });
-
-    if (summary) {
-      payload.push({
-        type: CvSectionType.SUMMARY,
-        content: { summary },
-        defaultTitle: "Resumen Profesional",
-      });
-    }
   }
 
   // COLECCIONES (Education, Experience, etc.)
@@ -85,6 +83,9 @@ function buildSectionsPayload(cvData: CVData) {
     achievements: { type: CvSectionType.ACHIEVEMENTS, title: "Logros" },
     certifications: { type: CvSectionType.CERTIFICATIONS, title: "Certificaciones" },
     volunteering: { type: CvSectionType.VOLUNTEERING, title: "Voluntariado" },
+    complements: { type: CvSectionType.COMPLEMENTS, title: "Complementos" },
+    interests: { type: CvSectionType.INTERESTS, title: "Intereses" },
+    languages: { type: CvSectionType.LANGUAGES, title: "Idiomas" },
   };
 
   for (const [key, meta] of Object.entries(map)) {

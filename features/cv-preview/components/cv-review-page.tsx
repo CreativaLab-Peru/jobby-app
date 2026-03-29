@@ -121,9 +121,6 @@ export function PreviewCVComponent({
     return tips;
   }, [language, opportunityMapped]);
 
-  console.log("[FINAL_SECTIONS_READY]", sections);
-  console.log("[CVDATA_STRUCTURE]", cvData);
-
   return (
     <div className="min-h-screen bg-gradient-primary">
       <div className="container mx-auto px-4 py-8">

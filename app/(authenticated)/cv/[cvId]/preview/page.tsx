@@ -53,8 +53,6 @@ export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
   const cvData: CVData = transformCVToDTO(cv);
   const creditLimits = await getCurrentCreditLimits();
 
-  // DEBUG profesional para WebStorm/Ubuntu
-  console.log(`[PREVIEW_LOAD] CV: ${cv.id} | Sections: ${filteredSections.length}`);
 
   return (
     <PreviewCVComponent

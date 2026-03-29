@@ -1,16 +1,15 @@
 "use client";
 
 import {useState, useTransition} from "react";
-import {motion, Reorder} from "framer-motion";
+import {motion} from "framer-motion";
 import {
   Save, Settings2, Plus, Trash2, GripVertical,
-  Type, List as ListIcon, CheckCircle2, ChevronRight
+  Type, List as ListIcon,
 } from "lucide-react";
 import {toast} from "sonner";
 import {CvSectionConfiguration} from "@prisma/client";
 
 import {Button} from "@/components/ui/button";
-import {Card, CardContent} from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Switch} from "@/components/ui/switch";
@@ -71,19 +70,44 @@ export function AdminCvConfigScreen({initialConfigs}: AdminCvConfigScreenProps) 
 
   // Funciones de ayuda para edición amigable
   const addField = (sectionIndex: number) => {
+    // 1. Clonamos el array de secciones
     const newSections = [...sections];
-    newSections[sectionIndex].fields.push({
-      name: "new_field",
-      type: "text",
-      label: "Nuevo Campo",
-      required: false
-    });
+
+    // 2. Clonamos la sección específica para romper la referencia de memoria
+    const targetSection = { ...newSections[sectionIndex] };
+
+    // 3. Clonamos el array de campos y añadimos el nuevo (sin usar .push)
+    targetSection.fields = [
+      ...targetSection.fields,
+      {
+        name: `field_${Date.now()}`, // ID temporal único para evitar colisiones
+        type: "text",
+        label: "Nuevo Campo",
+        required: false,
+      },
+    ];
+
+    // 4. Reemplazamos la sección clonada en el array clonado
+    newSections[sectionIndex] = targetSection;
+
+    // 5. Actualizamos el estado
     updateLocalSections(newSections);
   };
 
   const removeField = (sectionIndex: number, fieldIndex: number) => {
+    // 1. Clonamos el array de secciones (shallow copy)
     const newSections = [...sections];
-    newSections[sectionIndex].fields.splice(fieldIndex, 1);
+
+    // 2. Clonamos la sección específica que vamos a modificar
+    const targetSection = { ...newSections[sectionIndex] };
+
+    // 3. Filtramos los campos para crear un nuevo array de fields sin el elemento (inmutable)
+    targetSection.fields = targetSection.fields.filter((_, idx) => idx !== fieldIndex);
+
+    // 4. Reemplazamos la sección en nuestro nuevo array
+    newSections[sectionIndex] = targetSection;
+
+    // 5. Actualizamos el estado global
     updateLocalSections(newSections);
   };
 

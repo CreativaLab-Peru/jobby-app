@@ -179,6 +179,7 @@ export default function CreateCVPage({
                     <CardHeader className="border-b border-border/50">
                       <CardTitle className="flex items-center text-2xl text-foreground">
                         <div className="flex items-center flex-1">
+                          {/* TODO: icon of section title */}
                           {/*{(() => {*/}
                           {/*  const Icon = currentSection.icon*/}
                           {/*  return <Icon className="w-8 h-8 mr-3 text-primary" />*/}

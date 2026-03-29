@@ -21,7 +21,6 @@ export function CVPreview({
                             sections,
                             language = 'ES'
 }: CVPreviewProps) {
-  console.log("[CV_PREVIEW_DATA]", data)
   // Estilos comunes para consistencia con cv-document.tsx
   const sectionTitleClasses = "text-[12px] font-bold uppercase mb-1.5"
   const sectionDividerClasses = "border-b border-black mb-2"

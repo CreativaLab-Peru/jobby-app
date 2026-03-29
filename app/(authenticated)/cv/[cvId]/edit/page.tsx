@@ -17,10 +17,6 @@ export default async function EditCVPage({ params }: EditCVPageProps) {
   const cv = await getCvById(cvId);
   if (!cv) return redirect('/404');
 
-  for (const section of cv.sections){
-    console.log("[CV_SECTION]", section.sectionType);
-  }
-
   const config = await prisma.cvSectionConfiguration.findUnique({
     where: {
       cvType_opportunityType: {
@@ -52,13 +48,6 @@ export default async function EditCVPage({ params }: EditCVPageProps) {
   }).filter(Boolean);
 
   const cvData: CVData = transformCVToDTO(cv);
-
-  // DEBUG: Para verificar en la consola de Ubuntu/WebStorm que el join funcionó
-  console.log(`[JOIN_SUCCESS] Renderizando ${filteredSections.length} secciones para el CV: ${cv.id}`);
-
-  for (const section of cv.sections) {
-    console.log("[CONF_SECTION]", section.sectionType);
-  }
 
   return (
     <CreateCVPage

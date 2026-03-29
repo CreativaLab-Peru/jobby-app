@@ -92,14 +92,14 @@ export interface CVData {
   },
   complements?: {
     items?: Array<{
-      id: string
+      id?: string
       title?: string       // Ej: "Disponibilidad", "Licencia de conducir"
       description?: string // Ej: "Inmediata para reubicación", "Categoría A-I"
     }>
   },
   interests?: {
     items?: Array<{
-      id: string
+      id?: string
       title?: string       // Ej: "Disponibilidad", "Licencia de conducir"
       description?: string // Ej: "Inmediata para reubicación", "Categoría A-I"
     }>

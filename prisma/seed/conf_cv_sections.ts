@@ -60,6 +60,18 @@ import {educationEmployment} from "../../features/cv/helpers/configs/education/e
 import {educationInternship} from "../../features/cv/helpers/configs/education/internship";
 import {educationExchangeProgram} from "../../features/cv/helpers/configs/education/exchange-program";
 import {educationScholarship} from "../../features/cv/helpers/configs/education/scholarship";
+import {
+  designCreativityEmployment
+} from "@/features/cv/helpers/configs/design-creativity/employment";
+import {
+  designCreativityInternship
+} from "@/features/cv/helpers/configs/design-creativity/internship";
+import {
+  designCreativityExchangeProgram
+} from "@/features/cv/helpers/configs/design-creativity/exchange-program";
+import {
+  designCreativityScholarship
+} from "@/features/cv/helpers/configs/design-creativity/scholarship";
 
 // --- 1. MAPEO BASE DE SECCIONES (ESTRUCTURA GENERAL) ---
 // --- 1. MAPEO BASE DE SECCIONES (Sincronizado con el Enum de la DB) ---
@@ -272,6 +284,13 @@ async function main() {
     { type: CvType.EDUCATION, opp: OpportunityType.EXCHANGE_PROGRAM, data: educationExchangeProgram },
     { type: CvType.EDUCATION, opp: OpportunityType.SCHOLARSHIP, data: educationScholarship },
     { type: CvType.EDUCATION, opp: OpportunityType.STARTUP, data: educationScholarship },
+
+    // DESIGN & CREATIVITY
+    { type: CvType.DESIGN_CREATIVITY, opp: OpportunityType.EMPLOYMENT, data: designCreativityEmployment },
+    { type: CvType.DESIGN_CREATIVITY, opp: OpportunityType.INTERNSHIP, data: designCreativityInternship },
+    { type: CvType.DESIGN_CREATIVITY, opp: OpportunityType.EXCHANGE_PROGRAM, data: designCreativityExchangeProgram },
+    { type: CvType.DESIGN_CREATIVITY, opp: OpportunityType.SCHOLARSHIP, data: designCreativityScholarship },
+    { type: CvType.DESIGN_CREATIVITY, opp: OpportunityType.STARTUP, data: designCreativityScholarship }, // Usando scholarship como fallback si no tienes startup aún
   ];
 
   console.log("🚀 Iniciando carga de configuraciones de CV...");

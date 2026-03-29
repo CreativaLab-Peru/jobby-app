@@ -25,7 +25,8 @@ import {
 import {
   LayoutDashboard, FileText, MessageSquare, MessageSquareWarning,
   Activity, Briefcase, CreditCard, Settings, Users, BarChart3,
-  Tag, Wallet, Mic, Shield, Receipt, X, Map, Coins
+  Tag, Wallet, Mic, Shield, Receipt, X, Map, Coins,
+  FileCheckIcon
 } from "lucide-react";
 
 import { ProfileButton } from "@/components/profile-button";
@@ -55,6 +56,7 @@ const sessionFetcher = (): Promise<NavbarUser> =>
 const routeNavItems = [
   { title: "Mi Pasos", href: "/dashboard", icon: LayoutDashboard },
   { title: "CV", href: "/my-cv", icon: FileText },
+  { title: "Todos mis CVs", href: "/my-cvs", icon: FileCheckIcon },
   { title: "Análisis", href: "/my-evaluation", icon: MessageSquare },
   { title: "Oportunidades", href: "/my-opportunities", icon: Briefcase },
   { title: "Roadmaps", href: "/my-roadmaps", icon: Map },
@@ -113,6 +115,7 @@ export default function AppSidebar({
 
   const isActive = (path: string) => {
     if (path === "/dashboard") return pathname === "/dashboard";
+    if (path === "/my-cv" || path === "/my-cvs") return pathname === path;
     if (path === "/admin/plans") {
       return pathname.startsWith("/admin/plans") || pathname.startsWith("/admin/credit-packages");
     }

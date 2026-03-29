@@ -79,28 +79,28 @@ export default function MyCvScreen({ cv, canCreate, routeHasCv }: MyCvScreenProp
                 icon={FileText}
                 title="Tu ruta aún no tiene un CV"
                 description="Crea o sube un CV para comenzar tu ruta profesional. Se vinculará automáticamente."
-                action={
-                  <div className="flex items-center gap-3">
-                    <Button
-                      variant="outline"
-                      onClick={onOpenUpload}
-                      disabled={!canCreate}
-                      className="rounded-lg font-bold shadow-sm"
-                    >
-                      <Upload className="mr-2 h-4 w-4" />
-                      Subir CV
-                    </Button>
-                    <Button
-                      variant="default"
-                      onClick={onOpenCreate}
-                      disabled={!canCreate}
-                      className="rounded-lg font-bold shadow-sm"
-                    >
-                      <Plus className="mr-2 h-4 w-4" />
-                      Crear CV
-                    </Button>
-                  </div>
-                }
+                // action={
+                //   <div className="flex items-center gap-3">
+                //     <Button
+                //       variant="outline"
+                //       onClick={onOpenUpload}
+                //       disabled={!canCreate}
+                //       className="rounded-lg font-bold shadow-sm"
+                //     >
+                //       <Upload className="mr-2 h-4 w-4" />
+                //       Subir CV
+                //     </Button>
+                //     <Button
+                //       variant="default"
+                //       onClick={onOpenCreate}
+                //       disabled={!canCreate}
+                //       className="rounded-lg font-bold shadow-sm"
+                //     >
+                //       <Plus className="mr-2 h-4 w-4" />
+                //       Crear CV
+                //     </Button>
+                //   </div>
+                // }
               />
             </div>
           )}

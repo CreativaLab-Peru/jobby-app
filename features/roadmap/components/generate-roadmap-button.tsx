@@ -5,12 +5,14 @@ import { Map, Loader2, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { getRoadmapStatus } from "@/features/roadmap/actions/get-roadmap-status";
-import {useRouteStore} from "@/store/use-route-store";
-import {getRoutesForUser} from "@/features/routes/actions/get-routes-for-user";
+import { useRouteStore } from "@/store/use-route-store";
+import { getRoutesForUser } from "@/features/routes/actions/get-routes-for-user";
+import { generateRoadmapAction } from "@/features/roadmap/actions/generate-roadmap";
 
 interface GenerateRoadmapButtonProps {
   opportunityId: string;
   cvId: string;
+  routeId?: string | null;
   existingStatus: string | null;
   onGenerated: () => void;
   canGenerate?: boolean;
@@ -20,6 +22,7 @@ interface GenerateRoadmapButtonProps {
 export function GenerateRoadmapButton({
   opportunityId,
   cvId,
+  routeId = null,
   existingStatus,
   onGenerated,
   canGenerate = true,
@@ -38,7 +41,7 @@ export function GenerateRoadmapButton({
     if (!isProcessing) return;
 
     const interval = setInterval(async () => {
-      const result = await getRoadmapStatus(opportunityId, cvId);
+      const result = await getRoadmapStatus(opportunityId, cvId, routeId);
       setStatus(result.status);
 
       if (result.status === "SUCCEEDED") {
@@ -65,19 +68,14 @@ export function GenerateRoadmapButton({
   const handleGenerate = useCallback(async () => {
     setIsTriggering(true);
     try {
-      const res = await fetch("/api/roadmap/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ opportunityId, cvId }),
-      });
-      const data = await res.json();
+      const result = await generateRoadmapAction({ opportunityId, cvId, routeId });
 
-      if (!res.ok) {
-        toast.error(data.message || "Error al iniciar el roadmap.");
+      if (!result.success) {
+        toast.error(result.message || "Error al iniciar el roadmap.");
         return;
       }
 
-      if (res.status === 200) {
+      if (result.status === 200) {
         // Already exists
         onGenerated();
         return;
@@ -90,7 +88,7 @@ export function GenerateRoadmapButton({
     } finally {
       setIsTriggering(false);
     }
-  }, [opportunityId, cvId, onGenerated]);
+  }, [opportunityId, cvId, routeId, onGenerated]);
 
   if (isProcessing) {
     return (

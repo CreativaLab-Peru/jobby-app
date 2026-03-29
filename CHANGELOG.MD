@@ -1,6 +1,12 @@
 # WIP
 
 ## Fixes
+- Hidden roadmap into details of opportunities.
+- Removed button Todos mis CVs from sidebar into CV, and added to the sidebar app.
+- Fixed the 3 steps for analyzing a CV. 
+- Removed double buttons in create/upload CVs.
+- Fixed create a roadpmad for each route.
+- Mapped type of opportunity in roadmap create modal.
 - Refresh route after each action of the guided flow
 - Name of temporal user to use Mercado pago integration
 - Select sections to store the information of the CV in the database (it's missing in the preview and edit cv)

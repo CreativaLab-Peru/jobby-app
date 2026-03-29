@@ -53,6 +53,7 @@ export const OPPORTUNITY_MAP: Record<string, string> = {
 
 export const SECTION_LABELS: Record<string, string> = {
   SUMMARY: "Resumen Profesional",
+  CONTACT: "Información de Contacto",
   EXPERIENCE: "Experiencia Laboral",
   EDUCATION: "Formación Académica",
   SKILLS: "Habilidades Técnicas",
@@ -61,7 +62,6 @@ export const SECTION_LABELS: Record<string, string> = {
   CERTIFICATIONS: "Certificaciones",
   COMPLEMENTS: "Información Complementaria",
   ACHIEVEMENTS: "Logros",
-  CONTACT: "Información de Contacto",
   LANGUAGES: "Idiomas",
   INTERESTS: "Intereses",
 };

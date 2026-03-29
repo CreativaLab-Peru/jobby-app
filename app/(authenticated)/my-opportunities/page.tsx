@@ -14,7 +14,27 @@ export default async function MyOpportunitiesPage() {
   const activeRoute = await getActiveRoute();
   if (!activeRoute) return redirect("/routes/new");
 
-  const cvHasEvaluations = await getCvHasEvaluations(activeRoute.cvId);
+
+  if (!activeRoute.cv) {
+    return (
+      <main className="min-h-[90vh] p-4 md:p-8">
+        <div className="mx-auto max-w-7xl">
+          <PageHeader
+            title="Oportunidades de mi Ruta"
+            description="Vacantes recomendadas por IA para el CV de tu ruta activa."
+            actions={null}
+          />
+          <EmptyPlaceholder
+            icon={Briefcase}
+            title="Tu ruta activa no tiene un CV asociado"
+            description="Para ver oportunidades recomendadas, primero debes asociar un CV a tu ruta activa."
+          />
+        </div>
+      </main>
+    );
+  }
+
+  const cvHasEvaluations = await getCvHasEvaluations(activeRoute.cv.id);
   if (!cvHasEvaluations) {
     return (
       <main className="min-h-[90vh] p-4 md:p-8">
@@ -30,8 +50,8 @@ export default async function MyOpportunitiesPage() {
             description="Para ver oportunidades recomendadas, primero debes evaluar el CV asociado a tu ruta activa."
           />
         </div>
-        </main>
-    )
+      </main>
+    );
   }
 
   const data = await getOpportunitiesForActiveRoute({ skip: 0, take: 6 });

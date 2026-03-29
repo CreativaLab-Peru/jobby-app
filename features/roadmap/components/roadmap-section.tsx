@@ -9,7 +9,7 @@ import type { RoadmapData } from "@/features/roadmap/actions/get-roadmap-for-opp
 interface RoadmapSectionProps {
   opportunityId: string;
   cvId: string;
-  routeId?: string | null;
+  routeId: string;
   initialRoadmap: RoadmapData;
   canViewFull: boolean;
   canGenerate?: boolean;
@@ -23,7 +23,7 @@ interface RoadmapSectionProps {
 export function RoadmapSection({
   opportunityId,
   cvId,
-  routeId = null,
+  routeId,
   initialRoadmap,
   canViewFull,
   canGenerate = true,

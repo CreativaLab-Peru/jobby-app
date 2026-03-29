@@ -9,23 +9,13 @@ import { getCurrentUser } from "@/features/share/actions/get-current-user";
 export async function getRoadmapStatus(
   opportunityId: string,
   cvId: string,
-  routeId?: string | null,
+  routeId: string,
 ): Promise<{ status: string | null; roadmapId: string | null }> {
   try {
     const user = await getCurrentUser();
     if (!user) return { status: null, roadmapId: null };
 
-    let usedRouteId = routeId;
-    if (!usedRouteId) {
-      const route = await prisma.route.findFirst({
-        where: {
-          isActive: true,
-          userId: user.id,
-        }
-      });
-      if (!route) return { status: null, roadmapId: null };
-      usedRouteId = route.id;
-    }
+
 
     const roadmap = await prisma.roadmap.findUnique({
       where: {
@@ -33,7 +23,7 @@ export async function getRoadmapStatus(
           opportunityId,
           cvId,
           userId: user.id,
-          routeId: usedRouteId,
+          routeId,
         },
       },
       select: {

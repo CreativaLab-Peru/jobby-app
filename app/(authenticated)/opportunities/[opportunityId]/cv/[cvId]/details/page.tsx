@@ -26,7 +26,7 @@ export default async function OpportunityDetailsPage({ params }: PageProps) {
   }
 
   const [roadmap, canViewFull, generationPermission] = await Promise.all([
-    getRoadmapForOpportunity(opportunityId, cvId),
+    getRoadmapForOpportunity(opportunityId, cvId, opportunity.routeId),
     canViewFullRoadmap(),
     getRoadmapGenerationPermission(opportunityId, cvId, opportunity.routeId ?? ""),
   ]);

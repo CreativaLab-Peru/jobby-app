@@ -9,7 +9,7 @@ import {
 interface GenerateRoadmapBody {
   opportunityId: string;
   cvId: string;
-  routeId?: string | null;
+  routeId: string;
 }
 
 export async function POST(request: Request) {
@@ -32,29 +32,14 @@ export async function POST(request: Request) {
       );
     }
 
-    let usedRouteId = routeId;
-    if (!usedRouteId) {
-      const route = await prisma.route.findFirst({
-        where: {
-          isActive: true,
-          userId: currentUser.id,
-        }
-      });
-      if (!route) {
-        return NextResponse.json(
-          {success: false, message: "No tienes una ruta activada."},
-          {status: 404},
-        );
-      }
-      usedRouteId = route.id;
-    }
+
 
     // Verify opportunity belongs to user's CV
     const opportunity = await prisma.opportunity.findFirst({
       where: {
         id: opportunityId,
         cvId,
-        routeId: usedRouteId,
+        routeId,
         cv: {userId: currentUser.id},
       },
     });
@@ -72,7 +57,7 @@ export async function POST(request: Request) {
           opportunityId,
           cvId,
           userId: currentUser.id,
-          routeId: usedRouteId,
+          routeId,
         },
       },
     });
@@ -91,7 +76,7 @@ export async function POST(request: Request) {
       currentUser.id,
       opportunityId,
       cvId,
-      usedRouteId,
+      routeId,
     );
 
     if (!permission.canGenerate) {
@@ -110,7 +95,7 @@ export async function POST(request: Request) {
         opportunityId,
         cvId,
         userId: currentUser.id,
-        routeId: usedRouteId
+        routeId
       },
     });
 

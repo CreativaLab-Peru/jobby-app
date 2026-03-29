@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { OPPORTUNITY_MAP } from "@/const/index";
 import { AnimatePresence, motion } from "framer-motion";
 import { Building2, Lock, Map, Sparkles, Target, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -37,14 +38,6 @@ export function SelectOpportunityRoadmapModal({
   const starterLimitReached = isStarterPlan && generatedRoadmapsCount >= 1;
   const hasLockedByFree = isFreePlan && opportunities.length > 1;
 
-  const OPPORTUNITY_TYPE_LABELS: Record<string, string> = {
-    INTERNSHIP: "Pasantía",
-    SCHOLARSHIP: "Beca",
-    EXCHANGE_PROGRAM: "Intercambio",
-    EMPLOYMENT: "Empleo",
-    STARTUP: "Aceleradora",
-  };
-
   const isOpportunityLocked = (index: number) => {
     if (starterLimitReached) return true;
     if (isFreePlan && index > 0) return true;
@@ -55,7 +48,6 @@ export function SelectOpportunityRoadmapModal({
     () => opportunities.filter((_, index) => !isOpportunityLocked(index)),
     [opportunities, starterLimitReached, isFreePlan],
   );
-
 
   // Reset selection and roadmap info when modal opens
   useEffect(() => {
@@ -99,7 +91,6 @@ export function SelectOpportunityRoadmapModal({
     () => opportunities.find((opportunity) => opportunity.id === selectedOpportunityId) ?? null,
     [opportunities, selectedOpportunityId],
   );
-
 
   return (
     <AnimatePresence>
@@ -197,7 +188,7 @@ export function SelectOpportunityRoadmapModal({
                           </div>
 
                           <Badge variant="secondary" className="rounded-lg text-[10px] uppercase tracking-wider">
-                            {OPPORTUNITY_TYPE_LABELS[opportunity.type] || opportunity.type}
+                            {OPPORTUNITY_MAP[opportunity.type] || opportunity.type}
                           </Badge>
                         </div>
                       </button>

@@ -65,7 +65,7 @@ export const getOpportunitiesForActiveRoute = async (options: RouteOpportunityOp
           ...opt,
           match: Number(opt.match),
           cv: { id: opt.cv.id, title: opt.cv.title },
-          routeId: opt.routeId ?? null,
+          routeId: opt.routeId,
         })),
       ),
     ) as RouteOpportunity[];

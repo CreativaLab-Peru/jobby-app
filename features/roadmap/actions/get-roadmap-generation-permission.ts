@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { JobStatus } from "@prisma/client";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import { PAYMENT_PRO_ID, PAYMENT_STARTER_ID } from "@/features/billing/consts/payment-plant-ids";
 
@@ -37,7 +38,7 @@ export async function getRoadmapGenerationPermissionByUser(
     where: {
       userId,
       routeId,
-      status: "SUCCEEDED",
+      status: JobStatus.SUCCEEDED,
     },
     select: { id: true },
   });
@@ -54,7 +55,7 @@ export async function getRoadmapGenerationPermissionByUser(
     const generatedCount = await prisma.roadmap.count({
       where: {
         userId,
-        status: "SUCCEEDED",
+        status: JobStatus.SUCCEEDED,
       },
     });
 

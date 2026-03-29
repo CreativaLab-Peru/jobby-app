@@ -11,7 +11,6 @@ import { useEffect, useRef } from "react";
 import { FormSelect } from "@/components/form/select-input";
 import { CvSectionSelector } from "@/features/cv/components/cv-section-selector";
 import { cn } from "@/lib/utils";
-import { Info } from "lucide-react";
 
 interface CVFormProps {
   defaultValues?: Partial<CVFormData>;
@@ -143,18 +142,7 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
             </p>
           </div>
         )}
-
-        <div className="mt-8 p-4 rounded-xl border border-border bg-background flex items-start gap-3">
-          <Info className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-          <div className="space-y-1">
-            <p className="text-xs font-bold text-foreground">Resumen de bloques ({watch("sections")?.length || 0})</p>
-            <p className="text-[11px] text-muted-foreground leading-relaxed">
-              Las secciones seleccionadas aparecerán en tu editor para ser completadas. Puedes reordenarlas en el siguiente paso.
-            </p>
-          </div>
-        </div>
       </div>
-
     </div>
   )
 }

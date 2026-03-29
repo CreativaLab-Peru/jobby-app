@@ -52,9 +52,9 @@ export function CreateCVModal() {
         opportunityType: formData.opportunityType,
         language: formData.language,
         sections: formData.sections
-      }
+      };
 
-      const result = await createCVByTitleAndType(body)
+      const result = await createCVByTitleAndType(body);
 
       if (result?.success) {
         onCloseCreate();
@@ -67,9 +67,9 @@ export function CreateCVModal() {
 
         router.refresh();
         router.push(`/cv/${result.data.id}/edit`);
-        toast.success("¡CV creado con éxito!");
+        toast.success("CV creado correctamente");
       } else {
-        toast.error(result?.message || "Error al crear el currículum.");
+        toast.error(result?.message || "Error al crear el currículum");
       }
     });
   };
@@ -77,45 +77,48 @@ export function CreateCVModal() {
   return (
     <Dialog open={isCreateOpen} onOpenChange={onCloseCreate}>
       <DialogContent className={cn(
-        "max-w-[95vw] w-full p-0 overflow-hidden border-none bg-transparent shadow-none"
+        "max-w-[95vw] lg:max-w-6xl w-full p-0 overflow-hidden border border-border bg-background shadow-2xl rounded-xl"
       )}>
-        <div className="flex flex-col gap-4 h-[90vh]">
+        <div className="flex flex-col h-[90vh] md:h-[80vh]">
 
-          {/* Header Superior - Fuera del grid para dar aire */}
-          <div className="bg-background/80 backdrop-blur-md p-6 rounded-[2.5rem] border border-border/40 flex items-center justify-between shadow-xl">
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/20">
-                <Sparkles className="h-6 w-6" />
+          {/* Header Superior - Minimalista */}
+          <div className="p-5 border-b border-border bg-background flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <Sparkles size={20} />
               </div>
               <div>
-                <DialogTitle className="text-xl font-black tracking-tight">Configurador de CV IA</DialogTitle>
-                <DialogDescription className="text-xs font-medium">Define la estructura y el perfil de tu próximo paso profesional.</DialogDescription>
+                <DialogTitle className="text-lg font-bold leading-none">Configurador de CV</DialogTitle>
+                <DialogDescription className="text-xs mt-1">
+                  Personaliza la estructura antes de generar el documento.
+                </DialogDescription>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
               <Button
-                variant="ghost"
+                variant="outline"
                 onClick={onCloseCreate}
-                className="rounded-xl font-bold text-muted-foreground"
+                className="flex-1 sm:flex-none h-10 font-semibold text-xs"
+                disabled={isPending}
               >
                 Cancelar
               </Button>
               <Button
                 onClick={handleCreateCV}
                 disabled={!formData.title.trim() || isPending || formData.sections.length === 0}
-                className="bg-primary hover:opacity-90 text-primary-foreground rounded-xl px-8 h-11 font-bold shadow-lg shadow-primary/20 transition-all active:scale-95"
+                className="flex-[2] sm:flex-none h-10 px-6 font-bold text-xs"
               >
                 {isPending ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
                 ) : (
-                  "Crear y Continuar"
+                  "Confirmar y Crear"
                 )}
               </Button>
             </div>
           </div>
 
-          {/* Cuerpo del Formulario - Aquí es donde vive el Grid de 3 columnas del CVForm */}
+          {/* Cuerpo del Formulario */}
           <div className="flex-1 overflow-hidden">
             <CVForm
               defaultValues={formData}

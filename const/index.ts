@@ -53,6 +53,7 @@ export const OPPORTUNITY_MAP: Record<string, string> = {
 
 export const SECTION_LABELS: Record<string, string> = {
   SUMMARY: "Resumen Profesional",
+  CONTACT: "Información de Contacto",
   EXPERIENCE: "Experiencia Laboral",
   EDUCATION: "Formación Académica",
   SKILLS: "Habilidades Técnicas",
@@ -61,7 +62,6 @@ export const SECTION_LABELS: Record<string, string> = {
   CERTIFICATIONS: "Certificaciones",
   COMPLEMENTS: "Información Complementaria",
   ACHIEVEMENTS: "Logros",
-  CONTACT: "Información de Contacto",
   LANGUAGES: "Idiomas",
   INTERESTS: "Intereses",
 };
@@ -84,9 +84,9 @@ export const opportunities: {key: string, value: string}[] = Object.entries(OPPO
 export const RECOMMENDATIONS_BY_OPPORTUNITY: Record<OpportunityType, CvSectionType[]> = {
   SCHOLARSHIP: ['CONTACT', 'EDUCATION', 'PROJECTS', 'VOLUNTEERING', 'ACHIEVEMENTS', 'SKILLS'],
   INTERNSHIP: ['CONTACT', 'EDUCATION', 'PROJECTS', 'SKILLS'],
-  EMPLOYMENT: ['CONTACT', 'SUMMARY', 'EXPERIENCE', 'SKILLS'],
-  STARTUP: ['CONTACT', 'SUMMARY', 'PROJECTS', 'EXPERIENCE', 'SKILLS'],
-  EXCHANGE_PROGRAM: ['CONTACT', 'SUMMARY', 'EDUCATION', 'VOLUNTEERING', 'PROJECTS']
+  EMPLOYMENT: ['CONTACT', 'EXPERIENCE', 'SKILLS'],
+  STARTUP: ['CONTACT', 'PROJECTS', 'EXPERIENCE', 'SKILLS'],
+  EXCHANGE_PROGRAM: ['CONTACT', 'EDUCATION', 'VOLUNTEERING', 'PROJECTS']
 };
 
 

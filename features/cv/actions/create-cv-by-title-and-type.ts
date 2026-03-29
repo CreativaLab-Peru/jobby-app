@@ -77,8 +77,16 @@ export const createCVByTitleAndType = async (body: CreateCvBody) => {
         sections: {
           create: sectionsToCreate,
         },
+      },
+      include: {
+        sections: true,
       }
     });
+
+    console.log("[SECCIONES CREADAS]")
+    for (const section of newCv.sections) {
+      console.log("[SECTION]", section.sectionType);
+    }
 
     // 4. Consumir crédito
     await consumeCredits({

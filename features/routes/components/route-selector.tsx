@@ -64,6 +64,7 @@ export function RouteSelector() {
       setShowCreate(false);
       setNewName("");
       router.refresh();
+      router.push(routesLib.app.dashboard);
     });
   };
 

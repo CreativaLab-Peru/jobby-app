@@ -19,7 +19,8 @@ export function CvSectionSelector({
                                   }: CvSectionSelectorProps) {
   const recommended = RECOMMENDATIONS_BY_OPPORTUNITY[opportunityType] || [];
   const allSectionTypes = Object.values(CvSectionType)
-    .filter(item => item !== CvSectionType.LANGUAGES);
+    .filter(item => item !== CvSectionType.LANGUAGES)
+    .filter(item => item !== CvSectionType.SUMMARY);
 
   const toggleSection = (section: CvSectionType) => {
     const isSelected = selectedSections.includes(section);
@@ -33,20 +34,28 @@ export function CvSectionSelector({
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-2">
-        <Label className="text-sm ml-1 flex items-center gap-2">
-          Secciones para tu CV
-          <span className="text-[10px] bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold border border-accent/20">
-            IA Sugiere
-          </span>
-        </Label>
+        <div className="flex items-center justify-between px-1">
+          <Label className="text-sm flex items-center gap-2">
+            Secciones para tu CV
+            <span className="text-[10px] bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold border border-accent/20">
+              IA Sugiere
+            </span>
+          </Label>
+          {selectedSections.length > 0 && (
+            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
+               Orden de llenado activo
+             </span>
+          )}
+        </div>
 
         <p className="text-[10px] text-muted-foreground/60 px-1">
-          * Puedes agregar más secciones si deseas.
+          * Selecciona en el orden que prefieras que aparezcan.
         </p>
 
-        <div className="flex flex-wrap gap-2 p-3 rounded-3xl bg-secondary/20 border border-border/40">
+        <div className="flex flex-wrap gap-2 p-3 rounded-3xl bg-secondary/10 border border-border/40">
           {allSectionTypes.map((section) => {
-            const isSelected = selectedSections.includes(section);
+            const orderIndex = selectedSections.indexOf(section);
+            const isSelected = orderIndex !== -1;
             const isRecommended = recommended.includes(section);
 
             return (
@@ -55,36 +64,42 @@ export function CvSectionSelector({
                 type="button"
                 onClick={() => toggleSection(section)}
                 className={cn(
-                  "relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold transition-all border",
+                  "relative flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-bold transition-all border duration-200",
                   // Estado: Seleccionado
-                  isSelected && "bg-accent text-accent-foreground border-accent shadow-md shadow-accent/20",
-                  // Estado: No seleccionado pero RECOMENDADO
+                  isSelected
+                    ? "bg-accent text-accent-foreground border-accent shadow-md shadow-accent/20 scale-[1.02]"
+                    : "bg-background/50 text-muted-foreground border-border hover:border-accent/30",
+                  // Recomendado pero no seleccionado
                   (!isSelected && isRecommended) && "bg-accent/5 border-accent/40 text-foreground hover:bg-accent/10",
-                  // Estado: No seleccionado y NO recomendado
-                  (!isSelected && !isRecommended) && "bg-background/50 text-muted-foreground border-border hover:border-accent/30"
                 )}
               >
-                {isSelected ? (
-                  <CheckCircle className="h-3.5 w-3.5" />
-                ) : (
-                  <Plus className={cn("h-3.5 w-3.5", isRecommended && "text-accent")} />
+                {/* Indicador Numérico de Orden */}
+                {isSelected && (
+                  <span className="flex items-center justify-center w-4 h-4 bg-accent-foreground text-accent rounded-full text-[9px] font-black shadow-inner">
+                    {orderIndex + 1}
+                  </span>
                 )}
 
-                {SECTION_LABELS[section]}
+                {!isSelected && (
+                  isRecommended ? (
+                    <Sparkles className="h-3.5 w-3.5 text-accent animate-pulse" />
+                  ) : (
+                    <Plus className="h-3.5 w-3.5 opacity-40" />
+                  )
+                )}
 
-                {/* Badge de recomendación (brillo o punto) */}
-                {isRecommended && !isSelected && (
-                  <Sparkles className="h-2.5 w-2.5 text-accent animate-pulse" />
+                <span className={cn(isSelected && "ml-0.5")}>
+                  {SECTION_LABELS[section]}
+                </span>
+
+                {isSelected && (
+                  <CheckCircle className="h-3 w-3 opacity-70 ml-1" />
                 )}
               </button>
             );
           })}
         </div>
       </div>
-
-      <p className="text-[10px] text-muted-foreground/60 px-1">
-        * Las secciones seleccionadas son las que te recomendamos para  <b>{OPPORTUNITY_MAP[opportunityType] || opportunityType}</b>
-      </p>
     </div>
   );
 }

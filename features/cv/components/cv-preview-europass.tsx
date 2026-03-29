@@ -9,10 +9,12 @@ import {
   getNonEmptyProjectItems,
   getNonEmptyVolunteeringItems,
 } from "@/features/cv/helpers/non-empty-section-items"
+import {Language} from "@prisma/client";
 
 interface CVPreviewEuropassProps {
   data: CVData
   sections: CVSection[]
+  language: Language
 }
 
 const EU_BLUE = "#003FA3"
@@ -90,7 +92,11 @@ function BulletList({ text }: { text: string }) {
   )
 }
 
-export function CVPreviewEuropass({ data, sections }: CVPreviewEuropassProps) {
+export function CVPreviewEuropass({
+                                    data,
+                                    sections,
+                                    language
+}: CVPreviewEuropassProps) {
   const certificationsItems = getNonEmptyCertificationItems(data.certifications?.items ?? null)
   const projectsItems = getNonEmptyProjectItems(data.projects?.items ?? null)
   const volunteeringItems = getNonEmptyVolunteeringItems(data.volunteering?.items ?? null)

@@ -10,7 +10,7 @@ import { cvTypes, languages, opportunities, RECOMMENDATIONS_BY_OPPORTUNITY } fro
 import { useEffect, useRef } from "react";
 import { FormSelect } from "@/components/form/select-input";
 import { CvSectionSelector } from "@/features/cv/components/cv-section-selector";
-import {cn} from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface CVFormProps {
   defaultValues?: Partial<CVFormData>;
@@ -37,7 +37,6 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
   const selectedOpportunity = watch("opportunityType");
   const prevValuesRef = useRef<string>("");
 
-  // 1. Notificar cambios al padre (Modal)
   useEffect(() => {
     const currentValuesStr = JSON.stringify(allValues);
     if (prevValuesRef.current !== currentValuesStr) {
@@ -46,7 +45,6 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
     }
   }, [allValues, onValuesChange]);
 
-  // 2. Lógica de Recomendación Automática de Secciones
   useEffect(() => {
     if (selectedOpportunity) {
       const suggested = RECOMMENDATIONS_BY_OPPORTUNITY[selectedOpportunity] || [];
@@ -55,80 +53,94 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
   }, [selectedOpportunity, setValue]);
 
   return (
-    <div className="space-y-6 py-4">
-      {/* Nombre del CV */}
-      <FormField
-        label="Nombre del CV"
-        placeholder="Ejemplo: CV Ingeniero de Software"
-        register={register("title")}
-        error={errors.title?.message}
-      />
+    <div className="grid grid-cols-1 md:grid-cols-2 h-full w-full bg-background">
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Diseño del CV */}
-        <FormSelect
-          label="Diseño"
-          value={watch("templateId")}
-          options={[
-            { key: "harvard", value: "Harvard (Clásico)" },
-            { key: "europass", value: "Europass Modern" },
-          ]}
-          onChange={(v) => setValue("templateId", v as any, { shouldValidate: true })}
-          error={errors.templateId?.message}
-        />
+      {/* COLUMNA 1: Configuración Principal */}
+      <div className="p-6 md:p-8 space-y-8 border-b md:border-b-0 md:border-r border-border">
+        <div className="space-y-1">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-primary">01. Identidad</h3>
+          <p className="text-xs text-muted-foreground">Define los parámetros básicos de tu documento.</p>
+        </div>
 
-        {/* Idioma */}
-        <FormSelect
-          label="Idioma"
-          value={watch("language")}
-          options={languages}
-          onChange={(v) => setValue("language", v as any, { shouldValidate: true })}
-          error={errors.language?.message}
-        />
+        <div className="space-y-6">
+          <FormField
+            label="Nombre del CV"
+            placeholder="Ej: CV Backend Senior"
+            register={register("title")}
+            error={errors.title?.message}
+          />
+
+          <div className="grid grid-cols-2 gap-4">
+            <FormSelect
+              label="Diseño"
+              value={watch("templateId")}
+              options={[
+                { key: "harvard", value: "Harvard" },
+                { key: "europass", value: "Moderno" },
+              ]}
+              onChange={(v) => setValue("templateId", v as any, { shouldValidate: true })}
+            />
+
+            <FormSelect
+              label="Idioma"
+              value={watch("language")}
+              options={languages}
+              onChange={(v) => setValue("language", v as any, { shouldValidate: true })}
+            />
+          </div>
+
+          <FormSelect
+            label="Tipo de Oportunidad"
+            value={selectedOpportunity}
+            options={opportunities}
+            onChange={(v) => setValue("opportunityType", v as any, { shouldValidate: true })}
+          />
+
+          <div className="space-y-2">
+            <Label className={cn("text-xs font-semibold", errors.cvType && "text-destructive")}>
+              Perfil profesional
+            </Label>
+            <Select
+              onValueChange={(v) => setValue("cvType", v as any, { shouldValidate: true })}
+              value={watch("cvType")}
+            >
+              <SelectTrigger className="rounded-lg h-10 bg-secondary/30 border-border font-medium">
+                <SelectValue placeholder="Selecciona especialidad" />
+              </SelectTrigger>
+              <SelectContent>
+                {cvTypes.map((t) => (
+                  <SelectItem key={t.key} value={t.key}>{t.value}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {errors.cvType && (
+              <p className="text-[10px] font-medium text-destructive mt-1 italic">{errors.cvType.message}</p>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* Tipo de Oportunidad */}
-      <FormSelect
-        label="Tipo de Oportunidad"
-        placeholder="¿A qué aplicas?"
-        value={selectedOpportunity}
-        options={opportunities}
-        onChange={(v) => setValue("opportunityType", v as any, { shouldValidate: true })}
-        error={errors.opportunityType?.message}
-      />
+      {/* COLUMNA 2: Selección de Secciones */}
+      <div className="p-6 md:p-8 bg-secondary/5 overflow-y-auto">
+        <div className="space-y-1 mb-8">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-primary">02. Estructura</h3>
+          <p className="text-xs text-muted-foreground">Activa y ordena los módulos de información.</p>
+        </div>
 
-      {/* Perfil Profesional */}
-      <div className="space-y-2">
-        <Label className={errors.cvType ? "text-destructive" : ""}>Perfil profesional</Label>
-        <Select
-          onValueChange={(v) => setValue("cvType", v as any, { shouldValidate: true })}
-          value={watch("cvType")}
-        >
-          <SelectTrigger className={cn("rounded-xl h-11 bg-secondary/30 border-none font-medium", errors.cvType && "ring-2 ring-destructive")}>
-            <SelectValue placeholder="Selecciona tu perfil" />
-          </SelectTrigger>
-          <SelectContent>
-            {cvTypes.map((t) => (
-              <SelectItem key={t.key} value={t.key}>{t.value}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {errors.cvType && (
-          <p className="text-[10px] font-bold text-destructive ml-1">{errors.cvType.message}</p>
-        )}
-      </div>
+        <div className="bg-background border border-border rounded-xl p-5 shadow-sm">
+          <CvSectionSelector
+            selectedSections={watch("sections") || []}
+            onChange={(newSections) => setValue("sections", newSections, { shouldValidate: true })}
+            opportunityType={watch("opportunityType") as any}
+          />
+        </div>
 
-      {/* --- SECCIÓN NUEVA: Selector de Secciones --- */}
-      <div className="pt-4 border-t border-secondary/10">
-        <CvSectionSelector
-          selectedSections={watch("sections") || []}
-          onChange={(newSections) => setValue("sections", newSections, { shouldValidate: true })}
-          opportunityType={watch("opportunityType") as any}
-        />
         {errors.sections && (
-          <p className="text-[10px] font-bold text-destructive mt-2 ml-1">
-            {errors.sections.message}
-          </p>
+          <div className="mt-4 p-3 rounded-lg border border-destructive/20 bg-destructive/5 text-center">
+            <p className="text-[10px] font-bold text-destructive uppercase">
+              {errors.sections.message}
+            </p>
+          </div>
         )}
       </div>
     </div>

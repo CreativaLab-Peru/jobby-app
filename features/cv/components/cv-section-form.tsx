@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useCallback, forwardRef, useImperativeHandle } from "react"
+import React, { useState, useCallback, forwardRef, useImperativeHandle, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Plus, Trash2 } from "lucide-react"
@@ -29,6 +29,18 @@ export const CVSectionForm = forwardRef<CVSectionFormRef, CVSectionFormProps>(({
     return data || {}
   })
   const [errors, setErrors] = useState<any>({});
+
+  useEffect(() => {
+    // Sync local form state when parent section/data changes.
+    if (section.multiple) {
+      setFormData({
+        items: data?.items && data.items.length > 0 ? data.items : [{}],
+      })
+      return
+    }
+
+    setFormData(data || {})
+  }, [section.id, section.multiple, data])
 
   // Validación de campos obligatorios
   const validateFields = useCallback((item: any) => {

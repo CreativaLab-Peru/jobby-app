@@ -3,172 +3,110 @@
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import { CVData } from "@/types/cv";
-import { CvSectionType, Cv } from "@prisma/client";
+import { CvSectionType } from "@prisma/client";
 
 export const updateCvAndSections = async (id: string, cvData: CVData) => {
   try {
     const currentUser = await getCurrentUser();
-    if (!currentUser) {
-      return { success: false, message: "User not found." };
-    }
+    if (!currentUser) return { success: false, message: "Sesión expirada." };
 
+    // 1. Traemos las secciones que YA existen, incluyendo su orden actual
+    // Suponiendo que tienes un campo 'position' o 'order'
     const existingCv = await prisma.cv.findFirst({
       where: { id, userId: currentUser.id, deletedAt: null },
-    });
-
-    if (!existingCv) {
-      return { success: false, message: "CV not found." };
-    }
-
-    // 2️⃣ Build new sections from data
-    const newSections = buildSections(cvData);
-
-    // 3️⃣ Fetch existing sections
-    const existingSections = await prisma.cvSection.findMany({
-      where: { cvId: existingCv.id },
-    });
-
-    // 4️⃣ Sync sections intelligently
-    for (const section of newSections) {
-      const existing = existingSections.find(
-        (s) => s.sectionType === section.sectionType
-      );
-
-      if (existing) {
-        // Update content if changed
-        await prisma.cvSection.update({
-          where: { id: existing.id },
-          data: {
-            title: section.title,
-            contentJson: section.contentJson,
-            updatedAt: new Date(),
-          },
-        });
-      } else {
-        // Create new section
-        await prisma.cvSection.create({
-          data: {
-            cvId: existingCv.id,
-            sectionType: section.sectionType,
-            title: section.title,
-            contentJson: section.contentJson,
-          },
-        });
+      include: {
+        sections: {
+          select: { sectionType: true },
+          orderBy: { order: 'asc' } // <--- Crucial: Respetar el orden definido
+        }
       }
-    }
+    });
 
-    // 5️⃣ Delete sections that no longer exist in cvData
-    const newTypes = newSections.map((s) => s.sectionType);
-    const toDelete = existingSections.filter(
-      (s) => !newTypes.includes(s.sectionType)
+    if (!existingCv) return { success: false, message: "CV no encontrado." };
+
+    const allowedSectionTypes = existingCv.sections.map(s => s.sectionType);
+    const allPayload = buildSectionsPayload(cvData);
+
+    // 2. Filtramos el payload para que SOLO contenga lo que el CV permite
+    const sectionsToUpdate = allPayload.filter(s =>
+      allowedSectionTypes.includes(s.type)
     );
 
-    if (toDelete.length > 0) {
-      await prisma.cvSection.deleteMany({
-        where: { id: { in: toDelete.map((s) => s.id) } },
-      });
-    }
+    // 3. Ejecutamos la transacción de actualización
+    await prisma.$transaction(
+      sectionsToUpdate.map((section) =>
+        prisma.cvSection.update({
+          where: {
+            cvId_sectionType: {
+              cvId: id,
+              sectionType: section.type,
+            },
+          },
+          data: {
+            contentJson: section.content as any,
+            updatedAt: new Date(),
+            // IMPORTANTE: No enviamos 'position' ni 'title' para no sobreescribir
+            // lo que el admin configuró originalmente.
+          },
+        })
+      )
+    );
 
-    return {
-      success: true,
-      message: "CV and sections updated successfully.",
-      data: existingCv as Cv,
-    };
+    return { success: true, message: "Datos sincronizados manteniendo el orden original." };
   } catch (error) {
-    console.error("[UPDATE_CV_ERROR]", error);
-    return {
-      success: false,
-      message: error?.message || "Unexpected error while updating CV.",
-    };
+    console.error("[UPDATE_SECTIONS_ERROR]", error);
+    return { success: false, message: "Error al guardar secciones." };
   }
 };
 
 /**
- * Transforms CVData → CvSection[] (each sectionType + contentJson)
+ * Transforma el objeto plano CVData a un array de operaciones para la DB
  */
-function buildSections(cvData: CVData) {
-  const sections: { sectionType: CvSectionType; contentJson; title?: string }[] = [];
+function buildSectionsPayload(cvData: CVData) {
+  const payload: Array<{ type: CvSectionType; content: any; defaultTitle: string }> = [];
 
-  if (cvData.personal?.summary) {
-    sections.push({
-      sectionType: CvSectionType.SUMMARY,
-      title: "Summary",
-      contentJson: { text: cvData.personal.summary },
-    });
-  }
-
-  if (cvData.experience?.items?.length) {
-    sections.push({
-      sectionType: CvSectionType.EXPERIENCE,
-      title: "Experience",
-      contentJson: cvData.experience.items,
-    });
-  }
-
-  if (cvData.education?.items?.length) {
-    sections.push({
-      sectionType: CvSectionType.EDUCATION,
-      title: "Education",
-      contentJson: cvData.education.items,
-    });
-  }
-
-  if (cvData.skills) {
-    sections.push({
-      sectionType: CvSectionType.SKILLS,
-      title: "Skills",
-      contentJson: cvData.skills
-    });
-  }
-
-  if (cvData.projects?.items?.length) {
-    sections.push({
-      sectionType: CvSectionType.PROJECTS,
-      title: "Projects",
-      contentJson: cvData.projects.items,
-    });
-  }
-
-  if (cvData.certifications?.items?.length) {
-    sections.push({
-      sectionType: CvSectionType.CERTIFICATIONS,
-      title: "Certifications",
-      contentJson: cvData.certifications.items,
-    });
-  }
-
-  if (cvData.volunteering?.items?.length) {
-    sections.push({
-      sectionType: CvSectionType.VOLUNTEERING,
-      title: "Volunteering",
-      contentJson: cvData.volunteering.items,
-    });
-  }
-
-
-  if (cvData.achievements?.items?.length) {
-    sections.push({
-      sectionType: CvSectionType.ACHIEVEMENTS,
-      title: "Achievements",
-      contentJson: cvData.achievements.items,
-    });
-  }
-
+  // CONTACT (Información Personal)
   if (cvData.personal) {
-    sections.push({
-      sectionType: CvSectionType.CONTACT,
-      title: "Contact Info",
-      contentJson: {
-        fullName: cvData.personal.fullName,
-        email: cvData.personal.email,
-        phone: cvData.personal.phone,
-        address: cvData.personal.address,
-        linkedin: cvData.personal.linkedin,
-        nationality: cvData.personal.nationality ?? "",
-        image: cvData.personal.image ?? "",
-      },
+    payload.push({
+      type: CvSectionType.CONTACT,
+      content: cvData.personal,
+      defaultTitle: "Información de Contacto",
     });
   }
 
-  return sections;
+  // COLECCIONES (Education, Experience, etc.)
+  // Mapeamos las llaves del DTO a los Enums de la DB
+  const map: Record<string, { type: CvSectionType; title: string }> = {
+    education: { type: CvSectionType.EDUCATION, title: "Educación" },
+    experience: { type: CvSectionType.EXPERIENCE, title: "Experiencia Profesional" },
+    projects: { type: CvSectionType.PROJECTS, title: "Proyectos" },
+    achievements: { type: CvSectionType.ACHIEVEMENTS, title: "Logros" },
+    certifications: { type: CvSectionType.CERTIFICATIONS, title: "Certificaciones" },
+    volunteering: { type: CvSectionType.VOLUNTEERING, title: "Voluntariado" },
+    complements: { type: CvSectionType.COMPLEMENTS, title: "Complementos" },
+    interests: { type: CvSectionType.INTERESTS, title: "Intereses" },
+    languages: { type: CvSectionType.LANGUAGES, title: "Idiomas" },
+  };
+
+  for (const [key, meta] of Object.entries(map)) {
+    const sectionData = cvData[key as keyof CVData];
+    if (sectionData && "items" in sectionData) {
+      payload.push({
+        type: meta.type,
+        content: sectionData.items, // Guardamos directamente el array de items
+        defaultTitle: meta.title,
+      });
+    }
+  }
+
+  // SKILLS (Habilidades e Idiomas)
+  if (cvData.skills) {
+    payload.push({
+      type: CvSectionType.SKILLS,
+      content: cvData.skills,
+      defaultTitle: "Habilidades",
+    });
+  }
+
+  return payload;
 }

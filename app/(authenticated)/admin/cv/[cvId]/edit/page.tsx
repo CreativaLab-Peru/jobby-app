@@ -8,6 +8,7 @@ import { updateAdminCvAndSections } from "@/features/cv/actions/admin/update-adm
 import { requireAdmin } from "@/features/share/actions/require-admin";
 import { routes } from "@/lib/routes";
 import { CVData } from "@/types/cv";
+import {prisma} from "@/lib/prisma";
 
 interface AdminEditCVPageProps {
   params: Promise<{
@@ -31,6 +32,36 @@ export default async function AdminEditCVPage({ params }: AdminEditCVPageProps) 
     redirect("/404");
   }
 
+  const config = await prisma.cvSectionConfiguration.findUnique({
+    where: {
+      cvType_opportunityType: {
+        cvType: result.data.cvType,
+        opportunityType: result.data.opportunityType,
+      },
+    },
+  });
+
+  const masterSections = (config?.sections as any[]) || [];
+
+  // 2. Filtrar y Normalizar
+  const filteredSections = result.data.sections.map((userSection) => {
+    // Normalizamos ambos a Mayúsculas para evitar errores de matching
+    const sectionConfig = masterSections.find(
+      s => s.id?.toUpperCase() === userSection.sectionType?.toUpperCase()
+    );
+
+    if (!sectionConfig) {
+      console.warn(`[MISSING_CONFIG] No config found for section: ${userSection.sectionType}`);
+      return null;
+    }
+
+    return {
+      ...sectionConfig,
+      // // Usamos el helper para convertir el string del icono en Componente
+      // icon: getIconComponent(sectionConfig.icon),
+    };
+  }).filter(Boolean);
+
   const cvData: CVData = transformCVToDTO(result.data);
 
   return (
@@ -41,6 +72,8 @@ export default async function AdminEditCVPage({ params }: AdminEditCVPageProps) 
       cvType={result.data.cvType ?? CvType.TECHNOLOGY_ENGINEERING}
       saveCv={updateAdminCvAndSections}
       onCompletePath="/admin/cv"
+      initialSections={filteredSections}
+      language={result.data.language || "ES"}
     />
   );
 }

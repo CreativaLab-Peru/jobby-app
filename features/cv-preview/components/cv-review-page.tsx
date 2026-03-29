@@ -9,7 +9,6 @@ import {TipCard} from "@/features/cv-preview/components/tip-card"
 import {CVData} from "@/types/cv"
 import {PdfPreviewWrapper} from "@/components/pdf-preview/pdf-preview-wrapper"
 import {OpportunityType, CvType} from "@prisma/client"
-import {getSections} from "@/features/cv/helpers";
 import {OPPORTUNITY_MAP} from "@/const";
 
 interface PreviewCVComponentProps {
@@ -18,11 +17,27 @@ interface PreviewCVComponentProps {
   opportunityType: OpportunityType
   cvType: CvType
   templateId?: string
-  sectionIds: string[]
   canAnalyze: boolean
   analysisTokens: number
   opportunitiesActionTokens?: number
   language?: 'ES' | 'EN'
+  masterSections: any[]
+}
+
+const SECTION_ID_TO_CV_KEY: Record<string, keyof CVData> = {
+  CONTACT: "personal",
+  EXPERIENCE: "experience",
+  EDUCATION: "education",
+  PROJECTS: "projects",
+  ACHIEVEMENTS: "achievements",
+  SKILLS: "skills",
+  CERTIFICATIONS: "certifications",
+  VOLUNTEERING: "volunteering",
+}
+
+function getCvDataKey(sectionId: string): keyof CVData {
+  const normalizedId = String(sectionId || "").toUpperCase()
+  return SECTION_ID_TO_CV_KEY[normalizedId] ?? (String(sectionId || "").toLowerCase() as keyof CVData)
 }
 
 export function PreviewCVComponent({
@@ -31,31 +46,56 @@ export function PreviewCVComponent({
                                      opportunityType,
                                      cvType,
                                      templateId = "harvard",
-                                     sectionIds,
                                      canAnalyze,
                                      analysisTokens,
                                      opportunitiesActionTokens = 0,
-                                     language = 'ES'
+                                     language = 'ES',
+                                     masterSections
                                    }: PreviewCVComponentProps) {
   const [isDisabled] = useState(false)
   const router = useRouter()
-  const safeSectionIds = Array.isArray(sectionIds) ? sectionIds : []
 
   // Regenerar las secciones en el cliente usando los IDs
   const sections = useMemo(() => {
-    const allSections = getSections(opportunityType, cvType, templateId)
-    if (!allSections.length) return []
+    // 1. Usar siempre masterSections porque tiene los IDs de la DB (CONTACT, etc.)
+    if (!masterSections || masterSections.length === 0) return [];
 
-    // Fallback: if section IDs are not present, render the default section order.
-    if (!safeSectionIds.length) return allSections
+    return masterSections.map((sectionConfig) => {
+      // 2. Traducir ID de DB (ej: CONTACT) a key de DTO (ej: personal)
+      // console.log("[sectionConfig]", sectionConfig);
+      const dataKey = getCvDataKey(sectionConfig.id);
+      // console.log("[dataKey]", dataKey);
+      const sectionData = cvData[dataKey];
 
-    const sectionMap = new Map(allSections.map((section) => [section.id, section]))
-    const mappedSections = safeSectionIds
-      .map((id) => sectionMap.get(id))
-      .filter(Boolean) as typeof allSections
+      // Log para verificar qué está pasando con cada sección (puedes quitarlo luego)
+      // console.log(`Mapping ${sectionConfig.id} to cvData[${dataKey}]`, sectionData);
 
-    return mappedSections.length ? mappedSections : allSections
-  }, [opportunityType, cvType, safeSectionIds, templateId]);
+      return {
+        ...sectionConfig,
+        data: sectionData || {},
+        id: dataKey,
+      };
+    }).filter(s => {
+      // 3. Lógica de visibilidad (No mostrar secciones vacías)
+      if (s.id === "CONTACT") return true;
+
+      const data = s.data;
+      if (!data) return false;
+
+      // Si es una sección con items (Education, Experience, etc.)
+      if (data.items && Array.isArray(data.items)) {
+        return data.items.length > 0;
+      }
+
+      // Si es Skills
+      if (s.id === "SKILLS") {
+        return (data.technical?.length > 0 || data.soft?.length > 0);
+      }
+
+      // Si es un campo directo (como el summary que a veces viene en personal)
+      return Object.keys(data).length > 0;
+    });
+  }, [masterSections, cvData]);
 
   const opportunityMapped = OPPORTUNITY_MAP[opportunityType] || "No especificado";
 

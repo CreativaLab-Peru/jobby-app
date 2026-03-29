@@ -11,6 +11,7 @@ import { useEffect, useRef } from "react";
 import { FormSelect } from "@/components/form/select-input";
 import { CvSectionSelector } from "@/features/cv/components/cv-section-selector";
 import { cn } from "@/lib/utils";
+import { Info } from "lucide-react";
 
 interface CVFormProps {
   defaultValues?: Partial<CVFormData>;
@@ -53,19 +54,19 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
   }, [selectedOpportunity, setValue]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 h-full w-full overflow-hidden">
+    <div className="grid grid-cols-1 md:grid-cols-2 h-full w-full bg-background">
 
       {/* COLUMNA 1: Configuración Principal */}
-      <div className="p-8 space-y-8 border-r border-border/40 overflow-y-auto bg-background">
+      <div className="p-6 md:p-8 space-y-8 border-b md:border-b-0 md:border-r border-border">
         <div className="space-y-1">
-          <h3 className="text-sm font-black uppercase tracking-widest text-primary">01. Identidad</h3>
-          <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">Define la base de tu documento</p>
+          <h3 className="text-xs font-bold uppercase tracking-wider text-primary">01. Identidad</h3>
+          <p className="text-xs text-muted-foreground">Define los parámetros básicos de tu documento.</p>
         </div>
 
         <div className="space-y-6">
           <FormField
             label="Nombre del CV"
-            placeholder="Ej: CV Backend Senior - Nivel 3"
+            placeholder="Ej: CV Backend Senior"
             register={register("title")}
             error={errors.title?.message}
           />
@@ -75,8 +76,8 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
               label="Diseño"
               value={watch("templateId")}
               options={[
-                { key: "harvard", value: "Harvard (Clásico)" },
-                { key: "europass", value: "Modern (Standard)" },
+                { key: "harvard", value: "Harvard" },
+                { key: "europass", value: "Moderno" },
               ]}
               onChange={(v) => setValue("templateId", v as any, { shouldValidate: true })}
             />
@@ -91,44 +92,43 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
 
           <FormSelect
             label="Tipo de Oportunidad"
-            placeholder="¿A qué estás aplicando?"
             value={selectedOpportunity}
             options={opportunities}
             onChange={(v) => setValue("opportunityType", v as any, { shouldValidate: true })}
           />
 
           <div className="space-y-2">
-            <Label className={cn("text-xs font-bold ml-1", errors.cvType && "text-destructive")}>
+            <Label className={cn("text-xs font-semibold", errors.cvType && "text-destructive")}>
               Perfil profesional
             </Label>
             <Select
               onValueChange={(v) => setValue("cvType", v as any, { shouldValidate: true })}
               value={watch("cvType")}
             >
-              <SelectTrigger className="rounded-2xl h-12 bg-secondary/20 border-border/40 font-medium transition-all focus:ring-primary/20">
-                <SelectValue placeholder="Selecciona tu especialidad" />
+              <SelectTrigger className="rounded-lg h-10 bg-secondary/30 border-border font-medium">
+                <SelectValue placeholder="Selecciona especialidad" />
               </SelectTrigger>
-              <SelectContent className="rounded-2xl shadow-xl">
+              <SelectContent>
                 {cvTypes.map((t) => (
-                  <SelectItem key={t.key} value={t.key} className="rounded-lg">{t.value}</SelectItem>
+                  <SelectItem key={t.key} value={t.key}>{t.value}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
             {errors.cvType && (
-              <p className="text-[10px] font-bold text-destructive ml-1 italic">{errors.cvType.message}</p>
+              <p className="text-[10px] font-medium text-destructive mt-1 italic">{errors.cvType.message}</p>
             )}
           </div>
         </div>
       </div>
 
       {/* COLUMNA 2: Selección de Secciones */}
-      <div className="p-8 bg-secondary overflow-y-auto">
+      <div className="p-6 md:p-8 bg-secondary/5 overflow-y-auto">
         <div className="space-y-1 mb-8">
-          <h3 className="text-sm font-black uppercase tracking-widest text-primary">02. Estructura</h3>
-          <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">Selecciona y ordena los bloques</p>
+          <h3 className="text-xs font-bold uppercase tracking-wider text-primary">02. Estructura</h3>
+          <p className="text-xs text-muted-foreground">Activa y ordena los módulos de información.</p>
         </div>
 
-        <div className="bg-background/40 border border-border/40 rounded-[2rem] p-6 shadow-sm">
+        <div className="bg-background border border-border rounded-xl p-5 shadow-sm">
           <CvSectionSelector
             selectedSections={watch("sections") || []}
             onChange={(newSections) => setValue("sections", newSections, { shouldValidate: true })}
@@ -137,20 +137,20 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
         </div>
 
         {errors.sections && (
-          <div className="mt-6 p-3 rounded-2xl bg-destructive/5 border border-destructive/20 text-center">
-            <p className="text-[10px] font-black text-destructive uppercase tracking-widest leading-none">
+          <div className="mt-4 p-3 rounded-lg border border-destructive/20 bg-destructive/5 text-center">
+            <p className="text-[10px] font-bold text-destructive uppercase">
               {errors.sections.message}
             </p>
           </div>
         )}
 
-        <div className="mt-12 p-6 rounded-3xl border border-dashed border-primary/20 bg-primary/5 flex items-center gap-4">
-          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0 font-black text-xs">
-            {watch("sections")?.length || 0}
-          </div>
-          <div>
-            <p className="text-[11px] font-bold text-foreground">Secciones Activas</p>
-            <p className="text-[10px] text-muted-foreground italic">El orden de los números indica la secuencia en tu formulario.</p>
+        <div className="mt-8 p-4 rounded-xl border border-border bg-background flex items-start gap-3">
+          <Info className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <p className="text-xs font-bold text-foreground">Resumen de bloques ({watch("sections")?.length || 0})</p>
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              Las secciones seleccionadas aparecerán en tu editor para ser completadas. Puedes reordenarlas en el siguiente paso.
+            </p>
           </div>
         </div>
       </div>

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Upload, ChevronRight, FileIcon, X, Sparkles, CreditCard } from "lucide-react";
+import { Upload, ChevronRight, FileIcon, X, Sparkles, CreditCard, Loader2 } from "lucide-react";
 import { CvType, OpportunityType } from "@prisma/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -38,12 +38,11 @@ interface UploadCVModalProps {
 export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModalProps) {
   const router = useRouter();
   const { refreshCredits, credits } = useCreditsStore();
+  const { isUploadOpen, onCloseUpload } = useCvModalStore();
 
   const [isUploading, setIsUploading] = useState(false);
   const [step, setStep] = useState(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const { isUploadOpen, onCloseUpload } = useCvModalStore();
 
   const {
     register,
@@ -65,16 +64,15 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
   });
 
   const currentFile = watch("file");
-  const currentTitle = watch("title");
   const currentOpportunity = watch("opportunityType");
   const currentSections = watch("sections") || [];
 
+  // Efectos de inicialización y sincronización
   useEffect(() => {
     if (initialFile && isUploadOpen) {
       const fileToSet = initialFile instanceof File
         ? initialFile
         : new File([initialFile], "Mi_CV.pdf", { type: "application/pdf" });
-
       setValue("file", fileToSet, { shouldValidate: true });
       setValue("title", fileToSet.name.replace(/\.pdf$/i, ""), { shouldValidate: true });
     }
@@ -92,16 +90,6 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
     onCloseUpload();
     reset();
     setStep(1);
-  };
-
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (f) {
-      setValue("file", f, { shouldValidate: true });
-      if (!currentTitle) {
-        setValue("title", f.name.replace(/\.pdf$/i, ""), { shouldValidate: true });
-      }
-    }
   };
 
   const onSubmit = async (data: UploadCvFormValues) => {
@@ -123,19 +111,17 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
       const result = await createCvFromPdfAction(formData);
 
       if (result?.error) {
-        toast.error(result.error || 'No se pudo agregar tu CV');
+        toast.error(result.error);
         return;
       }
 
-      toast.success("Extrayendo datos con IA...");
-      setTimeout(() => {
-        handleClose();
-        refreshCredits();
-        resetParent();
-        router.push(`/cv/${result.cvId}/processing`);
-      }, 1000)
+      toast.success("Importación iniciada");
+      handleClose();
+      refreshCredits();
+      resetParent();
+      router.push(`/cv/${result.cvId}/processing`);
     } catch (error: any) {
-      toast.error(error.message || "Ocurrió un error inesperado.");
+      toast.error("Error inesperado al procesar el archivo.");
     } finally {
       setIsUploading(false);
     }
@@ -144,103 +130,92 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
   return (
     <Dialog open={isUploadOpen} onOpenChange={handleClose}>
       <DialogContent className={cn(
-        "overflow-hidden transition-all duration-500 ease-in-out p-0 border-none bg-background shadow-2xl rounded-[2.5rem]",
-        step === 1 ? "max-w-[500px]" : "max-w-[1000px]"
+        "p-0 border-border bg-background shadow-lg transition-all duration-300",
+        step === 1 ? "max-w-lg" : "max-w-5xl w-[95vw]"
       )}>
 
-        {/* Barra de Progreso Superior */}
-        <div className="absolute top-0 left-0 w-full h-1.5 bg-secondary/30 z-50">
-          <div
-            className="h-full bg-primary transition-all duration-700 ease-out shadow-[0_0_10px_rgba(var(--primary),0.5)]"
-            style={{ width: isUploading ? '100%' : (step === 1 ? '33%' : '66%') }}
-          />
-        </div>
-
         <div className="flex flex-col h-full max-h-[90vh]">
-          {/* Header Principal */}
-          <div className="p-8 pb-4 border-b border-border/40 bg-background/50 backdrop-blur-sm">
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-sm shrink-0">
-                {step === 1 ? <Upload className="h-6 w-6" /> : <Sparkles className="h-6 w-6" />}
+          {/* Header Minimalista */}
+          <div className="p-6 border-b border-border">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-secondary flex items-center justify-center text-primary">
+                {step === 1 ? <Upload size={20} /> : <Sparkles size={20} />}
               </div>
-              <div className="space-y-0.5">
-                <DialogTitle className="text-2xl font-black tracking-tight">
-                  {step === 1 ? "Importar desde PDF" : "Estructura del nuevo CV"}
+              <div>
+                <DialogTitle className="text-lg font-bold">
+                  {step === 1 ? "Importar archivo" : "Configuración de extracción"}
                 </DialogTitle>
-                <DialogDescription className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/60">
-                  {step === 1 ? "Paso 01: Archivo fuente" : "Paso 02: Configuración de IA"}
+                <DialogDescription className="text-xs">
+                  {step === 1 ? "Selecciona el PDF de tu CV actual." : "Confirma cómo la IA procesará tu información."}
                 </DialogDescription>
               </div>
             </div>
           </div>
 
           <div className={cn(
-            "flex-1 overflow-y-auto",
-            step === 2 && "grid grid-cols-1 lg:grid-cols-2"
+            "flex-1 overflow-y-auto min-h-[300px]",
+            step === 2 && "grid grid-cols-1 md:grid-cols-2"
           )}>
 
-            {/* COLUMNA 1 / PASO 1 */}
-            <div className={cn(
-              "p-8 space-y-6",
-              step === 2 && "border-r border-border/40"
-            )}>
+            {/* COLUMNA 1 */}
+            <div className={cn("p-6 space-y-6", step === 2 && "border-b md:border-b-0 md:border-r border-border")}>
               {step === 1 ? (
-                /* Layout Paso 1: Centrado */
-                <div className="space-y-6 py-4 animate-in fade-in zoom-in-95 duration-300">
+                /* Subida de Archivo */
+                <div className="py-4">
                   {!currentFile ? (
                     <div
                       onClick={() => fileInputRef.current?.click()}
-                      className="group relative flex flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-primary/20 bg-secondary/10 p-12 text-center transition-all hover:border-primary/40 hover:bg-secondary/20 cursor-pointer"
+                      className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-muted-foreground/20 bg-secondary/20 p-10 text-center hover:bg-secondary/40 transition-colors cursor-pointer"
                     >
-                      <input type="file" ref={fileInputRef} className="hidden" accept=".pdf" onChange={onFileChange} />
-                      <div className="rounded-2xl bg-background p-5 shadow-sm group-hover:scale-110 transition-transform duration-300">
-                        <Upload className="h-8 w-8 text-primary" />
-                      </div>
-                      <p className="mt-4 text-sm font-black">Haz clic o arrastra tu PDF</p>
-                      <p className="text-[11px] text-muted-foreground font-medium mt-1 uppercase tracking-tight">Límite 5MB por archivo</p>
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        className="hidden"
+                        accept=".pdf"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (f) setValue("file", f, { shouldValidate: true });
+                        }}
+                      />
+                      <Upload className="h-8 w-8 text-muted-foreground mb-4" />
+                      <p className="text-sm font-semibold text-foreground">Seleccionar PDF</p>
+                      <p className="text-xs text-muted-foreground mt-1 tracking-tight">Máximo 5MB</p>
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center gap-4 p-8 rounded-[2rem] bg-primary/5 border border-primary/10 border-dashed animate-in slide-in-from-bottom-4">
-                      <div className="p-4 bg-background rounded-2xl shadow-sm text-primary ring-4 ring-primary/5">
-                        <FileIcon className="h-10 w-10" />
-                      </div>
-                      <div className="text-center">
-                        <p className="text-sm font-black text-foreground max-w-[250px] truncate">{currentFile.name}</p>
-                        <p className="text-[10px] font-bold text-primary uppercase mt-1">Archivo seleccionado</p>
+                    <div className="flex items-center justify-between p-4 rounded-xl border border-primary/20 bg-primary/5">
+                      <div className="flex items-center gap-3 overflow-hidden">
+                        <FileIcon className="h-5 w-5 text-primary shrink-0" />
+                        <span className="text-sm font-medium truncate">{currentFile.name}</span>
                       </div>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setValue("file", null as any)}
-                        className="rounded-xl hover:bg-destructive/10 text-destructive font-bold text-[10px]"
+                        className="h-8 w-8 p-0 rounded-full"
                       >
-                        REEMPLAZAR ARCHIVO
+                        <X size={16} />
                       </Button>
                     </div>
                   )}
-                  {errors.file && <p className="text-[10px] text-center text-destructive font-black uppercase italic">{errors.file.message}</p>}
+                  {errors.file && <p className="text-xs text-destructive mt-3 font-medium">{errors.file.message}</p>}
                 </div>
               ) : (
-                /* Contenido Columna Izquierda en Paso 2 */
-                <div className="space-y-6 animate-in fade-in slide-in-from-left-4 duration-500">
+                /* Formulario de Configuración */
+                <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label className="text-xs font-black ml-1 uppercase text-muted-foreground">Nombre del proyecto</Label>
+                    <Label className="text-xs font-semibold">Título del CV</Label>
                     <Input
                       {...register("title")}
-                      className="rounded-2xl bg-secondary/30 border-none h-12 font-bold px-4"
-                      placeholder="Ej: CV Estratégico 2026"
-                      disabled={isUploading}
+                      className="h-10 rounded-lg bg-secondary/30"
+                      placeholder="Ej: CV Senior Backend"
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <FormSelect
                       label="Plantilla"
                       value={watch("templateId")}
-                      options={[
-                        { key: "harvard", value: "Harvard" },
-                        { key: "europass", value: "Modern" },
-                      ]}
+                      options={[{ key: "harvard", value: "Harvard" }, { key: "europass", value: "Europass" }]}
                       onChange={(v) => setValue("templateId", v as any)}
                     />
                     <FormSelect
@@ -252,36 +227,31 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
                   </div>
 
                   <FormSelect
-                    label="Oportunidad Objetivo"
+                    label="Oportunidad"
                     value={watch("opportunityType")}
                     options={opportunities}
                     onChange={(v) => setValue("opportunityType", v as OpportunityType)}
                   />
 
-                  <div className="p-5 rounded-3xl bg-primary/5 border border-primary/10 flex items-center gap-4">
-                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                      <CreditCard className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-black uppercase text-primary tracking-widest leading-none">Costo de importación</p>
-                      <p className="text-[11px] font-bold text-muted-foreground mt-1">
-                        Utilizarás 1 crédito de tus <span className="text-foreground">{credits.manageCvsLimit}</span> disponibles.
-                      </p>
-                    </div>
+                  <div className="p-4 rounded-xl border border-border bg-secondary/10 flex items-center gap-3">
+                    <CreditCard size={16} className="text-muted-foreground" />
+                    <span className="text-xs font-medium">
+                      Créditos disponibles: <b className="text-foreground">{credits.manageCvsLimit}</b>
+                    </span>
                   </div>
                 </div>
               )}
             </div>
 
-            {/* COLUMNA 2 (Solo Paso 2) */}
+            {/* COLUMNA 2 (Selector de Secciones) */}
             {step === 2 && (
-              <div className="p-8 bg-secondary/5 space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-                <div className="space-y-1 mb-4">
-                  <h4 className="text-sm font-black uppercase text-primary tracking-tight">Bloques de Extracción</h4>
-                  <p className="text-[10px] text-muted-foreground font-medium uppercase">IA extraerá datos solo para estas secciones</p>
+              <div className="p-6 bg-secondary/5 space-y-4">
+                <div>
+                  <h4 className="text-sm font-bold">Secciones a extraer</h4>
+                  <p className="text-[11px] text-muted-foreground">La IA buscará estos datos en tu documento.</p>
                 </div>
 
-                <div className="bg-background/60 p-6 rounded-[2rem] border border-border/40 shadow-sm">
+                <div className="bg-background rounded-xl border border-border p-4">
                   <CvSectionSelector
                     opportunityType={currentOpportunity}
                     selectedSections={currentSections}
@@ -293,40 +263,42 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
           </div>
 
           {/* Footer Unificado */}
-          <DialogFooter className="p-8 bg-background border-t border-border/40 shrink-0">
-            <div className="flex w-full gap-4">
+          <div className="p-6 border-t border-border bg-background">
+            <div className="flex w-full gap-3">
               {step === 1 ? (
                 <Button
                   onClick={() => setStep(2)}
-                  disabled={!currentFile || !!errors.file || (credits.manageCvsLimit <= 0)}
-                  className="w-full rounded-2xl h-14 font-black transition-all active:scale-95 shadow-xl shadow-primary/20"
-                  variant="accent"
+                  disabled={!currentFile || !!errors.file}
+                  className="w-full h-11 font-bold"
                 >
-                  CONFIGURAR EXTRACCIÓN
-                  <ChevronRight className="ml-2 h-5 w-5" />
+                  Siguiente paso
+                  <ChevronRight size={18} className="ml-2" />
                 </Button>
               ) : (
                 <>
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     onClick={() => setStep(1)}
-                    className="flex-1 rounded-2xl h-14 font-bold text-muted-foreground hover:bg-secondary/20 transition-all"
+                    className="flex-1 h-11 font-bold"
                     disabled={isUploading}
                   >
-                    ATRÁS
+                    Atrás
                   </Button>
                   <Button
                     onClick={handleSubmit(onSubmit)}
-                    disabled={isUploading || !isValid || credits.manageCvsLimit <= 0}
-                    className="flex-[2] rounded-2xl h-14 font-black shadow-xl shadow-primary/20 transition-all active:scale-95"
-                    variant="accent"
+                    disabled={isUploading || !isValid}
+                    className="flex-[2] h-11 font-bold"
                   >
-                    {isUploading ? "PROCESANDO ARCHIVO..." : "INICIAR IMPORTACIÓN IA"}
+                    {isUploading ? (
+                      <Loader2 className="animate-spin mr-2" size={18} />
+                    ) : (
+                      "Importar ahora"
+                    )}
                   </Button>
                 </>
               )}
             </div>
-          </DialogFooter>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

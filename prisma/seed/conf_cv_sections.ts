@@ -75,18 +75,18 @@ import {
 
 // --- 1. MAPEO BASE DE SECCIONES (ESTRUCTURA GENERAL) ---
 // --- 1. MAPEO BASE DE SECCIONES (Sincronizado con el Enum de la DB) ---
-const baseSectionsMap: Record<string, any> = {
+const baseSectionsMap = {
   CONTACT: {
     id: "CONTACT",
     title: "Información de Contacto",
     icon: "User",
     fields: [
-      { name: "fullName", label: "Nombre Completo", type: "text", required: true, tip: "Usa tu nombre completo oficial", example: "Edward Melendez" },
-      { name: "address", label: "Dirección", type: "text", required: false, tip: "Ciudad y País", example: "Cusco, Perú" },
-      { name: "linkedin", label: "LinkedIn", type: "text", required: false, tip: "URL de perfil (sin https://)", example: "linkedin.com/in/edward" },
-      { name: "phone", label: "Teléfono", type: "text", required: true, tip: "Incluye código de país", example: "+51 987654321" },
-      { name: "email", label: "Email", type: "email", required: true, tip: "Usa un email profesional", example: "edward@example.com" },
-      { name: "summary", label: "Resumen Profesional", tip: "2-3 líneas de tu perfil y valor", type: "textarea", example: "Ingeniero de software con más de 5 años de experiencia en desarrollo de aplicaciones web y móviles. Especializado en tecnologías de frontend y backend, con un enfoque en la creación de soluciones escalables y eficientes. Apasionado por la innovación y la mejora continua en el desarrollo de software.", required: false }
+      { name: "fullName", label: "Nombre Completo", type: "text", required: true, tip: "Tu nombre tal como aparece en tu documento de identidad", example: "Alex J. Doe" },
+      { name: "address", label: "Ubicación", type: "text", required: false, tip: "Ciudad y País", example: "Ciudad de México, México" },
+      { name: "linkedin", label: "LinkedIn", type: "text", required: false, tip: "Enlace a tu perfil profesional (ej: linkedin.com/in/usuario)", example: "linkedin.com/in/alexdoe" },
+      { name: "phone", label: "Teléfono", type: "text", required: true, tip: "Número con código de país (+52...)", example: "+52 5512345678" },
+      { name: "email", label: "Correo Electrónico", type: "email", required: true, tip: "Usa una dirección de correo profesional", example: "alex.doe@email.com" },
+      { name: "summary", label: "Perfil Profesional", tip: "Breve resumen de 3-4 líneas sobre tu trayectoria y objetivos", type: "textarea", example: "Estratega digital con más de 8 años de experiencia liderando equipos multidisciplinarios. Especializado en optimización de procesos y transformación digital con un enfoque en resultados medibles y escalabilidad empresarial.", required: false }
     ],
   },
   EXPERIENCE: {
@@ -95,102 +95,90 @@ const baseSectionsMap: Record<string, any> = {
     icon: "Briefcase",
     multiple: true,
     fields: [
-      { name: "company", label: "Empresa", type: "text", required: true, example: "TechCorp" },
-      { name: "location", label: "Ubicación", type: "text", required: true, example: "Lima, Perú" },
-      { name: "position", label: "Cargo", type: "text", required: true, example: "Senior Developer" },
-      { name: "duration", label: "Duración", type: "text", required: true, example: "Ene 2023 - Presente" },
-      { name: "responsibilities", label: "Responsabilidades", type: "textarea", required: true, example: "• Lideré la migración de microservicios..." },
+      { name: "company", label: "Empresa / Organización", type: "text", required: true, tip: "Nombre legal de la empresa o nombre comercial conocido", example: "Global Solutions Inc." },
+      { name: "location", label: "Ubicación", type: "text", required: true, tip: "Ciudad y país (o especificar 'Remoto')", example: "Remoto / Madrid, España" },
+      { name: "position", label: "Cargo o Rol", type: "text", required: true, tip: "Nombre exacto de tu puesto", example: "Project Manager Senior" },
+      { name: "duration", label: "Periodo", type: "text", required: true, tip: "Mes/Año de inicio y fin (o 'Presente')", example: "Marzo 2021 - Actualidad" },
+      { name: "responsibilities", label: "Logros y Responsabilidades", type: "textarea", required: true, tip: "Usa viñetas para describir tus impactos cuantificables y tareas principales", example: "• Incrementé la eficiencia operativa en un 20% mediante la implementación de metodologías ágiles.\n• Gestioné un presupuesto anual de $500k USD." },
     ],
   },
   EDUCATION: {
     id: "EDUCATION",
-    title: "Educación",
+    title: "Formación Académica",
     icon: "GraduationCap",
     multiple: true,
     fields: [
-      { name: "title", label: "Título/Carrera", type: "text", required: true, example: "Ingeniería de Sistemas" },
-      { name: "institution", label: "Institución", type: "text", required: true, example: "UNSAAC" },
-      { name: "location", label: "Ubicación", type: "text", required: true, example: "Cusco, Perú" },
-      { name: "year", label: "Año", type: "text", required: true, example: "2024" },
-      { name: "honors", label: "Honores/Menciones", type: "text", required: false, example: "Tercio Superior" },
+      { name: "title", label: "Grado / Carrera", type: "text", required: true, tip: "Nombre oficial de la licenciatura, grado o maestría", example: "Licenciatura en Administración de Empresas" },
+      { name: "institution", label: "Institución Educativa", type: "text", required: true, tip: "Nombre completo de la universidad o centro de estudios", example: "Universidad Nacional Autónoma" },
+      { name: "location", label: "Ubicación", type: "text", required: true, tip: "Ciudad donde se ubica la institución", example: "Santiago, Chile" },
+      { name: "year", label: "Año de Finalización", type: "text", required: true, tip: "Año de egreso (o 'En curso / Esperado 202X')", example: "2019" },
+      { name: "honors", label: "Distinciones (Opcional)", type: "text", required: false, tip: "Menciones, tercio superior o premios académicos", example: "Mención Honorífica por Excelencia Académica" },
     ],
   },
   SKILLS: {
     id: "SKILLS",
-    title: "Habilidades",
+    title: "Competencias",
     icon: "Languages",
     fields: [
-      { name: "technical", label: "Habilidades Técnicas", type: "tags", required: false, example: "React, Node.js, Prisma" },
-      { name: "soft", label: "Habilidades Blandas", type: "tags", required: false, example: "Liderazgo, KISS Principle" },
-      { name: "languages", label: "Idiomas", type: "tags", required: false, example: "Español (Nativo), Inglés (Fluido - C1)" },
+      { name: "technical", label: "Habilidades Técnicas / Hard Skills", type: "tags", required: false, tip: "Software, lenguajes, metodologías o herramientas específicas", example: "Python, SQL, Análisis de Datos, AWS" },
+      { name: "soft", label: "Habilidades Blandas / Soft Skills", type: "tags", required: false, tip: "Habilidades interpersonales y de gestión", example: "Comunicación Asertiva, Trabajo en Equipo, Resolución de Problemas" },
+      { name: "languages", label: "Idiomas", type: "tags", required: false, tip: "Indica el idioma y tu nivel (A1-C2 o Nativo/Fluido)", example: "Inglés (C1 - Avanzado), Francés (B2 - Intermedio)" },
     ],
   },
   PROJECTS: {
     id: "PROJECTS",
-    title: "Proyectos",
+    title: "Proyectos Destacados",
     icon: "Code",
     multiple: true,
     fields: [
-      { name: "title", label: "Título del Proyecto", type: "text", required: false, example: "AI CV Analyzer" },
-      { name: "description", label: "Descripción", type: "textarea", required: false, example: "Plataforma para análisis automático de CVs..." },
-      { name: "technologies", label: "Tecnologías", type: "text", required: false, example: "Next.js, OpenAI API" },
-      { name: "duration", label: "Duración", type: "text", required: false, example: "3 meses" },
+      { name: "title", label: "Nombre del Proyecto", type: "text", required: false, tip: "Título descriptivo del proyecto", example: "Sistema de Gestión de Inventarios E-commerce" },
+      { name: "description", label: "Descripción del Proyecto", type: "textarea", required: false, tip: "Explica brevemente el objetivo y el resultado del proyecto", example: "Desarrollo de una solución integral para el control de stock en tiempo real utilizando arquitectura de microservicios." },
+      { name: "technologies", label: "Tecnologías Aplicadas", type: "text", required: false, tip: "Lista de herramientas principales usadas", example: "React, PostgreSQL, Docker" },
+      { name: "duration", label: "Tiempo de Desarrollo", type: "text", required: false, tip: "Meses o semanas de duración", example: "6 meses (2023)" },
     ],
   },
   VOLUNTEERING: {
     id: "VOLUNTEERING",
-    title: "Voluntariado",
+    title: "Voluntariado y Causas",
     icon: "Heart",
     multiple: true,
     fields: [
-      { name: "organization", label: "Organización", type: "text", required: false, example: "Tech For Good" },
-      { name: "position", label: "Rol", type: "text", required: false, example: "Mentor" },
-      { name: "responsibilities", label: "Actividades", type: "textarea", required: false, example: "• Apoyé en la formación de jóvenes..." },
+      { name: "organization", label: "Organización", type: "text", required: false, tip: "Nombre de la ONG o fundación", example: "Alianza por la Alfabetización Digital" },
+      { name: "position", label: "Rol / Función", type: "text", required: false, tip: "Tu cargo dentro de la organización", example: "Instructor Voluntario" },
+      { name: "responsibilities", label: "Resumen de la labor", type: "textarea", required: false, tip: "Describe brevemente tu aporte social", example: "• Capacitación básica en herramientas ofimáticas para adultos mayores en zonas rurales." },
     ],
   },
   CERTIFICATIONS: {
     id: "CERTIFICATIONS",
-    title: "Certificaciones",
+    title: "Certificaciones y Licencias",
     icon: "Award",
     multiple: true,
     fields: [
-      { name: "name", label: "Nombre", type: "text", required: false, example: "AWS Certified Developer" },
-      { name: "issuer", label: "Emisor", type: "text", required: false, example: "Amazon" },
-      { name: "date", label: "Fecha", type: "text", required: false, example: "Jun 2024" },
+      { name: "name", label: "Nombre de la Certificación", type: "text", required: false, tip: "Nombre oficial del certificado", example: "Google Data Analytics Professional Certificate" },
+      { name: "issuer", label: "Entidad Emisora", type: "text", required: false, tip: "Quién otorga la certificación (empresa o institución)", example: "Coursera / Google" },
+      { name: "date", label: "Fecha de Emisión", type: "text", required: false, tip: "Mes y año en que se obtuvo", example: "Agosto 2023" },
     ],
   },
   ACHIEVEMENTS: {
     id: "ACHIEVEMENTS",
-    title: "Logros y Reconocimientos",
+    title: "Reconocimientos y Premios",
     icon: "Trophy",
     multiple: true,
     fields: [
-      { name: "title", label: "Título", type: "text", required: false, example: "1er Puesto Hackathon Regional" },
-      { name: "description", label: "Descripción", type: "textarea", required: false, example: "Ganador entre 50 equipos..." },
+      { name: "title", label: "Título del Reconocimiento", type: "text", required: false, tip: "Nombre del premio o distinción", example: "Empleado del Año 2022" },
+      { name: "description", label: "Detalles adicionales", type: "textarea", required: false, tip: "Contexto sobre por qué recibiste este logro", example: "Reconocimiento otorgado por superar los objetivos de ventas anuales en un 40%." },
     ],
   },
   INTERESTS: {
     id: "INTERESTS",
-    title: "Intereses",
+    title: "Pasatiempos e Intereses",
     icon: "Star",
     multiple: true,
     fields: [
-      { name: "title", label: "Interés/Hobby", type: "text", required: false, example: "Ciclismo de Montaña" },
-      { name: "description", label: "Detalles (opcional)", type: "textarea", required: false, example: "Participación en competencias regionales y rutas de fin de semana." },
+      { name: "title", label: "Actividad", type: "text", required: false, tip: "Hobby o interés personal", example: "Fotografía de Paisajes" },
+      { name: "description", label: "Comentario breve", type: "textarea", required: false, tip: "Opcional: Detalla por qué te apasiona", example: "Interés en la captura de entornos naturales y técnicas de post-procesado digital." },
     ],
-  },
-
-  // Ahora COMPLEMENTS permite múltiples entradas (ej. Disponibilidad, Licencia, Referencia corta)
-  COMPLEMENTS: {
-    id: "COMPLEMENTS",
-    title: "Información Complementaria",
-    icon: "PlusCircle",
-    multiple: true,
-    fields: [
-      { name: "title", label: "Categoría", type: "text", required: false, example: "Disponibilidad" },
-      { name: "description", label: "Descripción", type: "textarea", required: false, example: "Disponibilidad inmediata para reubicación y viajes internacionales." },
-    ],
-  },
+  }
 };
 
 const ALL_SECTION_IDS = [
@@ -216,7 +204,7 @@ function buildFullSectionJson(customConfig: any) {
     return {
       ...base,
       fields: base.fields.map((field: any) => {
-        const fieldPath = `${id}.${field.name}`;
+        const fieldPath = `${id.toLowerCase()}.${field.name}`;
         return {
           ...field,
           // Si el config específico tiene data para este campo, la usa.

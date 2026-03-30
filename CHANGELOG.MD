@@ -1,3 +1,9 @@
+# v.1.2.0 - 2026-03-30
+
+## Fixes
+- Fix generate roadmap
+- Fix phone number for 1:1 meeting
+
 # v.1.1.31 - 2026-03-29
 
 ## Features

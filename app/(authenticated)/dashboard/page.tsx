@@ -2,9 +2,13 @@ import { redirect } from "next/navigation";
 import { getActiveRoute } from "@/features/routes/actions/get-active-route";
 import RouteStepper from "@/features/routes/components/route-stepper";
 import { prisma } from "@/lib/prisma";
+import { getStatisticsForUser } from "@/features/dashboard/actions/get-statistics-for-user";
 
 export default async function DashboardPage() {
-  const activeRoute = await getActiveRoute();
+  const [activeRoute, stats] = await Promise.all([
+    getActiveRoute(),
+    getStatisticsForUser(),
+  ]);
 
   // If the user has no routes, redirect to create one
   if (!activeRoute) {
@@ -24,7 +28,9 @@ export default async function DashboardPage() {
     hasRoadmap = roadmap !== null;
     roadmapId = roadmap?.id ?? null;
   }
-  // const hasSubscription = true;
+
+  const planSlug = stats?.subscription?.plan?.slug;
+  const planTier = planSlug === "pro" ? "PRO" : planSlug === "starter" ? "STARTER" : "FREE";
 
   return (
     <RouteStepper
@@ -36,6 +42,7 @@ export default async function DashboardPage() {
       opportunitiesCount={cv?._count?.opportunities ?? 0}
       hasRoadmap={hasRoadmap}
       roadmapId={roadmapId}
+      planTier={planTier}
     />
   );
 }

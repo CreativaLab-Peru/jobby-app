@@ -14,7 +14,7 @@ interface GenerateRoadmapButtonProps {
   cvId: string;
   routeId?: string | null;
   existingStatus: string | null;
-  onGenerated: () => void;
+  onGenerated: (roadmapId: string) => void;
   canGenerate?: boolean;
   blockedMessage?: string | null;
 }
@@ -55,7 +55,7 @@ export function GenerateRoadmapButton({
         hydrate(routesResult.routes);
 
         toast.success("¡Roadmap generado!");
-        onGenerated();
+        onGenerated(result.roadmapId || "");
       } else if (result.status === "FAILED") {
         clearInterval(interval);
         toast.error("Error al generar el roadmap. Intenta de nuevo.");
@@ -63,7 +63,7 @@ export function GenerateRoadmapButton({
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [isProcessing, opportunityId, cvId, onGenerated]);
+  }, [isProcessing, opportunityId, cvId, onGenerated, routeId, hydrate]);
 
   const handleGenerate = useCallback(async () => {
     setIsTriggering(true);
@@ -77,7 +77,7 @@ export function GenerateRoadmapButton({
 
       if (result.status === 200) {
         // Already exists
-        onGenerated();
+        onGenerated(result.data?.roadmapId || "");
         return;
       }
 

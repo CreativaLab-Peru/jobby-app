@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useTransition } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Map, Search, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -36,12 +37,22 @@ export default function MyRoadmapsScreen({
   hasCv,
   planTier,
 }: MyRoadmapsScreenProps) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [roadmaps, setRoadmaps] = useState(initialData);
   const [hasMore, setHasMore] = useState(hasMoreProp);
   const [totalCount, setTotalCount] = useState(initialTotal);
   const [generatedRoadmapsCount, setGeneratedRoadmapsCount] = useState(initialTotal);
   const [opportunities, setOpportunities] = useState<RouteOpportunity[]>(initialOpportunities);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    useEffect(() => {
+      if (searchParams?.get("openCreate") === "1") {
+        setIsCreateModalOpen(true);
+        const params = new URLSearchParams(Array.from(searchParams.entries()));
+        params.delete("openCreate");
+        router.replace(`?${params.toString()}`, { scroll: false });
+      }
+    }, [searchParams, router]);
   const [isPending, startTransition] = useTransition();
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");

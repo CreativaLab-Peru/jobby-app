@@ -1,4 +1,4 @@
-import {CvType, Language} from "@prisma/client";
+import {CvSectionType, CvType, Language, OpportunityType} from "@prisma/client";
 
 export const cvTypes = [
   {
@@ -53,6 +53,7 @@ export const OPPORTUNITY_MAP: Record<string, string> = {
 
 export const SECTION_LABELS: Record<string, string> = {
   SUMMARY: "Resumen Profesional",
+  CONTACT: "Información de Contacto",
   EXPERIENCE: "Experiencia Laboral",
   EDUCATION: "Formación Académica",
   SKILLS: "Habilidades Técnicas",
@@ -61,7 +62,8 @@ export const SECTION_LABELS: Record<string, string> = {
   CERTIFICATIONS: "Certificaciones",
   COMPLEMENTS: "Información Complementaria",
   ACHIEVEMENTS: "Logros",
-  CONTACT: "Información de Contacto",
+  LANGUAGES: "Idiomas",
+  INTERESTS: "Intereses",
 };
 
 export const languages = [
@@ -79,3 +81,26 @@ export const MODALITIES: {key: string, value: string}[]  = Object.entries(MODALI
 
 export const opportunities: {key: string, value: string}[] = Object.entries(OPPORTUNITY_MAP).map(([key, value]) => ({ key, value }));
 
+export const RECOMMENDATIONS_BY_OPPORTUNITY: Record<OpportunityType, CvSectionType[]> = {
+  SCHOLARSHIP: ['CONTACT', 'EDUCATION', 'PROJECTS', 'VOLUNTEERING', 'ACHIEVEMENTS', 'SKILLS'],
+  INTERNSHIP: ['CONTACT', 'EDUCATION', 'PROJECTS', 'SKILLS'],
+  EMPLOYMENT: ['CONTACT', 'EXPERIENCE', 'SKILLS'],
+  STARTUP: ['CONTACT', 'PROJECTS', 'EXPERIENCE', 'SKILLS'],
+  EXCHANGE_PROGRAM: ['CONTACT', 'EDUCATION', 'VOLUNTEERING', 'PROJECTS']
+};
+
+
+export const LATAM_COUNTRIES = [
+  { code: "PE", name: "Perú", prefix: "+51" },
+  { code: "MX", name: "México", prefix: "+52" },
+  { code: "CO", name: "Colombia", prefix: "+57" },
+  { code: "AR", name: "Argentina", prefix: "+54" },
+  { code: "CL", name: "Chile", prefix: "+56" },
+  { code: "EC", name: "Ecuador", prefix: "+593" },
+  { code: "BO", name: "Bolivia", prefix: "+591" },
+  { code: "UY", name: "Uruguay", prefix: "+598" },
+  { code: "PY", name: "Paraguay", prefix: "+595" },
+  { code: "CR", name: "Costa Rica", prefix: "+506" },
+  { code: "PA", name: "Panamá", prefix: "+507" },
+  { code: "DO", name: "Dom. Rep.", prefix: "+1" },
+];

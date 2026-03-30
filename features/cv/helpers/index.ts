@@ -81,7 +81,6 @@ export function getSections(
 ): CVSection[] {
   // Obtener configuración específica
   const config = getConfig(cvType, opportunityType);
-
   // Construir secciones según el orden especificado en la config de cada CvType
   const sections: CVSection[] = [];
 

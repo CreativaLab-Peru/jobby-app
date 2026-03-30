@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import useSWR from "swr";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
 
@@ -21,13 +20,13 @@ import {
   SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
 
 // Icons & Features
 import {
   LayoutDashboard, FileText, MessageSquare, MessageSquareWarning,
   Activity, Briefcase, CreditCard, Settings, Users, BarChart3,
-  Tag, Wallet, Mic, Shield, Receipt, X, Map, Coins
+  Tag, Wallet, Mic, Shield, Receipt, X, Map, Coins,
+  FileCheckIcon
 } from "lucide-react";
 
 import { ProfileButton } from "@/components/profile-button";
@@ -36,7 +35,7 @@ import { CreditsIndicator } from "@/features/credits/components/credits-indicato
 import { RouteSelector } from "@/features/routes/components/route-selector";
 import { CreditLimits } from "@/features/credits/actions/get-current-credits-limits";
 import {Button} from "@/components/ui/button";
-import {PendingStepInfo} from "@/features/roadmap/actions/get-pending-roadmap-step";
+import {useCreditsStore} from "@/store/use-credits-store";
 
 // --- Types & Fetcher ---
 export type NavbarUser = {
@@ -57,6 +56,7 @@ const sessionFetcher = (): Promise<NavbarUser> =>
 const routeNavItems = [
   { title: "Mi Pasos", href: "/dashboard", icon: LayoutDashboard },
   { title: "CV", href: "/my-cv", icon: FileText },
+  { title: "Todos mis CVs", href: "/my-cvs", icon: FileCheckIcon },
   { title: "Análisis", href: "/my-evaluation", icon: MessageSquare },
   { title: "Oportunidades", href: "/my-opportunities", icon: Briefcase },
   { title: "Roadmaps", href: "/my-roadmaps", icon: Map },
@@ -78,8 +78,10 @@ const adminNavItems = [
   { title: "Monetización", href: "/admin/plans", icon: Tag },
   { title: "Balances", href: "/admin/balances", icon: Wallet },
   { title: "Reclamos", href: "/admin/complaints", icon: MessageSquareWarning },
-  { title: "Jobs", href: "/admin/jobs", icon: Activity },
   { title: "Entrevistas", href: "/admin/interviews", icon: Mic },
+  { title: "Conf. Secciones", href: "/admin/cv-configs", icon: Settings },
+  { title: "Jobs", href: "/admin/jobs", icon: Activity },
+
 ];
 
 export default function AppSidebar({
@@ -96,14 +98,14 @@ export default function AppSidebar({
   const collapsed = state === "collapsed";
   const isAdmin = userRole === "ADMIN";
 
-  // Logic from NavbarPrivate
-  const { data: sessionUser } = useSWR("session", sessionFetcher, {
-    fallbackData: initialUser,
-    revalidateOnFocus: true,
-    revalidateOnReconnect: true,
-  });
+  const user = initialUser;
+  const {credits} = useCreditsStore();
 
-  const user = sessionUser ?? initialUser;
+  const creditsFinal: CreditLimits = {
+    manageCvsLimit: credits?.manageCvsLimit ?? creditLimits.manageCvsLimit,
+    aiActionsLimit: credits?.aiActionsLimit ?? creditLimits.aiActionsLimit,
+    opportunitiesActionsLimit: credits?.opportunitiesActionsLimit ?? creditLimits.opportunitiesActionsLimit,
+  }
 
   useEffect(() => {
     if (isMobile) {
@@ -113,6 +115,7 @@ export default function AppSidebar({
 
   const isActive = (path: string) => {
     if (path === "/dashboard") return pathname === "/dashboard";
+    if (path === "/my-cv" || path === "/my-cvs") return pathname === path;
     if (path === "/admin/plans") {
       return pathname.startsWith("/admin/plans") || pathname.startsWith("/admin/credit-packages");
     }
@@ -202,7 +205,7 @@ export default function AppSidebar({
 
         {/* CREDITS INDICATOR (From Navbar) */}
         <div className={cn("px-4 py-2 transition-all", collapsed ? "flex justify-center" : "w-full")}>
-          <CreditsIndicator limits={creditLimits} />
+          <CreditsIndicator limits={creditsFinal} />
         </div>
 
 

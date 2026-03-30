@@ -47,7 +47,7 @@ export default function MyEvaluationScreen({
   const [isPending, startTransition] = useTransition();
   const [justSuccessful, setJustSuccessful] = useState(true);
 
-  const { onOpen, setIsAnalyzing, setSelectedCvId } = useEvaluationModalStore();
+  const { onOpen, onClose, setIsAnalyzing, setSelectedCvId } = useEvaluationModalStore();
   const { refreshCredits } = useCreditsStore();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -107,14 +107,17 @@ export default function MyEvaluationScreen({
       const response = await analyzeCvById(cvId);
       if (response.success) {
         toast.success("Análisis iniciado");
-        router.push(`/process/${cvId}`);
-        refreshCredits();
+        setTimeout(() => {
+          onClose();
+          router.push(`/process/${cvId}`);
+          refreshCredits();
+        }, 600);
       } else {
         toast.error(response.message || "Error al procesar el CV");
+        setIsAnalyzing(false);
       }
     } catch {
       toast.error("Error de conexión");
-    } finally {
       setIsAnalyzing(false);
     }
   };
@@ -138,7 +141,10 @@ export default function MyEvaluationScreen({
   return (
     <main className="min-h-[90vh] p-4 md:p-8">
       {/* Select CV Modal */}
-      <SelectCvModal cvs={cvList} onConfirm={handleAnalyzeConfirm} />
+      <SelectCvModal
+        cvs={cvList}
+        onConfirm={handleAnalyzeConfirm}
+      />
 
       <div className="mx-auto max-w-7xl">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">

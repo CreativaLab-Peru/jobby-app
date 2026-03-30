@@ -9,6 +9,7 @@ import {PaddleProvider} from "@/features/billing/components/paddle-provider";
 import {getRoutesForUser} from "@/features/routes/actions/get-routes-for-user";
 import {RouteProvider} from "@/features/routes/components/route-provider";
 import {getPendingRoadmapStep} from "@/features/roadmap/actions/get-pending-roadmap-step";
+import {CreditsProvider} from "@/providers/credits-provider";
 
 export const dynamic = "force-dynamic";
 
@@ -35,32 +36,33 @@ export default async function RootLayout({
   }
 
   return (
-  <SidebarProvider>
-    <ThemeSync />
-    <PaddleProvider>
-    <RouteProvider routes={routes}>
-    {/* Sidebar lateral */}
-    <AppSidebar
-      initialUser={userNavbar}
-      creditLimits={creditsLimits}
-      userRole={user.role}
-    />
+    <SidebarProvider>
+      <ThemeSync/>
+      <CreditsProvider/>
+      <PaddleProvider>
+        <RouteProvider routes={routes}>
+          {/* Sidebar lateral */}
+          <AppSidebar
+            initialUser={userNavbar}
+            creditLimits={creditsLimits}
+            userRole={user.role}
+          />
 
-    {/* Contenido Principal */}
-    <main className="flex flex-1 flex-col">
-      {/* Header/Navbar */}
-      <div className="block sm:hidden ">
-        <NavbarWrapper />
-      </div>
-      <div className="md:pl-64">
-        <div className="mx-auto w-full max-w-8xl pl-0 pr-4 py-6 sm:px-6 lg:px-8">
-          {children}
-        </div>
-      </div>
-    </main>
-    </RouteProvider>
-    </PaddleProvider>
-    {/*<TermsModal isOpen={!isTermsAccepted} userId={user?.id}/>*/}
-  </SidebarProvider>
+          {/* Contenido Principal */}
+          <main className="flex flex-1 flex-col">
+            {/* Header/Navbar */}
+            <div className="block sm:hidden ">
+              <NavbarWrapper/>
+            </div>
+            <div className="md:pl-64">
+              <div className="mx-auto w-full max-w-8xl pl-0 pr-4 sm:px-6 lg:px-8">
+                {children}
+              </div>
+            </div>
+          </main>
+        </RouteProvider>
+      </PaddleProvider>
+      {/*<TermsModal isOpen={!isTermsAccepted} userId={user?.id}/>*/}
+    </SidebarProvider>
   );
 }

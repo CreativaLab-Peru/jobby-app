@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { JobStatus } from "@prisma/client";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import { PAYMENT_PRO_ID, PAYMENT_STARTER_ID } from "@/features/billing/consts/payment-plant-ids";
 
@@ -9,14 +10,14 @@ export type RoadmapPlanTier = "FREE" | "STARTER" | "PRO";
 export type RoadmapGenerationPermission = {
   canGenerate: boolean;
   planTier: RoadmapPlanTier;
-  isFirstOpportunity: boolean;
   message: string | null;
 };
 
 export async function getRoadmapGenerationPermissionByUser(
   userId: string,
-  opportunityId: string,
-  cvId: string,
+  _opportunityId: string,
+  _cvId: string,
+  routeId: string,
 ): Promise<RoadmapGenerationPermission> {
   const activePaidPlans = await prisma.userPayment.findMany({
     where: {
@@ -31,22 +32,21 @@ export async function getRoadmapGenerationPermissionByUser(
   const hasStarter = activePaidPlans.some((payment) => payment.planId === PAYMENT_STARTER_ID);
   const planTier: RoadmapPlanTier = hasPro ? "PRO" : hasStarter ? "STARTER" : "FREE";
 
-  const firstOpportunity = await prisma.opportunity.findFirst({
+
+  // Para saber si ya existe un roadmap en esta ruta para el usuario
+  const existingRoadmap = await prisma.roadmap.findFirst({
     where: {
-      cvId,
-      cv: { userId },
+      userId,
+      routeId,
+      status: JobStatus.SUCCEEDED,
     },
-    orderBy: [{ match: "desc" }, { createdAt: "desc" }],
     select: { id: true },
   });
-
-  const isFirstOpportunity = firstOpportunity?.id === opportunityId;
 
   if (planTier === "PRO") {
     return {
       canGenerate: true,
       planTier,
-      isFirstOpportunity,
       message: null,
     };
   }
@@ -55,7 +55,7 @@ export async function getRoadmapGenerationPermissionByUser(
     const generatedCount = await prisma.roadmap.count({
       where: {
         userId,
-        status: "SUCCEEDED",
+        status: JobStatus.SUCCEEDED,
       },
     });
 
@@ -63,7 +63,6 @@ export async function getRoadmapGenerationPermissionByUser(
       return {
         canGenerate: false,
         planTier,
-        isFirstOpportunity,
         message: "Con Starter puedes generar 1 roadmap. Mejora a Pro para generar más.",
       };
     }
@@ -71,16 +70,15 @@ export async function getRoadmapGenerationPermissionByUser(
     return {
       canGenerate: true,
       planTier,
-      isFirstOpportunity,
       message: null,
     };
   }
 
-  if (isFirstOpportunity) {
+  // FREE: solo permitir crear un roadmap por ruta
+  if (!existingRoadmap) {
     return {
       canGenerate: true,
       planTier,
-      isFirstOpportunity,
       message: null,
     };
   }
@@ -88,24 +86,23 @@ export async function getRoadmapGenerationPermissionByUser(
   return {
     canGenerate: false,
     planTier,
-    isFirstOpportunity,
-    message: "Con Free solo puedes generar roadmap para tu primera oportunidad. Mejora a Starter o Pro para desbloquear más.",
+    message: "Con Free solo puedes generar 1 roadmap por ruta. Mejora a Starter o Pro para desbloquear más.",
   };
 }
 
 export async function getRoadmapGenerationPermission(
   opportunityId: string,
   cvId: string,
+  routeId: string,
 ): Promise<RoadmapGenerationPermission> {
   const user = await getCurrentUser();
   if (!user) {
     return {
       canGenerate: false,
       planTier: "FREE",
-      isFirstOpportunity: false,
       message: "Usuario no autenticado.",
     };
   }
 
-  return getRoadmapGenerationPermissionByUser(user.id, opportunityId, cvId);
+  return getRoadmapGenerationPermissionByUser(user.id, opportunityId, cvId, routeId);
 }

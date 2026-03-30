@@ -10,6 +10,7 @@ datasource db {
 model TemporalUser {
   id    String   @id @default(uuid())
   email String   @unique
+  name  String?
   date  DateTime @default(now())
 
   @@map("temporal_user")
@@ -32,6 +33,7 @@ model User {
   acceptedPrivacyPolicyAt    DateTime?
   acceptedCookiePolicy       Boolean             @default(false)
   acceptedSecurityPolicy     Boolean             @default(false)
+  phoneNumber                String?
   acceptedSecurityPolicyAt   DateTime?
   birthday                   DateTime?
   createdAt                  DateTime
@@ -234,6 +236,7 @@ model Cv {
   userId            String?
   createdByJobId    String?
   language          Language           @default(EN)
+  status            JobStatus         @default(PENDING)
   opportunityType   OpportunityType
   cvType            CvType?
   title             String?
@@ -339,9 +342,15 @@ model CvSection {
   title       String?
   contentJson Json?
   order       Int           @default(0)
+
+  isVisible   Boolean       @default(true) // Crucial para la feature
+  isRecommended Boolean     @default(false) // Meta-dato para UI
+
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   cv          Cv            @relation(fields: [cvId], references: [id])
+
+  @@unique([cvId, sectionType])
 
   @@index([cvId, sectionType])
   @@index([cvId, order])
@@ -659,6 +668,22 @@ model RoadmapStep {
 
   @@index([roadmapId, order])
   @@map("roadmap_step")
+}
+
+model CvSectionConfiguration {
+  id              String          @id @default(cuid())
+  cvType          CvType
+  opportunityType OpportunityType
+
+  // Almacenaremos el JSON que me pasaste aquí
+  // Usamos Json de Prisma para consultas eficientes y tipado
+  sections        Json
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@unique([cvType, opportunityType]) // Un solo esquema por combinación
+  @@map("cv_section_configuration")
 }
 
 enum RouteStatus {

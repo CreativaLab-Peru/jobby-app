@@ -1,3 +1,21 @@
+# v.1.1.31 - 2026-03-29
+
+## Features
+- Configuration of cv section and admin interface
+
+## Fixes
+- Hidden roadmap into details of opportunities.
+- Removed button Todos mis CVs from sidebar into CV, and added to the sidebar app.
+- Fixed the 3 steps for analyzing a CV.
+- Removed double buttons in create/upload CVs.
+- Fixed create a roadmap for each route.
+- Mapped type of opportunity in roadmap create modal.
+- Refresh route after each action of the guided flow.
+- Name of temporal user to use Mercado pago integration.
+- Select sections to store the information of the CV in the database (it's missing in the preview and edit cv).
+- Contact with mentor, store phone number and refactor route components.
+- It's impossible to get the current credits.
+
 # v1.1.30 - 2026-03-26
 
 ## Fixes

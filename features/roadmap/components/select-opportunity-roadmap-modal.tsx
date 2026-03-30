@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { OPPORTUNITY_MAP } from "@/const/index";
 import { AnimatePresence, motion } from "framer-motion";
 import { Building2, Lock, Map, Sparkles, Target, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -48,7 +49,6 @@ export function SelectOpportunityRoadmapModal({
     [opportunities, starterLimitReached, isFreePlan],
   );
 
-
   // Reset selection and roadmap info when modal opens
   useEffect(() => {
     if (!isOpen) return;
@@ -73,7 +73,7 @@ export function SelectOpportunityRoadmapModal({
         setCheckingRoadmap(false);
         return;
       }
-      const roadmap = await getRoadmapForOpportunity(opp.id, opp.cvId);
+      const roadmap = await getRoadmapForOpportunity(opp.id, opp.cvId, opp.routeId);
       if (!cancelled) {
         if (roadmap && roadmap.id) {
           setExistingRoadmap({ id: roadmap.id, status: roadmap.status });
@@ -91,7 +91,6 @@ export function SelectOpportunityRoadmapModal({
     () => opportunities.find((opportunity) => opportunity.id === selectedOpportunityId) ?? null,
     [opportunities, selectedOpportunityId],
   );
-
 
   return (
     <AnimatePresence>
@@ -189,7 +188,7 @@ export function SelectOpportunityRoadmapModal({
                           </div>
 
                           <Badge variant="secondary" className="rounded-lg text-[10px] uppercase tracking-wider">
-                            {opportunity.type}
+                            {OPPORTUNITY_MAP[opportunity.type] || opportunity.type}
                           </Badge>
                         </div>
                       </button>
@@ -266,6 +265,7 @@ export function SelectOpportunityRoadmapModal({
                   <GenerateRoadmapButton
                     opportunityId={selectedOpportunity.id}
                     cvId={selectedOpportunity.cvId}
+                    routeId={selectedOpportunity.routeId}
                     existingStatus={null}
                     onGenerated={onGenerated}
                     canGenerate={!starterLimitReached && (!isFreePlan || selectableOpportunities[0]?.id === selectedOpportunity.id)}

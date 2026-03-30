@@ -1,6 +1,6 @@
 "use client"
 
-import React, {useEffect, useMemo, useState} from "react"
+import React, {useEffect, useMemo, useRef, useState} from "react"
 import useSWR from "swr"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
@@ -12,6 +12,8 @@ import {
   UploadCloud,
   Sparkles,
 } from "lucide-react"
+import {useRouteStore} from "@/store/use-route-store";
+import {getRoutesForUser} from "@/features/routes/actions/get-routes-for-user";
 
 type CvStatus =
   | { status: "CV_IN_PROGRESS" }
@@ -41,7 +43,7 @@ const STATUS_TO_INDEX: Record<string, number> = {
   CV_IN_PROGRESS: 0,
   CV_SUCCEEDED: 0,
   CV_READY_FOR_ANALYSIS: 0,
-  CV_EVALUATION_PENDING_EVALUATION: 0,
+  CV_EVALUATION_PENDING_EVALUATION: 1,
   CV_EVALUATION_IN_PROGRESS: 1,
   CV_EVALUATION_SUCCEEDED: 2,
   CV_EVALUATION_FINISHED: 2,
@@ -57,36 +59,61 @@ const variants = {
   },
 }
 
+
 export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
-  const router = useRouter()
-  const [isRendering, setIsRendering] = useState(false)
+  const router = useRouter();
+  const [isRendering, setIsRendering] = useState(false);
+  const [step, setStep] = useState<0 | 1 | 2>(0); // 0: preparando, 1: evaluando, 2: finalizado
+  const isFinishedRef = useRef(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { data: status } = useSWR<CvStatus | null>(`/api/cv/${cvId}/status`, fetcher, {
     refreshInterval: 3000,
-  })
+  });
+  const { hydrate } = useRouteStore();
 
-  const activeIndex = useMemo(() => {
-    if (!status?.status) return -1
-    return STATUS_TO_INDEX[status.status] ?? -1
-  }, [status])
-
-  const failureIndex = useMemo(() => {
-    if (status?.status === "CV_FAILED") return 0
-    if (status?.status === "CV_EVALUATION_FAILED") return 1
-    return -1
-  }, [status])
-
+  // Step 1: Preparando (delay fijo de 3s)
   useEffect(() => {
-    setIsRendering(true)
+    setIsRendering(true);
+    setStep(0);
+    const t = setTimeout(() => {
+      setStep(1);
+    }, 3000);
+    return () => clearTimeout(t);
   }, []);
 
+  // Step 2: Evaluando (cuando el backend realmente lo indique)
   useEffect(() => {
-    if (status?.status === "CV_EVALUATION_FINISHED" || status?.status === "CV_EVALUATION_SUCCEEDED") {
-      const evaluateId = (status as any).evaluateId
-      setTimeout(() => {
-        if (evaluateId) router.push(`/evaluations/${evaluateId}`)
-      }, 800)
+    if (step === 1 && status?.status === "CV_EVALUATION_IN_PROGRESS") {
+      setStep(1); // Asegura que estamos en el step 2
     }
-  }, [status, router])
+    if (step === 1 && (status?.status === "CV_EVALUATION_SUCCEEDED" || status?.status === "CV_EVALUATION_FINISHED")) {
+      setStep(2);
+    }
+  }, [status, step]);
+
+  // Redirección al finalizar
+  useEffect(() => {
+    if (step === 2 && !isFinishedRef.current) {
+      isFinishedRef.current = true;
+      const evaluateId = (status as any)?.evaluateId;
+      timeoutRef.current = setTimeout(async () => {
+        try {
+          const routesResult = await getRoutesForUser();
+          if (routesResult.success) {
+            hydrate(routesResult.routes);
+          }
+        } catch (e) {
+          console.error("Hydration failed", e);
+        }
+        if (evaluateId) {
+          router.push(`/evaluations/${evaluateId}`);
+        }
+      }, 1000); // Un poco más de tiempo para que la animación de "Finalizado" se vea
+    }
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [step, status, hydrate, router]);
 
   if (!isRendering) {
     return (
@@ -96,8 +123,12 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
           <p className="text-muted-foreground">Cargando</p>
         </div>
       </div>
-    )
+    );
   }
+
+  // Determinar el step visual
+  const activeIndex = step;
+  const failureIndex = -1; // No se maneja error custom aquí
 
   return (
     <div className="fixed inset-0 z-40 flex flex-col items-center justify-center overflow-y-auto px-4 py-8 md:px-8 bg-background">
@@ -130,13 +161,13 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
             />
 
             <ol className="flex flex-col gap-y-24 w-full relative z-10 max-w-5xl">
-              {STEPS.map((step, idx) => {
-                const StepIcon = step.icon
-                const state = activeIndex === -1 ? "pending" : idx < activeIndex ? "completed" : idx === activeIndex ? "active" : "pending"
-                const isFailure = failureIndex === idx
+              {STEPS.map((stepObj, idx) => {
+                const StepIcon = stepObj.icon;
+                const state = idx < activeIndex ? "completed" : idx === activeIndex ? "active" : "pending";
+                const isFailure = failureIndex === idx;
 
                 return (
-                  <li key={step.key} className="flex justify-center">
+                  <li key={stepObj.key} className="flex justify-center">
                     <motion.div
                       variants={variants.step}
                       animate={state}
@@ -160,22 +191,22 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
                       </AnimatePresence>
                     </motion.div>
                   </li>
-                )
+                );
               })}
             </ol>
           </div>
 
           {/* Columna Derecha: Contenido (Entity Style) */}
           <div className="flex-1 space-y-24 py-1">
-            {STEPS.map((step, idx) => {
-              const state = activeIndex === -1 ? "pending" : idx < activeIndex ? "completed" : idx === activeIndex ? "active" : "pending"
-              const isActive = state === "active"
-              const isCompleted = state === "completed"
-              const isFailure = failureIndex === idx
+            {STEPS.map((stepObj, idx) => {
+              const state = idx < activeIndex ? "completed" : idx === activeIndex ? "active" : "pending";
+              const isActive = state === "active";
+              const isCompleted = state === "completed";
+              const isFailure = failureIndex === idx;
 
               return (
                 <motion.div
-                  key={step.key}
+                  key={stepObj.key}
                   animate={{ opacity: isActive || isCompleted ? 1 : 0.4, x: isActive ? 10 : 0 }}
                   className={`transition-all duration-500`}
                 >
@@ -185,7 +216,7 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-2">
                         <h3 className={`text-sm font-black uppercase tracking-widest ${isActive ? "text-primary" : isCompleted ? "text-foreground" : "text-muted-foreground"}`}>
-                          {step.title}
+                          {stepObj.title}
                         </h3>
                         {isCompleted && (
                           <StatusBadge variant="outline" className="text-[9px] py-0 h-4 border-primary/30 text-primary">
@@ -199,18 +230,18 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
                         )}
                       </div>
                       <p className={`text-xs font-medium leading-relaxed ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
-                        {step.desc}
+                        {stepObj.desc}
                       </p>
                     </div>
                   </div>
                 </motion.div>
-              )
+              );
             })}
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 // Sub-componente Badge para mantener consistencia

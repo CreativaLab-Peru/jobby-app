@@ -1,4 +1,4 @@
-import { CvType, OpportunityType, Language } from "@prisma/client";
+import {CvType, OpportunityType, Language, CvSectionType} from "@prisma/client";
 import * as z from "zod";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -12,14 +12,7 @@ export const cvFormSchema = z.object({
   opportunityType: z.enum(OpportunityType,"Selecciona un tipo de oportunidad"),
   templateId: z.string().optional(),
   language: z.enum(Language, "Selecciona un idioma"),
-}).refine((data) => {
-  if (["INTERNSHIP", "SCHOLARSHIP"].includes(data.opportunityType)) {
-    return !!data.templateId;
-  }
-  return true;
-}, {
-  message: "Debes seleccionar un diseño para este tipo de oportunidad",
-  path: ["templateId"],
+  sections: z.array(z.enum(CvSectionType)),
 });
 
 export const uploadCvSchema = z.object({
@@ -30,6 +23,7 @@ export const uploadCvSchema = z.object({
   cvType: z.enum(CvType, "Selecciona un tipo de oportunidad"),
   opportunityType: z.enum(OpportunityType),
   templateId: z.string().default("harvard"),
+  sections: z.array(z.enum(CvSectionType)),
 });
 
 export type CVFormData = z.infer<typeof cvFormSchema>;

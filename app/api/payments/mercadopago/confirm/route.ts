@@ -131,7 +131,7 @@ async function processPaymentJob(jobId: string, paymentId: string) {
           await authClient.signUp.email({
             email,
             password: FIRST_PASSWORD,
-            name:"tmp"
+            name: temporalUser.name || "Cambiar nombre",
           })
           existingUser = await prisma.user.findFirst({
             where: {email},

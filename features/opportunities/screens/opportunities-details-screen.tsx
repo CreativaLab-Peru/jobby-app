@@ -22,7 +22,7 @@ interface Props {
   matchValue: number;
   isHighMatch: boolean;
   requirements: {
-    required: string[] | string | null; // Soportamos array o string legacy
+    required: string[] | string | null;
     optional: string[] | string | null;
   };
   formattedDeadline: string | null;
@@ -202,14 +202,16 @@ export function OpportunityDetailsScreen({
           </div>
         </div>
 
+        {/* Hidden roadmap into details of opportunities */}        
         {/* Roadmap (Full Width) */}
-        {opportunity.cv?.id && (
+        {/* {opportunity.cv?.id && (
           <div className="pt-10">
             <h2 className="text-2xl font-black tracking-tight mb-6 px-4">Tu Roadmap de Preparación</h2>
             <Card className="rounded-[3rem] border-border/40 bg-card/50 backdrop-blur-sm p-2">
               <RoadmapSection
                 opportunityId={opportunity.id}
                 cvId={opportunity.cv.id}
+                routeId={opportunity.routeId}
                 initialRoadmap={roadmap}
                 canViewFull={canViewFullRoadmap}
                 canGenerate={canGenerateRoadmap}
@@ -217,7 +219,7 @@ export function OpportunityDetailsScreen({
               />
             </Card>
           </div>
-        )}
+        )} */}
       </div>
     </main>
   );

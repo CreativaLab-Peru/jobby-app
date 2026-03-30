@@ -8,7 +8,7 @@ function parseDeadline(value?: string | Date): Date | null {
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
-export const saveOpportunities = async (cv: Cv, opportunities: MatchAnalysis[]) => {
+export const saveOpportunities = async (cv: Cv, opportunities: MatchAnalysis[], routeId: string) => {
   try {
     if (opportunities.length === 0) return true;
     // 1. Transformamos los datos en un array de objetos planos
@@ -18,6 +18,7 @@ export const saveOpportunities = async (cv: Cv, opportunities: MatchAnalysis[]) 
       const maxSalary = Number(details?.salary?.max || 0).toString();
       return {
         id: opp.opportunity_id || `${cv.id}-${index}-${Date.now()}`,
+        routeId,
         type: cv.opportunityType,
         title: details?.title || "Sin título",
         linkUrl: details?.url || "#",

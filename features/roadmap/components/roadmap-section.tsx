@@ -9,6 +9,7 @@ import type { RoadmapData } from "@/features/roadmap/actions/get-roadmap-for-opp
 interface RoadmapSectionProps {
   opportunityId: string;
   cvId: string;
+  routeId: string;
   initialRoadmap: RoadmapData;
   canViewFull: boolean;
   canGenerate?: boolean;
@@ -22,6 +23,7 @@ interface RoadmapSectionProps {
 export function RoadmapSection({
   opportunityId,
   cvId,
+  routeId,
   initialRoadmap,
   canViewFull,
   canGenerate = true,
@@ -56,6 +58,7 @@ export function RoadmapSection({
       <GenerateRoadmapButton
         opportunityId={opportunityId}
         cvId={cvId}
+        routeId={routeId}
         existingStatus={initialRoadmap?.status ?? null}
         onGenerated={handleGenerated}
         canGenerate={canGenerate}

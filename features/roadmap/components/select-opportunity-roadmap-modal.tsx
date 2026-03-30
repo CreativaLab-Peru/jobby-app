@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { OPPORTUNITY_MAP } from "@/const/index";
 import { AnimatePresence, motion } from "framer-motion";
 import { Building2, Lock, Map, Sparkles, Target, X } from "lucide-react";
@@ -30,6 +31,7 @@ export function SelectOpportunityRoadmapModal({
   hasCv,
   onGenerated,
 }: SelectOpportunityRoadmapModalProps) {
+  const router = useRouter();
   const [existingRoadmap, setExistingRoadmap] = useState<{ id: string; status: string } | null>(null);
   const [checkingRoadmap, setCheckingRoadmap] = useState(false);
   const [selectedOpportunityId, setSelectedOpportunityId] = useState<string | null>(null);
@@ -269,8 +271,7 @@ export function SelectOpportunityRoadmapModal({
                     existingStatus={null}
                     onGenerated={(roadmapId) => {
                       if (roadmapId) {
-                        // Redirigir al roadmap generado
-                        window.location.href = `/my-roadmaps/${roadmapId}`;
+                        router.push(`/my-roadmaps/${roadmapId}`);
                       } else {
                         onGenerated("");
                       }

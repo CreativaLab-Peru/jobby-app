@@ -38,7 +38,8 @@ export function BookingModal({ isOpen, onClose, userName, userEmail, score }: Bo
         // Generar mensaje de WhatsApp
         const message = `Hola Dara, soy ${fullName}, ya tengo mi Levely Score (${score ?? 0} pts) y quiero que revises mi Dossier. Mi correo es ${userEmail ?? ""}.`;
         const encodedMessage = encodeURIComponent(message);
-        const whatsappUrl = `https://api.whatsapp.com/send/?phone=51950711530&text=${encodedMessage}`;
+        const levelyNumberPhone = '51914773770';
+        const whatsappUrl = `https://api.whatsapp.com/send/?phone=${levelyNumberPhone}&text=${encodedMessage}`;
 
         // Abrir WhatsApp en nueva pestaña
         window.open(whatsappUrl, "_blank");

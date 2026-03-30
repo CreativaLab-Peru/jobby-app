@@ -39,6 +39,8 @@ interface RouteStepperProps {
   opportunitiesCount: number;
   hasRoadmap?: boolean;
   roadmapId: string;
+  planTier: "FREE" | "STARTER" | "PRO";
+  generatedRoadmapsCount?: number;
 }
 
 const STATUS_ORDER: RouteStatus[] = [
@@ -68,19 +70,27 @@ function getStepStatus(
 }
 
 export default function RouteStepper({
-                                       routeName,
-                                       routeStatus,
-                                       cvId,
-                                       cvTitle,
-                                       evaluationScore,
-                                       opportunitiesCount,
-                                       hasRoadmap = false,
-                                       roadmapId,
+  routeName,
+  routeStatus,
+  cvId,
+  cvTitle,
+  evaluationScore,
+  opportunitiesCount,
+  hasRoadmap = false,
+  roadmapId,
+  planTier,
+  generatedRoadmapsCount = 0,
                                      }: RouteStepperProps) {
   const router = useRouter();
 
   const isRoadmapDone = routeStatus === "ROADMAP_DONE";
   const isFullCompleted = routeStatus === "PROGRAM_DONE";
+
+  // Lógica de límites por plan
+  const isFreePlan = planTier === "FREE";
+  const isStarterPlan = planTier === "STARTER";
+  const isProPlan = planTier === "PRO";
+  const starterLimitReached = isStarterPlan && generatedRoadmapsCount >= 1;
 
   const steps: Step[] = [
     {
@@ -126,16 +136,16 @@ export default function RouteStepper({
       description: hasRoadmap
         ? "Tienes un roadmap generado. Revisa los pasos para alcanzar tu meta."
         : "Recibe un roadmap personalizado con los pasos necesarios para acceder a oportunidades globales.",
-      href: hasRoadmap && roadmapId ? `/my-roadmaps/${roadmapId}` : "/my-opportunities",
+      href: hasRoadmap && roadmapId ? `/my-roadmaps/${roadmapId}` : "/my-roadmaps?openCreate=1",
       icon: Map,
       status: getStepStatus("OPPORTUNITIES_DONE", "ROADMAP_DONE", routeStatus),
       cta: hasRoadmap ? "Ver roadmap" : "Generar roadmap",
     },
     {
       id: 5,
-      title: "Logra tu oportunidad global",
+      title: "Lleva tu perfil al siguiente nivel.",
       description:
-        "Has optimizado tu perfil, aplicado a oportunidades y avanzado en tu carrera. Tu copiloto de carrera te ayudó a llegar aquí.",
+        "Has hecho el trabajo duro; ahora optimiza tus resultados. Agenda una asesoría 1 a 1 y acelera tu crecimiento profesional.",
       href: "/booking",
       icon: Trophy,
       // Se activa como 'current' solo cuando el Roadmap está completado
@@ -227,15 +237,33 @@ export default function RouteStepper({
                   </div>
 
                   {step.status !== "locked" && (
-                    <Button
-                      variant={step.status === "current" ? "default" : "outline"}
-                      size="sm"
-                      className="shrink-0 self-center"
-                      onClick={() => router.push(step.href)}
-                    >
-                      {step.cta}
-                      <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-                    </Button>
+                    step.id === 4 && !hasRoadmap ? (
+                      <Button
+                        variant={step.status === "current" ? "default" : "outline"}
+                        size="sm"
+                        className="shrink-0 self-center"
+                        onClick={() => {
+                          // Si es Starter y alcanzó el límite, deshabilitar
+                          if (starterLimitReached) return;
+                          router.push("/my-roadmaps?openCreate=1");
+                        }}
+                        disabled={starterLimitReached}
+                        title={starterLimitReached ? "Con Starter solo puedes generar 1 roadmap. Mejora tu plan para más." : undefined}
+                      >
+                        {step.cta}
+                        <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                      </Button>
+                    ) : (
+                      <Button
+                        variant={step.status === "current" ? "default" : "outline"}
+                        size="sm"
+                        className="shrink-0 self-center"
+                        onClick={() => router.push(step.href)}
+                      >
+                        {step.cta}
+                        <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                      </Button>
+                    )
                   )}
                 </div>
 

@@ -18,7 +18,7 @@ interface SelectOpportunityRoadmapModalProps {
   planTier: "FREE" | "STARTER" | "PRO";
   generatedRoadmapsCount: number;
   hasCv: boolean;
-  onGenerated: () => void;
+  onGenerated: (roadmapId: string) => void;
 }
 
 export function SelectOpportunityRoadmapModal({
@@ -267,7 +267,14 @@ export function SelectOpportunityRoadmapModal({
                     cvId={selectedOpportunity.cvId}
                     routeId={selectedOpportunity.routeId}
                     existingStatus={null}
-                    onGenerated={onGenerated}
+                    onGenerated={(roadmapId) => {
+                      if (roadmapId) {
+                        // Redirigir al roadmap generado
+                        window.location.href = `/my-roadmaps/${roadmapId}`;
+                      } else {
+                        onGenerated("");
+                      }
+                    }}
                     canGenerate={!starterLimitReached && (!isFreePlan || selectableOpportunities[0]?.id === selectedOpportunity.id)}
                     blockedMessage={
                       starterLimitReached

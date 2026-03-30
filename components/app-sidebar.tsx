@@ -56,10 +56,13 @@ const sessionFetcher = (): Promise<NavbarUser> =>
 const routeNavItems = [
   { title: "Mi Pasos", href: "/dashboard", icon: LayoutDashboard },
   { title: "CV", href: "/my-cv", icon: FileText },
-  { title: "Todos mis CVs", href: "/my-cvs", icon: FileCheckIcon },
   { title: "Análisis", href: "/my-evaluation", icon: MessageSquare },
   { title: "Oportunidades", href: "/my-opportunities", icon: Briefcase },
   { title: "Roadmaps", href: "/my-roadmaps", icon: Map },
+];
+
+const managementNavItems = [
+  { title: "Mis CVs", href: "/my-cvs", icon: FileCheckIcon },
 ];
 
 const accountNavItems = [
@@ -200,6 +203,13 @@ export default function AppSidebar({
           <SidebarGroupLabel className={cn(collapsed && "sr-only")}>Mi ruta</SidebarGroupLabel>
           <SidebarMenu>
             {routeNavItems.map((item) => renderNavItem(item, primaryActive, primaryInactive))}
+          </SidebarMenu>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel className={cn(collapsed && "sr-only")}>Gestión</SidebarGroupLabel>
+          <SidebarMenu>
+            {managementNavItems.map((item) => renderNavItem(item, primaryActive, primaryInactive))}
           </SidebarMenu>
         </SidebarGroup>
 

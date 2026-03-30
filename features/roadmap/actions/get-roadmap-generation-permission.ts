@@ -52,9 +52,11 @@ export async function getRoadmapGenerationPermissionByUser(
   }
 
   if (planTier === "STARTER") {
+    // Starter: solo 1 roadmap por ruta
     const generatedCount = await prisma.roadmap.count({
       where: {
         userId,
+        routeId,
         status: JobStatus.SUCCEEDED,
       },
     });
@@ -63,7 +65,7 @@ export async function getRoadmapGenerationPermissionByUser(
       return {
         canGenerate: false,
         planTier,
-        message: "Con Starter puedes generar 1 roadmap. Mejora a Pro para generar más.",
+        message: "Con Starter puedes generar 1 roadmap por ruta. Mejora a Pro para generar más.",
       };
     }
 

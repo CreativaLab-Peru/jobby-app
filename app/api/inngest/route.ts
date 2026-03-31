@@ -6,6 +6,7 @@ import {testOnProd} from "@/inngest/functions/test";
 import {sendMagicLinkToEmail} from "@/inngest/functions/send-magic-link-to-email";
 import {getAndSaveOpportunities} from "@/inngest/functions/get-and-save-opportunities";
 import {generateRoadmap} from "@/inngest/functions/generate-roadmap";
+import {processTempCvEvaluation} from "@/inngest/functions/process-temp-cv-evaluation";
 
 // Create an API that serves zero functions
 export const {GET, POST, PUT} = serve({
@@ -17,5 +18,6 @@ export const {GET, POST, PUT} = serve({
     sendMagicLinkToEmail,
     getAndSaveOpportunities,
     generateRoadmap,
+    processTempCvEvaluation,
   ],
 });

@@ -18,20 +18,20 @@ interface CVPayClientContentProps {
 
 export function CVPayScreen({ user, packs }: CVPayClientContentProps) {
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const { setFileData } = useAnalysisStore();
+  // const { setFileData } = useAnalysisStore();
   const router = useRouter();
 
   const handleFileSelection = async (file: File) => {
     if (!user) {
       // Guardamos temporalmente y pedimos login
-      await setFileData(file, "anonymous");
+      // await setFileData(file, "anonymous");
       setShowAuthModal(true);
       return;
     }
 
     // Si hay usuario, procesamos y redirigimos
-    await setFileData(file, user.id);
-    router.push("/cv?afterOnboarding=true");
+    // await setFileData(file, user.id);
+    // router.push("/cv?afterOnboarding=true");
   };
 
   return (

@@ -1,56 +1,99 @@
 import { create } from 'zustand';
-import { get, set, del } from 'idb-keyval';
+import { JobStatus } from "@prisma/client";
+import {evaluateCvAction} from "@/features/temp-evaluation/actions/evaluate-cv-action";
+import {
+  getEvaluationStatusAction
+} from "@/features/temp-evaluation/actions/get-evaluation-status-action";
 
 interface AnalysisState {
-  userId: string | null;
-  fileUrl: string | null;
-  fileName: string | null;
-  fileBlob: Blob | null; // Guardaremos el binario aquí
-  isAnalyzing: boolean;
-  setFileData: (file: File, userId: string) => Promise<void>;
-  loadPersistedFile: () => Promise<void>; // Para recuperar al abrir nueva pestaña
+  analysisId: string | null;
+  status: 'IDLE' | 'UPLOADING' | 'ANALYZING' | 'COMPLETED' | 'FAILED';
+  score: number | null;
+  result: any | null;
+  error: string | null;
+
+  startAnalysis: (file: File) => Promise<void>;
+  checkStatus: (id: string) => Promise<void>;
   reset: () => void;
 }
 
-export const useAnalysisStore = create<AnalysisState>((setStore) => ({
-  userId: null,
-  fileUrl: null,
-  fileName: null,
-  fileBlob: null,
-  isAnalyzing: false,
+export const useAnalysisStore = create<AnalysisState>((set, get) => ({
+  analysisId: null,
+  status: 'IDLE',
+  score: null,
+  result: null,
+  error: null,
 
-  setFileData: async (file, userId) => {
-    const url = URL.createObjectURL(file);
+  startAnalysis: async (file: File) => {
+    set({ status: 'UPLOADING', error: null });
 
-    // 1. Guardar en IndexedDB para persistencia entre pestañas
-    await set('pending_cv_file', file);
-    await set('pending_cv_metadata', { fileName: file.name, userId });
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
 
-    setStore({
-      fileUrl: url,
-      fileName: file.name,
-      fileBlob: file,
-      userId,
-    });
+      const result = await evaluateCvAction(formData);
+
+      if (result.error) {
+        set({
+          status: 'FAILED',
+          error: result.error,
+          score: result.score ? result.score * 100 : null
+        });
+        return;
+      }
+
+      set({
+        analysisId: result.id,
+        status: 'ANALYZING',
+        score: result.initialScore,
+        error: null
+      });
+    } catch (err) {
+      set({ status: 'FAILED', error: "Error en la subida." });
+    }
   },
 
-  loadPersistedFile: async () => {
-    const file = await get<File>('pending_cv_file');
-    const metadata = await get<{fileName: string, userId: string}>('pending_cv_metadata');
-    if (file && metadata) {
-      const url = URL.createObjectURL(file);
-      setStore({
-        fileUrl: url,
-        fileName: metadata.fileName,
-        userId: metadata.userId,
-        fileBlob: file
-      });
+  checkStatus: async (id: string) => {
+    const currentStatus = get().status;
+    if (currentStatus === 'COMPLETED' || currentStatus === 'FAILED') return;
+
+    try {
+      const data = await getEvaluationStatusAction(id);
+
+      if (data.error) throw new Error(data.error);
+
+      // Mapeo según tus JobStatus reales
+      switch (data.status) {
+        case JobStatus.SUCCEEDED:
+          set({
+            status: 'COMPLETED',
+            score: data.overallScore,
+            result: data.extractorOutput
+          });
+          break;
+        case JobStatus.FAILED:
+        case JobStatus.CANCELLED:
+          set({ status: 'FAILED', error: "El proceso no pudo completarse." });
+          break;
+        case JobStatus.IN_PROGRESS:
+        case JobStatus.PENDING:
+          // Mantenemos el estado 'ANALYZING' en la UI
+          set({ status: 'ANALYZING' });
+          break;
+      }
+    } catch (err: any) {
+      console.error("Polling Error:", err);
+      set({ status: 'FAILED', error: err.message });
     }
   },
 
   reset: () => {
-    del('pending_cv_file');
-    del('pending_cv_metadata');
-    setStore({ userId: null, fileUrl: null, fileName: null, fileBlob: null, isAnalyzing: false });
-  },
+    set({
+      analysisId: null,
+      status: 'IDLE',
+      score: null,
+      result: null,
+      error: null
+    });
+  }
 }));

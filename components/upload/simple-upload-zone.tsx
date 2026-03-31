@@ -1,4 +1,5 @@
 "use client"
+
 import { useDropzone } from "react-dropzone"
 import { Upload, Sparkles, FilePlus } from "lucide-react"
 

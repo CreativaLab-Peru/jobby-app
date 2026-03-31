@@ -22,7 +22,7 @@ export default function UploadHomePage() {
   const [email, setEmail] = useState('')
   const [loading] = useState(false);
 
-  const {setFileData} = useAnalysisStore();
+  // const {setFileData} = useAnalysisStore();
 
   const [isPending, startTransition] = useTransition();
 

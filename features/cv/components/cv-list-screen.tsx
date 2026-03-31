@@ -39,7 +39,7 @@ export function CvListScreen({
   const [hasMore, setHasMore] = useState(hasMoreProp); // Asumiendo batch inicial de 10
 
   const [isPending, startTransition] = useTransition();
-  const { fileBlob, loadPersistedFile, reset } = useAnalysisStore();
+  // const { fileBlob, loadPersistedFile, reset } = useAnalysisStore();
   const searchParams = useSearchParams();
   const [isProcessingPersisted, setIsProcessingPersisted] = useState(false);
 
@@ -61,7 +61,7 @@ export function CvListScreen({
         setIsProcessingPersisted(true);
 
         // 1. Intentamos recuperar el archivo de IndexedDB
-        await loadPersistedFile();
+        // await loadPersistedFile();
 
         // El estado de Zustand se actualiza, pero para mayor seguridad
         // podrías hacer que loadPersistedFile devuelva el archivo directamente
@@ -69,14 +69,14 @@ export function CvListScreen({
     };
 
     checkPersistedCV();
-  }, [searchParams, loadPersistedFile]);
+  }, [searchParams]);
 
   // Este useEffect reacciona cuando el archivo ya está cargado en el store
-  useEffect(() => {
-    if (isProcessingPersisted && fileBlob) {
-      handleAutoUpload();
-    }
-  }, [fileBlob, isProcessingPersisted]);
+  // useEffect(() => {
+  //   if (isProcessingPersisted && fileBlob) {
+  //     handleAutoUpload();
+  //   }
+  // }, [fileBlob, isProcessingPersisted]);
 
   const handleAutoUpload = async () => {
     onOpenUpload();
@@ -106,10 +106,10 @@ export function CvListScreen({
 
       {/* Modales para crear y subir CV */}
       <CreateCVModal/>
-      <UploadCVModal
-        initialFile={fileBlob}
-        reset={reset}
-      />
+      {/*<UploadCVModal*/}
+      {/*  initialFile={fileBlob}*/}
+      {/*  reset={reset}*/}
+      {/*/>*/}
     </>
   );
 

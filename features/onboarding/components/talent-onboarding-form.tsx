@@ -50,7 +50,7 @@ export function OnboardingForm() {
   // Debug
   const debug = useDebug();
   const [isProcessingPersisted, setIsProcessingPersisted] = useState(false);
-  const { fileBlob, loadPersistedFile } = useAnalysisStore();
+  // const { fileBlob, loadPersistedFile } = useAnalysisStore();
 
   // 1. Verificación inicial de sesión para evitar parpadeos en AccountStep
   useEffect(() => {
@@ -132,11 +132,11 @@ export function OnboardingForm() {
         toast.success("¡Bienvenido/a! Tu perfil está listo.");
 
         if (isOAuthUser) {
-          if (isProcessingPersisted && fileBlob) {
-            router.push("/cv?afterOnboarding=true");
-          } else {
-            router.push("/dashboard");
-          }
+          // if (isProcessingPersisted && fileBlob) {
+          //   router.push("/cv?afterOnboarding=true");
+          // } else {
+          //   router.push("/dashboard");
+          // }
         } else {
           router.push("/login?onboarding=completed");
         }
@@ -166,16 +166,16 @@ export function OnboardingForm() {
     }
   };
 
-  useEffect(() => {
-    const checkPersistedCV = async () => {
-      try {
-        await loadPersistedFile();
-      } finally {
-        setIsProcessingPersisted(true);
-      }
-    };
-    checkPersistedCV();
-  }, [loadPersistedFile]);
+  // useEffect(() => {
+  //   const checkPersistedCV = async () => {
+  //     try {
+  //       await loadPersistedFile();
+  //     } finally {
+  //       setIsProcessingPersisted(true);
+  //     }
+  //   };
+  //   checkPersistedCV();
+  // }, [loadPersistedFile]);
 
 
   // 2. RENDER DE CARGA INICIAL

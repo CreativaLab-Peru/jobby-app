@@ -56,6 +56,12 @@ export const AuthInterceptionModal = ({
                 </div>
                 <span><strong>1 Creación de CV</strong> profesional gratis</span>
               </div>
+              <div className="flex items-center gap-3 text-sm text-foreground/80">
+                <div className="bg-primary/20 p-1 rounded-full text-primary">
+                  <Sparkles className="w-3 h-3" />
+                </div>
+                <span><strong>1 Crédito Match</strong> para oportunidades</span>
+              </div>
             </div>
           </div>
 

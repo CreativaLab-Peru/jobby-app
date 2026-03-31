@@ -3,14 +3,14 @@ import type { CVSection } from "@/types/cv";
 import { baseSectionsMap } from "./base-sections";
 import type { SectionConfig } from "./types";
 import { getDefaultConfig } from "./configs/default";
-import { getFinanceProjectsConfig } from "./configs/finance-projects";
-import { getTechnologyEngineeringConfig } from "./configs/technology-engineering";
-import { getDesignCreativityConfig } from "./configs/design-creativity";
-import { getMarketingStrategyConfig } from "./configs/marketing-strategy";
-import { getManagementBusinessConfig } from "./configs/management-business";
-import { getSocialMediaConfig } from "./configs/social-media";
-import { getEducationConfig } from "./configs/education";
-import { getScienceConfig } from "./configs/science";
+import { getFinanceProjectsConfig_es } from "./configs/language/es/finance-projects";
+import { getTechnologyEngineeringConfig_es } from "./configs/language/es/technology-engineering";
+import { getDesignCreativityConfig_es } from "./configs/language/es/design-creativity";
+import { getMarketingStrategyConfig_es } from "./configs/language/es/marketing-strategy";
+import { getManagementBusinessConfig_es } from "./configs/language/es/management-business";
+import { getSocialMediaConfig_es } from "./configs/language/es/social-media";
+import { getEducationConfig_es } from "./configs/language/es/education";
+import { getScienceConfig_es } from "./configs/language/es/science";
 
 /**
  * Obtiene la configuración específica según CvType + OpportunityType
@@ -21,21 +21,21 @@ function getConfig(
 ): SectionConfig {
   switch (cvType) {
     case CvType.TECHNOLOGY_ENGINEERING:
-      return getTechnologyEngineeringConfig(opportunityType);
+      return getTechnologyEngineeringConfig_es(opportunityType);
     case CvType.FINANCE_PROJECTS:
-      return getFinanceProjectsConfig(opportunityType);
+      return getFinanceProjectsConfig_es(opportunityType);
     case CvType.DESIGN_CREATIVITY:
-      return getDesignCreativityConfig(opportunityType);
+      return getDesignCreativityConfig_es(opportunityType);
     case CvType.MARKETING_STRATEGY:
-      return getMarketingStrategyConfig(opportunityType);
+      return getMarketingStrategyConfig_es(opportunityType);
     case CvType.MANAGEMENT_BUSINESS:
-      return getManagementBusinessConfig(opportunityType);
+      return getManagementBusinessConfig_es(opportunityType);
     case CvType.SOCIAL_MEDIA:
-      return getSocialMediaConfig(opportunityType);
+      return getSocialMediaConfig_es(opportunityType);
     case CvType.EDUCATION:
-      return getEducationConfig(opportunityType);
+      return getEducationConfig_es(opportunityType);
     case CvType.SCIENCE:
-      return getScienceConfig(opportunityType);
+      return getScienceConfig_es(opportunityType);
     default:
       return getDefaultConfig(opportunityType);
   }

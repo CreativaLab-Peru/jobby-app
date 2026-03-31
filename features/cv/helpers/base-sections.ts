@@ -2,6 +2,7 @@ import { User, Briefcase, GraduationCap, Award, Code, Languages, Heart } from "l
 import type { CVSection } from "@/types/cv"
 import { fa } from "zod/v4/locales"
 
+// TODO: Unicamente se tiene el contenido en español, pero eventualmente podríamos querer tener ejemplos específicos para cada idioma. En ese caso, podríamos usar la nueva columna sections_en para almacenar ejemplos en inglés, y mantener sections para español o como fallback general. La función getDefaultConfig podría entonces retornar ejemplos basados en el idioma del CV que se está generando. Por ahora, mantendremos todo en español para simplicidad ya que llamamos los contenidos en el seed de conf_cv_sections, pero esta sería una forma de escalarlo en el futuro sin romper compatibilidad con los datos existentes.
 
 export const personalSection: CVSection = {
   id: "personal",

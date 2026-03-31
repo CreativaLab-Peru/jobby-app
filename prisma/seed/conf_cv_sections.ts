@@ -4,74 +4,74 @@ const prisma = new PrismaClient();
 
 import {
   technologyEngineeringEmployment
-} from "../../features/cv/helpers/configs/technology-engineering/employment";
+} from "../../features/cv/helpers/configs/language/es/technology-engineering/employment";
 import {
   technologyEngineeringInternship
-} from "../../features/cv/helpers/configs/technology-engineering/internship";
+} from "../../features/cv/helpers/configs/language/es/technology-engineering/internship";
 import {
   technologyEngineeringExchangeProgram
-} from "../../features/cv/helpers/configs/technology-engineering/exchange-program";
+} from "../../features/cv/helpers/configs/language/es/technology-engineering/exchange-program";
 import {
   technologyEngineeringScholarship
-} from "../../features/cv/helpers/configs/technology-engineering/scholarship";
+} from "../../features/cv/helpers/configs/language/es/technology-engineering/scholarship";
 import {
   marketingStrategyEmployment
-} from "../../features/cv/helpers/configs/marketing-strategy/employment";
+} from "../../features/cv/helpers/configs/language/es/marketing-strategy/employment";
 import {
   marketingStrategyInternship
-} from "../../features/cv/helpers/configs/marketing-strategy/internship";
+} from "../../features/cv/helpers/configs/language/es/marketing-strategy/internship";
 import {
   marketingStrategyExchangeProgram
-} from "../../features/cv/helpers/configs/marketing-strategy/exchange-program";
+} from "../../features/cv/helpers/configs/language/es/marketing-strategy/exchange-program";
 import {
   marketingStrategyScholarship
-} from "../../features/cv/helpers/configs/marketing-strategy/scholarship";
-import {financeProjectsEmployment} from "../../features/cv/helpers/configs/finance-projects/employment";
-import {financeProjectsInternship} from "../../features/cv/helpers/configs/finance-projects/internship";
+} from "../../features/cv/helpers/configs/language/es/marketing-strategy/scholarship";
+import {financeProjectsEmployment} from "../../features/cv/helpers/configs/language/es/finance-projects/employment";
+import {financeProjectsInternship} from "../../features/cv/helpers/configs/language/es/finance-projects/internship";
 import {
   financeProjectsExchangeProgram
-} from "../../features/cv/helpers/configs/finance-projects/exchange-program";
+} from "../../features/cv/helpers/configs/language/es/finance-projects/exchange-program";
 import {
   financeProjectsScholarship
-} from "../../features/cv/helpers/configs/finance-projects/scholarship";
+} from "../../features/cv/helpers/configs/language/es/finance-projects/scholarship";
 import {
   managementBusinessEmployment
-} from "../../features/cv/helpers/configs/management-business/employment";
+} from "../../features/cv/helpers/configs/language/es/management-business/employment";
 import {
   managementBusinessInternship
-} from "../../features/cv/helpers/configs/management-business/internship";
+} from "../../features/cv/helpers/configs/language/es/management-business/internship";
 import {
   managementBusinessExchangeProgram
-} from "../../features/cv/helpers/configs/management-business/exchange-program";
+} from "../../features/cv/helpers/configs/language/es/management-business/exchange-program";
 import {
   managementBusinessScholarship
-} from "../../features/cv/helpers/configs/management-business/scholarship";
-import {scienceEmployment} from "../../features/cv/helpers/configs/science/employment";
-import {scienceInternship} from "../../features/cv/helpers/configs/science/internship";
-import {scienceExchangeProgram} from "../../features/cv/helpers/configs/science/exchange-program";
-import {scienceScholarship} from "../../features/cv/helpers/configs/science/scholarship";
-import {socialMediaEmployment} from "../../features/cv/helpers/configs/social-media/employment";
-import {socialMediaInternship} from "../../features/cv/helpers/configs/social-media/internship";
+} from "../../features/cv/helpers/configs/language/es/management-business/scholarship";
+import {scienceEmployment} from "../../features/cv/helpers/configs/language/es/science/employment";
+import {scienceInternship} from "../../features/cv/helpers/configs/language/es/science/internship";
+import {scienceExchangeProgram} from "../../features/cv/helpers/configs/language/es/science/exchange-program";
+import {scienceScholarship} from "../../features/cv/helpers/configs/language/es/science/scholarship";
+import {socialMediaEmployment} from "../../features/cv/helpers/configs/language/es/social-media/employment";
+import {socialMediaInternship} from "../../features/cv/helpers/configs/language/es/social-media/internship";
 import {
   socialMediaExchangeProgram
-} from "../../features/cv/helpers/configs/social-media/exchange-program";
-import {socialMediaScholarship} from "../../features/cv/helpers/configs/social-media/scholarship";
-import {educationEmployment} from "../../features/cv/helpers/configs/education/employment";
-import {educationInternship} from "../../features/cv/helpers/configs/education/internship";
-import {educationExchangeProgram} from "../../features/cv/helpers/configs/education/exchange-program";
-import {educationScholarship} from "../../features/cv/helpers/configs/education/scholarship";
+} from "../../features/cv/helpers/configs/language/es/social-media/exchange-program";
+import {socialMediaScholarship} from "../../features/cv/helpers/configs/language/es/social-media/scholarship";
+import {educationEmployment} from "../../features/cv/helpers/configs/language/es/education/employment";
+import {educationInternship} from "../../features/cv/helpers/configs/language/es/education/internship";
+import {educationExchangeProgram} from "../../features/cv/helpers/configs/language/es/education/exchange-program";
+import {educationScholarship} from "../../features/cv/helpers/configs/language/es/education/scholarship";
 import {
   designCreativityEmployment
-} from "@/features/cv/helpers/configs/design-creativity/employment";
+} from "@/features/cv/helpers/configs/language/es/design-creativity/employment";
 import {
   designCreativityInternship
-} from "@/features/cv/helpers/configs/design-creativity/internship";
+} from "@/features/cv/helpers/configs/language/es/design-creativity/internship";
 import {
   designCreativityExchangeProgram
-} from "@/features/cv/helpers/configs/design-creativity/exchange-program";
+} from "@/features/cv/helpers/configs/language/es/design-creativity/exchange-program";
 import {
   designCreativityScholarship
-} from "@/features/cv/helpers/configs/design-creativity/scholarship";
+} from "@/features/cv/helpers/configs/language/es/design-creativity/scholarship";
 
 // --- 1. MAPEO BASE DE SECCIONES (ESTRUCTURA GENERAL) ---
 // --- 1. MAPEO BASE DE SECCIONES (Sincronizado con el Enum de la DB) ---

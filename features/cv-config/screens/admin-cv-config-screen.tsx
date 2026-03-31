@@ -30,7 +30,9 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
   const [isPending, startTransition] = useTransition();
   const [activeConfigId, setActiveConfigId] = useState<string>(initialConfigs[0]?.id || "");
   const [configs, setConfigs] = useState(initialConfigs);
+  const [activeLang, setActiveLang] = useState<'es' | 'en'>('es');
 
+  // Mantener la selección de config y refrescar la vista correctamente
   const currentConfig = configs.find(c => c.id === activeConfigId);
   const sections = (currentConfig?.sections as unknown as CvSectionConfigItem[]) || [];
 
@@ -73,6 +75,23 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
             </Button>
           </div>
 
+          {/* Switch de idioma */}
+          <div className="flex items-center gap-4 mb-4">
+            <Label className="text-xs font-bold">Idioma:</Label>
+            <Button
+              variant={activeLang === 'es' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setActiveLang('es')}
+              className={activeLang === 'es' ? 'font-bold' : ''}
+            >ES</Button>
+            <Button
+              variant={activeLang === 'en' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setActiveLang('en')}
+              className={activeLang === 'en' ? 'font-bold' : ''}
+            >EN</Button>
+          </div>
+
           <Tabs value={activeConfigId} onValueChange={setActiveConfigId} className="w-full">
             <div className="relative">
               <div className="overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
@@ -111,7 +130,7 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
                           <ListIcon className="h-5 w-5" />
                         </div>
                         <div>
-                          <p className="font-bold text-foreground">{section.title}</p>
+                          <p className="font-bold text-foreground">{section.title?.[activeLang] ?? ''}</p>
                           <p className="text-[10px] text-muted-foreground font-mono uppercase">Key: {section.id}</p>
                         </div>
                       </div>
@@ -121,13 +140,16 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
                       {/* Sub-header de Sección */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-muted/20 p-4 rounded-lg border border-border/50">
                         <div className="space-y-2">
-                          <Label className="text-xs font-semibold">Título de Sección</Label>
+                          <Label className="text-xs font-semibold">Título de Sección ({activeLang.toUpperCase()})</Label>
                           <Input
                             className="bg-background"
-                            value={section.title}
+                            value={section.title?.[activeLang] ?? ''}
                             onChange={(e) => {
                               const ns = [...sections];
-                              ns[sIdx].title = e.target.value;
+                              ns[sIdx].title = {
+                                ...ns[sIdx].title,
+                                [activeLang]: e.target.value
+                              };
                               updateLocalSections(ns);
                             }}
                           />
@@ -151,10 +173,16 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1">
                                   <div className="space-y-1.5">
-                                    <Label className="text-[10px] uppercase font-black text-muted-foreground/70">Nombre del Campo</Label>
-                                    <Input className="h-9 text-xs font-medium" value={field.label} onChange={(e) => {
+                                    <Label className="text-[10px] uppercase font-black text-muted-foreground/70">Nombre del Campo ({activeLang.toUpperCase()})</Label>
+                                    <Input className="h-9 text-xs font-medium" value={field.label?.[activeLang] ?? ''} onChange={(e) => {
                                       const ns = [...sections];
-                                      const f = {...ns[sIdx].fields[fIdx], label: e.target.value};
+                                      const f = {
+                                        ...ns[sIdx].fields[fIdx],
+                                        label: {
+                                          ...ns[sIdx].fields[fIdx].label,
+                                          [activeLang]: e.target.value
+                                        }
+                                      };
                                       ns[sIdx].fields[fIdx] = f;
                                       updateLocalSections(ns);
                                     }} />
@@ -196,29 +224,41 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-9 border-t border-dashed border-border pt-4">
                                 <div className="space-y-1.5">
                                   <Label className="text-[10px] uppercase font-bold flex items-center gap-1.5">
-                                    <Info className="h-3.5 w-3.5" /> Sugerencia (Tip)
+                                    <Info className="h-3.5 w-3.5" /> Sugerencia (Tip) ({activeLang.toUpperCase()})
                                   </Label>
                                   <Input
                                     placeholder="Instrucción para el usuario..."
                                     className="h-9 text-xs bg-muted/20 border-transparent focus:bg-background transition-all"
-                                    value={field.tip || ""}
+                                    value={field.tip?.[activeLang] ?? ''}
                                     onChange={(e) => {
                                       const ns = [...sections];
-                                      const f = {...ns[sIdx].fields[fIdx], tip: e.target.value};
+                                      const f = {
+                                        ...ns[sIdx].fields[fIdx],
+                                        tip: {
+                                          ...ns[sIdx].fields[fIdx].tip,
+                                          [activeLang]: e.target.value
+                                        }
+                                      };
                                       ns[sIdx].fields[fIdx] = f;
                                       updateLocalSections(ns);
                                     }}
                                   />
                                 </div>
                                 <div className="space-y-1.5">
-                                  <Label className="text-[10px] uppercase font-bold text-muted-foreground">Ejemplo de llenado</Label>
+                                  <Label className="text-[10px] uppercase font-bold text-muted-foreground">Ejemplo de llenado ({activeLang.toUpperCase()})</Label>
                                   <Input
                                     placeholder="Ej: Google, Microsoft..."
                                     className="h-9 text-xs"
-                                    value={field.example || ""}
+                                    value={field.example?.[activeLang] ?? ''}
                                     onChange={(e) => {
                                       const ns = [...sections];
-                                      const f = {...ns[sIdx].fields[fIdx], example: e.target.value};
+                                      const f = {
+                                        ...ns[sIdx].fields[fIdx],
+                                        example: {
+                                          ...ns[sIdx].fields[fIdx].example,
+                                          [activeLang]: e.target.value
+                                        }
+                                      };
                                       ns[sIdx].fields[fIdx] = f;
                                       updateLocalSections(ns);
                                     }}

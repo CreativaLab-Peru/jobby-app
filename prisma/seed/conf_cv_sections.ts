@@ -93,25 +93,13 @@ import { en } from "zod/v4/locales";
 
 // Función para fusionar configuraciones ES/EN en un solo objeto multi-idioma
 function mergeLangSection(esConfig: any, enConfig: any) {
-  // Fusiona los campos de nivel superior y los campos de fields
-  const merged: any = { ...esConfig };
-  for (const key of Object.keys(esConfig)) {
-    if (typeof esConfig[key] === "object" && !Array.isArray(esConfig[key]) && enConfig[key]) {
-      merged[key] = { es: esConfig[key], en: enConfig[key] };
-    } else if (Array.isArray(esConfig[key]) && Array.isArray(enConfig[key])) {
-      merged[key] = esConfig[key].map((field: any, idx: number) => {
-        const enField = enConfig[key][idx] || {};
-        const mergedField: any = { ...field };
-        for (const fKey of Object.keys(field)) {
-          if (typeof field[fKey] === "object" && !Array.isArray(field[fKey]) && enField[fKey]) {
-            mergedField[fKey] = { es: field[fKey], en: enField[fKey] };
-          }
-        }
-        return mergedField;
-      });
-    }
-  }
-  return merged;
+  // Devuelve los ejemplos y requiredFields de ambos idiomas
+  return {
+    requiredFields: esConfig.requiredFields || {},
+    requiredFieldsEn: enConfig.requiredFields || {},
+    examples: esConfig.examples || {},
+    examplesEn: enConfig.examples || {},
+  };
 }
 
 // --- 1. MAPEO BASE DE SECCIONES (ESTRUCTURA GENERAL) ---
@@ -790,22 +778,43 @@ const ALL_SECTION_IDS = [
 
 // --- 2. FUNCIÓN CONSTRUCTORA DE JSON ---
 function buildFullSectionJson(customConfig: any, lang: "es" | "en" = "es") {
-  // Mapeamos sobre la lista MAESTRA para asegurar que estén TODAS
-  return ALL_SECTION_IDS.map((id) => {
+  // Usar la lista de secciones específica si existe, si no la base
+  const sectionIds = Array.isArray(customConfig.sections) && customConfig.sections.length > 0
+    ? customConfig.sections.map((s: string) => s.toUpperCase())
+    : ALL_SECTION_IDS;
+  return sectionIds.map((id: string) => {
     const base = baseSectionsMap[id];
     if (!base) return null;
 
+    // Mezclar requiredFields y examples de la data específica
+    const requiredFields = customConfig.requiredFields || {};
+    const examples = customConfig.examples || {};
+    const examplesEn = customConfig.examplesEn || {};
+
     return {
       ...base,
-      title: base.title,
+      title: base.title, // Mantén el objeto multi-idioma
       fields: base.fields.map((field: any) => {
         const fieldPath = `${id.toLowerCase()}.${field.name}`;
+        // Mezclar required
+        let required = field.required;
+        if (typeof requiredFields[fieldPath] === 'boolean') {
+          required = requiredFields[fieldPath];
+        }
+        // Mezclar example multi-idioma
+        let example = field.example;
+        if (examples[fieldPath] || examplesEn[fieldPath]) {
+          example = {
+            es: examples[fieldPath] || (typeof example === 'object' ? example.es : ''),
+            en: examplesEn[fieldPath] || (typeof example === 'object' ? example.en : '')
+          };
+        }
         return {
           ...field,
-          required: customConfig.requiredFields?.[fieldPath] ?? field.required,
-          label: field.label,
-          tip: field.tip,
-          example: field.example, 
+          label: field.label, // Mantén el objeto multi-idioma
+          tip: field.tip,     // Mantén el objeto multi-idioma
+          example,
+          required,
         };
       }),
     };

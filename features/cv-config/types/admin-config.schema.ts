@@ -1,19 +1,22 @@
 import { z } from "zod";
 
+const langObject = z.object({ es: z.string(), en: z.string() });
+
 export const CvSectionFieldSchema = z.object({
   name: z.string(),
   type: z.enum(["text", "textarea", "email", "number", "tags", "date"]),
-  label: z.string(),
+  label: langObject,
   placeholder: z.string().optional(),
-  tip: z.string().optional(),
-  example: z.string().optional(),
+  tip: langObject.optional(),
+  example: langObject.optional(),
   required: z.boolean().default(false),
 });
+
 
 export const CvSectionConfigItemSchema = z.object({
   id: z.string(),
   icon: z.string(),
-  title: z.string(),
+  title: langObject,
   multiple: z.boolean().optional(),
   fields: z.array(CvSectionFieldSchema),
 });

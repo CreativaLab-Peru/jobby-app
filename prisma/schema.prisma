@@ -688,11 +688,14 @@ model CvSectionConfiguration {
 model TempCvWithEvaluation {
   id              String    @id @default(uuid())
   status          JobStatus @default(PENDING)
+  tempUserId      String?
   overallScore    Float?
   extractorOutput Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("temp_cv_with_evaluation")
 }
 
 enum RouteStatus {

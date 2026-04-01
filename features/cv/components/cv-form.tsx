@@ -2,6 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Language } from "@prisma/client";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormField } from "@/components/form-field";
@@ -28,6 +29,7 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
     defaultValues: {
       title: "",
       templateId: "harvard",
+      language: Language.ES,
       sections: [],
       ...defaultValues,
     },

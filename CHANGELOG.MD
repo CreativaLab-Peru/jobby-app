@@ -3,6 +3,9 @@
 ## Fixes
 - New way for hot selling (cv-pay and cv-builder)
 
+## Features
+- Added english recomendations (only examples).
+
 # v.1.2.0 - 2026-03-30
 
 ## Fixes

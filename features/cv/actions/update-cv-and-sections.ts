@@ -29,24 +29,30 @@ export const updateCvAndSections = async (id: string, cvData: CVData) => {
 
     // 2. Filtramos el payload para que SOLO contenga lo que el CV permite
     const sectionsToUpdate = allPayload.filter(s =>
-      allowedSectionTypes.includes(s.type)
+      allowedSectionTypes.includes(s.type) || s.type === CvSectionType.SUMMARY
     );
 
     // 3. Ejecutamos la transacción de actualización
     await prisma.$transaction(
       sectionsToUpdate.map((section) =>
-        prisma.cvSection.update({
+        prisma.cvSection.upsert({
           where: {
             cvId_sectionType: {
               cvId: id,
               sectionType: section.type,
             },
           },
-          data: {
+          update: {
             contentJson: section.content as any,
             updatedAt: new Date(),
             // IMPORTANTE: No enviamos 'position' ni 'title' para no sobreescribir
             // lo que el admin configuró originalmente.
+          },
+          create: {
+            cvId: id,
+            sectionType: section.type,
+            title: section.defaultTitle,
+            contentJson: section.content as any,
           },
         })
       )
@@ -64,6 +70,14 @@ export const updateCvAndSections = async (id: string, cvData: CVData) => {
  */
 function buildSectionsPayload(cvData: CVData) {
   const payload: Array<{ type: CvSectionType; content: any; defaultTitle: string }> = [];
+
+  if (cvData.personal) {
+    payload.push({
+      type: CvSectionType.SUMMARY,
+      content: { text: cvData.personal.summary ?? "" },
+      defaultTitle: "Resumen",
+    });
+  }
 
   // CONTACT (Información Personal)
   if (cvData.personal) {

@@ -7,6 +7,7 @@ import {sendMagicLinkToEmail} from "@/inngest/functions/send-magic-link-to-email
 import {getAndSaveOpportunities} from "@/inngest/functions/get-and-save-opportunities";
 import {generateRoadmap} from "@/inngest/functions/generate-roadmap";
 import {processTempCvEvaluation} from "@/inngest/functions/process-temp-cv-evaluation";
+import {processTempCvMigration} from "@/inngest/functions/process-temp-cv-migration";
 
 // Create an API that serves zero functions
 export const {GET, POST, PUT} = serve({
@@ -19,5 +20,6 @@ export const {GET, POST, PUT} = serve({
     getAndSaveOpportunities,
     generateRoadmap,
     processTempCvEvaluation,
+    processTempCvMigration,
   ],
 });

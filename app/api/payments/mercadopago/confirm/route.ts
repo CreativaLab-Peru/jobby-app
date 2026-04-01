@@ -137,9 +137,12 @@ async function processPaymentJob(jobId: string, paymentId: string) {
             where: {email},
           });
         }
-        await prisma.temporalUser.delete({
-          where: {id: temporalUser.id},
-        });
+
+        // Todo: we don't need to delete
+        // await prisma.temporalUser.delete({
+        //   where: {id: temporalUser.id},
+        // });
+
         userId = existingUser ? existingUser.id : userId;
         const token = generateMagicLinkToken();
         const hashedToken = hashMagicLinkToken(token);

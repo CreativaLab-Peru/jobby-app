@@ -9,9 +9,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Lightbulb, Info, CheckCircle } from "lucide-react"
 import { TagsInput } from "./tags-input"
 import type { CVField } from "@/types/cv"
+import { resolveLocalizedText } from "@/features/cv/utils/localized-text"
 
 interface FieldWithRecommendationsProps {
   field: CVField
+  language?: "ES" | "EN"
   value: any
   onChange: (value: string) => void
   onSelectChange?: (value: string) => void
@@ -20,6 +22,7 @@ interface FieldWithRecommendationsProps {
 
 export function FieldWithRecommendations({
                                            field,
+                                           language = "ES",
                                            value,
                                            onChange,
                                            onSelectChange,
@@ -28,12 +31,16 @@ export function FieldWithRecommendations({
   const [tipPopoverOpen, setTipPopoverOpen] = useState(false)
   const [examplePopoverOpen, setExamplePopoverOpen] = useState(false)
 
+  const labelText = resolveLocalizedText(field.label, language)
+  const tipText = field.tip ? resolveLocalizedText(field.tip, language) : ""
+  const exampleText = field.example ? resolveLocalizedText(field.example, language) : ""
+
   const useExample = () => {
-    if (field.type === "tags" && field.example) {
-      const exampleTags = field.example.split(", ")
+    if (field.type === "tags" && exampleText) {
+      const exampleTags = exampleText.split(", ")
       onTagsChange?.(exampleTags)
-    } else if (field.example) {
-      onChange(field.example)
+    } else if (exampleText) {
+      onChange(exampleText)
     }
     setExamplePopoverOpen(false)
   }
@@ -51,12 +58,12 @@ export function FieldWithRecommendations({
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <label className="block text-sm font-medium text-foreground">
-          {field.label} {field.required && <span className="text-destructive">*</span>}
+          {labelText} {field.required && <span className="text-destructive">*</span>}
         </label>
 
         <div className="flex items-center gap-2">
           {/* Tip Popover */}
-          {field.tip && (
+          {tipText && (
             <Popover open={tipPopoverOpen} onOpenChange={setTipPopoverOpen}>
               <PopoverTrigger asChild>
                 <button
@@ -64,7 +71,7 @@ export function FieldWithRecommendations({
                   className="inline-flex items-center gap-1.5 px-3 py-1.5  rounded-lg transition-all duration-300 border text-xs font-medium shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2"
                 >
                   <Lightbulb className=" w-3.5 h-3.5" />
-                  <span>Consejo</span>
+                  <span>{language === "EN" ? "Tip" : "Consejo"}</span>
                 </button>
               </PopoverTrigger>
               <PopoverContent className="bg-card w-80 text-card-foreground" side="top">
@@ -72,8 +79,8 @@ export function FieldWithRecommendations({
                   <div className="flex items-start gap-2">
                     <Lightbulb className="w-5 h-5  mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
-                      <p className="text-xs font-medium mb-1">Consejo:</p>
-                      <p className="text-sm leading-relaxed">{field.tip}</p>
+                      <p className="text-xs font-medium mb-1">{language === "EN" ? "Tip:" : "Consejo:"}</p>
+                      <p className="text-sm leading-relaxed">{tipText}</p>
                     </div>
                   </div>
                   <div className="flex justify-end">
@@ -83,7 +90,7 @@ export function FieldWithRecommendations({
                       onClick={() => setTipPopoverOpen(false)}
                       variant="outline"
                     >
-                      Entendido
+                      {language === "EN" ? "Got it" : "Entendido"}
                     </Button>
                   </div>
                 </div>
@@ -92,16 +99,16 @@ export function FieldWithRecommendations({
           )}
 
           {/* Example Popover */}
-          {field.example && (
+          {exampleText && (
             <Popover open={examplePopoverOpen} onOpenChange={setExamplePopoverOpen}>
               <PopoverTrigger asChild>
                 <button
                   type="button"
-                  aria-label="Ver ejemplo"
+                  aria-label={language === "EN" ? "View example" : "Ver ejemplo"}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5  rounded-lg transition-all duration-300 border text-xs font-medium shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2"
                 >
                   <Info className="w-3.5 h-3.5" />
-                  <span>Ejemplo</span>
+                  <span>{language === "EN" ? "Example" : "Ejemplo"}</span>
                 </button>
               </PopoverTrigger>
               <PopoverContent className="border-border bg-card w-80 text-card-foreground" side="top">
@@ -109,8 +116,8 @@ export function FieldWithRecommendations({
                   <div className="flex items-start gap-2">
                     <Info className="w-5 h-5  mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
-                      <p className="text-xs font-medium mb-1 text-secondary-foreground/80">Ejemplo:</p>
-                      <p className="text-sm italic leading-relaxed">{field.example}</p>
+                      <p className="text-xs font-medium mb-1 text-secondary-foreground/80">{language === "EN" ? "Example:" : "Ejemplo:"}</p>
+                      <p className="text-sm italic leading-relaxed">{exampleText}</p>
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -122,7 +129,7 @@ export function FieldWithRecommendations({
                       variant="outline"
                     >
                       <CheckCircle className="w-3 h-3 mr-1" />
-                      Usar este ejemplo
+                      {language === "EN" ? "Use this example" : "Usar este ejemplo"}
                     </Button>
                     <Button
                       type="button"
@@ -131,7 +138,7 @@ export function FieldWithRecommendations({
                       className=" border-border hover:bg-muted text-xs bg-transparent"
                       variant="outline"
                     >
-                      Cerrar
+                      {language === "EN" ? "Close" : "Cerrar"}
                     </Button>
                   </div>
                 </div>
@@ -146,19 +153,19 @@ export function FieldWithRecommendations({
         <Textarea
           value={fieldValue}
           onChange={(e) => onChange(e.target.value)}
-          placeholder={`Ingresa ${field.label.toLowerCase()}`}
+          placeholder={`${language === "EN" ? "Enter" : "Ingresa"} ${labelText.toLowerCase()}`}
           className="min-h-[200px] bg-input text-foreground border-border focus:ring-ring focus:ring-2 focus:ring-offset-2"
         />
       ) : field.type === "tags" ? (
         <TagsInput
           value={fieldValue}
           onChange={onTagsChange || (() => {})}
-          placeholder={`Agrega ${field.label.toLowerCase()}`}
+          placeholder={`${language === "EN" ? "Add" : "Agrega"} ${labelText.toLowerCase()}`}
         />
       ) : field.type === "select" ? (
         <Select value={fieldValue} onValueChange={(val) => onSelectChange?.(val)}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Selecciona una opción" />
+            <SelectValue placeholder={language === "EN" ? "Select an option" : "Selecciona una opcion"} />
           </SelectTrigger>
           <SelectContent>
             {field.options?.map((option: string) => (
@@ -173,7 +180,7 @@ export function FieldWithRecommendations({
           type={field.type}
           value={fieldValue}
           onChange={(e) => onChange(e.target.value)}
-          placeholder={`Ingresa ${field.label.toLowerCase()}`}
+          placeholder={`${language === "EN" ? "Enter" : "Ingresa"} ${labelText.toLowerCase()}`}
         />
       )}
     </div>

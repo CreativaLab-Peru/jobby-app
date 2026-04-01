@@ -95,12 +95,37 @@ import { en } from "zod/v4/locales";
 function mergeLangSection(esConfig: any, enConfig: any) {
   // Devuelve los ejemplos y requiredFields de ambos idiomas
   return {
+    sections: esConfig.sections || enConfig.sections || [],
     requiredFields: esConfig.requiredFields || {},
     requiredFieldsEn: enConfig.requiredFields || {},
     examples: esConfig.examples || {},
     examplesEn: enConfig.examples || {},
   };
 }
+
+const SECTION_ID_TO_CONFIG_KEY: Record<string, string> = {
+  CONTACT: "personal",
+  EXPERIENCE: "experience",
+  EDUCATION: "education",
+  SKILLS: "skills",
+  PROJECTS: "projects",
+  VOLUNTEERING: "volunteering",
+  CERTIFICATIONS: "certifications",
+  ACHIEVEMENTS: "achievements",
+  INTERESTS: "interests",
+};
+
+const CONFIG_KEY_TO_SECTION_ID: Record<string, string> = {
+  personal: "CONTACT",
+  experience: "EXPERIENCE",
+  education: "EDUCATION",
+  skills: "SKILLS",
+  projects: "PROJECTS",
+  volunteering: "VOLUNTEERING",
+  certifications: "CERTIFICATIONS",
+  achievements: "ACHIEVEMENTS",
+  interests: "INTERESTS",
+};
 
 // --- 1. MAPEO BASE DE SECCIONES (ESTRUCTURA GENERAL) ---
 const baseSectionsMap = {
@@ -777,10 +802,12 @@ const ALL_SECTION_IDS = [
 ];
 
 // --- 2. FUNCIÓN CONSTRUCTORA DE JSON ---
-function buildFullSectionJson(customConfig: any, lang: "es" | "en" = "es") {
+function buildFullSectionJson(customConfig: any) {
   // Usar la lista de secciones específica si existe, si no la base
   const sectionIds = Array.isArray(customConfig.sections) && customConfig.sections.length > 0
-    ? customConfig.sections.map((s: string) => s.toUpperCase())
+    ? customConfig.sections
+      .map((s: string) => CONFIG_KEY_TO_SECTION_ID[s.toLowerCase()] || s.toUpperCase())
+      .filter((s: string) => Boolean(baseSectionsMap[s]))
     : ALL_SECTION_IDS;
   return sectionIds.map((id: string) => {
     const base = baseSectionsMap[id];
@@ -795,18 +822,26 @@ function buildFullSectionJson(customConfig: any, lang: "es" | "en" = "es") {
       ...base,
       title: base.title, // Mantén el objeto multi-idioma
       fields: base.fields.map((field: any) => {
-        const fieldPath = `${id.toLowerCase()}.${field.name}`;
+        const configSectionKey = SECTION_ID_TO_CONFIG_KEY[id] || id.toLowerCase();
+        const fieldPath = `${configSectionKey}.${field.name}`;
         // Mezclar required
         let required = field.required;
         if (typeof requiredFields[fieldPath] === 'boolean') {
           required = requiredFields[fieldPath];
+        } else if (typeof customConfig.requiredFieldsEn?.[fieldPath] === 'boolean') {
+          required = customConfig.requiredFieldsEn[fieldPath];
         }
         // Mezclar example multi-idioma
         let example = field.example;
         if (examples[fieldPath] || examplesEn[fieldPath]) {
+          const esValue = examples[fieldPath] || (typeof example === 'object' ? example.es : '');
+          const enRawValue = examplesEn[fieldPath];
+          const baseEnValue = typeof example === 'object' ? example.en : '';
+          const enValue = enRawValue && enRawValue !== esValue ? enRawValue : baseEnValue;
+
           example = {
-            es: examples[fieldPath] || (typeof example === 'object' ? example.es : ''),
-            en: examplesEn[fieldPath] || (typeof example === 'object' ? example.en : '')
+            es: esValue,
+            en: enValue,
           };
         }
         return {

@@ -1,23 +1,41 @@
 "use client";
 
 import { CheckCircle, Plus, Sparkles } from "lucide-react";
-import { CvSectionType, OpportunityType } from "@prisma/client";
+import { CvSectionType, Language, OpportunityType } from "@prisma/client";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { OPPORTUNITY_MAP, RECOMMENDATIONS_BY_OPPORTUNITY, SECTION_LABELS } from "@/const";
+import { RECOMMENDATIONS_BY_OPPORTUNITY } from "@/const";
 
 interface CvSectionSelectorProps {
   opportunityType: OpportunityType;
   selectedSections: CvSectionType[];
   onChange: (sections: CvSectionType[]) => void;
+  language?: Language;
 }
+
+const SECTION_LABELS_I18N: Record<CvSectionType, { ES: string; EN: string }> = {
+  SUMMARY: { ES: "Resumen Profesional", EN: "Professional Summary" },
+  CONTACT: { ES: "Informacion de Contacto", EN: "Contact Information" },
+  EXPERIENCE: { ES: "Experiencia Laboral", EN: "Work Experience" },
+  EDUCATION: { ES: "Formacion Academica", EN: "Education" },
+  SKILLS: { ES: "Habilidades Tecnicas", EN: "Technical Skills" },
+  PROJECTS: { ES: "Proyectos Destacados", EN: "Featured Projects" },
+  VOLUNTEERING: { ES: "Voluntariado", EN: "Volunteering" },
+  CERTIFICATIONS: { ES: "Certificaciones", EN: "Certifications" },
+  COMPLEMENTS: { ES: "Informacion Complementaria", EN: "Additional Information" },
+  ACHIEVEMENTS: { ES: "Logros", EN: "Achievements" },
+  LANGUAGES: { ES: "Idiomas", EN: "Languages" },
+  INTERESTS: { ES: "Intereses", EN: "Interests" },
+};
 
 export function CvSectionSelector({
                                     opportunityType,
                                     selectedSections,
                                     onChange,
+                                    language = Language.ES,
                                   }: CvSectionSelectorProps) {
   const recommended = RECOMMENDATIONS_BY_OPPORTUNITY[opportunityType] || [];
+  const isEn = language === Language.EN;
   const allSectionTypes = Object.values(CvSectionType)
     .filter(item => item !== CvSectionType.LANGUAGES)
     .filter(item => item !== CvSectionType.SUMMARY);
@@ -36,20 +54,22 @@ export function CvSectionSelector({
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between px-1">
           <Label className="text-sm flex items-center gap-2">
-            Secciones para tu CV
+            {isEn ? "Sections for your CV" : "Secciones para tu CV"}
             <span className="text-[10px] bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold border border-accent/20">
-              IA Sugiere
+              {isEn ? "AI Suggests" : "IA Sugiere"}
             </span>
           </Label>
           {selectedSections.length > 0 && (
             <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
-               Orden de llenado activo
+               {isEn ? "Active fill order" : "Orden de llenado activo"}
              </span>
           )}
         </div>
 
         <p className="text-[10px] text-muted-foreground/60 px-1">
-          * Selecciona en el orden que prefieras que aparezcan.
+          {isEn
+            ? "* Select the order you want them to appear in."
+            : "* Selecciona en el orden que prefieras que aparezcan."}
         </p>
 
         <div className="flex flex-wrap gap-2 p-3 rounded-3xl bg-secondary/10 border border-border/40">
@@ -89,7 +109,7 @@ export function CvSectionSelector({
                 )}
 
                 <span className={cn(isSelected && "ml-0.5")}>
-                  {SECTION_LABELS[section]}
+                  {SECTION_LABELS_I18N[section][isEn ? "EN" : "ES"]}
                 </span>
 
                 {isSelected && (

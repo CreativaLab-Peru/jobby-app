@@ -9,11 +9,12 @@ import {NavigationButtons} from "@/features/cv/components/navigation-buttons"
 import {CVSectionForm, CVSectionFormRef} from "@/features/cv/components/cv-section-form"
 import {CVPreview} from "@/features/cv/components/cv-preview"
 import {CVPreviewEuropass} from "@/features/cv/components/cv-preview-europass"
-import {CVData} from "@/types/cv";
+import {CVData, CVSection} from "@/types/cv";
 import {updateCvAndSections} from "@/features/cv/actions/update-cv-and-sections";
 import {OpportunityType, CvType} from "@prisma/client"
 import {routes} from "@/lib/routes";
 import {toast} from "sonner";
+import { resolveLocalizedText } from "@/features/cv/utils/localized-text";
 
 interface CreateCVPageProps {
   cv: CVData
@@ -28,7 +29,7 @@ interface CreateCVPageProps {
   } | null>
   onCompletePath?: string
   language?: 'EN' | 'ES'
-  initialSections: any[]
+  initialSections: CVSection[]
 }
 
 const SECTION_ID_TO_CV_KEY: Record<string, keyof CVData> = {
@@ -139,7 +140,7 @@ export default function CreateCVPage({
     }
   }
 
-  const updateCVData = useCallback((sectionId: string, data: Record<string, unknown>) => {
+  const updateCVData = useCallback((sectionId: string, data: CVData[keyof CVData]) => {
     setCvData((prev) => {
       const newData = {
         ...prev,
@@ -184,7 +185,7 @@ export default function CreateCVPage({
                           {/*  const Icon = currentSection.icon*/}
                           {/*  return <Icon className="w-8 h-8 mr-3 text-primary" />*/}
                           {/*})()}*/}
-                          <span className="font-bold text-primary">{currentSection?.title || "No titulo"}</span>
+                          <span className="font-bold text-primary">{resolveLocalizedText(currentSection?.title ?? "", language) || "No titulo"}</span>
                         </div>
 
                         <NavigationButtons
@@ -199,6 +200,7 @@ export default function CreateCVPage({
                       <CVSectionForm
                         ref={formRef}
                         section={currentSection}
+                        language={language}
                         data={cvData[currentSection.id] || {}}
                         onChange={(data) => updateCVData(currentSection.id, data)}
                       />
@@ -223,20 +225,20 @@ export default function CreateCVPage({
                     <CardHeader className="bg-muted/30 border-b border-border">
                       <CardTitle className="flex items-center text-lg text-primary">
                         <Eye className="w-5 h-5 mr-2 text-primary"/>
-                        Vista Previa
+                        {language === "EN" ? "Preview" : "Vista Previa"}
 
                         <div className="ml-auto">
                           {isSaving ? (
                             <div
                               className="flex items-center gap-2 text-xs font-medium text-primary animate-pulse">
                               <CloudUpload className="w-4 h-4"/>
-                              Sincronizando...
+                              {language === "EN" ? "Syncing..." : "Sincronizando..."}
                             </div>
                           ) : (
                             <div
                               className="flex items-center gap-2 text-xs font-medium text-primary">
                               <CloudCheck className="w-4 h-4"/>
-                              Cambios guardados
+                              {language === "EN" ? "Changes saved" : "Cambios guardados"}
                             </div>
                           )}
                         </div>

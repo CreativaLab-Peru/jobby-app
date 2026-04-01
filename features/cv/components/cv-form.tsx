@@ -2,6 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Language } from "@prisma/client";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormField } from "@/components/form-field";
@@ -28,6 +29,7 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
     defaultValues: {
       title: "",
       templateId: "harvard",
+      language: Language.ES,
       sections: [],
       ...defaultValues,
     },
@@ -35,6 +37,7 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
 
   const allValues = watch();
   const selectedOpportunity = watch("opportunityType");
+  const selectedLanguage = watch("language") || Language.ES;
   const prevValuesRef = useRef<string>("");
 
   useEffect(() => {
@@ -132,6 +135,7 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
             selectedSections={watch("sections") || []}
             onChange={(newSections) => setValue("sections", newSections, { shouldValidate: true })}
             opportunityType={watch("opportunityType") as any}
+            language={selectedLanguage}
           />
         </div>
 

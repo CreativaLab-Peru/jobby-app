@@ -98,23 +98,26 @@ export function PreviewCVComponent({
   }, [masterSections, cvData]);
 
   const opportunityMapped = OPPORTUNITY_MAP[opportunityType] || "No especificado";
+  const isEn = language === "EN";
 
   const activeTips = useMemo(() => {
     const tips = [
       {
         id: "opt",
-        description: "Tu CV está optimizado para",
+        title: isEn ? "Tip" : "Consejo",
+        description: isEn ? "Your CV is optimized for" : "Tu CV está optimizado para",
         highlight: opportunityMapped,
-        footer: ". El análisis te mostrará cómo mejorarlo aún más."
+        footer: isEn ? ". Analysis will show how to improve it even more." : ". El análisis te mostrará cómo mejorarlo aún más."
       }
     ];
 
     if (language === 'EN') {
       tips.push({
         id: "lang",
-        description: "Hemos detectado que tu CV está en",
-        highlight: "Inglés",
-        footer: ". Esto aumenta tus posibilidades en vacantes internacionales."
+        title: "Tip",
+        description: "We detected your CV is in",
+        highlight: "English",
+        footer: ". This increases your chances for international roles."
       });
     }
 
@@ -163,6 +166,7 @@ export function PreviewCVComponent({
                 {activeTips.map((tip) => (
                   <TipCard
                     key={tip.id}
+                    title={tip.title}
                     description={tip.description}
                     highlightedText={tip.highlight}
                     footer={tip.footer}

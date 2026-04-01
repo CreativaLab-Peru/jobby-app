@@ -72,6 +72,9 @@ export function HotSaleSection({ user = null }: HotSaleSectionProps) {
 
   const handleMethodSelected = (method: PaymentMethod) => {
     setShowMethodModal(false);
+    if (!isPending) {
+      return;
+    }
     startTransition(async () => {
       if (isAuthenticated) {
         // Usuario con sesión activa — usar flujo autenticado

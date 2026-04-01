@@ -36,13 +36,7 @@ export const processTempCvEvaluation = inngest.createFunction(
             "language": "EN | ES",
             "cvType": "TECHNOLOGY_ENGINEERING | DESIGN_CREATIVITY | MARKETING_STRATEGY | MANAGEMENT_BUSINESS | FINANCE_PROJECTS | SOCIAL_MEDIA | EDUCATION | SCIENCE",
             "overallScore": (number 0-100),
-            "sections": [
-              {
-                "sectionType": "SUMMARY | EXPERIENCE | EDUCATION | SKILLS | PROJECTS | VOLUNTEERING | CERTIFICATIONS | LANGUAGES | CONTACT",
-                "title": "string",
-                "contentJson": {} // Object or Array of objects depending on the sectionType
-              }
-            ],
+            "whichSectionsContain": [], // Populate this array with one or more of the following tags: "EXPERIENCE|EDUCATION|SKILLS|PROJECTS|VOLUNTEERING|CERTIFICATIONS|LANGUAGES|CONTACT|COMPLEMENTS|ACHIEVEMENTS|INTERESTS" The tags MUST be in the EXACT order they appear in the CV (from top to bottom, left to right).
             "evaluation": {
               "summary": "Professional overview of the profile in spanish",
               "strengths": ["string" (in spanish)],
@@ -50,27 +44,6 @@ export const processTempCvEvaluation = inngest.createFunction(
               "improvementRoadmap": ["step 1", "step 2" (in spanish)]
             }
           }
-
-         ---
-### Detailed extraction rules
-1. **Section Selection**: We need all found out.
-2. **sectionType** must match exactly: SUMMARY, EXPERIENCE, EDUCATION, SKILLS, PROJECTS, VOLUNTEERING, CERTIFICATIONS, LANGUAGES, CONTACT, COMPLEMENTS, ACHIEVEMENTS, INTERESTS.
-3. **contentJson** structures:
-   - EXPERIENCE → [{ position, company, location, duration, responsibilities(string) }]
-   - EDUCATION → [{ level, title, institution, location, year, honors? }]
-   - SKILLS → { soft: string[], languages: string[], technical: string[] }
-   - PROJECTS → [{ title?, duration, description, technologies? }]
-   - CERTIFICATIONS → [{ name, issuer?, year? }]
-   - LANGUAGES → [{ language, proficiency }]
-   - CONTACT → { fullName?, email?, phone?, linkedin?, address?, summary? }
-   - SUMMARY → { text }
-   - VOLUNTEERING → [{ organization?, position?, duration?, responsibilities? }]
-4. Dates: Use ISO format "YYYY-MM" (e.g., "2023-05"). Use "Present" if applicable.
-5. Formatting: Escape special characters. Replace newlines with spaces.
-6. Validation: Ensure every opening brace has a closing one and strings are properly quoted.
----
-### Example output
-{"opportunityType":"EMPLOYMENT","language":"ES","cvType":"TECHNOLOGY_ENGINEERING","sections":[{"sectionType":"SUMMARY","title":"Resumen Profesional","contentJson":{"text":"Ingeniero de Software con experiencia en React."}}]}
         `;
 
         const result = await queryGemini({ prompt, type: "JSON" });

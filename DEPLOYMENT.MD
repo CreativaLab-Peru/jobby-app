@@ -1,6 +1,7 @@
 # WIP
 
 ## Enhancements
+- It't necesary to run again prisma/seed/conf_cv_sections.ts.
 - `requiredRequirements, optionalRequirements, companyLogoUrl, minSalary and maxSalary` added in opportunities table
 
 # v1.1.29 - 2026-03-23

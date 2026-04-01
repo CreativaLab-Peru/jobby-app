@@ -1,3 +1,8 @@
+# WIP
+
+## Fixes
+- New way for hot selling (cv-pay and cv-builder)
+
 # v.1.2.0 - 2026-03-30
 
 ## Fixes

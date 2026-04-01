@@ -61,6 +61,7 @@ export function CvListScreen({
         setIsProcessingPersisted(true);
 
         // 1. Intentamos recuperar el archivo de IndexedDB
+        // Todo:cv-pay
         // await loadPersistedFile();
 
         // El estado de Zustand se actualiza, pero para mayor seguridad

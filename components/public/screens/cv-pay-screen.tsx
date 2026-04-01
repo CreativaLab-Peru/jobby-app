@@ -25,6 +25,7 @@ export function CVPayScreen({ user, packs }: CVPayClientContentProps) {
     setSelectedFile(file);
     if (!user) {
       // Guardamos temporalmente y pedimos login
+      // Todo:cv-pay
       // await setFileData(file, "anonymous");
       // setShowAuthModal(true);
       return;

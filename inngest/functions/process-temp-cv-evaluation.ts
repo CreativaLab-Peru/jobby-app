@@ -9,15 +9,15 @@ export const processTempCvEvaluation = inngest.createFunction(
   async ({ event, step }) => {
     const { tempCvId, rawText } = event.data;
 
-    // 1. Marcamos inicio de procesamiento
-    await step.run("update-status-ingest", async () => {
-      await prisma.tempCvWithEvaluation.update({
-        where: { id: tempCvId },
-        data: { status: JobStatus.IN_PROGRESS },
-      });
-    });
-
     try {
+      // 1. Marcamos inicio de procesamiento
+      await step.run("update-status-ingest", async () => {
+        await prisma.tempCvWithEvaluation.update({
+          where: { id: tempCvId },
+          data: { status: JobStatus.IN_PROGRESS },
+        });
+      });
+
       // 2. Ejecución de Gemini con el Schema solicitado + Scoring
       const aiResult = await step.run("ai-extraction-and-scoring", async () => {
         const prompt = `

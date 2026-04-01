@@ -72,7 +72,7 @@ export function HotSaleSection({ user = null }: HotSaleSectionProps) {
 
   const handleMethodSelected = (method: PaymentMethod) => {
     setShowMethodModal(false);
-    if (!isPending) {
+    if (isPending) {
       return;
     }
     startTransition(async () => {

@@ -50,6 +50,7 @@ export function OnboardingForm() {
   // Debug
   const debug = useDebug();
   const [isProcessingPersisted, setIsProcessingPersisted] = useState(false);
+  // Todo:cv-pay
   // const { fileBlob, loadPersistedFile } = useAnalysisStore();
 
   // 1. Verificación inicial de sesión para evitar parpadeos en AccountStep

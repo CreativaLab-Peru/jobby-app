@@ -39,6 +39,11 @@ export function CreditPackModal({
   const handlePurchase = (_packId: string, method: PaymentMethod) => {
     if (isPending) return;
 
+    if (!tempUserId) {
+      console.log("[NOT_TEMP_USER_ID]", tempUserId);
+      return;
+    }
+
     startTransition(async () => {
       if (method === "paddle") {
         const result = await createCheckoutForNewUserPaddle(tempUserId);

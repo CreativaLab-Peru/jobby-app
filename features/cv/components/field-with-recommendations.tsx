@@ -32,7 +32,7 @@ export function FieldWithRecommendations({
   const [examplePopoverOpen, setExamplePopoverOpen] = useState(false)
 
   const labelText = resolveLocalizedText(field.label, "ES")
-  const tipText = field.tip ? resolveLocalizedText(field.tip, language) : ""
+  const tipText = field.tip ? resolveLocalizedText(field.tip, "ES") : ""
   const exampleText = field.example ? resolveLocalizedText(field.example, language) : ""
 
   const useExample = () => {
@@ -71,7 +71,7 @@ export function FieldWithRecommendations({
                   className="inline-flex items-center gap-1.5 px-3 py-1.5  rounded-lg transition-all duration-300 border text-xs font-medium shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2"
                 >
                   <Lightbulb className=" w-3.5 h-3.5" />
-                  <span>{language === "EN" ? "Tip" : "Consejo"}</span>
+                  <span>Consejo</span>
                 </button>
               </PopoverTrigger>
               <PopoverContent className="bg-card w-80 text-card-foreground" side="top">
@@ -79,7 +79,7 @@ export function FieldWithRecommendations({
                   <div className="flex items-start gap-2">
                     <Lightbulb className="w-5 h-5  mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
-                      <p className="text-xs font-medium mb-1">{language === "EN" ? "Tip:" : "Consejo:"}</p>
+                      <p className="text-xs font-medium mb-1">Consejo:</p>
                       <p className="text-sm leading-relaxed">{tipText}</p>
                     </div>
                   </div>
@@ -90,7 +90,7 @@ export function FieldWithRecommendations({
                       onClick={() => setTipPopoverOpen(false)}
                       variant="outline"
                     >
-                      {language === "EN" ? "Got it" : "Entendido"}
+                      Entendido
                     </Button>
                   </div>
                 </div>
@@ -116,7 +116,7 @@ export function FieldWithRecommendations({
                   <div className="flex items-start gap-2">
                     <Info className="w-5 h-5  mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
-                      <p className="text-xs font-medium mb-1 text-secondary-foreground/80">{language === "EN" ? "Example:" : "Ejemplo:"}</p>
+                      <p className="text-xs font-medium mb-1 text-secondary-foreground/80">Ejemplo:</p>
                       <p className="text-sm italic leading-relaxed">{exampleText}</p>
                     </div>
                   </div>

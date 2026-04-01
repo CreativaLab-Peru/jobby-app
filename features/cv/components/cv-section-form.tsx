@@ -256,7 +256,7 @@ export const CVSectionForm = forwardRef<CVSectionFormRef, CVSectionFormProps>(({
                 {resolveLocalizedText(field.label, "ES")}
               </label>
               {field.tip && (
-                <p className="text-xs text-muted-foreground">{resolveLocalizedText(field.tip, language)}</p>
+                <p className="text-xs text-muted-foreground">{resolveLocalizedText(field.tip, "ES")}</p>
               )}
               <CvPhotoUpload
                 value={formData[field.name] || ""}

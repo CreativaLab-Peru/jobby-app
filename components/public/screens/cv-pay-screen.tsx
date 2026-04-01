@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { useRouter } from "next/navigation";
 import { AuthInterceptionModal } from "@/components/auth-interception-modal";
 import { useAnalysisStore } from "@/hooks/use-analysis-store";
@@ -18,25 +18,78 @@ interface CVPayClientContentProps {
 
 export function CVPayScreen({ user, packs }: CVPayClientContentProps) {
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const { setFileData } = useAnalysisStore();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const router = useRouter();
 
   const handleFileSelection = async (file: File) => {
+    setSelectedFile(file);
     if (!user) {
       // Guardamos temporalmente y pedimos login
-      await setFileData(file, "anonymous");
-      setShowAuthModal(true);
+      // Todo:cv-pay
+      // await setFileData(file, "anonymous");
+      // setShowAuthModal(true);
       return;
     }
-
-    // Si hay usuario, procesamos y redirigimos
-    await setFileData(file, user.id);
-    router.push("/cv?afterOnboarding=true");
   };
+
+  const {
+    startAnalysis,
+    status,
+    score,
+    reset: resetStore,
+    analysisId,
+    checkStatus
+  } = useAnalysisStore();
+
+  const handleStartAnalysis = async () => {
+    if (!selectedFile) return;
+    try {
+      await startAnalysis(selectedFile);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const resetAll = () => {
+    setSelectedFile(null);
+    resetStore();
+  };
+
+  // 1. Efecto de Polling: Si tenemos un ID y estamos analizando, preguntamos al servidor
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (analysisId && status === "ANALYZING") {
+      interval = setInterval(() => {
+        checkStatus(analysisId);
+      }, 2000); // Poll cada 2 segundos
+    }
+
+    return () => clearInterval(interval);
+  }, [analysisId, status, checkStatus]);
+
+  // 2. Efecto de Redirección: Cuando el status cambia a COMPLETED, nos movemos
+  useEffect(() => {
+    if (status === "COMPLETED" && analysisId) {
+      // Redigimos a la ruta de revisión con el ID del TempCV
+      router.push(`/cv-builder/${analysisId}/review`);
+
+      // Opcional: Limpiar el store después de la redirección si no quieres
+      // que persista al volver atrás
+      // resetStore();
+    }
+  }, [status, analysisId, router]);
 
   return (
     <>
-      <HeroSection onFileSelected={handleFileSelection} />
+      <HeroSection
+        onFileSelected={handleFileSelection}
+        selectedFile={selectedFile}
+        onStartAnalysis={handleStartAnalysis}
+        status={status}
+        score={score}
+        reset={resetAll}
+      />
       <HotSaleSection user={user} />
       <CreditPackModal packs={packs} />
       {/* ... Resto de tus secciones (Video, HowItWorks, etc.) */}

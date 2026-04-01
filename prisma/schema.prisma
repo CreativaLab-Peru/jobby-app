@@ -236,7 +236,7 @@ model Cv {
   userId            String?
   createdByJobId    String?
   language          Language           @default(EN)
-  status            JobStatus         @default(PENDING)
+  status            JobStatus          @default(PENDING)
   opportunityType   OpportunityType
   cvType            CvType?
   title             String?
@@ -266,38 +266,38 @@ model Cv {
 }
 
 model Opportunity {
-  id                   String
-  cvId                 String
-  routeId              String?
-  title                String
-  type                 OpportunityType
-  deadline             DateTime?
-  match                Decimal            @db.Decimal(8, 4)
+  id       String
+  cvId     String
+  routeId  String?
+  title    String
+  type     OpportunityType
+  deadline DateTime?
+  match    Decimal         @db.Decimal(8, 4)
 
   // requirements is deprecated, we will use requiredRequirements and optionalRequirements for matching and display purposes. However, we keep it here for legacy data and potential future use.
   requirements         String?
   requiredRequirements String[]
   optionalRequirements String[]
 
-  linkUrl              String
-  company              String?
-  companyLogoUrl       String?
-  location             String?
-  modality             String?
+  linkUrl        String
+  company        String?
+  companyLogoUrl String?
+  location       String?
+  modality       String?
 
   // Salary is deprecated, we will use minSalary and maxSalary from UserPreference for matching and display purposes. However, we keep it here for legacy data and potential future use.
-  salary               String?
-  minSalary            String?
-  maxSalary            String?
+  salary    String?
+  minSalary String?
+  maxSalary String?
 
-  description          String?
-  benefits             String?
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
-  cv                   Cv                 @relation(fields: [cvId], references: [id], onDelete: Cascade)
-  route                Route?             @relation(fields: [routeId], references: [id], onDelete: Cascade)
-  interviewSessions    InterviewSession[]
-  roadmaps             Roadmap[]
+  description       String?
+  benefits          String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  cv                Cv                 @relation(fields: [cvId], references: [id], onDelete: Cascade)
+  route             Route?             @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  interviewSessions InterviewSession[]
+  roadmaps          Roadmap[]
 
   @@id([id, cvId])
   @@map("opportunity")
@@ -343,15 +343,14 @@ model CvSection {
   contentJson Json?
   order       Int           @default(0)
 
-  isVisible   Boolean       @default(true) // Crucial para la feature
-  isRecommended Boolean     @default(false) // Meta-dato para UI
+  isVisible     Boolean @default(true) // Crucial para la feature
+  isRecommended Boolean @default(false) // Meta-dato para UI
 
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  cv          Cv            @relation(fields: [cvId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cv        Cv       @relation(fields: [cvId], references: [id])
 
   @@unique([cvId, sectionType])
-
   @@index([cvId, sectionType])
   @@index([cvId, order])
   @@map("cv_section")
@@ -677,13 +676,26 @@ model CvSectionConfiguration {
 
   // Almacenaremos el JSON que me pasaste aquí
   // Usamos Json de Prisma para consultas eficientes y tipado
-  sections        Json
+  sections Json
 
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([cvType, opportunityType]) // Un solo esquema por combinación
   @@map("cv_section_configuration")
+}
+
+model TempCvWithEvaluation {
+  id              String    @id @default(uuid())
+  status          JobStatus @default(PENDING)
+  tempUserId      String?
+  overallScore    Float?
+  extractorOutput Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("temp_cv_with_evaluation")
 }
 
 enum RouteStatus {

@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Mail, User, ArrowRight, Loader2, AlertCircle } from "lucide-react";
-import { sendEmailToPay } from "@/features/home/actions/send-email-to-pay";
+import { createTemporalUser } from "@/features/home/actions/create-temporal-user";
 import { z } from "zod";
 
 const formSchema = z.object({
@@ -17,9 +17,15 @@ interface EmailModalProps {
   isOpen: boolean;
   closeModal: () => void;
   onSuccess?: (id: string, email: string) => void;
+  newEvaluationId?: string;
 }
 
-export function EmailModal({ isOpen, closeModal, onSuccess }: EmailModalProps) {
+export function EmailModal({
+                             isOpen,
+                             closeModal,
+                             onSuccess,
+                             newEvaluationId
+}: EmailModalProps) {
   const [isPending, startTransition] = useTransition();
   const [formData, setFormData] = useState({ name: "", email: "" });
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +40,11 @@ export function EmailModal({ isOpen, closeModal, onSuccess }: EmailModalProps) {
       try {
         const {email, name} = result.data;
         // Asumiendo que actualizas el action para recibir el nombre también
-        const res = await sendEmailToPay(email, name);
+        const res = await createTemporalUser({
+          email,
+          name,
+          newEvaluationId
+        });
 
         if (!res.success) return setError(res.error || "Error al procesar.");
 

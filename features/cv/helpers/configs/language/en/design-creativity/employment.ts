@@ -45,7 +45,7 @@ export const designCreativityEmployment: SectionConfig = {
     "experience.description":
         "As a Junior Graphic Designer at Creative Agency XYZ, I have contributed to the development of visual content for a variety of clients, including startups and established companies. My responsibilities include creating graphics for social media, designing logos and branding materials, and participating in brainstorming sessions for creative campaigns. I have collaborated closely with senior designers and marketing teams to ensure that our designs effectively communicate the client's message and meet their needs.",
     "experience.responsibilities":
-        "• Developed visual content for social media platforms, increasing engagement by 30%.\n• Designed logos and branding materials for 10+ clients, contributing to their brand identity.\n• Participated in brainstorming sessions, providing creative input that led to successful campaigns.\n• Collaborated with senior designers and marketing teams to ensure design quality and client satisfaction.",
+        "Developed visual content for social media platforms, increasing engagement by 30%.\n• Designed logos and branding materials for 10+ clients, contributing to their brand identity.\n• Participated in brainstorming sessions, providing creative input that led to successful campaigns.\n• Collaborated with senior designers and marketing teams to ensure design quality and client satisfaction.",
 
     // Achievements
     "achievements.title":

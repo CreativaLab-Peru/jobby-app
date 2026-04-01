@@ -12,28 +12,28 @@ export const technologyEngineeringInternship: SectionConfig = {
   },
   examples: {
     "personal.summary":
-      "Estudiante de 5to ciclo de Ingeniería de Sistemas con sólidos conocimientos en desarrollo web full-stack y bases de datos. Busco prácticas profesionales para aplicar mis habilidades en programación y contribuir al desarrollo de soluciones tecnológicas innovadoras mientras continúo aprendiendo de profesionales experimentados.",
+      "Systems Engineering student with a strong passion for software development and a focus on web technologies. I have participated in various academic projects and hackathons, developing skills in programming languages such as JavaScript and Python, as well as frameworks like React and Node.js. I am eager to apply my knowledge in a real-world internship to gain practical experience and contribute to innovative technology solutions.",
 
-    "education.title": "Ingeniería de Sistemas e Informática",
-    "education.institution": "Universidad Nacional de San Antonio Abad del Cusco",
-    "education.location": "Cusco, Perú",
-    "education.year": "Esperado Diciembre 2026",
-    "education.honors": "Tercio Superior, Participante de Hackathon Universitario 2023",
+    "education.title": "Bachelor's Degree in Systems and Computer Engineering",
+    "education.institution": "National University of San Antonio Abad in Cusco",
+    "education.location": "Cusco, Peru",
+    "education.year": "Expected December 2026",
+    "education.honors": "Top Third, Participant in University Hackathon 2023",
 
-    "projects.title": "Plataforma de E-learning con Gamificación",
+    "projects.title": "Educational Web Platform with Gamification",
     "projects.description":
-      "Desarrollé una plataforma web educativa que implementa mecánicas de juego para aumentar el engagement estudiantil. Utilicé React para el frontend, Node.js/Express para el backend, y PostgreSQL para gestión de datos. El proyecto logró incrementar la participación estudiantil en un 45% durante las pruebas piloto con 200 usuarios.",
+      "Developed an educational web platform that implements game mechanics to increase student engagement. I used React for the frontend, Node.js/Express for the backend, and PostgreSQL for data management. The project successfully increased student participation by 45% during pilot tests with 200 users.",
     "projects.technologies": "React, Node.js, Express, PostgreSQL, JWT, TailwindCSS, Git",
-    "projects.duration": "4 meses (Julio 2024 - Octubre 2024)",
+    "projects.duration": "4 months (July 2024 - October 2024)",
 
     "skills.technical":
       "JavaScript, TypeScript, Python, React, Node.js, Express, PostgreSQL, MongoDB, Git, Docker, REST APIs, HTML/CSS",
     "skills.soft":
-      "Trabajo en equipo, Aprendizaje rápido, Resolución de problemas, Comunicación efectiva, Pensamiento analítico, Adaptabilidad",
-    "skills.languages": "Español (Nativo), Inglés (Intermedio - B1), Quechua (Básico)",
+      "Teamwork, Quick Learning, Problem Solving, Effective Communication, Analytical Thinking, Adaptability",
+    "skills.languages": "Spanish (Native), English (Intermediate - B1), Quechua (BBasic)",
 
-    "certifications.name": "Certificación en Desarrollo Web Full-Stack",
+    "certifications.name": "Certification in Full-Stack Web Development",
     "certifications.issuer": "Platzi",
-    "certifications.date": "Noviembre 2023",
+    "certifications.date": "November 2023",
   },
 };

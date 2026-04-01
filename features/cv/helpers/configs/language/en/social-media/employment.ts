@@ -24,7 +24,7 @@ export const socialMediaEmployment: SectionConfig = {
 
     // Education
     "education.title": "Bachelor’s in Audiovisual Communication",
-    "education.institution": "Universidad Carlos III de Madrid",
+    "education.institution": "Complutense University of Madrid",
     "education.location": "Madrid, Spain",
     "education.year": "Graduated June 2018",
     "education.honors":
@@ -36,7 +36,7 @@ export const socialMediaEmployment: SectionConfig = {
     "experience.position": "Content Creator & Influencer",
     "experience.duration": "March 2019 - Present",
     "experience.responsibilities":
-      "• Grew audience to 300K on Instagram and 200K on TikTok with lifestyle and tech content.\n• Collaborated with 50+ brands (Nike, Samsung, Zara), generating campaigns with an average ROI of 350%.\n• Produced 1,000+ pieces of content with an engagement rate of 8.5% (above industry average of 3%).\n• Generated annual revenue of €120,000 through partnerships, advertising, and personal products.",
+      "Grew audience to 300K on Instagram and 200K on TikTok with lifestyle and tech content.\n• Collaborated with 50+ brands (Nike, Samsung, Zara), generating campaigns with an average ROI of 350%.\n• Produced 1,000+ pieces of content with an engagement rate of 8.5% (above industry average of 3%). Generated annual revenue of €120,000 through partnerships, advertising, and personal products.",
 
     // Achievements
     "achievements.title": "Best Emerging Creator Award - Influencer Awards Spain",

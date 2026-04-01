@@ -27,7 +27,7 @@ export const scienceInternship: SectionConfig = {
     // Education
     "education.title": "Biology / Chemistry",
     "education.institution":
-      "Universidad Nacional de San Antonio Abad del Cusco",
+      "National University of San Antonio Abad of Cusco",
     "education.location": "Cusco, Peru",
     "education.year": "Expected December 2026",
     "education.honors": "Top Third, Best Research Project 2023",

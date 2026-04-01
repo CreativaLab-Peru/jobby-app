@@ -19,26 +19,26 @@ export const technologyEngineeringEmployment: SectionConfig = {
   },
   examples: {
     "personal.summary":
-      "Ingeniero de software con más de 5 años de experiencia en desarrollo de aplicaciones web y móviles. Especializado en frontend y backend, enfocado en soluciones escalables y eficientes. Apasionado por innovación y mejora continua en desarrollo de software.",
+      "Engineer with over 5 years of experience in software development, specializing in cloud computing and scalable architectures. Proven track record of leading successful projects and delivering innovative solutions that drive business growth.",
 
-    "education.title": "Máster en Ingeniería de Software",
-    "education.institution": "Universidad Politécnica de Madrid",
-    "education.location": "Madrid, España",
-    "education.year": "Graduación en septiembre 2018",
+    "education.title": "MMaster in Software Engineering",
+    "education.institution": "Complutense University of Madrid",
+    "education.location": "Madrid, Spain",
+    "education.year": "Graduation in September 2018",
     "education.honors":
       "Matrícula de Honor, Mejor Proyecto Fin de Máster en Arquitecturas Cloud",
 
     "experience.company": "TechCorp Solutions",
-    "experience.location": "Madrid, España",
-    "experience.position": "Ingeniero de Software Senior",
-    "experience.duration": "Enero 2019 - Presente",
+    "experience.location": "Madrid, Spain",
+    "experience.position": "Senior Software Engineer",
+    "experience.duration": "January 2019 - Present",
     "experience.responsibilities":
-      "• Diseñé y desarrollé microservicios escalables con Node.js y Docker, mejorando el rendimiento en un 40%.\n• Lideré un equipo de 5 desarrolladores implementando arquitectura basada en eventos con Kafka.\n• Implementé pipelines CI/CD con Jenkins y GitLab, reduciendo tiempos de despliegue en 60%.\n• Migré aplicaciones legacy a arquitecturas cloud (AWS), optimizando costos en €200,000 anuales.",
+      "Designed and developed scalable microservices with Node.js and Docker, improving performance by 40%.\n• Led a team of 5 developers implementing event-driven architecture with Kafka.\n• Implemented CI/CD pipelines with Jenkins and GitLab, reducing deployment times by 60%.\n• Migrated legacy applications to cloud architectures (AWS), optimizing costs by €200,000 annually.",
 
-    "achievements.title": "Premio a la Innovación Tecnológica",
+    "achievements.title": "Development of Real-Time Analytics Platform",
     "achievements.description":
-      "Desarrollo de plataforma de analítica en tiempo real procesando más de 1 millón de eventos por segundo, mejorando la toma de decisiones empresariales y aumentando la eficiencia operativa en un 25%.",
-    "achievements.date": "Noviembre 2022",
+      "Led the development of a real-time analytics platform for e-commerce clients, achieving a 30% increase in data processing speed and enabling actionable insights that boosted sales by 15%. The project was recognized as a best practice case study in the company’s annual innovation awards.",
+    "achievements.date": "November 2022",
 
     "certifications.name": "AWS Certified Solutions Architect - Professional",
     "certifications.issuer": "Amazon Web Services",
@@ -47,8 +47,8 @@ export const technologyEngineeringEmployment: SectionConfig = {
     "skills.technical":
       "JavaScript/TypeScript, React, Node.js, Python, Java, Docker, Kubernetes, AWS, Azure, PostgreSQL, MongoDB, Redis, Kafka, GraphQL, REST APIs, Git, CI/CD",
     "skills.soft":
-      "Liderazgo técnico, Resolución de problemas complejos, Trabajo en equipo ágil, Comunicación efectiva, Mentoría de desarrolladores junior",
+      "Technical Leadership, Complex Problem Solving, Agile Teamwork, Effective Communication, Mentoring Junior Developers",
     "skills.languages":
-      "Español (Nativo), Inglés (Fluido - C1), Alemán (Básico)",
+      "Spanish (Native), English (Fluent - C1), German (Basic)",
   },
 };

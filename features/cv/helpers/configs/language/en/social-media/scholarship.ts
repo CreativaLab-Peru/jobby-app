@@ -16,27 +16,27 @@ export const socialMediaScholarship: SectionConfig = {
   examples: {
     // Personal - Summary
     "personal.summary":
-      "Estudiante destacado en comunicación digital y redes sociales, con excelente rendimiento académico y pasión por el desarrollo de proyectos creativos. Busco una beca para profundizar en estrategias de marketing digital y social media, aportando innovación y un impacto positivo en la comunidad académica y profesional.",
+      "Student passionate about social media and digital communication, with experience in content creation, community management, and international collaboration. Seeking a scholarship to further develop skills in social media strategy and contribute creativity to global projects.",
 
     // Projects
-    "projects.title": "Proyecto de Contenido Digital Multicultural",
+    "projects.title": "Multicultural Digital Content Project",
     "projects.description":
-      "Diseñé y ejecuté un proyecto académico de contenido digital enfocado en culturas latinoamericanas, integrando investigación, creación de materiales visuales y gestión de campañas en redes sociales, logrando interacción significativa y colaboración con estudiantes de varios países.",
-    "projects.technologies": "Instagram, TikTok, Canva, CapCut, Plataformas de colaboración académica",
-    "projects.duration": "6 meses (Ene 2024 - Jun 2024)",
+      "Design and execution of a content series about Peruvian culture for international audiences, achieving 50K views and collaborating with content creators from 5 different countries. Focused on traditions, cuisine, and local perspectives.",
+    "projects.technologies": "Instagram, TikTok, Canva, CapCut, Academic Collaboration Platforms",
+    "projects.duration": "6 months (Jan 2024 - Jun 2024)",
 
     // Achievements
-    "achievements.title": "Reconocimiento por Excelencia Académica y Liderazgo en Proyectos Digitales",
+    "achievements.title": "Recognition for Academic Excellence and Leadership in Digital Projects",
     "achievements.description":
-      "Seleccionado entre numerosos candidatos por desempeño académico sobresaliente y liderazgo en proyectos de comunicación digital. Participación activa en iniciativas de social media con resultados medibles y contribución a la comunidad estudiantil.",
+      "Selected among numerous candidates for outstanding academic performance and leadership in digital communication projects. Active participation in social media initiatives with measurable results and contribution to the student community.",
     "achievements.date": "2023",
 
     // Education
-    "education.title": "Licenciatura en Comunicación Digital",
-    "education.institution": "Universidad Nacional de San Antonio Abad del Cusco",
-    "education.location": "Cusco, Perú",
-    "education.year": "Esperado 2026",
+    "education.title": "Bachelor's in Digital Communication",
+    "education.institution": "National University of San Antonio Abad of Cusco",
+    "education.location": "Cusco, Peru",
+    "education.year": "Expected 2026",
     "education.honors":
-      "Tercio Superior (Top 10%), Reconocimiento al Rendimiento Académico, Participación en Programas de Excelencia en Medios Digitales",
+      "Top Third (Top 10%), Academic Excellence Recognition, Participation in Digital Media Excellence Programs",
   },
 };

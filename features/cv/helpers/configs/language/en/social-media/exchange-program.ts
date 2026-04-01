@@ -18,7 +18,7 @@ export const socialMediaExchangeProgram: SectionConfig = {
     // Education
     "education.title": "Bachelor’s in Digital Communication",
     "education.institution":
-      "Universidad Nacional de San Antonio Abad del Cusco",
+      "National University of San Antonio Abad of Cusco",
     "education.location": "Cusco, Peru",
     "education.year": "Expected December 2025",
     "education.honors":

@@ -44,7 +44,7 @@ export const managementBusinessEmployment: SectionConfig = {
         "experience.duration":
                 "January 2023 - Present",
         "experience.responsibilities":
-                "• Led the implementation of a new project management system that increased team efficiency by 25%.\n• Coordinated cross-functional teams to ensure timely delivery of key projects.\n• Conducted detailed financial analysis to evaluate the feasibility of new projects and optimize resources.",
+                "Led the implementation of a new project management system that increased team efficiency by 25%.\n• Coordinated cross-functional teams to ensure timely delivery of key projects.\n• Conducted detailed financial analysis to evaluate the feasibility of new projects and optimize resources.",
 
         // Achievements
         "achievements.title":

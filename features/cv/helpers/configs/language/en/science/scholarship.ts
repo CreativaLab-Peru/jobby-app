@@ -33,7 +33,7 @@ export const scienceScholarship: SectionConfig = {
 
     // Education
     "education.title": "Biology",
-    "education.institution": "Universidad Nacional de San Antonio Abad del Cusco",
+    "education.institution": "National University of San Antonio Abad of Cusco",
     "education.location": "Cusco, Peru",
     "education.year": "Expected July 2026",
     "education.honors":

@@ -12,27 +12,27 @@ export const technologyEngineeringExchangeProgram: SectionConfig = {
   },
   examples: {
     "personal.summary":
-      "Estudiante de Ingeniería de Sistemas con enfoque en desarrollo de software y análisis de datos. Participación en hackathons y proyectos académicos de programación web y bases de datos. Habilidades en resolución de problemas tecnológicos y aplicación de lenguajes como Python y SQL para optimizar procesos.",
+      "Student of Systems and Computer Engineering with a strong passion for software development and international collaboration. Currently participating in an exchange program at the University of Technology in Sydney, Australia, where I am expanding my knowledge in software engineering and gaining valuable cross-cultural experience. Eager to apply my skills in real-world projects and contribute to innovative solutions in the technology industry.",
 
-    "education.title": "Ingeniería de Sistemas e Informática",
-    "education.institution": "Universidad Nacional de San Antonio Abad del Cusco",
-    "education.location": "Cusco, Perú",
-    "education.year": "Esperado Diciembre 2026",
+    "education.title": "Bachelor's Degree in Systems and Computer Engineering",
+    "education.institution": "National University of San Antonio Abad in Cusco",
+    "education.location": "Cusco, Peru",
+    "education.year": "Expected December 2026",
     "education.honors":
-      "Promedio ponderado: 15.8/20, Participante activo del Club de Programación Competitiva",
+      "Weighted Average: 15.8/20, Active Member of the Competitive Programming Club",
 
     "skills.technical":
       "JavaScript, TypeScript, Python, React, React Native, Node.js, Express, MongoDB, PostgreSQL, AWS, Google Cloud, Docker, Git, CI/CD",
     "skills.soft":
-      "Adaptabilidad cultural, Liderazgo comunitario, Colaboración internacional, Comunicación intercultural, Gestión de proyectos, Trabajo remoto",
+      "Cultural Adaptability, Community Leadership, International Collaboration, Intercultural Communication, Project Management, Remote Work",
     "skills.languages":
-      "Español (Nativo), Inglés (Avanzado - C1), Portugués (Intermedio - B1)",
+      "Spanish (Native), English (Advanced - C1), Portuguese (Intermediate - B1)",
 
-    "volunteering.organization": "Código para el Futuro",
-    "volunteering.location": "Cusco, Perú",
-    "volunteering.position": "Instructor Voluntario",
-    "volunteering.duration": "Marzo 2023 - Diciembre 2023",
+    "volunteering.organization": "Code for Good",
+    "volunteering.location": "Cusco, Peru",
+    "volunteering.position": "Volunteer Software Developer",
+    "volunteering.duration": "March 2023 - December 2023",
     "volunteering.responsibilities":
-      "• Impartí talleres semanales de programación básica (HTML, CSS, JavaScript) a niños de 10-14 años.\n• Desarrollé materiales didácticos interactivos para facilitar el aprendizaje.\n• Fomenté un ambiente inclusivo y motivador para los estudiantes.\n• Colaboré con otros voluntarios para organizar eventos de tecnología comunitarios.",
+      "I conducted weekly basic programming workshops (HTML, CSS, JavaScript) for children aged 10-14.\n• I developed interactive educational materials to facilitate learning, I fostered an inclusive and motivating environment for the students.\n• I collaborated with other volunteers to organize community technology events.",
   },
 };

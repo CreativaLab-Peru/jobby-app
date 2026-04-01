@@ -20,7 +20,7 @@ export const scienceExchangeProgram: SectionConfig = {
     // Education
     "education.title": "Bachelor's in Biology",
     "education.institution":
-      "Universidad Nacional de San Antonio Abad del Cusco",
+      "National University of San Antonio Abad of Cusco", // Mantener el nombre en inglés para el CV en inglés
     "education.location": "Cusco, Peru",
     "education.year": "Expected December 2025",
     "education.honors":

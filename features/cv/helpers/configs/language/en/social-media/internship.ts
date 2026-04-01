@@ -17,8 +17,8 @@ export const socialMediaInternship: SectionConfig = {
 
     // Education
     "education.title": "Digital Communication / Marketing",
-    "education.institution": "Universidad de Comunicaciones",
-    "education.location": "Ciudad de México, CDMX",
+    "education.institution": "National University of San Antonio Abad of Cusco",
+    "education.location": "Cusco, Peru",
     "education.year": "2023",
     "education.honors": "Honorable Mention in Digital Content Strategy Project",
 
@@ -42,8 +42,8 @@ export const socialMediaInternship: SectionConfig = {
     "certifications.date": "2022",
 
     // Volunteering
-    "volunteering.organization": "Colectivo Juvenil Digital",
-    "volunteering.location": "Ciudad de México, CDMX",
+    "volunteering.organization": "Community Collective for Social Change",
+    "volunteering.location": "Cusco, Peru",
     "volunteering.position": "Volunteer Community Manager",
     "volunteering.duration": "Jun 2022 - Dec 2022",
     "volunteering.responsibilities":

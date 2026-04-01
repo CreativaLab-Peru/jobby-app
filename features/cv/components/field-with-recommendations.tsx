@@ -31,7 +31,7 @@ export function FieldWithRecommendations({
   const [tipPopoverOpen, setTipPopoverOpen] = useState(false)
   const [examplePopoverOpen, setExamplePopoverOpen] = useState(false)
 
-  const labelText = resolveLocalizedText(field.label, language)
+  const labelText = resolveLocalizedText(field.label, "ES")
   const tipText = field.tip ? resolveLocalizedText(field.tip, language) : ""
   const exampleText = field.example ? resolveLocalizedText(field.example, language) : ""
 
@@ -104,11 +104,11 @@ export function FieldWithRecommendations({
               <PopoverTrigger asChild>
                 <button
                   type="button"
-                  aria-label={language === "EN" ? "View example" : "Ver ejemplo"}
+                  aria-label="Ver ejemplo"
                   className="inline-flex items-center gap-1.5 px-3 py-1.5  rounded-lg transition-all duration-300 border text-xs font-medium shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2"
                 >
                   <Info className="w-3.5 h-3.5" />
-                  <span>{language === "EN" ? "Example" : "Ejemplo"}</span>
+                  <span>Ejemplo</span>
                 </button>
               </PopoverTrigger>
               <PopoverContent className="border-border bg-card w-80 text-card-foreground" side="top">
@@ -129,7 +129,7 @@ export function FieldWithRecommendations({
                       variant="outline"
                     >
                       <CheckCircle className="w-3 h-3 mr-1" />
-                      {language === "EN" ? "Use this example" : "Usar este ejemplo"}
+                      Usar este ejemplo
                     </Button>
                     <Button
                       type="button"
@@ -138,7 +138,7 @@ export function FieldWithRecommendations({
                       className=" border-border hover:bg-muted text-xs bg-transparent"
                       variant="outline"
                     >
-                      {language === "EN" ? "Close" : "Cerrar"}
+                      Cerrar
                     </Button>
                   </div>
                 </div>
@@ -153,19 +153,19 @@ export function FieldWithRecommendations({
         <Textarea
           value={fieldValue}
           onChange={(e) => onChange(e.target.value)}
-          placeholder={`${language === "EN" ? "Enter" : "Ingresa"} ${labelText.toLowerCase()}`}
+          placeholder={`Ingresa ${labelText.toLowerCase()}`}
           className="min-h-[200px] bg-input text-foreground border-border focus:ring-ring focus:ring-2 focus:ring-offset-2"
         />
       ) : field.type === "tags" ? (
         <TagsInput
           value={fieldValue}
           onChange={onTagsChange || (() => {})}
-          placeholder={`${language === "EN" ? "Add" : "Agrega"} ${labelText.toLowerCase()}`}
+          placeholder={`Agrega ${labelText.toLowerCase()}`}
         />
       ) : field.type === "select" ? (
         <Select value={fieldValue} onValueChange={(val) => onSelectChange?.(val)}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder={language === "EN" ? "Select an option" : "Selecciona una opcion"} />
+            <SelectValue placeholder="Selecciona una opcion" />
           </SelectTrigger>
           <SelectContent>
             {field.options?.map((option: string) => (
@@ -180,7 +180,7 @@ export function FieldWithRecommendations({
           type={field.type}
           value={fieldValue}
           onChange={(e) => onChange(e.target.value)}
-          placeholder={`${language === "EN" ? "Enter" : "Ingresa"} ${labelText.toLowerCase()}`}
+          placeholder={`Ingresa ${labelText.toLowerCase()}`}
         />
       )}
     </div>

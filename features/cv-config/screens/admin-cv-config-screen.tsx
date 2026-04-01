@@ -130,7 +130,7 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
                           <ListIcon className="h-5 w-5" />
                         </div>
                         <div>
-                          <p className="font-bold text-foreground">{section.title?.[activeLang] ?? ''}</p>
+                          <p className="font-bold text-foreground">{section.title?.es ?? ''}</p>
                           <p className="text-[10px] text-muted-foreground font-mono uppercase">Key: {section.id}</p>
                         </div>
                       </div>
@@ -140,15 +140,15 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
                       {/* Sub-header de Sección */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-muted/20 p-4 rounded-lg border border-border/50">
                         <div className="space-y-2">
-                          <Label className="text-xs font-semibold">Título de Sección ({activeLang.toUpperCase()})</Label>
+                          <Label className="text-xs font-semibold">Título de Sección</Label>
                           <Input
                             className="bg-background"
-                            value={section.title?.[activeLang] ?? ''}
+                            value={section.title?.es ?? ''}
                             onChange={(e) => {
                               const ns = [...sections];
                               ns[sIdx].title = {
                                 ...ns[sIdx].title,
-                                [activeLang]: e.target.value
+                                es: e.target.value
                               };
                               updateLocalSections(ns);
                             }}
@@ -173,14 +173,14 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1">
                                   <div className="space-y-1.5">
-                                    <Label className="text-[10px] uppercase font-black text-muted-foreground/70">Nombre del Campo ({activeLang.toUpperCase()})</Label>
-                                    <Input className="h-9 text-xs font-medium" value={field.label?.[activeLang] ?? ''} onChange={(e) => {
+                                    <Label className="text-[10px] uppercase font-black text-muted-foreground/70">Nombre del Campo</Label>
+                                    <Input className="h-9 text-xs font-medium" value={field.label?.es ?? ''} onChange={(e) => {
                                       const ns = [...sections];
                                       const f = {
                                         ...ns[sIdx].fields[fIdx],
                                         label: {
                                           ...ns[sIdx].fields[fIdx].label,
-                                          [activeLang]: e.target.value
+                                          es: e.target.value
                                         }
                                       };
                                       ns[sIdx].fields[fIdx] = f;

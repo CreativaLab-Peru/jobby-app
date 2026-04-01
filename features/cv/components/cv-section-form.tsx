@@ -195,7 +195,7 @@ export const CVSectionForm = forwardRef<CVSectionFormRef, CVSectionFormProps>(({
           >
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                {resolveLocalizedText(section.title, language)} #{index + 1}
+                {resolveLocalizedText(section.title, "ES")} #{index + 1}
               </h3>
 
               {items.length > 1 && (
@@ -239,7 +239,7 @@ export const CVSectionForm = forwardRef<CVSectionFormRef, CVSectionFormProps>(({
         >
           <div className="flex flex-col items-center gap-2">
             <Plus className="w-6 h-6 transition-transform group-hover:scale-110" />
-            <span className="font-medium">{language === "EN" ? "Add" : "Agregar"} {resolveLocalizedText(section.title, language).toLowerCase()}</span>
+            <span className="font-medium">Agregar {resolveLocalizedText(section.title, "ES").toLowerCase()}</span>
           </div>
         </Button>
       </div>
@@ -253,7 +253,7 @@ export const CVSectionForm = forwardRef<CVSectionFormRef, CVSectionFormProps>(({
           {field.type === "photo" ? (
             <div className="space-y-2">
               <label className="block text-sm font-medium text-foreground">
-                {resolveLocalizedText(field.label, language)}
+                {resolveLocalizedText(field.label, "ES")}
               </label>
               {field.tip && (
                 <p className="text-xs text-muted-foreground">{resolveLocalizedText(field.tip, language)}</p>

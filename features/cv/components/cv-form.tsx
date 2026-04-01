@@ -37,7 +37,6 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
 
   const allValues = watch();
   const selectedOpportunity = watch("opportunityType");
-  const selectedLanguage = watch("language") || Language.ES;
   const prevValuesRef = useRef<string>("");
 
   useEffect(() => {
@@ -135,7 +134,6 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
             selectedSections={watch("sections") || []}
             onChange={(newSections) => setValue("sections", newSections, { shouldValidate: true })}
             opportunityType={watch("opportunityType") as any}
-            language={selectedLanguage}
           />
         </div>
 

@@ -185,7 +185,7 @@ export default function CreateCVPage({
                           {/*  const Icon = currentSection.icon*/}
                           {/*  return <Icon className="w-8 h-8 mr-3 text-primary" />*/}
                           {/*})()}*/}
-                          <span className="font-bold text-primary">{resolveLocalizedText(currentSection?.title ?? "", language) || "No titulo"}</span>
+                          <span className="font-bold text-primary">{resolveLocalizedText(currentSection?.title ?? "", "ES") || "No titulo"}</span>
                         </div>
 
                         <NavigationButtons
@@ -225,20 +225,20 @@ export default function CreateCVPage({
                     <CardHeader className="bg-muted/30 border-b border-border">
                       <CardTitle className="flex items-center text-lg text-primary">
                         <Eye className="w-5 h-5 mr-2 text-primary"/>
-                        {language === "EN" ? "Preview" : "Vista Previa"}
+                        Vista Previa
 
                         <div className="ml-auto">
                           {isSaving ? (
                             <div
                               className="flex items-center gap-2 text-xs font-medium text-primary animate-pulse">
                               <CloudUpload className="w-4 h-4"/>
-                              {language === "EN" ? "Syncing..." : "Sincronizando..."}
+                              Sincronizando...
                             </div>
                           ) : (
                             <div
                               className="flex items-center gap-2 text-xs font-medium text-primary">
                               <CloudCheck className="w-4 h-4"/>
-                              {language === "EN" ? "Changes saved" : "Cambios guardados"}
+                              Cambios guardados
                             </div>
                           )}
                         </div>

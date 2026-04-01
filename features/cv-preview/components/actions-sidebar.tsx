@@ -45,7 +45,6 @@ export function ActionsSidebar({
   opportunitiesActionTokens = 0,
   language = Language.ES
 }: ActionsSidebarProps) {
-  const isEn = language === Language.EN;
   const [downloading, setDownloading] = useState(false)
   const [analyzing, setAnalyzing] = useState(false)
   const [matching, setMatching] = useState(false)
@@ -67,9 +66,9 @@ export function ActionsSidebar({
 
     if (result.success) {
       setLang(newLang);
-      toast.success(isEn ? `Language changed to ${newLang}` : `Idioma cambiado a ${newLang}`);
+      toast.success(`Idioma cambiado a ${newLang}`);
     } else {
-      toast.error(isEn ? "Could not change language" : "No se pudo cambiar el idioma");
+      toast.error("No se pudo cambiar el idioma");
     }
     setUpdatingLang(false);
   };
@@ -127,7 +126,7 @@ export function ActionsSidebar({
         return
       }
 
-      toast.success(isEn ? "Analysis started! Redirecting..." : "¡Análisis iniciado! Redirigiendo...")
+      toast.success("¡Análisis iniciado! Redirigiendo...")
 
       // Refresh credits after analysis
       await refreshCredits();
@@ -136,7 +135,7 @@ export function ActionsSidebar({
       router.push(`/cv/${cvId}/analysis`)
     } catch (error) {
       console.error("Error al analizar CV:", error)
-      toast.error(isEn ? "Error starting CV analysis" : "Error al iniciar el análisis del CV")
+      toast.error("Error al iniciar el análisis del CV")
     } finally {
       setAnalyzing(false)
     }
@@ -144,13 +143,13 @@ export function ActionsSidebar({
 
   const handleQuickMatch = async () => {
     if (!cvId) {
-      toast.error(isEn ? "CV ID not found" : "No se encontró el ID del CV")
+      toast.error("No se encontró el ID del CV")
       return
     }
 
     // Validar que tenga créditos antes de proceder
     if (opportunitiesActionTokens <= 0) {
-      toast.error(isEn ? "You have no credits available to match opportunities" : "No tienes créditos disponibles para hacer match de oportunidades")
+      toast.error("No tienes créditos disponibles para hacer match de oportunidades")
       return
     }
 
@@ -165,11 +164,11 @@ export function ActionsSidebar({
       const data = await response.json()
 
       if (!response.ok) {
-        toast.error(data.message || (isEn ? "Error starting opportunity matching" : "Error al iniciar el match de oportunidades"))
+        toast.error(data.message || "Error al iniciar el match de oportunidades")
         return
       }
 
-      toast.success(isEn ? "Matching started! Redirecting..." : "¡Match iniciado! Redirigiendo...")
+      toast.success("¡Match iniciado! Redirigiendo...")
 
       // Refresh credits after match
       await refreshCredits()
@@ -178,7 +177,7 @@ export function ActionsSidebar({
       router.push(`/opportunities/cv/${cvId}/analysis`)
     } catch (error) {
       console.error("Error al hacer match:", error)
-      toast.error(isEn ? "Error starting opportunity matching" : "Error al iniciar el match de oportunidades")
+      toast.error("Error al iniciar el match de oportunidades")
     } finally {
       setMatching(false)
     }
@@ -199,12 +198,12 @@ export function ActionsSidebar({
 
   const handleExecuteAction = (actionType: "analyze" | "match") => {
     if (actionType === "analyze") {
-      setTitle(isEn ? "Confirm Analysis" : "Confirmar Análisis")
-      setDescription(isEn ? "Are you sure you want to analyze this CV? This will consume 1 analysis credit." : "¿Estás seguro de que quieres analizar este CV? Esto consumirá 1 crédito de análisis.")
+      setTitle("Confirmar Análisis")
+      setDescription("¿Estás seguro de que quieres analizar este CV? Esto consumirá 1 crédito de análisis.")
       setIsOpen(true)
     } else if (actionType === "match") {
-      setTitle(isEn ? "Confirm Match" : "Confirmar Match")
-      setDescription(isEn ? "Are you sure you want to match opportunities for this CV? This will consume 1 opportunities credit." : "¿Estás seguro de que quieres hacer match de oportunidades para este CV? Esto consumirá 1 crédito de oportunidades.")
+      setTitle("Confirmar Match")
+      setDescription("¿Estás seguro de que quieres hacer match de oportunidades para este CV? Esto consumirá 1 crédito de oportunidades.")
       setIsOpen(true)
     }
   }
@@ -214,7 +213,7 @@ export function ActionsSidebar({
       <Card className="shadow-card border-0 bg-card/90 backdrop-blur-sm">
         <CardContent className="p-6 space-y-4 text-card-foreground">
           <h3 className="text-xl font-semibold mb-2">
-            {isEn ? "Actions" : "Acciones"}
+            Acciones
           </h3>
 
 
@@ -225,7 +224,7 @@ export function ActionsSidebar({
             onClick={onHome}
           >
             <Home className="w-4 h-4 mr-2" />
-            {isEn ? "My progress" : "Mi progreso"}
+            Mi progreso
           </Button>
 
           {/* <Button
@@ -244,7 +243,7 @@ export function ActionsSidebar({
             onClick={onEditCV}
           >
             <Edit className="w-4 h-4 mr-2" />
-            {isEn ? "Edit" : "Editar"}
+            Editar
           </Button>
 
           <Button
@@ -258,7 +257,7 @@ export function ActionsSidebar({
             ) : (
               <Download className="w-4 h-4 mr-2" />
             )}
-            {downloading ? (isEn ? "Downloading..." : "Descargando...") : (isEn ? "Download PDF" : "Descargar PDF")}
+            {downloading ? "Descargando..." : "Descargar PDF"}
           </Button>
 
           {showAnalyzeButton && (
@@ -272,7 +271,7 @@ export function ActionsSidebar({
               ) : (
                 <Sparkles className="w-4 h-4 mr-2" />
               )}
-              {analyzing ? (isEn ? "Analyzing..." : "Analizando...") : (isEn ? "Analyze CV" : "Analizar CV")}
+              {analyzing ? "Analizando..." : "Analizar CV"}
             </Button>
           )}
 
@@ -294,7 +293,7 @@ export function ActionsSidebar({
           <div className="space-y-3 mt-2">
             <div className="flex items-center justify-between">
               <label className="text-sm flex items-center gap-2">
-                <Languages className="w-3 h-3" /> {isEn ? "My CV language is" : "El idioma de mi cv esta en"}
+                <Languages className="w-3 h-3" /> El idioma de mi cv esta en
               </label>
               {updatingLang && <Loader2 className="w-3 h-3 animate-spin text-primary" />}
             </div>

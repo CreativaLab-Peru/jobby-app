@@ -1,6 +1,7 @@
 # WIP
 
 ## Fixes
+- Fixed the problem where the summary content was not being saved.
 - New way for hot selling (cv-pay and cv-builder)
 
 ## Features

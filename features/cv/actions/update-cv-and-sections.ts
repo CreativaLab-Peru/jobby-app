@@ -16,7 +16,13 @@ export const updateCvAndSections = async (id: string, cvData: CVData) => {
       where: { id, userId: currentUser.id, deletedAt: null },
       include: {
         sections: {
-          select: { sectionType: true },
+          select: {
+            sectionType: true,
+            order: true,
+            isVisible: true,
+            isRecommended: true,
+            title: true,
+          },
           orderBy: { order: 'asc' } // <--- Crucial: Respetar el orden definido
         }
       }
@@ -25,31 +31,45 @@ export const updateCvAndSections = async (id: string, cvData: CVData) => {
     if (!existingCv) return { success: false, message: "CV no encontrado." };
 
     const allowedSectionTypes = existingCv.sections.map(s => s.sectionType);
+    const sectionMetaMap = new Map(
+      existingCv.sections.map((s) => [s.sectionType, s])
+    );
     const allPayload = buildSectionsPayload(cvData);
 
     // 2. Filtramos el payload para que SOLO contenga lo que el CV permite
     const sectionsToUpdate = allPayload.filter(s =>
-      allowedSectionTypes.includes(s.type)
+      allowedSectionTypes.includes(s.type) || s.type === CvSectionType.SUMMARY
     );
 
     // 3. Ejecutamos la transacción de actualización
     await prisma.$transaction(
-      sectionsToUpdate.map((section) =>
-        prisma.cvSection.update({
+      sectionsToUpdate.map((section, index) => {
+        const sectionMeta = sectionMetaMap.get(section.type);
+
+        return prisma.cvSection.upsert({
           where: {
             cvId_sectionType: {
               cvId: id,
               sectionType: section.type,
             },
           },
-          data: {
+          update: {
             contentJson: section.content as any,
             updatedAt: new Date(),
             // IMPORTANTE: No enviamos 'position' ni 'title' para no sobreescribir
             // lo que el admin configuró originalmente.
           },
-        })
-      )
+          create: {
+            cvId: id,
+            sectionType: section.type,
+            title: sectionMeta?.title ?? section.defaultTitle,
+            order: sectionMeta?.order ?? existingCv.sections.length + index + 1,
+            isVisible: sectionMeta?.isVisible ?? true,
+            isRecommended: sectionMeta?.isRecommended ?? false,
+            contentJson: section.content as any,
+          },
+        });
+      })
     );
 
     return { success: true, message: "Datos sincronizados manteniendo el orden original." };
@@ -64,6 +84,14 @@ export const updateCvAndSections = async (id: string, cvData: CVData) => {
  */
 function buildSectionsPayload(cvData: CVData) {
   const payload: Array<{ type: CvSectionType; content: any; defaultTitle: string }> = [];
+
+  if (cvData.personal) {
+    payload.push({
+      type: CvSectionType.SUMMARY,
+      content: { text: cvData.personal.summary ?? "" },
+      defaultTitle: "Resumen",
+    });
+  }
 
   // CONTACT (Información Personal)
   if (cvData.personal) {

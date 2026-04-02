@@ -84,7 +84,10 @@ export async function completeOnboardingAction(id: string, body: TalentOnboardin
     // }
 
     // Create basic credits for the user
-    await createBasicCredits(user.id);
+    const creditsResult = await createBasicCredits(user.id);
+    if (creditsResult.status === "error") {
+      return { error: "Error al otorgar créditos" };
+    }
 
     revalidatePath("/dashboard");
     return { success: true };

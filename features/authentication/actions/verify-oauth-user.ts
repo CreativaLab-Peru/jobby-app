@@ -32,18 +32,20 @@ export async function verifyOAuthUser(userId: string) {
     }
 
 
-    // Si ya está verificado, verificar si tiene créditos
+    // Si ya está verificado, otorgar créditos de onboarding una sola vez
     if (user.emailVerified) {
-      // Verificar si ya tiene créditos
-      const hasCredits = user.userCreditBalance.length > 0;
-      if (!hasCredits) {
-        console.log("[INFO] Usuario verificado pero sin créditos, otorgándolos...");
-        const creditsResult = await createBasicCredits(userId);
-        console.log("[INFO] Resultado de otorgar créditos:", creditsResult);
-        return { success: true, alreadyVerified: true, creditsAdded: true };
+      console.log("[INFO] Usuario verificado, otorgando créditos de onboarding si aún no los recibió...");
+      const creditsResult = await createBasicCredits(userId);
+      if (creditsResult.status === "error") {
+        return { error: "Error al otorgar créditos" };
       }
 
-      return { success: true, alreadyVerified: true, creditsAdded: false };
+      console.log("[INFO] Resultado de otorgar créditos:", creditsResult);
+      return {
+        success: true,
+        alreadyVerified: true,
+        creditsAdded: creditsResult.status === "granted",
+      };
     }
 
     // Marcar como verificado
@@ -55,7 +57,7 @@ export async function verifyOAuthUser(userId: string) {
     // Otorgar créditos básicos
     const creditsResult = await createBasicCredits(userId);
 
-    if (!creditsResult) {
+    if (creditsResult.status === "error") {
       return { error: "Error al otorgar créditos" };
     }
 

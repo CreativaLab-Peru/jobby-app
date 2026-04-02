@@ -1,6 +1,7 @@
 # WIP
 
 ## Fixes
+- Fix: onboarding is only used once; there is no longer a risk of having infinite credits.
 - New way for hot selling (cv-pay and cv-builder)
 
 ## Features

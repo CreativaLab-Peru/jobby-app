@@ -39,7 +39,10 @@ export async function verifyCodeAction(userId: string, code: string) {
     // await newUserConfiguration(userId);
 
     // Create basic credits for the user
-    await createBasicCredits(userId);
+    const creditsResult = await createBasicCredits(userId);
+    if (creditsResult.status === "error") {
+      return { error: "Error al otorgar créditos" };
+    }
 
     revalidatePath("/dashboard");
     return { success: true };

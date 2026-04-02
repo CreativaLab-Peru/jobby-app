@@ -1,12 +1,13 @@
 import { prisma } from "@/lib/prisma";
-import { CreditBalanceType, Prisma } from "@prisma/client";
+import { CreditBalanceType, Prisma, TransactionType } from "@prisma/client";
 
 export type RechargeCreditsBody = {
   userId: string;
   amount: number;
   description: string;
-  metadata?: any;
+  metadata?: Prisma.InputJsonValue;
   type: CreditBalanceType;
+  transactionType?: TransactionType;
 };
 
 /**
@@ -18,7 +19,7 @@ export const rechargeCredits = async (
   body: RechargeCreditsBody,
   tx?: Prisma.TransactionClient // <--- Soporte para transacción opcional
 ) => {
-  const { userId, amount, description, metadata, type } = body;
+  const { userId, amount, description, metadata, type, transactionType } = body;
 
   // Definimos la lógica de ejecución
   const execute = async (client: Prisma.TransactionClient) => {
@@ -43,7 +44,7 @@ export const rechargeCredits = async (
       data: {
         balanceId: balance.id,
         amount,
-        type: "RECHARGE",
+        type: transactionType ?? "RECHARGE",
         description,
         metadata,
       },

@@ -59,7 +59,10 @@ export async function completeOnboardingDebugAction(id: string, body: TalentOnbo
       })
     });
 
-    await createBasicCredits(user.id);
+    const creditsResult = await createBasicCredits(user.id);
+    if (creditsResult.status === "error") {
+      return { error: "Error al otorgar créditos" };
+    }
 
     revalidatePath("/dashboard");
     return { success: true };

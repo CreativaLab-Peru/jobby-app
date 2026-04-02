@@ -696,6 +696,7 @@ model TempCvWithEvaluation {
   tempUserId      String?
   overallScore    Float?
   extractorOutput Json?
+  fileUrl         String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

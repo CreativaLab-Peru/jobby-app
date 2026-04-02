@@ -16,7 +16,13 @@ export const updateCvAndSections = async (id: string, cvData: CVData) => {
       where: { id, userId: currentUser.id, deletedAt: null },
       include: {
         sections: {
-          select: { sectionType: true },
+          select: {
+            sectionType: true,
+            order: true,
+            isVisible: true,
+            isRecommended: true,
+            title: true,
+          },
           orderBy: { order: 'asc' } // <--- Crucial: Respetar el orden definido
         }
       }
@@ -25,6 +31,9 @@ export const updateCvAndSections = async (id: string, cvData: CVData) => {
     if (!existingCv) return { success: false, message: "CV no encontrado." };
 
     const allowedSectionTypes = existingCv.sections.map(s => s.sectionType);
+    const sectionMetaMap = new Map(
+      existingCv.sections.map((s) => [s.sectionType, s])
+    );
     const allPayload = buildSectionsPayload(cvData);
 
     // 2. Filtramos el payload para que SOLO contenga lo que el CV permite
@@ -34,8 +43,10 @@ export const updateCvAndSections = async (id: string, cvData: CVData) => {
 
     // 3. Ejecutamos la transacción de actualización
     await prisma.$transaction(
-      sectionsToUpdate.map((section) =>
-        prisma.cvSection.upsert({
+      sectionsToUpdate.map((section, index) => {
+        const sectionMeta = sectionMetaMap.get(section.type);
+
+        return prisma.cvSection.upsert({
           where: {
             cvId_sectionType: {
               cvId: id,
@@ -51,11 +62,14 @@ export const updateCvAndSections = async (id: string, cvData: CVData) => {
           create: {
             cvId: id,
             sectionType: section.type,
-            title: section.defaultTitle,
+            title: sectionMeta?.title ?? section.defaultTitle,
+            order: sectionMeta?.order ?? existingCv.sections.length + index + 1,
+            isVisible: sectionMeta?.isVisible ?? true,
+            isRecommended: sectionMeta?.isRecommended ?? false,
             contentJson: section.content as any,
           },
-        })
-      )
+        });
+      })
     );
 
     return { success: true, message: "Datos sincronizados manteniendo el orden original." };

@@ -91,7 +91,6 @@ export const getAndSaveOpportunities = inngest.createFunction(
         message: "Prepared cv_data for match engine",
         metadata: { cvId, cvAnalysisDebug },
       });
-      console.info("[OPPORTUNITIES_MATCH][CV_DATA]", { cvId, userId, cvAnalysisDebug });
 
       // 3. Llamada al Engine
       const opportunities = await step.run("get-matches", async () => {
@@ -116,15 +115,8 @@ export const getAndSaveOpportunities = inngest.createFunction(
           firstMatchId: opportunities?.matches?.[0]?.opportunity_id ?? null,
         },
       });
-      console.info("[OPPORTUNITIES_MATCH][ENGINE_RESPONSE]", {
-        cvId,
-        userId,
-        matchesCount: opportunities?.matches?.length ?? 0,
-        firstMatchId: opportunities?.matches?.[0]?.opportunity_id ?? null,
-      });
 
       if (!opportunities?.matches?.length || opportunities.matches.length === 0) {
-        console.warn("[OPPORTUNITIES_MATCH][NO_MATCHES]", { cvId, userId });
         await logsService.createLog({ userId, action: LogAction.OPPORTUNITY, level: LogLevel.WARNING, entity: "CV_OPPORTUNITY", entityId: cvId, message: "No matches found" });
 
         // ✅ Mark job as SUCCEEDED (no matches is not a failure)
@@ -217,12 +209,6 @@ export const getAndSaveOpportunities = inngest.createFunction(
         entityId: job.id,
         message: "Opportunities job completed successfully",
         metadata: { cvId, count: opportunities.matches.length, saved: result },
-      });
-      console.info("[OPPORTUNITIES_MATCH][DONE]", {
-        cvId,
-        userId,
-        matchesCount: opportunities.matches.length,
-        saved: result,
       });
 
       return { success: result, count: opportunities.matches.length };

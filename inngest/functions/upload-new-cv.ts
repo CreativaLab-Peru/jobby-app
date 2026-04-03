@@ -146,6 +146,16 @@ export const uploadNewCv = inngest.createFunction(
         })
       });
 
+      await step.run("emit-completion", async () => {
+        await inngest.send({
+          name: "cv/upload.completed",
+          data: {
+            cvId: cvId,
+            userId: userId
+          }
+        });
+      });
+
     } catch (err: any) {
       await step.run("handle-process-failure", async () => {
         await prisma.queueJob.update({

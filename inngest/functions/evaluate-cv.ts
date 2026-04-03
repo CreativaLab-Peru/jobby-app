@@ -6,8 +6,6 @@ import { queryGemini } from "@/features/cv/queries/query-gemini";
 import {consumeCredits, ConsumeCreditsParams} from "@/features/credits/actions/consume-credits";
 import {
   AiEvaluationResult,
-  buildCvPayloadForEvaluation,
-  filterSectionsByOpportunity,
   sanitizeSectionType
 } from "../utils/cv-evaluation-helper";
 import {refundCredits} from "@/features/credits/actions/refund-credits";
@@ -39,22 +37,19 @@ export const evaluateCv = inngest.createFunction(
     });
 
     // 2. Preparación de Datos
-    const { filteredSections, cv } = await step.run("prepare-data", async () => {
+    const { sections, cv } = await step.run("prepare-data", async () => {
       const cvData = await prisma.cv.findUnique({
-        where: { id: cvId },
+        where: { id: cvId, userId },
         include: { sections: true }
       });
 
-      const fullPayload = buildCvPayloadForEvaluation({
-        sections: cvData?.sections,
-      });
-
-      const filtered = filterSectionsByOpportunity(fullPayload, cvData?.opportunityType ?? null);
-
-      return { filteredSections: filtered, cv: cvData };
+      return {
+        sections: cv.sections,
+        cv: cvData
+      };
     });
 
-    if (Object.keys(filteredSections).length === 0) {
+    if (sections.length === 0) {
       throw new Error("CV insufficient data for evaluation type");
     }
 
@@ -67,7 +62,7 @@ export const evaluateCv = inngest.createFunction(
     try {
       // 4. Inteligencia Artificial
       const aiResult = await step.run("query-ai-evaluator", async () => {
-        const prompt = getPromptToEvaluateCv(filteredSections, cv?.cvType, cv?.opportunityType, cv?.language);
+        const prompt = getPromptToEvaluateCv(sections, cv?.cvType, cv?.opportunityType, cv?.language);
         const response = await queryGemini({ prompt, type: "JSON" });
         return response as { success: boolean; data: AiEvaluationResult; message?: string };
       });

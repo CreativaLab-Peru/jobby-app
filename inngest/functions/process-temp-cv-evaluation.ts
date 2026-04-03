@@ -1,20 +1,20 @@
-import { inngest } from "./client";
-import { prisma } from "@/lib/prisma";
-import { JobStatus } from "@prisma/client";
-import { queryGemini } from "@/features/cv/queries/query-gemini";
+import {inngest} from "./client";
+import {prisma} from "@/lib/prisma";
+import {JobStatus} from "@prisma/client";
+import {queryGemini} from "@/features/cv/queries/query-gemini";
 
 export const processTempCvEvaluation = inngest.createFunction(
-  { id: "process-temp-cv-evaluation", name: "Análisis de CV Temporal" },
-  { event: "cv/evaluate-temp" },
-  async ({ event, step }) => {
-    const { tempCvId, rawText } = event.data;
+  {id: "process-temp-cv-evaluation", name: "Análisis de CV Temporal"},
+  {event: "cv/evaluate-temp"},
+  async ({event, step}) => {
+    const {tempCvId, rawText} = event.data;
 
     try {
       // 1. Marcamos inicio de procesamiento
       await step.run("update-status-ingest", async () => {
         await prisma.tempCvWithEvaluation.update({
-          where: { id: tempCvId },
-          data: { status: JobStatus.IN_PROGRESS },
+          where: {id: tempCvId},
+          data: {status: JobStatus.IN_PROGRESS},
         });
       });
 
@@ -32,7 +32,7 @@ export const processTempCvEvaluation = inngest.createFunction(
           ### Output JSON Schema
           Return ONLY a valid JSON object with this exact structure:
           {
-            "opportunityType": "INTERNSHIP | SCHOLARSHIP | EXCHANGE_PROGRAM | EMPLOYMENT | STARTUP",
+            "opportunityType": "SCHOLARSHIP",
             "language": "EN | ES",
             "cvType": "TECHNOLOGY_ENGINEERING | DESIGN_CREATIVITY | MARKETING_STRATEGY | MANAGEMENT_BUSINESS | FINANCE_PROJECTS | SOCIAL_MEDIA | EDUCATION | SCIENCE",
             "overallScore": (number 0-100),
@@ -46,7 +46,7 @@ export const processTempCvEvaluation = inngest.createFunction(
           }
         `;
 
-        const result = await queryGemini({ prompt, type: "JSON" });
+        const result = await queryGemini({prompt, type: "JSON"});
         if (!result.success) throw new Error(result.message || "Gemini Error");
 
         return result.data;
@@ -55,23 +55,23 @@ export const processTempCvEvaluation = inngest.createFunction(
       // 3. Persistencia Final en la tabla Temp
       await step.run("save-final-evaluation", async () => {
         await prisma.tempCvWithEvaluation.update({
-          where: { id: tempCvId },
+          where: {id: tempCvId},
           data: {
             status: JobStatus.SUCCEEDED,
             overallScore: aiResult.overallScore || 0,
-            // Guardamos el objeto completo (Opportunity, Sections, Evaluation) en el JSONB
             extractorOutput: aiResult,
           },
         });
       });
 
     } catch (err: any) {
+      // Todo: test
       await step.run("mark-as-failed", async () => {
         await prisma.tempCvWithEvaluation.update({
-          where: { id: tempCvId },
+          where: {id: tempCvId},
           data: {
             status: JobStatus.FAILED,
-            extractorOutput: { error: err.message }
+            extractorOutput: {error: err.message}
           },
         });
       });

@@ -46,13 +46,13 @@ export default function AnalysisResultsScreen({
     <>
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
 
-        {/* Botón Volver - Usa text-muted-foreground y hover:text-primary */}
+        {/* Botón Volver */}
         <Link href="/"
               className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors font-medium">
-          <ChevronLeft className="w-4 h-4"/> Volver a CV Builder
+          <ChevronLeft className="w-4 h-4"/> Volver al Editor de Perfil
         </Link>
 
-        {/* HEADER: Score de Empleabilidad */}
+        {/* HEADER: Score de Aplicación */}
         <Card className="p-8 rounded-[2.5rem] border-border/50 shadow-xl bg-card">
           <div
             className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -62,8 +62,9 @@ export default function AnalysisResultsScreen({
               </div>
               <div>
                 <p
-                  className="text-sm font-bold text-muted-foreground uppercase tracking-tight">Score
-                  de Empleabilidad</p>
+                  className="text-sm font-bold text-muted-foreground uppercase tracking-tight">
+                  Tu Nivel
+                </p>
                 <div className="flex items-baseline gap-1">
                   <span className="text-5xl font-black text-foreground">{Math.round(score)}</span>
                   <span className="text-xl text-muted-foreground font-bold">/100</span>
@@ -72,7 +73,7 @@ export default function AnalysisResultsScreen({
             </div>
             <Badge variant="secondary"
                    className="rounded-full px-4 py-2 bg-secondary text-secondary-foreground border-none gap-2 font-bold shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 text-primary"/> Análisis IA completado
+              <Sparkles className="w-3.5 h-3.5 text-primary"/> Evaluación IA
             </Badge>
           </div>
 
@@ -80,9 +81,9 @@ export default function AnalysisResultsScreen({
             <Progress value={score} className="h-3 bg-secondary"/>
             <div
               className="flex justify-between text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 px-1">
-              <span>Bajo</span>
-              <span className="text-primary/60">Promedio</span>
-              <span>Excelente</span>
+              <span>Competitivo</span>
+              <span className="text-primary/60">Sólido</span>
+              <span>Excelente Candidato</span>
             </div>
           </div>
         </Card>
@@ -95,10 +96,10 @@ export default function AnalysisResultsScreen({
               <div className="p-2.5 bg-primary/10 rounded-xl text-primary">
                 <Lightbulb className="w-5 h-5"/>
               </div>
-              <h3 className="font-black text-lg tracking-tight">Insight de tu perfil</h3>
+              <h3 className="font-black text-lg tracking-tight">Perfil del Postulante</h3>
             </div>
             <p className="text-muted-foreground leading-relaxed text-sm font-medium line-clamp-5">
-              {evaluation?.summary || "Cargando análisis estratégico..."}
+              {evaluation?.summary || "Analizando tu perfil académico y extracurricular..."}
             </p>
           </Card>
 
@@ -108,19 +109,18 @@ export default function AnalysisResultsScreen({
               <div className="p-2.5 bg-destructive/10 rounded-xl text-destructive">
                 <TrendingUp className="w-5 h-5"/>
               </div>
-              <h3 className="font-black text-lg tracking-tight">Área de mejora</h3>
+              <h3 className="font-black text-lg tracking-tight">Fortalezas a Reforzar</h3>
             </div>
             <p className="text-muted-foreground leading-relaxed text-sm font-medium">
-              {evaluation?.weaknesses?.[0] || "Identificando puntos críticos..."}
+              {evaluation?.weaknesses?.[0] || "Identificando áreas para potenciar tu postulación..."}
             </p>
           </Card>
         </div>
 
-        {/* SECCIÓN PREMIUM: Oportunidades y Bloqueo */}
+        {/* SECCIÓN PREMIUM: Becas e Intercambios */}
         <div className="space-y-8 pt-10">
           <div className="flex flex-col items-center gap-2">
-            <h2 className="text-2xl font-black tracking-tight text-center">Oportunidades que hacen
-              Match</h2>
+            <h2 className="text-2xl font-black tracking-tight text-center">Programas y Becas Sugeridas</h2>
             <div className="h-1 w-12 bg-primary rounded-full"/>
           </div>
 
@@ -137,7 +137,7 @@ export default function AnalysisResultsScreen({
             ))}
           </div>
 
-          {/* CTA FINAL: Desbloquear */}
+          {/* CTA FINAL */}
           <Card
             className="p-12 rounded-[3.5rem] bg-secondary/40 border border-border/40 flex flex-col items-center text-center space-y-8 relative overflow-hidden">
             <div
@@ -148,10 +148,9 @@ export default function AnalysisResultsScreen({
             </div>
 
             <div className="space-y-3">
-              <h3 className="text-2xl font-black tracking-tight">Tu CV fue analizado con IA</h3>
+              <h3 className="text-2xl font-black tracking-tight">Tu perfil está listo para despegar</h3>
               <p className="text-muted-foreground max-w-sm font-medium">
-                Desbloquea el reporte completo para acceder a recomendaciones personalizadas y el
-                match de oportunidades.
+                Desbloquea el análisis detallado para ver qué becas e intercambios encajan mejor con tu trayectoria.
               </p>
             </div>
 
@@ -159,7 +158,7 @@ export default function AnalysisResultsScreen({
               className="rounded-full bg-primary text-primary-foreground hover:opacity-90 px-10 py-7 h-auto text-lg font-black gap-3 shadow-2xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
               onClick={handleOpenCreditPackModal}
             >
-              Desbloquear Reporte Completo <ArrowRight className="w-5 h-5"/>
+              Ver Oportunidades <ArrowRight className="w-5 h-5"/>
             </Button>
           </Card>
         </div>

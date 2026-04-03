@@ -1,47 +1,33 @@
 "use client";
 
-import {useOnboardingStore} from "@/features/onboarding/store/talent-onboarding-store";
-import {FormField} from "@/components/form-field";
-import {Mail, Lock, CheckCircle2, LogOut} from "lucide-react";
-import {useEffect, useState} from "react";
-import {authClient} from "@/lib/auth-client";
-import {GoogleOAuthButton} from "@/features/authentication/components/google-oauth-button";
-import {Button} from "@/components/ui/button";
-import {UserAvatar} from "@/components/avatar-user";
+import { useOnboardingStore } from "@/features/onboarding/store/talent-onboarding-store";
+import { FormField } from "@/components/form-field";
+import { Mail, Lock, CheckCircle2, LogOut } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import { GoogleOAuthButton } from "@/features/authentication/components/google-oauth-button";
+import { Button } from "@/components/ui/button";
+import { UserAvatar } from "@/components/avatar-user";
 
-export function AccountStep() {
-  const {formData, updateFormData, errors} = useOnboardingStore();
-  const [user, setUser] = useState<{
+interface AccountStepProps {
+  user: {
     name: string;
     email: string;
     image?: string | null;
-  }>(null);
+  } | null;
+  isSignedIn: boolean;
+}
 
-  // Escuchamos la sesión solo para actualizar la vista local
-  useEffect(() => {
-    const checkSession = async () => {
-      const session = await authClient.getSession();
-      if (session?.data?.user) {
-        setUser({
-          name: session.data.user.name,
-          email: session.data.user.email,
-          image: session.data.user.image,
-        });
-        // Actualizamos store si no estaba actualizado
-        if (!formData.email) {
-          updateFormData({email: session.data.user.email, name: session.data.user.name});
-          updateFormData({acceptedTerms: true});
-        }
-
-      }
-    };
-    checkSession();
-  }, [formData.email, updateFormData]);
+export function AccountStep({ user, isSignedIn }: AccountStepProps) {
+  const { formData, updateFormData, errors } = useOnboardingStore();
 
   const handleLogout = async () => {
-    await authClient.signOut();
-    setUser(null);
-    updateFormData({email: "", password: "", confirmPassword: ""});
+    try {
+      await authClient.signOut();
+      // Forzamos un refresh para que el estado 'sessionUser' del padre se limpie
+      window.location.reload();
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
   };
 
   return (
@@ -57,10 +43,9 @@ export function AccountStep() {
         </p>
       </div>
 
-      {user ? (
+      {user && isSignedIn ? (
         <div className="space-y-4">
-          <div
-            className="bg-secondary/50 border rounded-xl p-6 flex flex-col items-center text-center gap-4">
+          <div className="bg-secondary/50 border rounded-xl p-6 flex flex-col items-center text-center gap-4">
             <UserAvatar
               image={user?.image}
               name={formData?.name}
@@ -70,100 +55,81 @@ export function AccountStep() {
               <p className="font-semibold text-lg leading-tight">{formData?.name}</p>
               <p className="text-sm text-muted-foreground">{user?.email}</p>
             </div>
-            <div
-              className="flex items-center gap-2 bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-full">
-              <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400"/>
+            <div className="flex items-center gap-2 bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-full">
+              <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
               <span className="text-xs font-medium text-green-700 dark:text-green-300">
                 Cuenta vinculada
               </span>
             </div>
             <Button variant="outline" size="sm" onClick={handleLogout} className="mt-2 gap-2">
-              <LogOut className="h-4 w-4"/>
+              <LogOut className="h-4 w-4" />
               Cambiar cuenta
             </Button>
           </div>
         </div>
       ) : (
-        /* VISTA: FORMULARIO (Mismo código de antes) */
         <div className="space-y-4">
           <FormField
             label="Correo electrónico"
             placeholder="tu@email.com"
             icon={Mail}
             value={formData.email}
-            onChange={(e) => updateFormData({email: e.target.value})}
+            onChange={(e) => updateFormData({ email: e.target.value })}
             error={errors.email}
           />
-          <FormField
-            label="Contraseña"
-            placeholder="••••••••"
-            icon={Lock}
-            value={formData.password}
-            onChange={(e) => updateFormData({password: e.target.value})}
-            error={errors.password}
-            type={'password'}
-          />
-          <FormField
-            label="Confirmar contraseña"
-            placeholder="••••••••"
-            icon={Lock}
-            value={formData.confirmPassword ?? ""}
-            onChange={(e) => updateFormData({confirmPassword: e.target.value})}
-            error={errors.confirmPassword}
-            type={'password'}
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              label="Contraseña"
+              placeholder="••••••••"
+              icon={Lock}
+              value={formData.password || ""}
+              onChange={(e) => updateFormData({ password: e.target.value })}
+              error={errors.password}
+              type="password"
+            />
+            <FormField
+              label="Confirmar contraseña"
+              placeholder="••••••••"
+              icon={Lock}
+              value={formData.confirmPassword || ""}
+              onChange={(e) => updateFormData({ confirmPassword: e.target.value })}
+              error={errors.confirmPassword}
+              type="password"
+            />
+          </div>
+
           <div className="relative my-6 text-center text-xs uppercase text-muted-foreground">
             <span className="bg-background px-2 relative z-10">O continuar con</span>
-            <div className="absolute inset-0 flex items-center"><span className="w-full border-t"/>
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
             </div>
           </div>
+
           <GoogleOAuthButton
             text="Registrarse con Google"
             callbackURL="/onboarding/talents"
-            mode={'signUp'}
+            mode="signUp"
             disabled={!formData.acceptedTerms}
           />
         </div>
       )}
 
+      {/* Checkbox de términos */}
       <div className="flex flex-col gap-3 pt-2">
-        <div className="flex flex-col gap-1">
-          <label className="flex items-center gap-2 text-sm cursor-pointer">
-            <input
-              type="checkbox"
-              className="w-4 h-4 accent-primary"
-              checked={formData.acceptedTerms}
-              onChange={(e) =>
-                updateFormData({acceptedTerms: e.target.checked})
-              }
-            />
-            <span>
-            Acepto los{" "}
-              <a
-                href="/terminos-y-condiciones"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline text-xs"
-              >
-                términos y condiciones
-              </a>{" "}
-              y las{" "}
-              <a
-                href="/politica-de-privacidad"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline text-xs"
-              >
-                políticas de privacidad.
-              </a>
-            </span>
-          </label>
-          {errors.acceptedTerms && (
-            <span className="text-red-600 text-xs">
-            {errors.acceptedTerms}
+        <label className="flex items-center gap-2 text-sm cursor-pointer">
+          <input
+            type="checkbox"
+            className="w-4 h-4 accent-primary"
+            checked={formData.acceptedTerms}
+            onChange={(e) => updateFormData({ acceptedTerms: e.target.checked })}
+          />
+          <span className="text-muted-foreground">
+            Acepto los términos y políticas de privacidad.
           </span>
-          )}
-        </div>
+        </label>
+        {errors.acceptedTerms && (
+          <span className="text-destructive text-xs font-medium">{errors.acceptedTerms}</span>
+        )}
       </div>
     </div>
   );

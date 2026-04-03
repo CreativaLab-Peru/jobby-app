@@ -12,7 +12,7 @@ interface CVReviewPageProps {
 export default async function CVReviewPage({params}: CVReviewPageProps) {
   const {id} = await params;
   const [result, packs] = await Promise.all([
-    await getTempCvAnalysis(id),
+    getTempCvAnalysis(id),
     getCreditPackOffers(),
   ]);
 

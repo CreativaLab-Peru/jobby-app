@@ -1,7 +1,7 @@
-import type { EvaluateCvSectionsPayload } from "@/features/cv/helpers/types";
+import {CvSection} from "@prisma/client";
 
 export const getPromptToEvaluateCv = (
-  sections: EvaluateCvSectionsPayload,
+  sections: CvSection[],
   cvType?: string | null,
   opportunityType?: string | null,
   lang?: 'ES' | 'EN'

@@ -16,6 +16,8 @@ interface OnboardingStore {
   validateCurrentStep: () => { success: boolean; error?: string };
   errors: Record<string, string>; // Guardaremos los errores aquí
   setErrors: (errors: Record<string, string>) => void;
+  isOAuth: boolean; // Nuevo flag
+  setIsOAuth: (value: boolean) => void;
 }
 
 const initialFormData: TalentOnboardingFormData = {
@@ -44,6 +46,8 @@ export const useOnboardingStore = create<OnboardingStore>()(
   persist(
     (set, get) => ({
       step: 1,
+      isOAuth: false,
+      setIsOAuth: (value) => set({ isOAuth: value }),
       formData: initialFormData,
 
       setStep: (step) => set({ step }),
@@ -56,11 +60,9 @@ export const useOnboardingStore = create<OnboardingStore>()(
       reset: () => set({ step: 1, formData: initialFormData }),
 
       validateCurrentStep: () => {
-        const { step, formData } = get();
+        const { step, formData, isOAuth } = get();
 
-        if (step === 1) {
-          return { success: true }; // No hay datos que validar en el paso 0
-        }
+        // 1. Definimos los esquemas base
         const stepSchemas: Record<number, any> = {
           2: talentOnboardingBaseSchema.pick({ name: true, country: true }),
           3: talentOnboardingBaseSchema.pick({ targetIndustries: true }),
@@ -68,14 +70,28 @@ export const useOnboardingStore = create<OnboardingStore>()(
           5: talentOnboardingBaseSchema.pick({ workModality: true, relocation: true }),
           6: talentOnboardingBaseSchema.pick({ availability: true }),
           7: talentOnboardingBaseSchema.pick({ expLevel: true }),
-          8: talentOnboardingBaseSchema
-            .pick({ email: true, password: true, confirmPassword: true, acceptedTerms: true })
-            .superRefine((data, ctx) => {
-              if (data.password && data.password.length > 0 && data.password !== data.confirmPassword) {
-                ctx.addIssue({ path: ["confirmPassword"], message: "Las contraseñas no coinciden", code: "custom" });
-              }
-            }),
         };
+
+        // 2. Lógica especial para el Paso 8 (Cuenta)
+        if (step === 8) {
+          if (isOAuth) {
+            // SI ESTÁ LOGUEADO: Solo validamos términos
+            stepSchemas[8] = talentOnboardingBaseSchema.pick({ acceptedTerms: true });
+          } else {
+            // SI NO ESTÁ LOGUEADO: Validamos credenciales completas
+            stepSchemas[8] = talentOnboardingBaseSchema
+              .pick({ email: true, password: true, confirmPassword: true, acceptedTerms: true })
+              .superRefine((data, ctx) => {
+                if (data.password && data.password.length > 0 && data.password !== data.confirmPassword) {
+                  ctx.addIssue({
+                    path: ["confirmPassword"],
+                    message: "Las contraseñas no coinciden",
+                    code: "custom"
+                  });
+                }
+              });
+          }
+        }
 
         const currentSchema = stepSchemas[step];
         if (!currentSchema) return { success: true };

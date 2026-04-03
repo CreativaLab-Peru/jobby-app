@@ -1,17 +1,22 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Mail, User, ArrowRight, Loader2, AlertCircle } from "lucide-react";
+import { FormField } from "@/components/form-field"; // Tu componente personalizado
 import { createTemporalUser } from "@/features/home/actions/create-temporal-user";
-import { z } from "zod";
 
 const formSchema = z.object({
   name: z.string().min(2, "El nombre es muy corto"),
-  email: z.string().email("Ingresa un correo válido"),
+  email: z.string().email("El formato del correo no es válido")
 });
+
+type FormValues = z.infer<typeof formSchema>;
 
 interface EmailModalProps {
   isOpen: boolean;
@@ -25,33 +30,40 @@ export function EmailModal({
                              closeModal,
                              onSuccess,
                              newEvaluationId
-}: EmailModalProps) {
+                           }: EmailModalProps) {
   const [isPending, startTransition] = useTransition();
-  const [formData, setFormData] = useState({ name: "", email: "" });
-  const [error, setError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const handleAction = () => {
-    const result = formSchema.safeParse(formData);
-    if (!result) {
-      return;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      email: "",
     }
-    setError(null);
+  });
+
+  const onSubmit = (values: FormValues) => {
+    setServerError(null);
     startTransition(async () => {
       try {
-        const {email, name} = result.data;
-        // Asumiendo que actualizas el action para recibir el nombre también
         const res = await createTemporalUser({
-          email,
-          name,
+          email: values.email,
+          name: values.name,
           newEvaluationId
         });
 
-        if (!res.success) return setError(res.error || "Error al procesar.");
+        if (!res.success) {
+          return setServerError(res.error || "Error al procesar.");
+        }
 
         closeModal();
-        onSuccess?.(res.temporalUserId, result.data.email);
-      } catch {
-        setError("Error de conexión.");
+        onSuccess?.(res.temporalUserId, values.email);
+      } catch (e) {
+        setServerError("Error de conexión.");
       }
     });
   };
@@ -68,53 +80,50 @@ export function EmailModal({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4 mt-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
+
           {/* Campo Nombre */}
-          <div className="space-y-2">
-            <div className="relative">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Tu nombre completo"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="h-14 pl-11 bg-secondary/30 border-none rounded-2xl font-bold"
-              />
-            </div>
-          </div>
+          <FormField
+            placeholder="Tu nombre completo"
+            icon={User}
+            register={register("name")}
+            error={errors.name?.message}
+            label={"Nombre completo"}
+          />
 
           {/* Campo Email */}
-          <div className="space-y-2">
-            <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="tu@correo.com"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="h-14 pl-11 bg-secondary/30 border-none rounded-2xl font-bold"
-              />
-            </div>
-          </div>
+          <FormField
+            placeholder="tu@correo.com"
+            icon={Mail}
+            register={register("email")}
+            error={errors.email?.message}
+            label={"Correo electrónico"}
+          />
 
-          {error && (
-            <p className="text-xs text-destructive font-bold flex items-center gap-2 px-1 italic">
-              <AlertCircle className="w-4 h-4" /> {error}
-            </p>
+          {serverError && (
+            <div className="text-xs text-destructive font-bold flex items-center gap-2 px-1 italic">
+              <AlertCircle className="w-4 h-4" /> {serverError}
+            </div>
           )}
 
           <Button
-            onClick={handleAction}
+            type="submit"
             disabled={isPending}
-            className="w-full h-14 bg-primary text-primary-foreground font-black uppercase tracking-tighter rounded-2xl hover:scale-[1.02] transition-transform"
+            className="w-full h-14 bg-primary text-primary-foreground font-black uppercase tracking-tighter rounded-2xl hover:scale-[1.02] transition-transform cursor-pointer"
           >
-            {isPending ? <Loader2 className="animate-spin" /> : (
-              <>Continuar al pago <ArrowRight className="ml-2 w-5 h-5" /></>
+            {isPending ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <>
+                Continuar al pago <ArrowRight className="ml-2 w-5 h-5" />
+              </>
             )}
           </Button>
 
           <p className="text-[10px] text-center text-muted-foreground font-bold uppercase tracking-widest opacity-60">
-              Pago seguro vía Stripe
+            Pago seguro
           </p>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );

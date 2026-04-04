@@ -3,6 +3,9 @@
 ## Fixes
 - New way for hot selling (cv-pay and cv-builder)
 
+## Technical
+- New function to migrate from temporal tables to real tables for CVs, evaluations and opportunities.
+
 # v.1.2.0 - 2026-03-30
 
 ## Fixes

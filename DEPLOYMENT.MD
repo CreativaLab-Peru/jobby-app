@@ -2,6 +2,7 @@
 
 ## Enhancements
 - `requiredRequirements, optionalRequirements, companyLogoUrl, minSalary and maxSalary` added in opportunities table
+- New CvSectionConfiguration and TempCvWithEvaluation added to support new CV template and evaluation flow
 
 # v1.1.29 - 2026-03-23
 

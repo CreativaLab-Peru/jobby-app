@@ -83,6 +83,7 @@ export const uploadNewCv = inngest.createFunction(
           await tx.cv.update({
             where: { id: cvId },
             data: {
+              cvType: initCvUploading?.cvType || aiResult.cvType || "TECHNOLOGY_ENGINEERING",
               extractedJson: aiResult,
               fullTextSearch: JSON.stringify(aiResult),
               // El lenguaje lo detecta la IA, pero lo guardamos formalmente

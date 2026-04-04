@@ -59,8 +59,6 @@ export const processTempCvMigration = inngest.createFunction(
         contentJson: {},
       }));
 
-      console.log(`Creando ${sectionsToCreate.length} secciones para cvId: ${cvId}`);
-
       // Usamos createMany para eficiencia
       if (sectionsToCreate.length > 0) {
         await prisma.cvSection.createMany({
@@ -132,7 +130,7 @@ export const processTempCvMigration = inngest.createFunction(
       });
     });
 
-    step.run("update-job-step", async () => {
+    await step.run("update-job-step", async () => {
       await prisma.queueJob.update({
         where: {id: jobId},
         data: {

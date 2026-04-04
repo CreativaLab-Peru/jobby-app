@@ -71,7 +71,7 @@ export function OnboardingForm() {
     } finally {
       setIsInitializing(false);
     }
-  }, [updateFormData]);
+  }, [setIsOAuth, updateFormData]);
 
   useEffect(() => {
     initSession();

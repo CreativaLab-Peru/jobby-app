@@ -27,8 +27,6 @@ export async function promoteTempAnalysisAction({
       },
       orderBy: {createdAt: 'desc'} // Obtenemos el más reciente
     });
-    console.log("[existing_job_id]", existingJob?.id);
-
     // Caso A: El proceso ya tuvo éxito o está en curso
     if (existingJob) {
       if (existingJob.status === JobStatus.SUCCEEDED ||
@@ -41,8 +39,16 @@ export async function promoteTempAnalysisAction({
       // Caso B: Si falló, procedemos a crear uno nuevo (limpieza lógica)
       if (existingJob.status === JobStatus.FAILED) {
         console.warn(`[PROMOTE_TEMP_ANALYSIS]: Proceso previo fallido para userId=${currentUser.id}. Creando uno nuevo.`);
-        // return {success: false, error: "Fallo el analisis."};
+        return {success: false, error: "Fallo el analisis."};
       }
+    }
+
+    if (!existingJob.cvId) {
+      console.warn(`[PROMOTE_TEMP_ANALYSIS]: Job existente sin cvId para userId=${currentUser.id}, jobId=${existingJob.id}.`);
+      return {
+        success: false,
+        error: "Se encontró un proceso previo incompleto. Intenta nuevamente."
+      };
     }
 
     // 2. Transacción Atómica: Crear CV + Crear Job de Seguimiento

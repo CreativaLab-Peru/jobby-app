@@ -23,7 +23,8 @@ export const processTempCvMigration = inngest.createFunction(
             name: "Mi primera ruta",
             userId,
             cvId, // Vinculamos al CV que ya existe
-            status: RouteStatus.CV_CREATED
+            status: RouteStatus.CV_CREATED,
+            isActive: true,
           }
         });
       }
@@ -67,8 +68,10 @@ export const processTempCvMigration = inngest.createFunction(
         });
       }
 
-      // Create the sections to update in the cv/upload inngest function
-
+      if (!tempEval.fileUrl) {
+        console.error("[MISSING_FILE_URL_IN_PROCESS_TMP_CV_MIGRATION]", { tempEvalId: tempEval.id, cvId });
+        return; // Si no hay URL, no enviamos el evento de upload, pero el proceso puede continuar (quizás solo con texto)
+      }
 
       // 4. Enviar el evento
       await inngest.send({

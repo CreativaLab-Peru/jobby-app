@@ -17,7 +17,7 @@ export const evaluateCv = inngest.createFunction(
   async ({ event, step }) => {
     const { cvId, userId, evaluationId } = event.data as {
       cvId: string;
-      userId: string;
+      userId: string; // Todo: we don't need to delete
       evaluationId?: string
     };
 
@@ -43,10 +43,6 @@ export const evaluateCv = inngest.createFunction(
         where: { id: cvId },
         include: { sections: true }
       });
-      console.log("[CV]", cvData);
-      for (const section of cvData.sections) {
-        console.log("[SECTIONS]", section.sectionType);
-      }
 
       const fullPayload = buildCvPayloadForEvaluation({
         sections: cvData?.sections,

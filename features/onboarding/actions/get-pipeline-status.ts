@@ -2,12 +2,16 @@
 
 import { prisma } from "@/lib/prisma";
 import { JobStatus } from "@prisma/client";
+import {getCurrentUser} from "@/features/share/actions/get-current-user";
 
-// get-pipeline-status.ts
 export async function getPipelineStatus(cvId: string) {
   try {
+    const currentUser = await getCurrentUser();
+    if (!currentUser) {
+      return { success: false, error: "No usuario encontrado" };
+    }
     const cv = await prisma.cv.findUnique({
-      where: { id: cvId },
+      where: { id: cvId, userId: currentUser.id },
       select: { status: true }
     });
 

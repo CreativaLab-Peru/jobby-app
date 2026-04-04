@@ -45,11 +45,32 @@ export const processTempCvMigration = inngest.createFunction(
 
       // 3. Validar específicamente la propiedad whichSectionsContain
       // Usamos el operador de encadenamiento opcional y un fallback a array vacío
-      const selectedSections = Array.isArray(extractorOutput?.whichSectionsContain)
+      const rawSections = Array.isArray(extractorOutput?.whichSectionsContain)
         ? (extractorOutput.whichSectionsContain as string[])
         : [];
 
-      console.log("Secciones seleccionadas:", selectedSections);
+      // Mapeamos y aseguramos que el "cvId" esté presente
+      const sectionsToCreate = rawSections.map((type, index) => ({
+        cvId: cvId,
+        sectionType: type as any, // Forzamos a any o validamos contra el Enum CvSectionType
+        isVisible: true,
+        order: index,
+        title: type.charAt(0).toUpperCase() + type.slice(1).toLowerCase(), // Un título base
+        contentJson: {},
+      }));
+
+      console.log(`Creando ${sectionsToCreate.length} secciones para cvId: ${cvId}`);
+
+      // Usamos createMany para eficiencia
+      if (sectionsToCreate.length > 0) {
+        await prisma.cvSection.createMany({
+          data: sectionsToCreate,
+          skipDuplicates: true, // Por seguridad ante re-ejecuciones del step
+        });
+      }
+
+      // Create the sections to update in the cv/upload inngest function
+
 
       // 4. Enviar el evento
       await inngest.send({
@@ -58,7 +79,7 @@ export const processTempCvMigration = inngest.createFunction(
           cvId,
           attachmentUrl: tempEval.fileUrl,
           userId,
-          targetSections: selectedSections // Ahora garantizado como string[]
+          targetSections: rawSections
         },
       });
     });
@@ -92,6 +113,12 @@ export const processTempCvMigration = inngest.createFunction(
           evaluationId: newEvaluation.id,
         },
       });
+    });
+
+    await step.waitForEvent("wait-for-evaluation", {
+      event: "cv/evaluation.completed",
+      timeout: "1m", // La IA puede tardar, le damos margen
+      if: `event.data.cvId == '${cvId}'`,
     });
 
     // --- PASO 3: TRIGGER OPORTUNIDADES ---

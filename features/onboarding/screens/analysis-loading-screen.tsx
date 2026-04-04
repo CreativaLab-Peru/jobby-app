@@ -39,12 +39,6 @@ export function AnalysisLoadingScreen({
 
     addLog("Identidad confirmada. Vinculando cuenta...");
 
-    console.log({
-      component: "asdasd",
-      tempCvEvaluationId,
-      temporalUserId,
-    })
-
     const result = await promoteTempAnalysisAction({
       tempCvEvaluationId,
       temporalUserId,
@@ -83,7 +77,7 @@ export function AnalysisLoadingScreen({
         if (res.steps.matches === JobStatus.SUCCEEDED) {
           addLog("¡Todo listo! Redirigiendo...");
           if (pollInterval.current) clearInterval(pollInterval.current);
-          // setTimeout(() => router.push("/dashboard"), 1500);
+          setTimeout(() => router.push("/dashboard"), 1500);
         }
       }
     }, 3000);

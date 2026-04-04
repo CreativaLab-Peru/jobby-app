@@ -1,10 +1,10 @@
 'use server'
 
-import { inngest } from "@/inngest/functions/client";
-import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/features/share/actions/get-current-user";
-import { JobStatus, OpportunityType } from "@prisma/client";
-import { randomUUID } from "crypto";
+import {inngest} from "@/inngest/functions/client";
+import {prisma} from "@/lib/prisma";
+import {getCurrentUser} from "@/features/share/actions/get-current-user";
+import {JobStatus, OpportunityType} from "@prisma/client";
+import {randomUUID} from "crypto";
 
 export async function promoteTempAnalysisAction({
                                                   tempCvEvaluationId,
@@ -16,7 +16,7 @@ export async function promoteTempAnalysisAction({
   try {
     const currentUser = await getCurrentUser();
     if (!currentUser) {
-      return { success: false, error: "Usuario no autenticado." };
+      return {success: false, error: "Usuario no autenticado."};
     }
 
     // 1. Buscar si ya existe un CV o un proceso activo para este usuario
@@ -25,10 +25,9 @@ export async function promoteTempAnalysisAction({
         userId: currentUser.id,
         type: 'PROMOTE_TEMP_ANALYSIS',
       },
-      orderBy: { createdAt: 'desc' } // Obtenemos el más reciente
+      orderBy: {createdAt: 'desc'} // Obtenemos el más reciente
     });
-
-    console.log("[existingJob]:", existingJob);
+    console.log("[existing_job_id]", existingJob?.id);
 
     // Caso A: El proceso ya tuvo éxito o está en curso
     if (existingJob) {
@@ -36,13 +35,13 @@ export async function promoteTempAnalysisAction({
         existingJob.status === JobStatus.IN_PROGRESS ||
         existingJob.status === JobStatus.PENDING) {
 
-        return { success: true, cvId: existingJob.cvId };
+        return {success: true, cvId: existingJob.cvId};
       }
 
       // Caso B: Si falló, procedemos a crear uno nuevo (limpieza lógica)
       if (existingJob.status === JobStatus.FAILED) {
-        console.log(`[PROMOTE]: Reintentando proceso fallido para usuario ${currentUser.id}`);
-        // return { success: false, error: "Fallo el analisis" };
+        console.warn(`[PROMOTE_TEMP_ANALYSIS]: Proceso previo fallido para userId=${currentUser.id}. Creando uno nuevo.`);
+        // return {success: false, error: "Fallo el analisis."};
       }
     }
 
@@ -63,7 +62,7 @@ export async function promoteTempAnalysisAction({
           language: "ES",
           opportunityType: OpportunityType.SCHOLARSHIP,
           status: JobStatus.PENDING,
-        }
+        },
       });
 
       const job = await tx.queueJob.create({
@@ -81,20 +80,13 @@ export async function promoteTempAnalysisAction({
         }
       });
 
-      return { newCv: cv, createNewJob: job };
+      return {newCv: cv, createNewJob: job};
     });
 
-    const { newCv, createNewJob } = result;
+    const {newCv, createNewJob} = result;
 
     // 3. Disparo de Inngest (Solo si se creó un Job nuevo)
     if (createNewJob) {
-      console.log("[PROMOTE_START]:", {
-        tempCvEvaluationId,
-        userId: currentUser.id,
-        cvId: newCv.id,
-        jobId: createNewJob.id,
-      });
-
       await inngest.send({
         name: "cv/migrate-temporary",
         data: {
@@ -107,10 +99,10 @@ export async function promoteTempAnalysisAction({
       });
     }
 
-    return { success: true, cvId: newCv.id };
+    return {success: true, cvId: newCv.id};
 
   } catch (error) {
     console.error("[PROMOTE_ACTION_ERROR]:", error);
-    return { success: false, error: "No se pudo iniciar la migración de tu perfil." };
+    return {success: false, error: "No se pudo iniciar la migración de tu perfil."};
   }
 }

@@ -6,6 +6,7 @@ import { queryGemini } from "@/features/cv/queries/query-gemini";
 import {consumeCredits, ConsumeCreditsParams} from "@/features/credits/actions/consume-credits";
 import {
   AiEvaluationResult,
+  buildCvPayloadForEvaluation,
   sanitizeSectionType
 } from "../utils/cv-evaluation-helper";
 import {refundCredits} from "@/features/credits/actions/refund-credits";
@@ -37,19 +38,25 @@ export const evaluateCv = inngest.createFunction(
     });
 
     // 2. Preparación de Datos
-    const { sections, cv } = await step.run("prepare-data", async () => {
+    const { filteredSections, cv } = await step.run("prepare-data", async () => {
       const cvData = await prisma.cv.findUnique({
-        where: { id: cvId, userId },
+        where: { id: cvId },
         include: { sections: true }
       });
+      console.log("[CV]", cvData);
+      for (const section of cvData.sections) {
+        console.log("[SECTIONS]", section.sectionType);
+      }
 
-      return {
-        sections: cv.sections,
-        cv: cvData
-      };
+      const fullPayload = buildCvPayloadForEvaluation({
+        sections: cvData?.sections,
+      });
+      console.log("[fullPayload]", fullPayload)
+
+      return { filteredSections: fullPayload, cv: cvData };
     });
 
-    if (sections.length === 0) {
+    if (Object.keys(filteredSections).length === 0) {
       throw new Error("CV insufficient data for evaluation type");
     }
 
@@ -62,7 +69,7 @@ export const evaluateCv = inngest.createFunction(
     try {
       // 4. Inteligencia Artificial
       const aiResult = await step.run("query-ai-evaluator", async () => {
-        const prompt = getPromptToEvaluateCv(sections, cv?.cvType, cv?.opportunityType, cv?.language);
+        const prompt = getPromptToEvaluateCv(filteredSections, cv?.cvType, cv?.opportunityType, cv?.language);
         const response = await queryGemini({ prompt, type: "JSON" });
         return response as { success: boolean; data: AiEvaluationResult; message?: string };
       });
@@ -101,7 +108,7 @@ export const evaluateCv = inngest.createFunction(
               status: JobStatus.SUCCEEDED,
               overallScore: data.overallScore,
               summary: data.summary,
-              extractorOutput: JSON.stringify(data),
+              extractorOutput: data as any,
               improvementsJson: {
                 improvedTexts,
                 suggestedAdditions,
@@ -139,6 +146,16 @@ export const evaluateCv = inngest.createFunction(
         await prisma.route.updateMany({
           where: { cvId, userId, status: { in: [RouteStatus.CV_CREATED, RouteStatus.ANALYSIS_PENDING] } },
           data: { status: RouteStatus.ANALYSIS_DONE }
+        });
+      });
+
+      await step.run("emit-completion-evaluation", async () => {
+        await inngest.send({
+          name: "cv/evaluation.completed",
+          data: {
+            cvId: cvId,
+            userId: userId
+          }
         });
       });
 

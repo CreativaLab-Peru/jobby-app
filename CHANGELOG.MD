@@ -1,10 +1,14 @@
 # WIP
 
 ## Fixes
+- Fixed the problem where the summary content was not being saved.
 - New way for hot selling (cv-pay and cv-builder)
 
 ## Technical
 - New function to migrate from temporal tables to real tables for CVs, evaluations and opportunities.
+
+## Features
+- Added english recomendations (only examples).
 
 # v.1.2.0 - 2026-03-30
 

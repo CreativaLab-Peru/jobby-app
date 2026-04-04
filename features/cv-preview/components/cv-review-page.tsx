@@ -103,6 +103,7 @@ export function PreviewCVComponent({
     const tips = [
       {
         id: "opt",
+        title: "Consejo",
         description: "Tu CV está optimizado para",
         highlight: opportunityMapped,
         footer: ". El análisis te mostrará cómo mejorarlo aún más."
@@ -112,6 +113,7 @@ export function PreviewCVComponent({
     if (language === 'EN') {
       tips.push({
         id: "lang",
+        title: "Consejo",
         description: "Hemos detectado que tu CV está en",
         highlight: "Inglés",
         footer: ". Esto aumenta tus posibilidades en vacantes internacionales."
@@ -163,6 +165,7 @@ export function PreviewCVComponent({
                 {activeTips.map((tip) => (
                   <TipCard
                     key={tip.id}
+                    title={tip.title}
                     description={tip.description}
                     highlightedText={tip.highlight}
                     footer={tip.footer}

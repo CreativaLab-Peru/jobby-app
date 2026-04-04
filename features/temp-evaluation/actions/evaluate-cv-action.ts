@@ -40,6 +40,7 @@ export async function evaluateCvAction(formData: FormData) {
       data: {
         status: JobStatus.PENDING,
         overallScore: evaluation.score * 100, // Convertimos 0.85 a 85
+        fileUrl: url,
         extractorOutput: {
           fileName: file.name,
           fileUrl: url,

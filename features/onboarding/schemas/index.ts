@@ -31,6 +31,7 @@ export const talentOnboardingBaseSchema = z.object({
     message: "Debes aceptar los términos y condiciones",
   }),
   opportunityTypes: z.array(z.string()).min(1, "Selecciona al menos un tipo de oportunidad"),
+  image: z.string().optional().nullable(),
 });
 
 // 2. Esquema Final (Con refinamientos para el registro final)

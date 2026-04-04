@@ -52,7 +52,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Inngest will consume credit ONLY if matches > 0 (same logic as analysis flow)
+    // Inngest will consume credit ONLY if matches > 0
     await inngest.send({
       name: "get.and.save.opportunities",
       data: { cvId, userId: currentUser.id },

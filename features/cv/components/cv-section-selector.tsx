@@ -4,7 +4,7 @@ import { CheckCircle, Plus, Sparkles } from "lucide-react";
 import { CvSectionType, OpportunityType } from "@prisma/client";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { OPPORTUNITY_MAP, RECOMMENDATIONS_BY_OPPORTUNITY, SECTION_LABELS } from "@/const";
+import { RECOMMENDATIONS_BY_OPPORTUNITY, SECTION_LABELS } from "@/const";
 
 interface CvSectionSelectorProps {
   opportunityType: OpportunityType;

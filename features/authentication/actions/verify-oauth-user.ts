@@ -37,9 +37,7 @@ export async function verifyOAuthUser(userId: string) {
       // Verificar si ya tiene créditos
       const hasCredits = user.userCreditBalance.length > 0;
       if (!hasCredits) {
-        console.log("[INFO] Usuario verificado pero sin créditos, otorgándolos...");
-        const creditsResult = await createBasicCredits(userId);
-        console.log("[INFO] Resultado de otorgar créditos:", creditsResult);
+        await createBasicCredits(userId);
         return { success: true, alreadyVerified: true, creditsAdded: true };
       }
 

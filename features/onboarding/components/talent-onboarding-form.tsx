@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useState, useTransition} from "react"; // Añadimos useState
+import {useCallback, useEffect, useMemo, useState, useTransition} from "react"; // Añadimos useState
 import {useRouter} from "next/navigation";
 import {toast} from "sonner";
 
@@ -28,6 +28,8 @@ import {getUserByEmail} from "@/features/authentication/actions/get-user-by-emai
 import {verifyOAuthUser} from "@/features/authentication/actions/verify-oauth-user";
 import {OpportunityTypeStep} from "@/features/onboarding/components/opportunity-type-step";
 import {useAnalysisStore} from "@/hooks/use-analysis-store";
+import {getTempAnalysisByUserEmail} from "@/features/onboarding/actions/get-temp-analysis";
+import {routes} from "@/lib/routes";
 
 const TOTAL_STEPS = 8;
 
@@ -39,152 +41,159 @@ export function OnboardingForm() {
     reset,
     validateCurrentStep,
     setErrors,
-    updateFormData
+    updateFormData,
+    setIsOAuth,
+    isOAuth,
   } = useOnboardingStore();
+
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-
-  // ESTADO DE CARGA INICIAL (KISS)
   const [isInitializing, setIsInitializing] = useState(true);
 
-  // Debug
-  const debug = useDebug();
-  const [isProcessingPersisted, setIsProcessingPersisted] = useState(false);
-  const { fileBlob, loadPersistedFile } = useAnalysisStore();
-
-  // 1. Verificación inicial de sesión para evitar parpadeos en AccountStep
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const session = await authClient.getSession();
-        if (session?.data?.user) {
-          const user = session.data.user;
-          updateFormData({
-            email: user.email,
-            // name: user.name,
-          });
-        }
-      } catch (e) {
-        console.error("[ERROR_SIGN_IN_WITH_GOOGLE]", e);
-      } finally {
-        setIsInitializing(false);
+  /**
+   * 1. Lógica de Verificación de Sesión (Memoizada)
+   * Evita llamadas redundantes y maneja el estado de carga inicial.
+   */
+  const initSession = useCallback(async () => {
+    try {
+      // Usamos .get({ ... }) si tu versión de Better Auth lo permite para ser más directo
+      const session = await authClient.getSession();
+      if (session?.data?.user) {
+        const {email, name, image} = session.data.user;
+        setIsOAuth(true);
+        updateFormData({email, name, image});
+      } else {
+        setIsOAuth(false);
       }
-    };
-    checkSession();
-  }, []);
+    } catch (e) {
+      // Silencioso: Si falla, el usuario simplemente completa el form manualmente
+      console.warn("[ONBOARDING_SESSION_INIT_SILENT_FAIL]");
+    } finally {
+      setIsInitializing(false);
+    }
+  }, [setIsOAuth, updateFormData]);
 
+  useEffect(() => {
+    initSession();
+  }, [initSession]);
+
+  /**
+   * 2. Finalización del Onboarding
+   * Refactorizado para ser lineal y evitar múltiples llamadas a getSession.
+   */
   const handleFinalize = async () => {
     setErrors({});
+
+    // Validación de UI
     const validation = validateCurrentStep();
-    const isOAuthUser = !!(await authClient.getSession())?.data?.user && step === TOTAL_STEPS;
-    if (!validation.success && !isOAuthUser) {
-      toast.error(validation.error || "Revisa los campos antes de finalizar");
+    if (!validation.success) {
+      toast.error(validation.error || "Revisa los campos");
       return;
     }
 
     startTransition(async () => {
       try {
-        const session = await authClient.getSession();
-        let userId: string;
-        let isOAuthUser = false;
+        // Capturamos la sesión UNA sola vez aquí
+        const sessionResponse = await authClient.getSession();
+        const sessionUser = sessionResponse?.data?.user;
 
-        if (session?.data?.user) {
-          userId = session.data.user.id;
-          isOAuthUser = true;
+        let userId: string;
+        const isOAuthFlow = !!sessionUser;
+
+        if (isOAuthFlow) {
+          userId = sessionUser.id;
         } else {
-          const body = {
-            email: formData.email,
-            password: formData.password,
-            name: formData.name,
-          };
-          const existingUser = await checkExistingUser(body.email);
-          if (existingUser.exists) {
+          // Flujo Email/Password
+          const existing = await checkExistingUser(formData.email);
+          if (existing.exists) {
             toast.error("El correo ya está registrado.");
             return;
           }
-          const newUser = await authClient.signUp.email(body);
-          if (newUser?.error) {
-            toast.error(newUser.error.message || "Error al crear la cuenta.");
-            console.error(newUser.error);
+
+          const signUp = await authClient.signUp.email({
+            email: formData.email,
+            password: formData.password!,
+            name: formData.name,
+          });
+
+          if (signUp?.error) {
+            toast.error(signUp.error.message || "Error al crear cuenta");
             return;
           }
 
-          const currentUser = await getUserByEmail(newUser.data.user.email);
-          if (!currentUser) {
-            toast.error("Error al obtener los datos del usuario.");
-            console.error(newUser.error);
-            return;
-          }
-          userId = currentUser.id;
+          // Obtenemos el ID del usuario recién creado
+          const dbUser = await getUserByEmail(formData.email);
+          if (!dbUser) throw new Error("User not found after signup");
+          userId = dbUser.id;
         }
 
-        const result = debug
-          ? await completeOnboardingDebugAction(userId, formData)
-          : await completeOnboardingAction(userId, formData);
-
+        // Ejecutar Acción de Servidor (Onboarding)
+        const result = await completeOnboardingAction(userId, formData);
         if (result.error) {
           toast.error(result.error);
           return;
         }
 
-        if (isOAuthUser) await verifyOAuthUser(userId);
+        // Si es OAuth, marcamos como verificado
+        if (isOAuthFlow) await verifyOAuthUser(userId);
 
-        toast.success("¡Bienvenido/a! Tu perfil está listo.");
+        toast.success("¡Perfil listo!");
 
-        if (isOAuthUser) {
-          if (isProcessingPersisted && fileBlob) {
-            router.push("/cv?afterOnboarding=true");
+        // 3. Lógica de Redirección Inteligente
+        if (isOAuthFlow) {
+          const tempAnalysis = await getTempAnalysisByUserEmail({email: formData.email});
+
+          if (tempAnalysis.success && tempAnalysis.data) {
+            const {tempCvEvaluationId, temporalUserId} = tempAnalysis.data;
+            router.push(`/users/${temporalUserId}/analysis/${tempCvEvaluationId}/loading`);
           } else {
-            router.push("/dashboard");
+            router.push(routes.app.dashboard);
           }
         } else {
           router.push("/login?onboarding=completed");
         }
 
-        timeout(() => reset(), 1000);
+        // Limpieza suave
+        setTimeout(() => reset(), 1000);
       } catch (error) {
-        toast.error("Error inesperado en el servidor");
+        console.error("Finalize Error:", error);
+        toast.error("Error inesperado en el proceso");
       }
     });
   };
 
+  /**
+   * 4. Manejo de Navegación entre pasos
+   */
   const handleNext = async () => {
-    const validation = validateCurrentStep();
-    if (!validation.success) {
-      const session = await authClient.getSession();
-      const isOAuthUser = !!session?.data?.user && step === TOTAL_STEPS;
-
-      if (!isOAuthUser) {
-        toast.error(validation.error || "Revisa los campos antes de finalizar");
-        return;
-      }
-    }
     if (step === TOTAL_STEPS) {
       await handleFinalize();
-    } else {
+      return;
+    }
+
+    const validation = validateCurrentStep();
+    if (validation.success) {
       setStep(step + 1);
+    } else {
+      toast.error(validation.error || "Completa los campos requeridos");
     }
   };
 
-  useEffect(() => {
-    const checkPersistedCV = async () => {
-      try {
-        await loadPersistedFile();
-      } finally {
-        setIsProcessingPersisted(true);
-      }
+  const userMemo = useMemo(() => {
+    return {
+      email: formData.email,
+      name: formData.name,
+      image: formData.image,
     };
-    checkPersistedCV();
-  }, [loadPersistedFile]);
+  }, [formData.email, formData.name, formData.image]);
 
-
-  // 2. RENDER DE CARGA INICIAL
+  // Render de Carga
   if (isInitializing) {
     return (
       <div
         className="max-w-2xl mx-auto min-h-[60vh] flex flex-col items-center justify-center space-y-4">
-        <Loader2 className="h-10 w-10 animate-spin text-primary/60"/>
-        <p className="text-muted-foreground animate-pulse text-sm">Cargando tu progreso...</p>
+        <Loader2 className="h-10 w-10 animate-spin text-primary/40"/>
+        <p className="text-muted-foreground text-sm">Preparando tu experiencia...</p>
       </div>
     );
   }
@@ -216,7 +225,12 @@ export function OnboardingForm() {
         {step === 6 && <AvailabilityStep/>}
         {step === 7 && <ExperienceLevelStep/>}
         {/*{step === 9 && <PortfolioStep/>}*/}
-        {step === 8 && <AccountStep/>}
+        {step === 8 && (
+          <AccountStep
+            user={userMemo}
+            isSignedIn={isOAuth}
+          />
+        )}
       </div>
 
       {/* Controles */}

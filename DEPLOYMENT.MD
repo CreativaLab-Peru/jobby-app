@@ -1,7 +1,9 @@
-# WIP
+# v1.2.1 - 2026-04-06
 
 ## Enhancements
+- It's necessary to run again prisma/seed/conf_cv_sections.ts.
 - `requiredRequirements, optionalRequirements, companyLogoUrl, minSalary and maxSalary` added in opportunities table
+- New CvSectionConfiguration and TempCvWithEvaluation added to support new CV template and evaluation flow
 
 # v1.1.29 - 2026-03-23
 

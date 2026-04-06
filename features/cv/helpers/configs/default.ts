@@ -1,6 +1,8 @@
 import { OpportunityType } from "@prisma/client"
 import type { SectionConfig } from "../types"
 
+// TODO: el default actual unicamente toda los valores en español, pero eventualmente podríamos querer tener ejemplos específicos para cada idioma. En ese caso, podríamos usar la nueva columna sections_en para almacenar ejemplos en inglés, y mantener sections para español o como fallback general. La función getDefaultConfig podría entonces retornar ejemplos basados en el idioma del CV que se está generando. Por ahora, mantendremos todo en español para simplicidad ya que llamamos los contenidos en el seed de conf_cv_sections, pero esta sería una forma de escalarlo en el futuro sin romper compatibilidad con los datos existentes.
+
 /**
  * Configuración por defecto para CvTypes que aún no han sido configurados
  * Usa la lógica actual del sistema

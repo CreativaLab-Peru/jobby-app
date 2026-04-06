@@ -9,9 +9,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Lightbulb, Info, CheckCircle } from "lucide-react"
 import { TagsInput } from "./tags-input"
 import type { CVField } from "@/types/cv"
+import { resolveLocalizedText } from "@/features/cv/utils/localized-text"
 
 interface FieldWithRecommendationsProps {
   field: CVField
+  language?: "ES" | "EN"
   value: any
   onChange: (value: string) => void
   onSelectChange?: (value: string) => void
@@ -20,6 +22,7 @@ interface FieldWithRecommendationsProps {
 
 export function FieldWithRecommendations({
                                            field,
+                                           language = "ES",
                                            value,
                                            onChange,
                                            onSelectChange,
@@ -28,12 +31,16 @@ export function FieldWithRecommendations({
   const [tipPopoverOpen, setTipPopoverOpen] = useState(false)
   const [examplePopoverOpen, setExamplePopoverOpen] = useState(false)
 
+  const labelText = resolveLocalizedText(field.label, "ES")
+  const tipText = field.tip ? resolveLocalizedText(field.tip, "ES") : ""
+  const exampleText = field.example ? resolveLocalizedText(field.example, language) : ""
+
   const useExample = () => {
-    if (field.type === "tags" && field.example) {
-      const exampleTags = field.example.split(", ")
+    if (field.type === "tags" && exampleText) {
+      const exampleTags = exampleText.split(", ")
       onTagsChange?.(exampleTags)
-    } else if (field.example) {
-      onChange(field.example)
+    } else if (exampleText) {
+      onChange(exampleText)
     }
     setExamplePopoverOpen(false)
   }
@@ -51,12 +58,12 @@ export function FieldWithRecommendations({
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <label className="block text-sm font-medium text-foreground">
-          {field.label} {field.required && <span className="text-destructive">*</span>}
+          {labelText} {field.required && <span className="text-destructive">*</span>}
         </label>
 
         <div className="flex items-center gap-2">
           {/* Tip Popover */}
-          {field.tip && (
+          {tipText && (
             <Popover open={tipPopoverOpen} onOpenChange={setTipPopoverOpen}>
               <PopoverTrigger asChild>
                 <button
@@ -73,7 +80,7 @@ export function FieldWithRecommendations({
                     <Lightbulb className="w-5 h-5  mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
                       <p className="text-xs font-medium mb-1">Consejo:</p>
-                      <p className="text-sm leading-relaxed">{field.tip}</p>
+                      <p className="text-sm leading-relaxed">{tipText}</p>
                     </div>
                   </div>
                   <div className="flex justify-end">
@@ -92,7 +99,7 @@ export function FieldWithRecommendations({
           )}
 
           {/* Example Popover */}
-          {field.example && (
+          {exampleText && (
             <Popover open={examplePopoverOpen} onOpenChange={setExamplePopoverOpen}>
               <PopoverTrigger asChild>
                 <button
@@ -110,7 +117,7 @@ export function FieldWithRecommendations({
                     <Info className="w-5 h-5  mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
                       <p className="text-xs font-medium mb-1 text-secondary-foreground/80">Ejemplo:</p>
-                      <p className="text-sm italic leading-relaxed">{field.example}</p>
+                      <p className="text-sm italic leading-relaxed">{exampleText}</p>
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -146,19 +153,19 @@ export function FieldWithRecommendations({
         <Textarea
           value={fieldValue}
           onChange={(e) => onChange(e.target.value)}
-          placeholder={`Ingresa ${field.label.toLowerCase()}`}
+          placeholder={`Ingresa ${labelText.toLowerCase()}`}
           className="min-h-[200px] bg-input text-foreground border-border focus:ring-ring focus:ring-2 focus:ring-offset-2"
         />
       ) : field.type === "tags" ? (
         <TagsInput
           value={fieldValue}
           onChange={onTagsChange || (() => {})}
-          placeholder={`Agrega ${field.label.toLowerCase()}`}
+          placeholder={`Agrega ${labelText.toLowerCase()}`}
         />
       ) : field.type === "select" ? (
         <Select value={fieldValue} onValueChange={(val) => onSelectChange?.(val)}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Selecciona una opción" />
+            <SelectValue placeholder="Selecciona una opcion" />
           </SelectTrigger>
           <SelectContent>
             {field.options?.map((option: string) => (
@@ -173,7 +180,7 @@ export function FieldWithRecommendations({
           type={field.type}
           value={fieldValue}
           onChange={(e) => onChange(e.target.value)}
-          placeholder={`Ingresa ${field.label.toLowerCase()}`}
+          placeholder={`Ingresa ${labelText.toLowerCase()}`}
         />
       )}
     </div>

@@ -1,10 +1,15 @@
+export type LocalizedText = {
+  es: string
+  en: string
+}
+
 export interface CVField {
   name: string
-  label: string
+  label: string | LocalizedText
   type: "text" | "email" | "number" | "textarea" | "select" | "tags" | "url" | "photo"
   required: boolean
-  tip?: string
-  example?: string
+  tip?: string | LocalizedText
+  example?: string | LocalizedText
   options?: string[]
   pattern?: string
   patternError?: string
@@ -12,7 +17,7 @@ export interface CVField {
 
 export interface CVSection {
   id: string
-  title: string
+  title: string | LocalizedText
   icon
   fields: CVField[]
   multiple?: boolean

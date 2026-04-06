@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
 const LEVELS = [
   {
     id: "EGRESADO",
-    label: "Recién egresado/a",
-    desc: "Buscando mi primera oportunidad profesional.",
+    label: "En curso o recién egresado/a",
+    desc: "Buscando mis primeras oportunidades.",
     icon: GraduationCap
   },
   {

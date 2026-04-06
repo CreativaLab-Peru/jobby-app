@@ -4,10 +4,18 @@ import {auth} from "@/lib/auth";
 import {prisma} from "@/lib/prisma";
 
 export async function proxy(request: NextRequest) {
-  const sessionCookie = getSessionCookie(request);
   const {pathname} = request.nextUrl;
 
+  if (
+    pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/onboarding") ||
+    pathname.startsWith("/_next")
+  ) {
+    return NextResponse.next();
+  }
+
   // 1. Si NO hay sesión y el usuario intenta entrar a una ruta protegida
+  const sessionCookie = getSessionCookie(request);
   if (!sessionCookie) {
     // Redirigir al login en lugar de 404 para mejorar la UX
     const loginUrl = new URL("/login", request.url);
@@ -59,6 +67,6 @@ export const config = {
     "/settings",
     "/billing",
     "/dashboard",
-    "/app/:path*" // Recomendación: agrupar rutas protegidas bajo /app
+    // "/app/:path*" // Recomendación: agrupar rutas protegidas bajo /app
   ],
 };

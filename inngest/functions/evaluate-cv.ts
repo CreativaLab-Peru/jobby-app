@@ -7,7 +7,6 @@ import {consumeCredits, ConsumeCreditsParams} from "@/features/credits/actions/c
 import {
   AiEvaluationResult,
   buildCvPayloadForEvaluation,
-  filterSectionsByOpportunity,
   sanitizeSectionType
 } from "../utils/cv-evaluation-helper";
 import {refundCredits} from "@/features/credits/actions/refund-credits";
@@ -18,7 +17,7 @@ export const evaluateCv = inngest.createFunction(
   async ({ event, step }) => {
     const { cvId, userId, evaluationId } = event.data as {
       cvId: string;
-      userId: string;
+      userId: string; // Todo: we don't need to delete
       evaluationId?: string
     };
 
@@ -48,10 +47,9 @@ export const evaluateCv = inngest.createFunction(
       const fullPayload = buildCvPayloadForEvaluation({
         sections: cvData?.sections,
       });
+      console.log("[fullPayload]", fullPayload)
 
-      const filtered = filterSectionsByOpportunity(fullPayload, cvData?.opportunityType ?? null);
-
-      return { filteredSections: filtered, cv: cvData };
+      return { filteredSections: fullPayload, cv: cvData };
     });
 
     if (Object.keys(filteredSections).length === 0) {
@@ -106,7 +104,7 @@ export const evaluateCv = inngest.createFunction(
               status: JobStatus.SUCCEEDED,
               overallScore: data.overallScore,
               summary: data.summary,
-              extractorOutput: JSON.stringify(data),
+              extractorOutput: data as any,
               improvementsJson: {
                 improvedTexts,
                 suggestedAdditions,
@@ -144,6 +142,16 @@ export const evaluateCv = inngest.createFunction(
         await prisma.route.updateMany({
           where: { cvId, userId, status: { in: [RouteStatus.CV_CREATED, RouteStatus.ANALYSIS_PENDING] } },
           data: { status: RouteStatus.ANALYSIS_DONE }
+        });
+      });
+
+      await step.run("emit-completion-evaluation", async () => {
+        await inngest.send({
+          name: "cv/evaluation.completed",
+          data: {
+            cvId: cvId,
+            userId: userId
+          }
         });
       });
 

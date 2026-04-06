@@ -7,12 +7,12 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog"
-import { Badge } from "@/components/ui/badge"
-import { CreditCard, Wallet } from "lucide-react"
+import {Badge} from "@/components/ui/badge"
+import {CreditCard, Wallet} from "lucide-react"
 
 export enum PaymentMethod {
-    MERCADOPAGO = "mercadopago",
-    PADDLE = "paddle",
+  MERCADOPAGO = "mercadopago",
+  PADDLE = "paddle",
 }
 
 interface PaymentMethodOption {
@@ -50,12 +50,12 @@ interface PaymentMethodModalProps {
 }
 
 export function PaymentMethodModal({
-  isOpen,
-  onClose,
-  packName,
-  price,
-  onSelectMethod,
-}: PaymentMethodModalProps) {
+                                     isOpen,
+                                     onClose,
+                                     packName,
+                                     price,
+                                     onSelectMethod,
+                                   }: PaymentMethodModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-sm">
@@ -82,10 +82,10 @@ export function PaymentMethodModal({
                 }}
                 className={`flex items-center gap-4 p-4 rounded-2xl border text-left transition-all w-full
                   ${
-                    method.available
-                      ? "hover:border-primary hover:bg-primary/5 cursor-pointer"
-                      : "opacity-50 cursor-not-allowed bg-muted/30"
-                  }`}
+                  method.available
+                    ? "hover:border-primary hover:bg-primary/5 cursor-pointer"
+                    : "opacity-50 cursor-not-allowed bg-muted/30"
+                }`}
               >
                 <div
                   className={`p-3 rounded-xl shrink-0 ${
@@ -94,7 +94,7 @@ export function PaymentMethodModal({
                       : "bg-muted text-muted-foreground"
                   }`}
                 >
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-5 h-5"/>
                 </div>
 
                 <div className="flex-1 min-w-0">
@@ -116,7 +116,8 @@ export function PaymentMethodModal({
           })}
         </div>
 
-        <p className="text-[10px] text-center text-muted-foreground font-semibold uppercase tracking-widest opacity-50 pt-1">
+        <p
+          className="text-[10px] text-center text-muted-foreground font-semibold uppercase tracking-widest opacity-50 pt-1">
           Pagos procesados de forma segura
         </p>
       </DialogContent>

@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { useCreditModal } from "@/features/credits/hooks/use-credit-modal";
 
 export default function AnalysisPage() {
-  const { fileName, userId } = useAnalysisStore();
+  // const { fileName, userId } = useAnalysisStore();
   const [stage, setStage] = useState<"loading" | "results">("loading");
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState("Extrayendo texto del PDF...");
@@ -55,9 +55,9 @@ export default function AnalysisPage() {
                 <Search className="w-6 h-6 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
               </div>
               <h2 className="text-3xl font-bold mb-2 tracking-tight">Analizando Perfil</h2>
-              <p className="text-muted-foreground mb-8 text-sm font-mono bg-muted/50 py-1 px-3 rounded-full">
-                {fileName || "curriculum_vitae.pdf"}
-              </p>
+              {/*<p className="text-muted-foreground mb-8 text-sm font-mono bg-muted/50 py-1 px-3 rounded-full">*/}
+              {/*  {fileName || "curriculum_vitae.pdf"}*/}
+              {/*</p>*/}
               <div className="w-full space-y-2">
                 <Progress value={progress} className="w-full h-3 shadow-inner" />
                 <div className="flex justify-between text-xs font-medium text-muted-foreground">

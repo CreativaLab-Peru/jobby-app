@@ -1,25 +1,46 @@
 # Personalización de CVs
 
 El sistema de CVs soporta **personalización completa** de campos según:
+
 - **Tipo de CV** (`CvType`): TECHNOLOGY_ENGINEERING, DESIGN_CREATIVITY, MARKETING_STRATEGY, FINANCE_PROJECTS, MANAGEMENT_BUSINESS, SOCIAL_MEDIA, EDUCATION, SCIENCE
 - **Tipo de Oportunidad** (`OpportunityType`): SCHOLARSHIP, INTERNSHIP, EMPLOYMENT, FREELANCE, EXCHANGE_PROGRAM, GRADUATE_PROGRAM, FULL_TIME, PART_TIME
+
+---
+
+## 🌐 Soporte Multilenguaje
+
+Ahora existen **dos carpetas de idiomas** dentro de `language/`:
+
+```
+features/cv/helpers/configs/language/
+├── es/   ← Español
+└── en/   ← Inglés
+```
+
+Cada carpeta contiene los archivos de traducción y textos personalizados para los formularios de CV.
+
+> ⚠️ **Nota:** Falta implementar la personalización en inglés en los archivos `default` y `base-sections` para que el sistema funcione completamente en ambos idiomas.
 
 ---
 
 ## Características Personalizables
 
 ### 1. **Secciones del CV** (`sections`)
+
 Define qué secciones mostrar y en qué orden.
 
 **Ejemplo:**
+
 ```typescript
-sections: ["personal", "education", "projects", "skills"]
+sections: ["personal", "education", "projects", "skills"];
 ```
 
 ### 2. **Ejemplos** (`examples`)
+
 Personaliza los ejemplos que aparecen en cada campo del formulario.
 
 **Ejemplo:**
+
 ```typescript
 examples: {
   "personal.summary": "Estudiante de...",
@@ -27,10 +48,12 @@ examples: {
 }
 ```
 
-### 3. **Tips** (`tips`) *(Opcional)*
+### 3. **Tips** (`tips`) _(Opcional)_
+
 Personaliza los consejos/ayudas que aparecen en cada campo.
 
 **Ejemplo:**
+
 ```typescript
 tips: {
   "personal.summary": "Enfócate en tus logros académicos y objetivos",
@@ -39,9 +62,11 @@ tips: {
 ```
 
 ### 4. **Campos Requeridos** (`requiredFields`) ⭐ **NUEVO**
+
 Personaliza qué campos son obligatorios según el contexto.
 
 **Ejemplo:**
+
 ```typescript
 requiredFields: {
   "education.level": false,        // Campo opcional
@@ -60,14 +85,14 @@ Para **TODOS los tipos de CV** con **OpportunityType: SCHOLARSHIP**, la educaci�
 
 #### Archivos Configurados (8 tipos de CV):
 
-1. ✅ `configs/technology-engineering/scholarship.ts`
-2. ✅ `configs/design-creativity/scholarship.ts`
-3. ✅ `configs/marketing-strategy/scholarship.ts`
-4. ✅ `configs/finance-projects/scholarship.ts`
-5. ✅ `configs/management-business/scholarship.ts`
-6. ✅ `configs/social-media/scholarship.ts`
-7. ✅ `configs/education/scholarship.ts`
-8. ✅ `configs/science/scholarship.ts`
+1. ✅ `configs/language/es/technology-engineering/scholarship.ts`
+2. ✅ `configs/language/es/design-creativity/scholarship.ts`
+3. ✅ `configs/language/es/marketing-strategy/scholarship.ts`
+4. ✅ `configs/language/es/finance-projects/scholarship.ts`
+5. ✅ `configs/language/es/management-business/scholarship.ts`
+6. ✅ `configs/language/es/social-media/scholarship.ts`
+7. ✅ `configs/language/es/education/scholarship.ts`
+8. ✅ `configs/language/es/science/scholarship.ts`
 9. ✅ `configs/default.ts` (fallback)
 
 #### Código Implementado:
@@ -76,7 +101,7 @@ Para **TODOS los tipos de CV** con **OpportunityType: SCHOLARSHIP**, la educaci�
 // Ejemplo: technology-engineering/scholarship.ts
 export const technologyEngineeringScholarship: SectionConfig = {
   sections: ["personal", "education", "projects", "achievements", "skills"],
-  
+
   // ✅ Educación opcional para becas
   requiredFields: {
     "education.level": false,
@@ -85,13 +110,13 @@ export const technologyEngineeringScholarship: SectionConfig = {
     "education.location": false,
     "education.year": false,
   },
-  
+
   examples: {
     "personal.summary": "Estudiante de Ingeniería de Sistemas buscando beca...",
     "education.year": "Esperado Diciembre 2026",
     "education.institution": "Universidad Nacional de San Antonio Abad del Cusco",
     // ... más ejemplos
-  }
+  },
 };
 ```
 
@@ -111,7 +136,7 @@ export const technologyEngineeringScholarship: SectionConfig = {
 Según el **Tipo de CV** y **Tipo de Oportunidad**:
 
 ```
-features/cv/helpers/configs/
+features/cv/helpers/configs/language/es/
 ├── technology-engineering/
 │   ├── scholarship.ts      ← Para SCHOLARSHIP
 │   ├── internship.ts       ← Para INTERNSHIP
@@ -139,19 +164,19 @@ features/cv/helpers/configs/
 
 export const technologyEngineeringInternship: SectionConfig = {
   sections: ["personal", "education", "projects", "experience", "skills"],
-  
+
   // ✅ Agregar requiredFields
   requiredFields: {
-    "experience.company": false,          // Opcional para pasantías
-    "experience.position": false,         // Opcional
+    "experience.company": false, // Opcional para pasantías
+    "experience.position": false, // Opcional
     "experience.responsibilities": false, // Opcional
-    "projects.title": true,               // Proyectos SÍ requeridos
+    "projects.title": true, // Proyectos SÍ requeridos
   },
-  
+
   examples: {
     "personal.summary": "Estudiante buscando pasantía en desarrollo de software...",
     // ... más ejemplos
-  }
+  },
 };
 ```
 
@@ -162,15 +187,13 @@ Asegúrate de que el archivo esté exportado en `index.ts`:
 ```typescript
 // En: technology-engineering/index.ts
 
-import { technologyEngineeringInternship } from "./internship";
-import { technologyEngineeringScholarship } from "./scholarship";
-import { technologyEngineeringEmployment } from "./employment";
+import { technologyEngineeringInternship_es } from "./internship";
+import { technologyEngineeringScholarship_es } from "./scholarship";
+import { technologyEngineeringEmployment_es } from "./employment";
 import { OpportunityType } from "@prisma/client";
 import type { SectionConfig } from "../types";
 
-export const getTechnologyEngineeringConfig = (
-  opportunityType: OpportunityType
-): SectionConfig => {
+export const getTechnologyEngineeringConfig = (opportunityType: OpportunityType): SectionConfig => {
   switch (opportunityType) {
     case OpportunityType.INTERNSHIP:
       return technologyEngineeringInternship;
@@ -197,6 +220,7 @@ export const getTechnologyEngineeringConfig = (
 ## Referencia de Campos Disponibles
 
 ### Personal
+
 - `personal.fullName` (siempre requerido)
 - `personal.address`
 - `personal.linkedin`
@@ -205,6 +229,7 @@ export const getTechnologyEngineeringConfig = (
 - `personal.summary` (siempre requerido)
 
 ### Educación
+
 - `education.level`
 - `education.title`
 - `education.institution`
@@ -213,6 +238,7 @@ export const getTechnologyEngineeringConfig = (
 - `education.honors` (siempre opcional)
 
 ### Experiencia
+
 - `experience.company`
 - `experience.location`
 - `experience.position`
@@ -220,27 +246,32 @@ export const getTechnologyEngineeringConfig = (
 - `experience.responsibilities`
 
 ### Proyectos
+
 - `projects.title`
 - `projects.description`
 - `projects.technologies`
 - `projects.duration`
 
 ### Habilidades
+
 - `skills.technical`
 - `skills.soft`
 - `skills.languages` (siempre requerido)
 
 ### Logros
+
 - `achievements.title`
 - `achievements.description`
 - `achievements.date`
 
 ### Certificaciones
+
 - `certifications.name`
 - `certifications.issuer`
 - `certifications.date`
 
 ### Voluntariado
+
 - `volunteering.organization`
 - `volunteering.location`
 - `volunteering.position`
@@ -256,6 +287,7 @@ export const getTechnologyEngineeringConfig = (
 **Contexto**: Estudiantes que están en proceso de estudiar necesitan solicitar becas sin tener aún su título completo.
 
 **Configuración:**
+
 ```typescript
 requiredFields: {
   "education.level": false,
@@ -275,6 +307,7 @@ requiredFields: {
 **Contexto**: Estudiantes universitarios que buscan programas de intercambio académico priorizan logros académicos sobre experiencia laboral.
 
 **Configuración sugerida:**
+
 ```typescript
 requiredFields: {
   "experience.company": false,        // Experiencia laboral opcional
@@ -293,6 +326,7 @@ sections: ["personal", "education", "projects", "achievements", "skills"]
 **Contexto**: Candidatos sin experiencia laboral formal que buscan su primer trabajo.
 
 **Configuración sugerida:**
+
 ```typescript
 requiredFields: {
   "experience.company": false,        // Sin experiencia profesional aún
@@ -311,6 +345,7 @@ sections: ["personal", "education", "projects", "skills", "certifications"]
 **Contexto**: Profesionales independientes donde el portfolio de proyectos es más importante que la educación formal.
 
 **Configuración sugerida:**
+
 ```typescript
 requiredFields: {
   "education.institution": false,     // Educación formal opcional
@@ -330,6 +365,7 @@ sections: ["personal", "projects", "certifications", "skills", "experience"]
 **Contexto**: Académicos y científicos que aplican a posiciones de investigación.
 
 **Configuración sugerida:**
+
 ```typescript
 requiredFields: {
   "projects.title": true,             // Proyectos de investigación requeridos
@@ -347,6 +383,7 @@ sections: ["personal", "education", "projects", "achievements", "certifications"
 **Contexto**: Estudiantes que buscan pasantías durante o después de sus estudios.
 
 **Configuración sugerida:**
+
 ```typescript
 requiredFields: {
   "experience.company": false,        // Experiencia laboral opcional
@@ -374,7 +411,7 @@ applyCustomization(baseSection, config)
        ├─ Lee base-sections.ts (defaults)
        ├─ Aplica examples personalizados
        ├─ Aplica tips personalizados
-       └─ Aplica requiredFields personalizados 
+       └─ Aplica requiredFields personalizados
        ↓
 CVSectionForm recibe sección personalizada
        └─ Campos tienen required: true/false según config
@@ -393,14 +430,13 @@ Submit guarda en DB
 4. **`configs/[cvType]/`**: Configuraciones específicas por tipo
 5. **`cv-section-form.tsx`**: Validación de formularios
 
+> ⚠️ **Recuerda:** Falta implementar la personalización en inglés en los archivos `default` y `base-sections` para soporte completo en ambos idiomas.
+
 ### Flujo de Personalización
 
 ```typescript
 // 1. Usuario crea CV: SCHOLARSHIP + TECHNOLOGY_ENGINEERING
-const sections = getSections(
-  OpportunityType.SCHOLARSHIP, 
-  CvType.TECHNOLOGY_ENGINEERING
-);
+const sections = getSections(OpportunityType.SCHOLARSHIP, CvType.TECHNOLOGY_ENGINEERING);
 
 // 2. getConfig() retorna configuración específica
 const config = getTechnologyEngineeringConfig(OpportunityType.SCHOLARSHIP);
@@ -408,29 +444,36 @@ const config = getTechnologyEngineeringConfig(OpportunityType.SCHOLARSHIP);
 
 // 3. applyCustomization() modifica required
 const educationSection = applyCustomization(baseEducationSection, config);
-// education.institution.required: true → false 
+// education.institution.required: true → false
 
 // 4. Formulario valida según required personalizado
-if (educationSection.fields.every(f => !f.required)) {
-  return true; // Permite avanzar sin items 
+if (educationSection.fields.every((f) => !f.required)) {
+  return true; // Permite avanzar sin items
 }
 ```
 
 ---
 
 ## Archivos para revisar:
+
 - `features/cv/helpers/types.ts` - Definiciones de tipos
 - `features/cv/helpers/index.ts` - Lógica de aplicación
 - `features/cv/components/cv-section-form.tsx` - Validación
+- `features/cv/helpers/language/es/` y `features/cv/helpers/language/en/` - Traducciones y textos
 
 **Para debugging, agregar logs temporales:**
+
 ```typescript
 // En applyCustomization():
 console.log(`${fieldPath}:`, { originalRequired, customRequired, finalRequired });
 
 // En validateAll():
-console.log("Section:", section.id, "Fields:", section.fields.map(f => f.required));
+console.log(
+  "Section:",
+  section.id,
+  "Fields:",
+  section.fields.map((f) => f.required),
+);
 ```
-````
 
 ---

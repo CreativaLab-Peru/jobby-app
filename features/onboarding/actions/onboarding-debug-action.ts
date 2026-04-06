@@ -4,6 +4,37 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { TalentOnboardingFormData } from "@/features/onboarding/schemas";
 import {createBasicCredits} from "@/features/credits/actions/create-basic-credits";
+import { Prisma } from "@prisma/client";
+
+const hasCompletedOnboardingPreference = (pref: {
+  preferredRoles: string[];
+  targetIndustries: string[];
+  workModality: string[];
+  availability: string[];
+  opportunityTypes: string[];
+  skills: unknown[];
+  expLevel: string | null;
+  portfolioUrl: string | null;
+  minSalary: unknown;
+  maxSalary: unknown;
+  relocation: boolean;
+} | null) => {
+  if (!pref) return false;
+
+  return (
+    pref.preferredRoles.length > 0 ||
+    pref.targetIndustries.length > 0 ||
+    pref.workModality.length > 0 ||
+    pref.availability.length > 0 ||
+    pref.opportunityTypes.length > 0 ||
+    pref.skills.length > 0 ||
+    Boolean(pref.expLevel) ||
+    Boolean(pref.portfolioUrl) ||
+    pref.minSalary !== null ||
+    pref.maxSalary !== null ||
+    pref.relocation === true
+  );
+};
 
 export async function completeOnboardingDebugAction(id: string, body: TalentOnboardingFormData) {
   const data = body;
@@ -17,8 +48,32 @@ export async function completeOnboardingDebugAction(id: string, body: TalentOnbo
       return { error: "Usuario no encontrado." };
     }
 
-    // Usamos una transacción para asegurar que todo se cree correctamente
+    let onboardingAlreadyCompleted = false;
+
+    // Usamos una transacción serializable para evitar carreras en doble submit.
     await prisma.$transaction(async (tx) => {
+      const existingPreference = await tx.userPreference.findUnique({
+        where: { userId: user.id },
+        select: {
+          preferredRoles: true,
+          targetIndustries: true,
+          workModality: true,
+          availability: true,
+          opportunityTypes: true,
+          skills: true,
+          expLevel: true,
+          portfolioUrl: true,
+          minSalary: true,
+          maxSalary: true,
+          relocation: true,
+        },
+      });
+
+      if (hasCompletedOnboardingPreference(existingPreference)) {
+        onboardingAlreadyCompleted = true;
+        return;
+      }
+
       // 1. Guardar preferencias
       await tx.userPreference.upsert({
         where: { userId: user.id },
@@ -56,12 +111,16 @@ export async function completeOnboardingDebugAction(id: string, body: TalentOnbo
           emailVerified: true,
           birthday: new Date(data.birthDate)
         },
-      })
-    });
+      });
 
-    const creditsResult = await createBasicCredits(user.id);
-    if (creditsResult.status === "error") {
-      return { error: "Error al otorgar créditos" };
+      const creditsResult = await createBasicCredits(user.id, tx);
+      if (!creditsResult) {
+        throw new Error("CREDITS_GRANT_FAILED");
+      }
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+
+    if (onboardingAlreadyCompleted) {
+      return { error: "El onboarding ya fue completado." };
     }
 
     revalidatePath("/dashboard");

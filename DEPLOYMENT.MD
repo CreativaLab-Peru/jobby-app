@@ -1,9 +1,6 @@
 # WIP
-## Fix:
-- It's OBLIGATORY run the backfill-onboarding-credits.mjs to apply the single omboarding condition to existing users.
 
 ## Enhancements
-- Added new column onboardingCreditsGranted in the Table USER.
 - It't necesary to run again prisma/seed/conf_cv_sections.ts.
 - `requiredRequirements, optionalRequirements, companyLogoUrl, minSalary and maxSalary` added in opportunities table
 - New CvSectionConfiguration and TempCvWithEvaluation added to support new CV template and evaluation flow

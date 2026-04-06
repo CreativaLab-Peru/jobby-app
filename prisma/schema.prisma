@@ -25,7 +25,6 @@ model User {
   image                      String?
   updatedPassword            Boolean             @default(false)
   isBlocked                  Boolean             @default(false)
-  onboardingCreditsGranted   Boolean             @default(false)
   lastLoginAt                DateTime?
   happensAfterPayment        Boolean             @default(false)
   acceptedTermsAndConditions Boolean             @default(false)

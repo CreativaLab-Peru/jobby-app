@@ -1,10 +1,10 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { createBasicCredits } from "@/features/credits/actions/create-basic-credits";
 
 /**
- * Verifica automáticamente el email de usuarios OAuth y les otorga créditos
+ * Verifica automáticamente el email de usuarios OAuth.
+ * Los créditos básicos se otorgan al completar onboarding.
  * ya que los proveedores OAuth (Google, etc.) ya verifican el email
  */
 export async function verifyOAuthUser(userId: string) {
@@ -31,17 +31,13 @@ export async function verifyOAuthUser(userId: string) {
       return { error: "No es un usuario OAuth" };
     }
 
-
-    // Si ya está verificado, verificar si tiene créditos
+    // Si ya está verificado, no hay más acciones necesarias aquí.
     if (user.emailVerified) {
-      // Verificar si ya tiene créditos
-      const hasCredits = user.userCreditBalance.length > 0;
-      if (!hasCredits) {
-        await createBasicCredits(userId);
-        return { success: true, alreadyVerified: true, creditsAdded: true };
-      }
-
-      return { success: true, alreadyVerified: true, creditsAdded: false };
+      return {
+        success: true,
+        alreadyVerified: true,
+        creditsAdded: false,
+      };
     }
 
     // Marcar como verificado
@@ -49,13 +45,6 @@ export async function verifyOAuthUser(userId: string) {
       where: { id: userId },
       data: { emailVerified: true },
     });
-
-    // Otorgar créditos básicos
-    const creditsResult = await createBasicCredits(userId);
-
-    if (!creditsResult) {
-      return { error: "Error al otorgar créditos" };
-    }
 
     return { success: true, alreadyVerified: false };
 

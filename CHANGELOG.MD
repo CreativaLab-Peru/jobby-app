@@ -1,6 +1,16 @@
+# v.1.2.2 - 2026-04-06
+
+## Features
+- Admin dashboard to monitor new CVs, evaluations, opportunities, roadmaps and complaints.
+
+## Fixes
+- Onboarding is only used once; there is no longer a risk of having infinite credits.
+
+
 # v.1.2.1 - 2026-04-06
 
 ## Fixes
+- Fixed the problem where the summary content was not being saved.
 - Fixed the problem where the summary content was not being saved.
 - New way for hot selling (cv-pay and cv-builder)
 

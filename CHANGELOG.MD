@@ -1,7 +1,7 @@
 # WIP
 
 ## Features
-- Admin dashboard to monitor new CVs, evaluations, opportunities and roadmaps.
+- Admin dashboard to monitor new CVs, evaluations, opportunities, roadmaps and complains.
 
 # v.1.2.1 - 2026-04-06
 

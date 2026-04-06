@@ -15,6 +15,7 @@ export interface AdminDashboardStats {
     evaluations: number;
     opportunities: number;
     roadmaps: number;
+    complaints: number;
   };
 }
 
@@ -55,12 +56,13 @@ export const getAdminDashboardStats = async (
     const {start, end} = getRangeDates(range);
     const createdAtFilter = {gte: start, lte: end};
 
-    const [users, cvs, evaluations, opportunities, roadmaps] = await Promise.all([
+    const [users, cvs, evaluations, opportunities, roadmaps, complaints] = await Promise.all([
       prisma.user.count({where: {createdAt: createdAtFilter}}),
       prisma.cv.count({where: {createdAt: createdAtFilter, deletedAt: null}}),
       prisma.cvEvaluation.count({where: {createdAt: createdAtFilter}}),
       prisma.opportunity.count({where: {createdAt: createdAtFilter}}),
       prisma.roadmap.count({where: {createdAt: createdAtFilter}}),
+      prisma.complaint.count({where: {createdAt: createdAtFilter}}),
     ]);
 
     return {
@@ -75,6 +77,7 @@ export const getAdminDashboardStats = async (
           evaluations,
           opportunities,
           roadmaps,
+          complaints,
         },
       },
       error: "",
@@ -84,4 +87,3 @@ export const getAdminDashboardStats = async (
     return {success: false, error: "Error obteniendo estadisticas"};
   }
 };
-

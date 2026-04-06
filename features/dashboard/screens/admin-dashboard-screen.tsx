@@ -1,10 +1,15 @@
-import { Users, FileText, ClipboardCheck, Target, Map } from "lucide-react";
+import {Users, FileText, ClipboardCheck, Target, Map, MessageSquareWarning} from "lucide-react";
 
-import { PageHeader } from "@/components/shared/page-header";
-import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
-import { AdminDashboardRange, AdminDashboardStats } from "@/features/dashboard/actions/admin/get-admin-dashboard-stats";
-import { AdminDashboardRangeTabs } from "@/features/dashboard/components/admin/admin-dashboard-range-tabs";
-import { AdminDashboardStatCard } from "@/features/dashboard/components/admin/admin-dashboard-stat-card";
+import {PageHeader} from "@/components/shared/page-header";
+import {EmptyPlaceholder} from "@/components/shared/empty-placeholder";
+import {AdminDashboardStats} from "@/features/dashboard/actions/admin/get-admin-dashboard-stats";
+import {
+  AdminDashboardRangeTabs
+} from "@/features/dashboard/components/admin/admin-dashboard-range-tabs";
+import {
+  AdminDashboardStatCard
+} from "@/features/dashboard/components/admin/admin-dashboard-stat-card";
+import {AdminDashboardRange} from "@/features/dashboard/utils/get-range";
 
 interface AdminDashboardScreenProps {
   stats: AdminDashboardStats | null;
@@ -21,10 +26,10 @@ const formatDate = (value: string) => {
 };
 
 export function AdminDashboardScreen({
-  stats,
-  activeRange,
-  error,
-}: AdminDashboardScreenProps) {
+                                       stats,
+                                       activeRange,
+                                       error,
+                                     }: AdminDashboardScreenProps) {
   const hasError = Boolean(error);
   const dateRangeLabel = stats
     ? `${formatDate(stats.since)} - ${formatDate(stats.until)}`
@@ -39,12 +44,14 @@ export function AdminDashboardScreen({
             description="Resumen operativo del crecimiento y pipeline del producto."
           />
 
-          <div className="flex flex-col gap-4 rounded-2xl border border-border/60 bg-card/50 p-4 md:flex-row md:items-center md:justify-between">
+          <div
+            className="flex flex-col gap-4 rounded-2xl border border-border/60 bg-card/50 p-4 md:flex-row md:items-center md:justify-between">
             <div className="space-y-1">
-              <div className="text-xs font-semibold uppercase text-muted-foreground">Rango activo</div>
+              <div className="text-xs font-semibold uppercase text-muted-foreground">Rango activo
+              </div>
               <div className="text-sm font-semibold text-foreground">{dateRangeLabel}</div>
             </div>
-            <AdminDashboardRangeTabs activeRange={activeRange} />
+            <AdminDashboardRangeTabs activeRange={activeRange}/>
           </div>
 
           {hasError ? (
@@ -92,6 +99,13 @@ export function AdminDashboardScreen({
                 subtitle="Roadmaps IA"
                 toneClassName="bg-sky-500/10 text-sky-600"
               />
+              <AdminDashboardStatCard
+                title="Reclamos"
+                value={stats?.totals.complaints ?? 0}
+                icon={MessageSquareWarning}
+                subtitle="Libro de reclamaciones"
+                toneClassName="bg-rose-500/10 text-rose-600"
+              />
             </div>
           )}
         </div>
@@ -99,4 +113,3 @@ export function AdminDashboardScreen({
     </main>
   );
 }
-

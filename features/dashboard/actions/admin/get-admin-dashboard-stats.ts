@@ -20,7 +20,7 @@ export interface AdminDashboardStats {
 }
 
 export type AdminDashboardStatsResult =
-  | { success: true; data: AdminDashboardStats, error: string }
+  | { success: true; data: AdminDashboardStats, error: null }
   | { success: false; error: string };
 
 
@@ -80,10 +80,10 @@ export const getAdminDashboardStats = async (
           complaints,
         },
       },
-      error: "",
+      error: null,
     };
   } catch (error) {
     console.error("[ADMIN_DASHBOARD_STATS_ERROR]", error);
-    return {success: false, error: "Error obteniendo estadisticas"};
+    return {success: false, error: "Error obteniendo estadísticas"};
   }
 };

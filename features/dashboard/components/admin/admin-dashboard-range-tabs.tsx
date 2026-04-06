@@ -1,14 +1,14 @@
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { AdminDashboardRange } from "@/features/dashboard/actions/admin/get-admin-dashboard-stats";
+import {AdminDashboardRange} from "@/features/dashboard/utils/get-range";
 
 const RANGE_OPTIONS: { value: AdminDashboardRange; label: string }[] = [
-  { value: "3d", label: "Ultimos 3 dias" },
-  { value: "7d", label: "Ultimos 7 dias" },
-  { value: "1m", label: "Ultimo mes" },
-  { value: "3m", label: "Ultimos 3 meses" },
-  { value: "6m", label: "Ultimos 6 meses" },
+  { value: "3d", label: "Últimos 3 dias" },
+  { value: "7d", label: "Últimos 7 dias" },
+  { value: "1m", label: "Último mes" },
+  { value: "3m", label: "Últimos 3 meses" },
+  { value: "6m", label: "Últimos 6 meses" },
 ];
 
 interface AdminDashboardRangeTabsProps {

@@ -58,7 +58,7 @@ export function AdminDashboardScreen({
             <div className="rounded-2xl border border-dashed border-border/60 bg-secondary/10">
               <EmptyPlaceholder
                 icon={Target}
-                title="No se pudieron cargar las metricas"
+                title="No se pudieron cargar las métricas"
                 description={error || "Hubo un problema obteniendo los datos."}
               />
             </div>

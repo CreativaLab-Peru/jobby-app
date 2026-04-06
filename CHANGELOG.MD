@@ -1,4 +1,4 @@
-# WIP
+# v.1.2.1 - 2026-04-06
 
 ## Fixes
 - Fixed the problem where the summary content was not being saved.
@@ -8,7 +8,7 @@
 - New function to migrate from temporal tables to real tables for CVs, evaluations and opportunities.
 
 ## Features
-- Added english recomendations (only examples).
+- Added english recommendations (only examples).
 
 # v.1.2.0 - 2026-03-30
 

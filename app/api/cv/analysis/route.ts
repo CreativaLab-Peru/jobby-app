@@ -74,7 +74,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Send event to trigger CV evaluation (correct event name)
+    // Send event to trigger CV evaluation
     await inngest.send({
       name: "cv/ready-for-evaluation",
       data: {

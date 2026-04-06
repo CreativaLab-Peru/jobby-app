@@ -16,6 +16,11 @@ Almacena emails de usuarios temporales (leads) capturados antes de un registro c
 - **Campos:** `id`, `email` (unique), `date`.
 - **Uso:** Pre-registro, captura de interés.
 
+### `temporal_user` (Mapeado como `temporal_user`)
+Almacena emails de usuarios temporales (leads) capturados antes de un registro completo.
+- **Campos:** `id`, `email` (unique), `date`.
+- **Uso:** Pre-registro, captura de interés.
+
 ### `session` & `account`
 - **`account`**: Almacena vinculaciones OAuth (Google, etc.) o credenciales.
 - **`session`**: Control de estado de sesión con persistencia de metadatos del cliente (`ipAddress`, `userAgent`).
@@ -139,14 +144,20 @@ Facturas de pagos realizados por usuarios.
 
 ## 🛠️ 6. Infraestructura y Auditoría
 
-### `queue_job`
+### `queue_job` (Mapeado como `queue_job`)
 Gestión de tareas asíncronas para el procesamiento pesado de IA.
-- **Resiliencia:** Maneja `attempts` y `maxAttempts` para reintentos automáticos tras fallos.
+- **Resiliencia:** Control de `attempts` y `maxAttempts` (default 5).
 
-### `log_entry`
-Registro de auditoría inmutable para debugging y seguridad.
-- **Acciones:** `AUTH`, `PAYMENT`, `EVALUATION`, `FILE_UPLOAD`.
+### `log_entry` (Mapeado como `log_entry`)
+Auditoría de eventos (AUTH, PAYMENT, EVALUATION, etc.) para debugging y seguridad.
 
+### `cv_section_configuration` (Mapeado como `cv_section_configuration`)
+Motor de reglas que define qué secciones requiere cada tipo de CV según la oportunidad.
+- **Unique:** `[cvType, opportunityType]` — Garantiza una configuración única por combinación.
+
+### `temp_cv_with_evaluation` (Mapeado como `temp_cv_with_evaluation`)
+Persistencia temporal para usuarios no registrados que prueban la herramienta.
+- **Campos:** `tempUserId`, `overallScore`, `extractorOutput`, `fileUrl`.
 ---
 
 ## 📋 7. Dominio de Cumplimiento (Compliance)

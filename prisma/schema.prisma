@@ -55,6 +55,7 @@ model User {
   cvPhotos                   CvPhoto[]
   routes                     Route[]
   roadmaps                   Roadmap[]
+  queueJobs                  QueueJob[]
 
   @@map("user")
 }
@@ -448,9 +449,13 @@ model QueueJob {
   startedAt   DateTime?
   finishedAt  DateTime?
   cvId        String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  cv          Cv?       @relation(fields: [cvId], references: [id])
+  userId      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cv   Cv?   @relation(fields: [cvId], references: [id])
+  user User? @relation(fields: [userId], references: [id])
 
   @@index([status])
   @@index([type])
@@ -692,6 +697,7 @@ model TempCvWithEvaluation {
   tempUserId      String?
   overallScore    Float?
   extractorOutput Json?
+  fileUrl         String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

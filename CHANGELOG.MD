@@ -1,8 +1,13 @@
 # WIP
 
 ## Fixes
+- Fixed the problem where the summary content was not being saved.
 - Fix: onboarding is only used once; there is no longer a risk of having infinite credits.
+- Fixed the problem where the summary content was not being saved.
 - New way for hot selling (cv-pay and cv-builder)
+
+## Technical
+- New function to migrate from temporal tables to real tables for CVs, evaluations and opportunities.
 
 ## Features
 - Added english recomendations (only examples).

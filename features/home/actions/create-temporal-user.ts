@@ -24,11 +24,16 @@ export const createTemporalUser = async (body: CreateTemporalUser) => {
 
     let user: TemporalUser | null;
     user = await prisma.temporalUser.findFirst({
-      where: {email, name}
+      where: {email}
     })
     if (!user) {
       user = await prisma.temporalUser.create({
         data: {email, name}
+      })
+    } else if (user.name !== name) {
+      user = await prisma.temporalUser.update({
+        where: {id: user.id},
+        data: {name}
       })
     }
 
@@ -57,7 +62,7 @@ export const createTemporalUser = async (body: CreateTemporalUser) => {
       temporalUserId: user.id,
     }
   } catch (error) {
-    console.error("[ERROR_SEND_EMAIL_TO_PAY]", error);
+    console.error("[ERROR_CREATE_TEMP_USER]", error);
     return {
       success: false,
       error: 'Internal server error',

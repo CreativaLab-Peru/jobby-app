@@ -83,11 +83,11 @@ export const updateAdminCvAndSections = async (
 function buildSections(cvData: CVData) {
   const sections: { sectionType: CvSectionType; contentJson; title?: string }[] = [];
 
-  if (cvData.personal?.summary) {
+  if (cvData.personal) {
     sections.push({
       sectionType: CvSectionType.SUMMARY,
-      title: "Summary",
-      contentJson: { text: cvData.personal.summary },
+      title: "Resumen",
+      contentJson: { text: cvData.personal.summary ?? "" },
     });
   }
 

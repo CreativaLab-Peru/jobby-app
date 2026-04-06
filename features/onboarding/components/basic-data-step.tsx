@@ -13,7 +13,7 @@ export function BasicDataStep() {
       <div className="space-y-1 text-center sm:text-left">
         <h2 className="text-3xl font-bold tracking-tight">Información Personal</h2>
         <p className="text-muted-foreground italic">
-          Esto nos ayuda a personalizar tu perfil profesional.
+          Ayudanos a conocerte mejor para mostrarte las mejores oportunidades.
         </p>
       </div>
 

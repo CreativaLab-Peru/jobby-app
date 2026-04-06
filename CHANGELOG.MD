@@ -7,6 +7,8 @@
 
 ## Fixes
 - Fixed the problem where the summary content was not being saved.
+- Fix: onboarding is only used once; there is no longer a risk of having infinite credits.
+- Fixed the problem where the summary content was not being saved.
 - New way for hot selling (cv-pay and cv-builder)
 
 ## Technical

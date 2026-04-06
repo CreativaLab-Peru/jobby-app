@@ -1,41 +1,51 @@
-import {rechargeCredits, RechargeCreditsBody} from "@/features/credits/actions/recharge-credits";
-import {CreditBalanceType} from "@prisma/client";
-import {prisma} from "@/lib/prisma";
+import { rechargeCredits, RechargeCreditsBody } from "@/features/credits/actions/recharge-credits";
+import { CreditBalanceType, Prisma, TransactionType } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
-export const createBasicCredits = async (userId: string) => {
+const ONBOARDING_CREDITS_DESCRIPTION = "Créditos básicos iniciales al registrarse";
+const ONBOARDING_CREDITS_SOURCE = "onboarding_free_grant";
+
+export const createBasicCredits = async (
+  userId: string,
+  tx?: Prisma.TransactionClient,
+): Promise<boolean> => {
+  if (!userId) throw new Error("User ID is required");
+
+  const metadata: Prisma.InputJsonValue = {
+    source: ONBOARDING_CREDITS_SOURCE,
+    version: 1,
+  };
+
   try {
-    if (!userId) throw new Error("User ID is required");
+    const execute = async (client: Prisma.TransactionClient) => {
+      const creditTypes = [
+        CreditBalanceType.MANAGE_CVS,
+        CreditBalanceType.AI_ACTIONS,
+        CreditBalanceType.SEARCH_OPPORTUNITIES,
+      ];
 
-    const bodyManageCvs: RechargeCreditsBody = {
-      userId,
-      amount: 1,
-      description: "Créditos básicos iniciales al registrarse",
-      type: CreditBalanceType.MANAGE_CVS
+      for (const type of creditTypes) {
+        const body: RechargeCreditsBody = {
+          userId,
+          amount: 1,
+          description: ONBOARDING_CREDITS_DESCRIPTION,
+          type,
+          metadata,
+          transactionType: TransactionType.BONUS,
+        };
+        await rechargeCredits(body, client);
+      }
+    };
+
+    if (tx) {
+      await execute(tx);
+    } else {
+      await prisma.$transaction(execute);
     }
-
-    const bodyAIActions: RechargeCreditsBody = {
-      userId,
-      amount: 1,
-      description: "Créditos básicos iniciales al registrarse",
-      type: CreditBalanceType.AI_ACTIONS
-    }
-
-    const bodyOpp: RechargeCreditsBody = {
-      userId,
-      amount: 1,
-      description: "Créditos básicos iniciales al registrarse",
-      type: CreditBalanceType.SEARCH_OPPORTUNITIES
-    }
-
-    await prisma.$transaction(async (tx) => {
-      await rechargeCredits(bodyManageCvs, tx);
-      await rechargeCredits(bodyAIActions, tx);
-      await rechargeCredits(bodyOpp, tx);
-    })
 
     return true;
-  } catch (e){
-    console.error("[ERROR_CREATE_BASIC_CREDITS]", e);
+  } catch (error) {
+    console.error("[ERROR_CREATE_BASIC_CREDITS]", error);
     return false;
   }
-}
+};

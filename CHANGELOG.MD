@@ -1,3 +1,11 @@
+# WIP
+
+## Fixes
+- [Al terminar todos los pasos, solo aparece que el final estuviera terminado](https://app.clickup.com/t/86agpvwu1)
+- [El nombre de producto dice jobby, pero deberia decir Levely](https://app.clickup.com/t/86agpvx2y)
+- [El monto esta mal (deberia aparecer 49.90 y no 19.90)](https://app.clickup.com/t/86agpvx9d)
+- [Mensaje de WhatsApp al completar una ruta](https://app.clickup.com/t/86agpvyar)
+
 # v.1.2.2 - 2026-04-06
 
 ## Features

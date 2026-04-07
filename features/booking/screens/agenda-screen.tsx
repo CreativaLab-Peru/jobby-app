@@ -142,6 +142,8 @@ export function AgendaScreen({ dossier }: AgendaScreenProps) {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         userName={dossier.userName}
+        userEmail={dossier.userEmail}
+        score={dossier.cv.score}
       />
     </div>
   );

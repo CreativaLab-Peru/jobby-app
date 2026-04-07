@@ -4,9 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { paddle, BASE_URL } from "@/features/billing/domain/paddle-client";
 import { syncPlanToPaddle } from "@/features/billing/actions/admin/sync-plan-to-paddle";
 
-const PREFERENCE_PLAN = "starter";
-
-export const createCheckoutForNewUserPaddle = async (temporalUserId: string) => {
+export const createCheckoutForNewUserPaddle = async (temporalUserId: string, slug: string) => {
   try {
     if (!BASE_URL) throw new Error("BASE_URL no definida en variables de entorno");
 
@@ -18,7 +16,7 @@ export const createCheckoutForNewUserPaddle = async (temporalUserId: string) => 
     }
 
     const paymentPlan = await prisma.paymentPlan.findFirst({
-      where: { slug: PREFERENCE_PLAN },
+      where: { slug: slug.toLowerCase() },
     });
     if (!paymentPlan) {
       return { success: false, error: "No se ha encontrado el plan de pago" };

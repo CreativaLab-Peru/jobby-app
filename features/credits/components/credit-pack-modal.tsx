@@ -46,14 +46,14 @@ export function CreditPackModal({
 
     startTransition(async () => {
       if (method === "paddle") {
-        const result = await createCheckoutForNewUserPaddle(tempUserId);
+        const result = await createCheckoutForNewUserPaddle(tempUserId, _packId);
         if (result.success) {
           openCheckout(result.transactionId);
         } else {
           setError(result.error);
         }
       } else {
-        const result = await createPreferenceForNewUser(tempUserId);
+        const result = await createPreferenceForNewUser(tempUserId, _packId);
         if (result.success) {
           window.location.href = result.redirect;
         } else {

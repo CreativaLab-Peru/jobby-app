@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import {
   ArrowLeft,
-  Send,
   Rocket,
   GraduationCap,
   Flame,
@@ -13,32 +12,30 @@ import Link from "next/link";
 import ConvertKitForm from "@/components/convert-kit-form";
 
 export const Newsletter = () => {
-  const [email, setEmail] = useState("");
-
   const cards = [
     {
-      icon: <Rocket className="text-primary" size={28} />,
+      icon: <Rocket className="text-primary" size={28}/>,
       tag: "STARTUP & FONDOS",
       title: "Capital y Grants desde cero",
       desc: "Estrategias reales para fondear tu startup o fundación. Cómo aplicar a grants internacionales y aceleradoras desde Latinoamérica.",
       highlight: "+$70K conseguidos",
     },
     {
-      icon: <GraduationCap className="text-primary" size={28} />,
+      icon: <GraduationCap className="text-primary" size={28}/>,
       tag: "BECAS DE ÉLITE",
       title: "Postgrados 100% financiados",
       desc: "Guía específica para ganar becas totales en UK, Europa y USA. Olvida las deudas y enfócate en las mejores universidades del mundo.",
       highlight: "UK / Europa / USA",
     },
     {
-      icon: <Flame className="text-primary" size={28} />,
+      icon: <Flame className="text-primary" size={28}/>,
       tag: "BITÁCORA DE CONSTRUCCIÓN",
       title: "El 'detrás de cámaras' real",
       desc: "Lo que no cabe en un post de LinkedIn: el paso a paso técnico, los errores estratégicos y las reflexiones crudas de construir una startup y una fundación desde cero.",
       highlight: "100% transparente",
     },
     {
-      icon: <MailSearch className="text-primary" size={28} />,
+      icon: <MailSearch className="text-primary" size={28}/>,
       tag: "CONVOCATORIAS",
       title: "Oportunidades de la semana",
       desc: "Cada semana, becas y fondos que acaban de abrir. Ahorra horas de búsqueda con acceso directo.",
@@ -54,14 +51,15 @@ export const Newsletter = () => {
           href="/"
           className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
         >
-          <ArrowLeft size={16} /> Volver
+          <ArrowLeft size={16}/> Volver
         </Link>
       </header>
 
       {/* Hero Section */}
       <main className="px-6 md:px-12 pt-12 pb-24 max-w-6xl mx-auto">
         <div className="max-w-4xl">
-          <span className="inline-block text-[10px] font-black tracking-[0.3em] uppercase border border-primary/30 bg-primary/10 text-primary px-4 py-1.5 mb-10 rounded-full">
+          <span
+            className="inline-block text-[10px] font-black tracking-[0.3em] uppercase border border-primary/30 bg-primary/10 text-primary px-4 py-1.5 mb-10 rounded-full">
             CARRERA GLOBAL
           </span>
 
@@ -72,35 +70,19 @@ export const Newsletter = () => {
           <div className="flex items-center gap-3 mb-8">
             <div className="h-[1px] w-12 bg-border"></div>
             <p className="text-lg md:text-xl font-medium">
-              Carrera Global <span className="text-muted-foreground font-light">— by Dara Mariluz</span>
+              Carrera Global <span
+              className="text-muted-foreground font-light">— by Dara Mariluz</span>
             </p>
           </div>
 
-          <h2 className="text-xl md:text-2xl leading-relaxed mb-12 max-w-2xl text-muted-foreground font-medium">
-            Un boletín semanal donde compartimos la ruta estratégica para ganar becas, startups y oportunidades internacionales.
+          <h2
+            className="text-xl md:text-2xl leading-relaxed mb-12 max-w-2xl text-muted-foreground font-medium">
+            Un boletín semanal donde compartimos la ruta estratégica para ganar becas, startups y
+            oportunidades internacionales.
           </h2>
 
-          {/* Subscribe Form */}
-          {/*<form*/}
-          {/*  onSubmit={(e) => e.preventDefault()}*/}
-          {/*  className="flex flex-col sm:flex-row gap-3 mb-6 max-w-xl"*/}
-          {/*>*/}
-          {/*  <input*/}
-          {/*    type="email"*/}
-          {/*    placeholder="Tu correo principal..."*/}
-          {/*    value={email}*/}
-          {/*    onChange={(e) => setEmail(e.target.value)}*/}
-          {/*    className="flex-1 px-6 py-4 rounded-2xl border-2 border-border bg-card text-foreground outline-none focus:border-primary transition-all"*/}
-          {/*    required*/}
-          {/*  />*/}
-          {/*  <button*/}
-          {/*    type="submit"*/}
-          {/*    className="px-8 py-4 rounded-2xl font-bold uppercase tracking-wider bg-primary text-primary-foreground transition-all hover:opacity-90 active:scale-95 shadow-lg flex items-center justify-center gap-2"*/}
-          {/*  >*/}
-          {/*    Únete <Send size={18} />*/}
-          {/*  </button>*/}
-          {/*</form>*/}
-          <ConvertKitForm uid={"bfc8a3a54f"} />
+          {/*  KitForm */}
+          <ConvertKitForm uid={"bfc8a3a54f"}/>
           <p className="text-xs text-muted-foreground opacity-60 italic">
             Únete a +2,000 profesionales. Sin spam, solo valor.
           </p>
@@ -125,10 +107,12 @@ export const Newsletter = () => {
               >
                 <div>
                   <div className="flex items-center justify-between mb-8">
-                    <div className="bg-background/40 p-4 rounded-2xl shrink-0 flex items-center justify-center">
+                    <div
+                      className="bg-background/40 p-4 rounded-2xl shrink-0 flex items-center justify-center">
                       {card.icon}
                     </div>
-                    <span className="text-[10px] font-black tracking-widest uppercase bg-background/20 px-3 py-1 rounded-full opacity-80">
+                    <span
+                      className="text-[10px] font-black tracking-widest uppercase bg-background/20 px-3 py-1 rounded-full opacity-80">
                       {card.tag}
                     </span>
                   </div>
@@ -143,7 +127,8 @@ export const Newsletter = () => {
                 </div>
 
                 <div className="mt-auto">
-                  <span className="inline-block text-[11px] font-black px-4 py-1.5 rounded-full shadow-sm bg-primary text-primary-foreground">
+                  <span
+                    className="inline-block text-[11px] font-black px-4 py-1.5 rounded-full shadow-sm bg-primary text-primary-foreground">
                     {card.highlight}
                   </span>
                 </div>

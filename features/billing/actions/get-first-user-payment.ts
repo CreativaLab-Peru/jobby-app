@@ -1,5 +1,5 @@
-import { getCurrentUser } from "@/features/share/actions/get-current-user";
-import { prisma } from "@/lib/prisma";
+import {getCurrentUser} from "@/features/share/actions/get-current-user";
+import {prisma} from "@/lib/prisma";
 import {
   UserPayment,
   PaymentPlan
@@ -17,9 +17,9 @@ export const getFirstUserPayment = async (): Promise<UserSubscriptionPayment | n
     if (!currentUser) return null;
 
     const subscription = await prisma.userPayment.findFirst({
-      where: { userId: currentUser.id, active: true },
-      include: { plan: true },
-      orderBy: { createdAt: "desc" }
+      where: {userId: currentUser.id, active: true},
+      include: {plan: true},
+      orderBy: {createdAt: "desc"}
     });
 
     return JSON.parse(JSON.stringify({

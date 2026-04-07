@@ -6,8 +6,7 @@ import {Preference} from "mercadopago";
 import {PreferenceCreateData} from "mercadopago/dist/clients/preference/create/types";
 import {BASE_URL, mercadopago} from "@/features/billing/domain/mercado-preference";
 
-const PREFERENCE_PLAN = "starter"
-export const createPreferenceForNewUser = async (id: string) => {
+export const createPreferenceForNewUser = async (id: string, slug: string) => {
   try {
     const currentUser = await prisma.temporalUser.findFirst({
       where: {
@@ -23,7 +22,7 @@ export const createPreferenceForNewUser = async (id: string) => {
 
     const directPayment = await prisma.paymentPlan.findFirst({
       where: {
-        slug: PREFERENCE_PLAN
+        slug: slug.toLowerCase(),
       },
     })
     if (!directPayment) {

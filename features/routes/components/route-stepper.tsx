@@ -53,6 +53,7 @@ const STATUS_ORDER: RouteStatus[] = [
   "ROADMAP_PENDING",
   "ROADMAP_IN_PROGRESS",
   "ROADMAP_DONE",
+  "PROGRAM_DONE",
 ];
 
 function getStepStatus(

@@ -1,9 +1,9 @@
 "use client"
 
-import React, {useEffect, useMemo, useRef, useState} from "react"
+import React, {useEffect, useRef, useState} from "react"
 import useSWR from "swr"
-import { useRouter } from "next/navigation"
-import { motion, AnimatePresence } from "framer-motion"
+import {useRouter} from "next/navigation"
+import {motion, AnimatePresence} from "framer-motion"
 import {
   Loader2,
   CheckCircle,
@@ -34,9 +34,24 @@ interface ProgressStatusProps {
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 const STEPS = [
-  { key: "preparing", title: "Preparando CV", desc: "Subiendo y preparando tu CV para evaluación.", icon: UploadCloud },
-  { key: "evaluation", title: "Evaluando", desc: "Analizando fortalezas y mejoras con IA.", icon: Loader2 },
-  { key: "finished", title: "Finalizado", desc: "Listo — redirigiendo a resultados.", icon: FileCheck },
+  {
+    key: "preparing",
+    title: "Preparando CV",
+    desc: "Subiendo y preparando tu CV para evaluación.",
+    icon: UploadCloud
+  },
+  {
+    key: "evaluation",
+    title: "Evaluando",
+    desc: "Analizando fortalezas y mejoras con IA.",
+    icon: Loader2
+  },
+  {
+    key: "finished",
+    title: "Finalizado",
+    desc: "Listo — redirigiendo a resultados.",
+    icon: FileCheck
+  },
 ]
 
 const STATUS_TO_INDEX: Record<string, number> = {
@@ -53,23 +68,23 @@ const STATUS_TO_INDEX: Record<string, number> = {
 
 const variants = {
   step: {
-    pending: { scale: 1, opacity: 0.5 },
-    active: { scale: 1.05, opacity: 1 },
-    completed: { scale: 1, opacity: 1 },
+    pending: {scale: 1, opacity: 0.5},
+    active: {scale: 1.05, opacity: 1},
+    completed: {scale: 1, opacity: 1},
   },
 }
 
 
-export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
+export default function ProgressTimeline({cvId}: ProgressStatusProps) {
   const router = useRouter();
   const [isRendering, setIsRendering] = useState(false);
   const [step, setStep] = useState<0 | 1 | 2>(0); // 0: preparando, 1: evaluando, 2: finalizado
   const isFinishedRef = useRef(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const { data: status } = useSWR<CvStatus | null>(`/api/cv/${cvId}/status`, fetcher, {
+  const {data: status} = useSWR<CvStatus | null>(`/api/cv/${cvId}/status`, fetcher, {
     refreshInterval: 3000,
   });
-  const { hydrate } = useRouteStore();
+  const {hydrate} = useRouteStore();
 
   // Step 1: Preparando (delay fijo de 3s)
   useEffect(() => {
@@ -106,7 +121,7 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
           console.error("Hydration failed", e);
         }
         if (evaluateId) {
-          router.push(`/evaluations/${evaluateId}`);
+          router.push(`/my-evaluation/${evaluateId}`);
         }
       }, 1000); // Un poco más de tiempo para que la animación de "Finalizado" se vea
     }
@@ -119,7 +134,7 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
     return (
       <div className="fixed inset-0 z-40 flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <Loader2 className="w-8 h-8 animate-spin text-primary"/>
           <p className="text-muted-foreground">Cargando</p>
         </div>
       </div>
@@ -131,15 +146,17 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
   const failureIndex = -1; // No se maneja error custom aquí
 
   return (
-    <div className="fixed inset-0 z-40 flex flex-col items-center justify-center overflow-y-auto px-4 py-8 md:px-8 bg-background">
+    <div
+      className="fixed inset-0 z-40 flex flex-col items-center justify-center overflow-y-auto px-4 py-8 md:px-8 bg-background">
       <div className="mx-auto w-full max-w-3xl">
         {/* Header con gradiente del sistema */}
         <div className="text-center mb-16 mt-10">
           <h1 className="text-3xl sm:text-4xl font-black tracking-tighter text-foreground mb-3">
             Analizando tu potencial
           </h1>
-          <div className="flex items-center justify-center gap-2 text-muted-foreground font-bold uppercase tracking-widest text-[10px]">
-            <Sparkles className="w-4 h-4 text-primary animate-pulse" />
+          <div
+            className="flex items-center justify-center gap-2 text-muted-foreground font-bold uppercase tracking-widest text-[10px]">
+            <Sparkles className="w-4 h-4 text-primary animate-pulse"/>
             <span>Levely AI está procesando tu perfil</span>
           </div>
         </div>
@@ -148,16 +165,17 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
           {/* Columna Izquierda: Línea y Checkpoints */}
           <div className="w-12 flex flex-col items-center relative">
             {/* Línea Base (Muted) */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 top-6 bottom-6 w-[2px] bg-border opacity-50" />
+            <div
+              className="absolute left-1/2 transform -translate-x-1/2 top-6 bottom-6 w-[2px] bg-border opacity-50"/>
 
             {/* Línea de Progreso (Primary) */}
             <motion.div
               className="absolute left-1/2 transform -translate-x-1/2 top-6 w-[2px] bg-primary origin-top max-w-2xl"
-              initial={{ height: 0 }}
+              initial={{height: 0}}
               animate={{
                 height: activeIndex <= 0 ? 0 : `${(activeIndex / (STEPS.length - 1)) * 100}%`,
               }}
-              transition={{ type: "spring", stiffness: 40, damping: 20 }}
+              transition={{type: "spring", stiffness: 40, damping: 20}}
             />
 
             <ol className="flex flex-col gap-y-24 w-full relative z-10 max-w-5xl">
@@ -178,15 +196,16 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
                     >
                       <AnimatePresence mode="wait">
                         {isFailure ? (
-                          <XCircle className="w-5 h-5 text-destructive" />
+                          <XCircle className="w-5 h-5 text-destructive"/>
                         ) : state === "completed" ? (
-                          <CheckCircle className="w-5 h-5 text-primary" />
+                          <CheckCircle className="w-5 h-5 text-primary"/>
                         ) : state === "active" ? (
-                          <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }}>
-                            <Loader2 className="w-5 h-5 text-primary" />
+                          <motion.div animate={{rotate: 360}}
+                                      transition={{repeat: Infinity, duration: 2, ease: "linear"}}>
+                            <Loader2 className="w-5 h-5 text-primary"/>
                           </motion.div>
                         ) : (
-                          <StepIcon className="w-4 h-4 opacity-40" />
+                          <StepIcon className="w-4 h-4 opacity-40"/>
                         )}
                       </AnimatePresence>
                     </motion.div>
@@ -207,7 +226,7 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
               return (
                 <motion.div
                   key={stepObj.key}
-                  animate={{ opacity: isActive || isCompleted ? 1 : 0.4, x: isActive ? 10 : 0 }}
+                  animate={{opacity: isActive || isCompleted ? 1 : 0.4, x: isActive ? 10 : 0}}
                   className={`transition-all duration-500`}
                 >
                   <div className={`p-4 rounded-2xl border transition-all duration-500
@@ -215,11 +234,13 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
                   >
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-2">
-                        <h3 className={`text-sm font-black uppercase tracking-widest ${isActive ? "text-primary" : isCompleted ? "text-foreground" : "text-muted-foreground"}`}>
+                        <h3
+                          className={`text-sm font-black uppercase tracking-widest ${isActive ? "text-primary" : isCompleted ? "text-foreground" : "text-muted-foreground"}`}>
                           {stepObj.title}
                         </h3>
                         {isCompleted && (
-                          <StatusBadge variant="outline" className="text-[9px] py-0 h-4 border-primary/30 text-primary">
+                          <StatusBadge variant="outline"
+                                       className="text-[9px] py-0 h-4 border-primary/30 text-primary">
                             Completado
                           </StatusBadge>
                         )}
@@ -229,7 +250,8 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
                           </StatusBadge>
                         )}
                       </div>
-                      <p className={`text-xs font-medium leading-relaxed ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
+                      <p
+                        className={`text-xs font-medium leading-relaxed ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
                         {stepObj.desc}
                       </p>
                     </div>
@@ -245,13 +267,14 @@ export default function ProgressTimeline({ cvId }: ProgressStatusProps) {
 }
 
 // Sub-componente Badge para mantener consistencia
-function StatusBadge({ children, variant = "outline", className }: any) {
+function StatusBadge({children, variant = "outline", className}: any) {
   const variants: any = {
     outline: "border-border text-muted-foreground",
     destructive: "bg-destructive/10 border-destructive/20 text-destructive",
   }
   return (
-    <span className={`px-2 rounded-full border font-black uppercase tracking-tighter ${variants[variant]} ${className}`}>
+    <span
+      className={`px-2 rounded-full border font-black uppercase tracking-tighter ${variants[variant]} ${className}`}>
       {children}
     </span>
   )

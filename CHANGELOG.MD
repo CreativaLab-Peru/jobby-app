@@ -1,5 +1,8 @@
 # WIP
 
+## Features
+- [new letter page](https://app.clickup.com/t/86agq5b8r)
+
 ## Fixes
 - [Al terminar todos los pasos, solo aparece que el final estuviera terminado](https://app.clickup.com/t/86agpvwu1)
 - [El nombre de producto dice jobby, pero deberia decir Levely](https://app.clickup.com/t/86agpvx2y)

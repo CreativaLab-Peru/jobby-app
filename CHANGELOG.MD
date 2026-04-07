@@ -1,3 +1,8 @@
+# v.1.2.3 - 2026-04-07
+
+## Fixes
+- HE CORREDIGO ALGO
+
 # v.1.2.2 - 2026-04-06
 
 ## Features

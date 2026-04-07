@@ -33,7 +33,7 @@ export const createPreferenceForNewUser = async (id: string, slug: string) => {
     }
 
     const priceCents = Number(directPayment.priceCentsPEN) || 0
-    const pricePEN = priceCents > 0 ? priceCents / 100 : 9.90
+    const pricePEN = priceCents > 0 ? priceCents / 100 : 19.90
 
     const body: PreferenceCreateData = {
       body: {

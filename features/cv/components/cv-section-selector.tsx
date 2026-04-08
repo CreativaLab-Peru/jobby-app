@@ -55,19 +55,20 @@ export function CvSectionSelector({
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between px-1">
-          <Label className="text-sm flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-1 gap-1">
+          <Label className="flex items-center gap-1 text-sm">
             Secciones para tu CV
-            <span className="text-[10px] bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold border border-accent/20">
+            <span className="ml-1 text-[10px] bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold border border-accent/20">
               IA Sugiere
             </span>
           </Label>
+
           {selectedSections.length > 0 && (
-            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
-               Orden de llenado activo
-             </span>
+            <span className="text-[8px] sm:text-[9px] font-bold text-muted-foreground uppercase tracking-wider mt-1 sm:mt-0">
+              Orden de llenado activo
+            </span>
           )}
-        </div>
+        </div
 
         <p className="text-[10px] text-muted-foreground/60 px-1">
           * Selecciona en el orden que prefieras que aparezcan.

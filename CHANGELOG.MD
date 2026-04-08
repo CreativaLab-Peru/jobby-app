@@ -1,4 +1,4 @@
-# WIP
+# v.1.2.3 - 2026-04-08
 
 ## Features
 - [JB-86agq5b8r](https://app.clickup.com/t/86agq5b8r) New letter page

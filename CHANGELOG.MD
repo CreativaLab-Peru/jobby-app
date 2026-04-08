@@ -1,6 +1,7 @@
 # WIP
 
 ## Fixes
+- [LV-86agpvy83](https://app.clickup.com/t/86agpvy83) Fixed Cookie redirection
 - [LV-86agpvw8n](https://app.clickup.com/t/86agpvw8n) Fixed and added a reference to the creation of roadmaps, and improved the style.
 - [LV-86agpvwah](https://app.clickup.com/t/86agpvwah) Fixed the order in which sections are displayed when creating a resume, and we've also updated the styles for the mobile version.
 - [Al terminar todos los pasos, solo aparece que el final estuviera terminado](https://app.clickup.com/t/86agpvwu1)

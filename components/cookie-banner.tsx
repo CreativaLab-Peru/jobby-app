@@ -49,7 +49,7 @@ export default function CookieBanner() {
               variant="ghost"
               size="sm"
               className="text-xs"
-              onClick={() => window.open('/privacy', '_blank')}
+              onClick={() => window.open('/politica-de-privacidad', '_blank')}
             >
               Leer más
             </Button>

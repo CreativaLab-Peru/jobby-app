@@ -21,17 +21,17 @@ export async function POST(req: Request) {
 
   // 1. Crear un job en DB
   const job = await prisma.queueJob.upsert({
-    where: { jobId: paymentPlanId },
+    where: {jobId: paymentPlanId},
     create: {
       jobId: paymentPlanId,
       type: "MERCADOPAGO_PAYMENT",
       status: JobStatus.PENDING,
-      payload: { paymentId: paymentPlanId },
+      payload: {paymentId: paymentPlanId},
     },
     update: {
       // choose which fields to update if the record exists
       status: JobStatus.PENDING,
-      payload: { paymentId: paymentPlanId },
+      payload: {paymentId: paymentPlanId},
     },
   });
 
@@ -142,6 +142,7 @@ async function processPaymentJob(jobId: string, paymentId: string) {
         const token = generateMagicLinkToken();
         const hashedToken = hashMagicLinkToken(token);
 
+
         await prisma.magicLinkToken.create({
           data: {
             userId,
@@ -159,6 +160,13 @@ async function processPaymentJob(jobId: string, paymentId: string) {
             userId: existingUser.id,
             magicLink: token,
           }
+        });
+
+        console.info("[==> GENERATED_MAGIC_LINK_TOKEN_1]", {
+          email,
+          token,
+          hashedToken,
+          paymentIdMP: paymentId,
         });
       }
     }
@@ -182,6 +190,11 @@ async function processPaymentJob(jobId: string, paymentId: string) {
         metadata: {paymentId, userId, planId: paymentPlanId},
       })
     }
+
+    console.info("[++> GENERATED_MAGIC_LINK_TOKEN_2]", {
+      email,
+      newPaymentId: newUserPayment?.id
+    });
 
     await rechargeCreditsByPlan(paymentPlanId, userId);
 

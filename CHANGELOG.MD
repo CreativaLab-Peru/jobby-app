@@ -1,3 +1,9 @@
+# WIP
+
+## Fixes
+- [JB-86agpvy9d](https://app.clickup.com/t/86agpvy9d) Se tarda cambiar estado de una tarea (parece lento para el usuario)
+- [JB-86agp593z](https://app.clickup.com/t/86agp593z) Mejorar el diseño y contenido de los correos
+
 # v1.2.6 - 2026-04-08
 
 ## Fixes
@@ -10,7 +16,7 @@
 
 ## Fixes
 - [LV-86agpvx6g](https://app.clickup.com/t/86agpvx6g) Added price in USD
-- [LV-86agpvy8f](https://app.clickup.com/t/86agpvy8f) Hidden the section Career Acelerator
+- [LV-86agpvy8f](https://app.clickup.com/t/86agpvy8f) Hidden the section Career Accelerator
 - [LV-86agpvydd](https://app.clickup.com/t/86agpvydd) Hidden the “Upload” and “Create Resume” buttons on the page listing all resumes
 - [LV-86agpvy83](https://app.clickup.com/t/86agpvy83) Fixed Cookie redirection
 - [LV-86agpvw8n](https://app.clickup.com/t/86agpvw8n) Fixed and added a reference to the creation of roadmaps, and improved the style.

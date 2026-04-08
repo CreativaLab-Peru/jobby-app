@@ -29,6 +29,7 @@ export const getCreditPackOffers = async (): Promise<CreditPackOffer[]> => {
         slug: true,
         name: true,
         priceCentsPEN: true,
+        priceCentsUSD: true,
         manualCvLimit: true,
         features: true,
         creditPackages: {
@@ -79,6 +80,7 @@ const buildOfferFromPlan = (
   return {
     name: plan.name || basePack.name,
     price: toNumber(plan.priceCentsPEN) / 100,
+    priceUSD: plan.priceCentsUSD ? toNumber(plan.priceCentsUSD) / 100 : undefined,
     limits: dynamicLimits,
     features: getPlanFeatureItems(plan.features).length
       ? getPlanFeatureItems(plan.features).map((text) => ({ text, included: true }))

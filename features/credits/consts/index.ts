@@ -2,6 +2,7 @@ export type CreditPackOffer = {
   id: string;
   name: string;
   price: number;
+  priceUSD?: number;
   limits: { manageCvsLimit: number; aiActionsLimit: number; opportunitiesActionsLimit: number };
   features: { text: string; included: boolean }[];
   highlight: boolean;

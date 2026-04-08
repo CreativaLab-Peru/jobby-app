@@ -1,6 +1,7 @@
 # WIP
 
 ## Fixes
+- [LV-86agpvx6g](https://app.clickup.com/t/86agpvx6g) Added price in USD
 - [LV-86agpvy8f](https://app.clickup.com/t/86agpvy8f) Hidden the section Career Acelerator
 - [LV-86agpvydd](https://app.clickup.com/t/86agpvydd) Hidden the “Upload” and “Create Resume” buttons on the page listing all resumes
 - [LV-86agpvy83](https://app.clickup.com/t/86agpvy83) Fixed Cookie redirection

@@ -1,3 +1,8 @@
+# v1.2.6 - 2026-04-08
+
+## Fixes
+- [JB-86agrt0tb](https://app.clickup.com/t/86agrt0tb) Despues de hacer analisis de un cv no se muestra el detalle
+
 # v1.2.3, v1.2.4 and v1.2.5 - 2026-04-08
 
 ## Features

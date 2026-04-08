@@ -33,12 +33,10 @@ export function CreditPackCard({ pack, onPurchase, isAuthenticated = true }: Pac
           </h3>
 
           <div className="flex items-end justify-center gap-3">
-            {/* Precio en soles (principal) */}
             <span className="text-4xl font-extrabold text-zinc-900 dark:text-white leading-none">
               S/ {Number(pack.price).toFixed(2)}
             </span>
 
-            {/* Precio en USD (secundario) */}
             {pack.priceUSD !== undefined && (
               <span className="text-lg font-semibold text-zinc-500 dark:text-gray-400 mb-1">
                 $ {Number(pack.priceUSD).toFixed(2)}

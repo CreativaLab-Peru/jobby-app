@@ -1,4 +1,9 @@
-# WIP
+# v1.2.4
+
+## Features
+- [JB-86agrp9nr](https://app.clickup.com/t/86agrp9nr) Change route of new letter page and include it in navbar
+
+# v1.2.3
 
 ## Features
 - [JB-86agq5b8r](https://app.clickup.com/t/86agq5b8r) New letter page

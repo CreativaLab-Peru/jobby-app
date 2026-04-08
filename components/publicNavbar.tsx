@@ -15,7 +15,7 @@ interface HeaderProps {
 
 const navItems = [
   { name: "CV Builder", href: "/cv-builder" },
-  { name: "Career Accelerator", href: "/career-accelerator" },
+  // { name: "Career Accelerator", href: "/career-accelerator" },
   { name: "Partners", href: "/partners" },
   // { name: "Empresas", href: "/empresas" },
   // { name: "Resources", href: "/resources" },

@@ -68,7 +68,7 @@ export function CreditPackModal({
       <DialogContent
         className="sm:max-w-6xl p-0 overflow-hidden border-none bg-transparent shadow-none">
         {/* Contenedor con estilo de Dashboard */}
-        <div className="bg-card border border-border rounded-[2rem] overflow-hidden shadow-2xl">
+        <div className="bg-card border border-border rounded-[2rem] max-h-[90vh] shadow-2xl overflow-y-auto">
           <DialogHeader className="p-8 pb-4 text-center md:text-left">
             <div className="flex flex-col md:flex-row md:items-center gap-4">
               <div className="mx-auto md:mx-0 p-3 bg-primary/10 rounded-2xl text-primary">

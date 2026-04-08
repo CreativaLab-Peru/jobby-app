@@ -76,8 +76,13 @@ export function EmailModal({
             <Mail className="w-8 h-8" />
           </div>
           <DialogTitle className="text-2xl font-black uppercase italic tracking-tight">
-            Casi listo para <span className="text-primary">Levely</span>
+            Primero unete a  <span className="text-primary">Levely</span>
           </DialogTitle>
+
+          {/* Mensaje añadido */}
+          <p className="text-sm text-muted-foreground font-medium">
+            Te enviaremos un correo con tu acceso a <span className="font-bold text-foreground">Levely</span>.
+          </p>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">

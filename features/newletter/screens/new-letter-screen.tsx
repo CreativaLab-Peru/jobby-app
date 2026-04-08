@@ -63,7 +63,7 @@ export const Newsletter = () => {
             CARRERA GLOBAL
           </span>
 
-          <h1 className="text-5xl md:text-8xl font-black tracking-tight leading-[0.95] mb-8 italic">
+          <h1 className="text-5xl md:text-8xl font-black tracking-tight leading-[0.95] mb-8">
             La ruta al <span className="text-primary">top 3%</span> del talento global
           </h1>
 
@@ -77,8 +77,9 @@ export const Newsletter = () => {
 
           <h2
             className="text-xl md:text-2xl leading-relaxed mb-12 max-w-2xl text-muted-foreground font-medium">
-            Un boletín semanal donde compartimos la ruta estratégica para ganar becas, startups y
-            oportunidades internacionales.
+            Un boletín semanal donde te compartimos la ruta para entrar al top 3% del talento global
+            que gana becas, fellowships, startups y oportunidades internacionales para que empieces
+            a calificar.
           </h2>
 
           {/*  KitForm */}
@@ -103,7 +104,7 @@ export const Newsletter = () => {
             {cards.map((card, i) => (
               <div
                 key={i}
-                className="group rounded-[2.5rem] p-8 transition-all duration-500 hover:-translate-y-2 flex flex-col justify-between h-full bg-secondary text-secondary-foreground border border-border/50"
+                className="group rounded-[2.5rem] p-8 transition-all duration-500 hover:-translate-y-2 flex flex-col justify-between h-full bg-blue-300 dark:bg-blue-400 text-secondary-foreground border border-border/50"
               >
                 <div>
                   <div className="flex items-center justify-between mb-8">

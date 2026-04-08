@@ -8,10 +8,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FormField } from "@/components/form-field";
 import { CVFormData, cvFormSchema } from "@/features/cv/schema";
 import { cvTypes, languages, opportunities, RECOMMENDATIONS_BY_OPPORTUNITY } from "@/const";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FormSelect } from "@/components/form/select-input";
 import { CvSectionSelector } from "@/features/cv/components/cv-section-selector";
 import { cn } from "@/lib/utils";
+import { ChevronDown } from "lucide-react";
 
 interface CVFormProps {
   defaultValues?: Partial<CVFormData>;
@@ -19,6 +20,8 @@ interface CVFormProps {
 }
 
 export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
+  const [openSection, setOpenSection] = useState<"identidad" | "estructura">("identidad");
+
   const {
     register,
     setValue,
@@ -55,16 +58,36 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
   }, [selectedOpportunity, setValue]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 h-full w-full bg-background">
+    <div className="flex flex-col md:grid md:grid-cols-2 h-full w-full bg-background overflow-hidden">
 
       {/* COLUMNA 1: Configuración Principal */}
-      <div className="p-6 md:p-8 space-y-8 border-b md:border-b-0 md:border-r border-border">
-        <div className="space-y-1">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-primary">01. Identidad</h3>
-          <p className="text-xs text-muted-foreground">Define los parámetros básicos de tu documento.</p>
-        </div>
+      <div className={cn(
+        "flex flex-col md:border-r border-border min-h-0", // min-h-0 es crucial para que el flex-1 respete el límite
+        openSection === "identidad" ? "flex-1 border-b md:border-b-0" : "border-b shrink-0",
+        "md:flex-1 md:h-full"
+      )}>
+        <button
+          type="button"
+          onClick={() => setOpenSection("identidad")}
+          className="shrink-0 w-full flex items-center justify-between p-6 md:p-8 text-left md:pointer-events-none md:cursor-default"
+        >
+          <div className="space-y-1">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-primary">01. Identidad</h3>
+            <p className="text-xs text-muted-foreground">Define los parámetros básicos de tu documento.</p>
+          </div>
+          <ChevronDown 
+            className={cn(
+              "h-5 w-5 text-muted-foreground transition-transform md:hidden shrink-0", 
+              openSection === "identidad" && "rotate-180"
+            )} 
+          />
+        </button>
 
-        <div className="space-y-6">
+        {/* Contenido (Hace scroll interno: flex-1 overflow-y-auto) */}
+        <div className={cn(
+          "flex-1 overflow-y-auto px-6 pb-6 md:px-8 md:pb-8 md:pt-0 space-y-6",
+          openSection === "identidad" ? "block" : "hidden md:block"
+        )}>
           <FormField
             label="Nombre del CV"
             placeholder="Ej: CV Backend Senior"
@@ -123,27 +146,48 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
       </div>
 
       {/* COLUMNA 2: Selección de Secciones */}
-      <div className="p-6 md:p-8 bg-secondary/5 overflow-y-auto">
-        <div className="space-y-1 mb-8">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-primary">02. Estructura</h3>
-          <p className="text-xs text-muted-foreground">Activa y ordena los módulos de información.</p>
-        </div>
-
-        <div className="bg-background border border-border rounded-xl p-5 shadow-sm">
-          <CvSectionSelector
-            selectedSections={watch("sections") || []}
-            onChange={(newSections) => setValue("sections", newSections, { shouldValidate: true })}
-            opportunityType={watch("opportunityType") as any}
-          />
-        </div>
-
-        {errors.sections && (
-          <div className="mt-4 p-3 rounded-lg border border-destructive/20 bg-destructive/5 text-center">
-            <p className="text-[10px] font-bold text-destructive uppercase">
-              {errors.sections.message}
-            </p>
+      <div className={cn(
+        "flex flex-col bg-secondary/5 min-h-0",
+        openSection === "estructura" ? "flex-1" : "shrink-0",
+        "md:flex-1 md:h-full"
+      )}>
+        <button
+          type="button"
+          onClick={() => setOpenSection("estructura")}
+          className="shrink-0 w-full flex items-center justify-between p-6 md:p-8 text-left md:pointer-events-none md:cursor-default"
+        >
+          <div className="space-y-1">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-primary">02. Estructura</h3>
+            <p className="text-xs text-muted-foreground">Activa y ordena los módulos de información.</p>
           </div>
-        )}
+          <ChevronDown 
+            className={cn(
+              "h-5 w-5 text-muted-foreground transition-transform md:hidden shrink-0", 
+              openSection === "estructura" && "rotate-180"
+            )} 
+          />
+        </button>
+
+        <div className={cn(
+          "flex-1 overflow-y-auto px-6 pb-6 md:px-8 md:pb-8 md:pt-0",
+          openSection === "estructura" ? "block" : "hidden md:block"
+        )}>
+          <div className="bg-background border border-border rounded-xl p-5 shadow-sm">
+            <CvSectionSelector
+              selectedSections={watch("sections") || []}
+              onChange={(newSections) => setValue("sections", newSections, { shouldValidate: true })}
+              opportunityType={watch("opportunityType") as any}
+            />
+          </div>
+
+          {errors.sections && (
+            <div className="mt-4 p-3 rounded-lg border border-destructive/20 bg-destructive/5 text-center">
+              <p className="text-[10px] font-bold text-destructive uppercase">
+                {errors.sections.message}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

@@ -30,6 +30,27 @@ export function CvSectionSelector({
       onChange([...selectedSections, section]);
     }
   };
+  
+  const orderOfSections: Record<CvSectionType, number> = {
+    [CvSectionType.SUMMARY]: 0,
+    [CvSectionType.CONTACT]: 1,
+    [CvSectionType.EXPERIENCE]: 2,
+    [CvSectionType.EDUCATION]: 3,
+    [CvSectionType.SKILLS]: 4,
+    [CvSectionType.PROJECTS]: 5,
+    [CvSectionType.VOLUNTEERING]: 6,
+    [CvSectionType.CERTIFICATIONS]: 7,
+    [CvSectionType.COMPLEMENTS]: 8,
+    [CvSectionType.ACHIEVEMENTS]: 9,
+    [CvSectionType.INTERESTS]: 10,
+    [CvSectionType.LANGUAGES]: 11,
+  } as Record<CvSectionType, number>;
+
+  const renderOrder = [...allSectionTypes].sort((a, b) => {
+    const oa = orderOfSections[a] ?? 1000;
+    const ob = orderOfSections[b] ?? 1000;
+    return oa - ob;
+  });
 
   return (
     <div className="space-y-4">
@@ -52,10 +73,9 @@ export function CvSectionSelector({
           * Selecciona en el orden que prefieras que aparezcan.
         </p>
 
-        <div className="flex flex-wrap gap-2 p-3 rounded-3xl bg-secondary/10 border border-border/40">
-          {allSectionTypes.map((section) => {
-            const orderIndex = selectedSections.indexOf(section);
-            const isSelected = orderIndex !== -1;
+        <div className="flex flex-col gap-2 p-3 rounded-2xl bg-secondary/10 border border-border/40">
+          {renderOrder.map((section) => {
+            const isSelected = selectedSections.includes(section);
             const isRecommended = recommended.includes(section);
 
             return (
@@ -64,36 +84,28 @@ export function CvSectionSelector({
                 type="button"
                 onClick={() => toggleSection(section)}
                 className={cn(
-                  "relative flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-bold transition-all border duration-200",
-                  // Estado: Seleccionado
+                  "w-full text-left flex items-center justify-between px-4 py-2 rounded-lg text-sm font-semibold transition-all border duration-200",
                   isSelected
-                    ? "bg-accent text-accent-foreground border-accent shadow-md shadow-accent/20 scale-[1.02]"
+                    ? "bg-accent text-accent-foreground border-accent"
                     : "bg-background/50 text-muted-foreground border-border hover:border-accent/30",
-                  // Recomendado pero no seleccionado
-                  (!isSelected && isRecommended) && "bg-accent/5 border-accent/40 text-foreground hover:bg-accent/10",
                 )}
               >
-                {/* Indicador Numérico de Orden */}
-                {isSelected && (
-                  <span className="flex items-center justify-center w-4 h-4 bg-accent-foreground text-accent rounded-full text-[9px] font-black shadow-inner">
-                    {orderIndex + 1}
-                  </span>
-                )}
-
-                {!isSelected && (
-                  isRecommended ? (
-                    <Sparkles className="h-3.5 w-3.5 text-accent animate-pulse" />
+                <div className="flex items-center gap-3">
+                  {isSelected ? (
+                    <CheckCircle className="h-4 w-4 text-accent-foreground" />
+                  ) : isRecommended ? (
+                    <Sparkles className="h-4 w-4 text-accent" />
                   ) : (
-                    <Plus className="h-3.5 w-3.5 opacity-40" />
-                  )
-                )}
+                    <Plus className="h-4 w-4 opacity-40" />
+                  )}
 
-                <span className={cn(isSelected && "ml-0.5")}>
-                  {SECTION_LABELS[section]}
-                </span>
+                  <span>{SECTION_LABELS[section]}</span>
+                </div>
 
                 {isSelected && (
-                  <CheckCircle className="h-3 w-3 opacity-70 ml-1" />
+                  <span className="text-[12px] text-muted-foreground">
+                    {selectedSections.indexOf(section) + 1}
+                  </span>
                 )}
               </button>
             );

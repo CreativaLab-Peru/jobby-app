@@ -119,20 +119,61 @@ export default function AnalysisResultsScreen({
 
         {/* SECCIÓN PREMIUM: Becas e Intercambios */}
         <div className="space-y-8 pt-10">
-          <div className="flex flex-col items-center gap-2">
-            <h2 className="text-2xl font-black tracking-tight text-center">Programas y Becas Sugeridas</h2>
-            <div className="h-1 w-12 bg-primary rounded-full"/>
+          <div className="flex flex-col items-center gap-4">
+            <h2 className="text-2xl font-black tracking-tight text-center uppercase">
+              Programas y Becas Sugeridas
+            </h2>
+            <div className="h-1.5 w-16 bg-primary rounded-full"/>
           </div>
 
+          {/* CARD DE INSIGHT: Acceso al top 3% */}
+          <Card className="max-w-3xl mx-auto p-10 rounded-[2.5rem] border-none bg-secondary/30 shadow-inner flex flex-col items-center text-center space-y-4">
+            <Badge className="bg-primary text-primary-foreground font-black px-4 py-1 rounded-full uppercase tracking-widest text-[10px]">
+              Análisis de Compatibilidad
+            </Badge>
+
+            <div className="space-y-2">
+              <h3 className="text-3xl font-black uppercase tracking-tighter text-foreground leading-none">
+                Acceso al top 3% global
+              </h3>
+              <p className="text-base text-muted-foreground font-medium max-w-lg mx-auto leading-relaxed">
+                Tu perfil tiene un <span className="text-primary font-bold">40% de compatibilidad</span> con más de 2 oportunidades detectadas. Desbloquea el análisis completo de brechas para aplicar hoy mismo.
+              </p>
+            </div>
+          </Card>
+
           {/* Simulación de contenido bloqueado */}
-          <div
-            className="grid grid-cols-1 md:grid-cols-3 gap-4 opacity-50 select-none pointer-events-none grayscale blur-[1px]">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Card key={i}
-                    className="p-8 rounded-[2rem] border-dashed border-2 border-border flex flex-col items-center justify-center gap-4 bg-secondary/20">
-                <Lock className="w-6 h-6 text-muted-foreground"/>
-                <div className="h-3 w-20 bg-muted rounded-full"/>
-                <div className="h-3 w-16 bg-muted/50 rounded-full"/>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              "Beca Alianza del Pacífico",
+              "Intercambio Santander",
+              "Programa de Movilidad Global",
+              "Beca de Excelencia Académica",
+              "Pasantía Internacional",
+              "Fondo de Investigación"
+            ].map((texto, i) => (
+              <Card
+                key={i}
+                onClick={handleOpenCreditPackModal}
+                className="group p-8 rounded-[2rem] border border-3 border-border flex flex-col items-center justify-center gap-4 bg-secondary/20 cursor-pointer transition-all hover:bg-secondary/30 hover:border-primary/30"
+              >
+                <div className="relative">
+                  <Lock className="w-6 h-6 text-muted-foreground/50 transition-all duration-300 group-hover:scale-125 group-hover:text-primary group-hover:rotate-12" />
+                  <div className="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+
+                {/* Texto "random" con blur */}
+                <div className="space-y-2 text-center transition-all duration-300 grayscale opacity-40 blur-[2px] group-hover:blur-[3px] group-hover:opacity-20">
+                  <p className="text-[10px] font-black uppercase tracking-tighter text-muted-foreground">
+                    {texto}
+                  </p>
+                  <div className="h-2 w-16 bg-muted/30 rounded-full mx-auto"/>
+                </div>
+
+                <div className="flex gap-1 opacity-20 group-hover:opacity-10 transition-opacity">
+                  <div className="h-1.5 w-8 bg-muted/20 rounded-full"/>
+                  <div className="h-1.5 w-8 bg-muted/20 rounded-full"/>
+                </div>
               </Card>
             ))}
           </div>

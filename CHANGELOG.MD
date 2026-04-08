@@ -1,4 +1,4 @@
-# WIP
+# v1.2.3, v1.2.4 and v1.2.5 - 2026-04-08
 
 ## Features
 - [JB-86agq5b8r](https://app.clickup.com/t/86agq5b8r) New letter page
@@ -15,6 +15,9 @@
 - [JB-86agpvx9d](https://app.clickup.com/t/86agpvx9d) El monto esta mal (deberia aparecer 49.90 y no 19.90)
 - [JB-86agpvyar](https://app.clickup.com/t/86agpvyar) Mensaje de WhatsApp al completar una ruta
 - [JB-86agpvy0g](https://app.clickup.com/t/86agpvy0g) Mejorar los prompts de insight y area y el modal de planes no tiene scroll
+- [JB-86agrp9nr](https://app.clickup.com/t/86agrp9nr) Change route of new letter page and include it in navbar
+- [JB-86agrqhb1](https://app.clickup.com/t/86agrqhb1) Mejorar news letter y mensaje para el usuario que va pagar
+- [JB-86agrq9dq](https://app.clickup.com/t/86agrq9dq) Aún se puede acceder a career accelerator desde este card
 
 # v.1.2.2 - 2026-04-06
 

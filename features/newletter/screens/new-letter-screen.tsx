@@ -51,7 +51,7 @@ export const Newsletter = () => {
           href="/"
           className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
         >
-          <ArrowLeft size={16}/> Volver
+          <ArrowLeft size={16}/> Levely
         </Link>
       </header>
 

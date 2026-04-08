@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import {useEffect, useRef} from 'react';
 
 interface ConvertKitProps {
   uid: string;
 }
 
-export default function ConvertKitForm({ uid }: ConvertKitProps) {
+export default function ConvertKitForm({uid}: ConvertKitProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function ConvertKitForm({ uid }: ConvertKitProps) {
   return (
     <div
       ref={containerRef}
-      className="min-h-[150px] w-full my-1 justify-center text-red-500"
+      className="min-h-[150px] w-full"
       id={`ck-wrapper-${uid}`}
     >
       {/* El script se inyectará aquí y ConvertKit pondrá el form justo al lado */}

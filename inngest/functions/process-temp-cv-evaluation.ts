@@ -22,7 +22,7 @@ export const processTempCvEvaluation = inngest.createFunction(
       const aiResult = await step.run("ai-extraction-and-scoring", async () => {
         const prompt = `
           You are an **AI Senior Recruiter and CV Auditor**.
-          Extract the information from the CV text and provide a professional evaluation.
+          Extract information and provide a strategic evaluation.
 
           ---
           ### Input (raw CV text)
@@ -30,20 +30,26 @@ export const processTempCvEvaluation = inngest.createFunction(
 
           ---
           ### Output JSON Schema
-          Return ONLY a valid JSON object with this exact structure:
+          Return ONLY a valid JSON object:
           {
             "opportunityType": "SCHOLARSHIP",
             "language": "EN | ES",
             "cvType": "TECHNOLOGY_ENGINEERING | DESIGN_CREATIVITY | MARKETING_STRATEGY | MANAGEMENT_BUSINESS | FINANCE_PROJECTS | SOCIAL_MEDIA | EDUCATION | SCIENCE",
             "overallScore": (number 0-100),
-            "whichSectionsContain": [], // Populate this array with one or more of the following tags: "EXPERIENCE|EDUCATION|SKILLS|PROJECTS|VOLUNTEERING|CERTIFICATIONS|LANGUAGES|CONTACT|COMPLEMENTS|ACHIEVEMENTS|INTERESTS" The tags MUST be in the EXACT order they appear in the CV (from top to bottom, left to right).
+            "whichSectionsContain": [],  // Populate this array with one or more of the following tags: "EXPERIENCE|EDUCATION|SKILLS|PROJECTS|VOLUNTEERING|CERTIFICATIONS|LANGUAGES|CONTACT|COMPLEMENTS|ACHIEVEMENTS|INTERESTS" The tags MUST be in the EXACT order they appear in the CV (from top to bottom, left to right).
             "evaluation": {
-              "summary": "Professional overview of the profile in spanish",
+              "summary": "Insight de perfil: Debe ser un análisis de alto impacto en español (ej: 'Tu perfil posee un X% de transferencia...'). Máximo 2 frases.",
               "strengths": ["string" (in spanish)],
-              "weaknesses": ["string" (in spanish)],
+              "weaknesses": ["Área de mejora crítica: Identifica el error principal (ej: fechas post-datadas) y su impacto en el score."],
               "improvementRoadmap": ["step 1", "step 2" (in spanish)]
             }
           }
+
+          ---
+          ### Specific Instructions for High-Value Content:
+          1. **For 'summary'**: Do not just summarize. Act as a strategic consultant. Mention the "Top %" positioning of the candidate and their skill transferability to international ecosystems.
+          2. **For 'weaknesses[0]'**: This is the 'Área de Mejora' highlight. If you detect post-dated years (e.g., 2025/2026) in experience or education that doesn't clearly state "Projected" or "Present", flag it as a "Red Flag" of integrity and explain that it reduces the score.
+          3. **Integrity Check**: Penalize the 'overallScore' significantly if there are chronological inconsistencies.
         `;
 
         const result = await queryGemini({prompt, type: "JSON"});

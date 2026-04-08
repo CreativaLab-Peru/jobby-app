@@ -10,7 +10,6 @@ import {BASE_URL, mercadopago} from "@/features/billing/domain/mercado-preferenc
 
 export const createPreferenceForAuthenticatedUser = async (slug: string) => {
   try {
-    console.log("BASE_URL:", BASE_URL);
     if (!BASE_URL) {
       throw new Error("Critical: BASE_URL is not defined in environment variables");
     }
@@ -46,6 +45,7 @@ export const createPreferenceForAuthenticatedUser = async (slug: string) => {
 
     const body: PreferenceCreateData = {
       body: {
+        statement_descriptor:"Levely",
         items: [
           {
             id: paymentPlan.id,

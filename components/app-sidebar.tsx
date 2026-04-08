@@ -54,7 +54,7 @@ const sessionFetcher = (): Promise<NavbarUser> =>
 
 // --- Nav Items Configuration ---
 const routeNavItems = [
-  { title: "Mi Pasos", href: "/dashboard", icon: LayoutDashboard },
+  { title: "Mis Pasos", href: "/dashboard", icon: LayoutDashboard },
   { title: "CV", href: "/my-cv", icon: FileText },
   { title: "Análisis", href: "/my-evaluation", icon: MessageSquare },
   { title: "Oportunidades", href: "/my-opportunities", icon: Briefcase },
@@ -117,12 +117,12 @@ export default function AppSidebar({
   }, [pathname, isMobile, setOpenMobile]);
 
   const isActive = (path: string) => {
-    if (path === "/dashboard") return pathname === "/dashboard";
-    if (path === "/my-cv" || path === "/my-cvs") return pathname === path;
     if (path === "/admin/plans") {
       return pathname.startsWith("/admin/plans") || pathname.startsWith("/admin/credit-packages");
     }
-    return pathname.startsWith(path);
+    
+    if (path === "/my-cv" && pathname.startsWith("/cv/")) return true;
+    return pathname === path || pathname.startsWith(`${path}/`);
   };
 
   const renderNavItem = (

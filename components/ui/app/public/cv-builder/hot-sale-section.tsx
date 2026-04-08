@@ -89,13 +89,13 @@ export function HotSaleSection({ user = null }: HotSaleSectionProps) {
         // Usuario nuevo — usar flujo con temporalUserId
         if (!temporalUserId) return;
         if (method === PaymentMethod.PADDLE) {
-          const result = await createCheckoutForNewUserPaddle(temporalUserId);
+          const result = await createCheckoutForNewUserPaddle(temporalUserId, "STARTER");
           if (result.success) {
             sessionStorage.setItem("paddle_new_user_checkout", "1");
             openCheckout(result.transactionId, checkoutEmail ?? undefined);
           }
         } else {
-          const result = await createPreferenceForNewUser(temporalUserId);
+          const result = await createPreferenceForNewUser(temporalUserId, "STARTER");
           if (result.success) window.location.href = result.redirect;
         }
       }

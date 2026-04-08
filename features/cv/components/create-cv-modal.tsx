@@ -82,7 +82,7 @@ export function CreateCVModal() {
         <div className="flex flex-col h-[90vh] md:h-[80vh]">
 
           {/* Header Superior - Minimalista */}
-          <div className="p-5 border-b border-border bg-background flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="p-8 border-b border-border bg-background flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3 w-full sm:w-auto">
               <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
                 <Sparkles size={20} />

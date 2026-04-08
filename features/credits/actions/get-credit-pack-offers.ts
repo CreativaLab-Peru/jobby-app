@@ -9,6 +9,7 @@ type NumericLike = number | string | { toNumber?: () => number };
 type PlanOfferProjection = {
   name: string;
   priceCentsPEN: NumericLike;
+  priceCentsUSD: NumericLike | null;
   manualCvLimit: number;
   features: Prisma.JsonValue | null;
   creditPackages: Array<{ type: string; credits: number }>;
@@ -29,6 +30,7 @@ export const getCreditPackOffers = async (): Promise<CreditPackOffer[]> => {
         slug: true,
         name: true,
         priceCentsPEN: true,
+        priceCentsUSD: true,
         manualCvLimit: true,
         features: true,
         creditPackages: {
@@ -79,6 +81,10 @@ const buildOfferFromPlan = (
   return {
     name: plan.name || basePack.name,
     price: toNumber(plan.priceCentsPEN) / 100,
+    priceUSD:
+      plan.priceCentsUSD != null
+        ? toNumber(plan.priceCentsUSD) / 100
+        : undefined,
     limits: dynamicLimits,
     features: getPlanFeatureItems(plan.features).length
       ? getPlanFeatureItems(plan.features).map((text) => ({ text, included: true }))

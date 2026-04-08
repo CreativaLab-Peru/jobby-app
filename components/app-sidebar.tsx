@@ -117,7 +117,6 @@ export default function AppSidebar({
   }, [pathname, isMobile, setOpenMobile]);
 
   const isActive = (path: string) => {
-    // Keep admin/plans special handling
     if (path === "/admin/plans") {
       return pathname.startsWith("/admin/plans") || pathname.startsWith("/admin/credit-packages");
     }

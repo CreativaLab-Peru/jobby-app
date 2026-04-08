@@ -121,13 +121,8 @@ export default function AppSidebar({
     if (path === "/admin/plans") {
       return pathname.startsWith("/admin/plans") || pathname.startsWith("/admin/credit-packages");
     }
-
-    // If the sidebar item is `my-cv`, consider any `/cv/:id/...` page active
-    // because `/my-cv` redirects to `/cv/:id/preview` when a CV exists.
+    
     if (path === "/my-cv" && pathname.startsWith("/cv/")) return true;
-
-    // Consider exact path or any subpath as active so the active/hover
-    // styles persist when the user is inside that section (e.g. /my-evaluation/*)
     return pathname === path || pathname.startsWith(`${path}/`);
   };
 

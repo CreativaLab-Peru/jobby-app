@@ -85,7 +85,7 @@ export function CvListScreen({
 
   const actions = (
     <>
-      <Button
+      {/* <Button
         variant="secondary" // Usamos el token secondary para acciones complementarias
         disabled={!canCreate}
         onClick={onOpenUpload}
@@ -103,7 +103,7 @@ export function CvListScreen({
       >
         <Plus className="mr-2 h-4 w-4"/>
         Crear nuevo CV
-      </Button>
+      </Button> */}
 
       {/* Modales para crear y subir CV */}
       <CreateCVModal/>

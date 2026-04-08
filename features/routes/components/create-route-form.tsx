@@ -3,12 +3,12 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Route, Sparkles } from "lucide-react";
+import { MoveRight, Route, Sparkles, User, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createRoute } from "@/features/routes/actions/create-route";
-import {useRouteStore} from "@/store/use-route-store";
-import {getRoutesForUser} from "@/features/routes/actions/get-routes-for-user";
+import { useRouteStore } from "@/store/use-route-store";
+import { getRoutesForUser } from "@/features/routes/actions/get-routes-for-user";
 
 export default function CreateRouteForm() {
   const router = useRouter();
@@ -16,7 +16,18 @@ export default function CreateRouteForm() {
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
 
-  const {hydrate} = useRouteStore();
+  const { hydrate } = useRouteStore();
+
+  const suggestions = [
+    "Máster en UK",
+    "MBA en Europa",
+    "Becas en STEM",
+  ];
+
+  const handleSuggestionClick = (value: string) => {
+    setName(value);
+    setError("");
+  };
 
   const handleSubmit = () => {
     if (!name.trim()) {
@@ -24,23 +35,47 @@ export default function CreateRouteForm() {
       return;
     }
     setError("");
+
     startTransition(async () => {
       const result = await createRoute(name.trim());
       if (!result.success) {
         setError(result.message || "Error al crear la ruta.");
-        return
+        return;
       }
 
       const routesResult = await getRoutesForUser();
       if (!routesResult.success) {
-        setError(routesResult.message || "Ruta creada, pero no se pudieron cargar las rutas.");
+        setError(
+          routesResult.message ||
+            "Ruta creada, pero no se pudieron cargar las rutas."
+        );
         return;
       }
+
       hydrate(routesResult.routes);
       router.refresh();
       router.push("/dashboard");
     });
   };
+
+  const steps = [
+    {
+      icon: User,
+      title: "Sincronización de Perfil",
+      label: "Sube tu trayectoria para el diagnóstico inicial.",
+    },
+    {
+      icon: Brain,
+      title: "Auditoría de IA",
+      label: "Identificamos tus brechas de competitividad global.",
+    },
+    {
+      icon: Sparkles,
+      title: "Revelación de Matches",
+      label:
+        "Acceso a fondos, becas y vacantes de alta compatibilidad listos para que apliques.",
+    },
+  ];
 
   return (
     <main className="min-h-[80vh] flex items-center justify-center p-4">
@@ -49,7 +84,7 @@ export default function CreateRouteForm() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md space-y-8"
       >
-        {/* Icon */}
+        {/* Header */}
         <div className="flex flex-col items-center text-center space-y-4">
           <div className="p-4 rounded-2xl bg-primary/10">
             <Route className="h-10 w-10 text-primary" />
@@ -69,16 +104,33 @@ export default function CreateRouteForm() {
         <div className="space-y-4">
           <div className="space-y-2">
             <label className="text-sm font-medium" htmlFor="route-name">
-              Nombre de tu ruta
+              Define el propósito de tu ruta
             </label>
+
             <Input
               id="route-name"
-              placeholder='Ej: "Mi camino en tecnología"'
+              placeholder='Ej: "Master en UK, Fellowship en IA, etc."'
               value={name}
               onChange={(e) => setName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
               disabled={isPending}
             />
+
+            {/* Suggestions */}
+            <div className="flex flex-wrap gap-2 pt-1">
+              {suggestions.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => handleSuggestionClick(s)}
+                  disabled={isPending}
+                  className="text-xs px-3 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 transition-colors"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+
             {error && <p className="text-sm text-destructive">{error}</p>}
           </div>
 
@@ -91,33 +143,41 @@ export default function CreateRouteForm() {
               "Creando..."
             ) : (
               <>
-                <Sparkles className="mr-2 h-4 w-4" />
-                Comenzar mi ruta
+                Comenzar
+                <MoveRight className="ml-2 h-4 w-4" />
               </>
             )}
           </Button>
         </div>
 
-        {/* Steps preview */}
-        <div className="rounded-xl border border-border/50 bg-secondary/30 p-5 space-y-3">
+        {/* Steps */}
+        <div className="rounded-xl border border-border/50 bg-secondary/30 p-5 space-y-4">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            Lo que harás
+            Auditoría en Tiempo Real
           </p>
-          {[
-            { step: "1", label: "Crea o sube tu CV" },
-            { step: "2", label: "Analízalo con IA y mejóralo" },
-            { step: "3", label: "Encuentra oportunidades ideales" },
-          ].map((s) => (
-            <div key={s.step} className="flex items-center gap-3">
-              <span className="flex items-center justify-center h-7 w-7 rounded-full bg-primary/10 text-primary text-xs font-bold">
-                {s.step}
-              </span>
-              <span className="text-sm text-foreground">{s.label}</span>
-            </div>
-          ))}
+
+          {steps.map((s, i) => {
+            const Icon = s.icon;
+
+            return (
+              <div key={i} className="flex items-start gap-4">
+                <span className="flex items-center justify-center h-8 w-8 rounded-lg bg-primary/10 text-primary shrink-0 mt-0.5">
+                  <Icon className="h-5 w-5" />
+                </span>
+
+                <div className="flex flex-col space-y-0.5">
+                  <span className="text-sm font-semibold text-foreground leading-none">
+                    {s.title}
+                  </span>
+                  <span className="text-xs text-muted-foreground leading-snug">
+                    {s.label}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </motion.div>
     </main>
   );
 }
-

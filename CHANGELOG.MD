@@ -4,6 +4,12 @@
 - [JB-86agq5b8r](https://app.clickup.com/t/86agq5b8r) New letter page
 
 ## Fixes
+- [LV-86agpvx6g](https://app.clickup.com/t/86agpvx6g) Added price in USD
+- [LV-86agpvy8f](https://app.clickup.com/t/86agpvy8f) Hidden the section Career Acelerator
+- [LV-86agpvydd](https://app.clickup.com/t/86agpvydd) Hidden the “Upload” and “Create Resume” buttons on the page listing all resumes
+- [LV-86agpvy83](https://app.clickup.com/t/86agpvy83) Fixed Cookie redirection
+- [LV-86agpvw8n](https://app.clickup.com/t/86agpvw8n) Fixed and added a reference to the creation of roadmaps, and improved the style.
+- [LV-86agpvwah](https://app.clickup.com/t/86agpvwah) Fixed the order in which sections are displayed when creating a resume, and we've also updated the styles for the mobile version.
 - [JB-86agpvwu1](https://app.clickup.com/t/86agpvwu1) Al terminar todos los pasos, solo aparece que el final estuviera terminado
 - [JB-86agpvx2y](https://app.clickup.com/t/86agpvx2y) El nombre de producto dice jobby, pero deberia decir Levely
 - [JB-86agpvx9d](https://app.clickup.com/t/86agpvx9d) El monto esta mal (deberia aparecer 49.90 y no 19.90)

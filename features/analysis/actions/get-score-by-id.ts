@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/features/share/actions/get-current-user";
+import {prisma} from "@/lib/prisma";
+import {getCurrentUser} from "@/features/share/actions/get-current-user";
 import {
   Opportunity,
   CvEvaluation,
@@ -19,7 +19,7 @@ export const getEvaluationById = async (analyzeId: string): Promise<GetScoreAndO
     const currentUser = await getCurrentUser();
     if (!currentUser) return null;
     const cvEvaluation = await prisma.cvEvaluation.findFirst({
-      where: { id: analyzeId },
+      where: {id: analyzeId, cv: {userId: currentUser.id}},
       include: {
         scores: true,
         recommendations: true,

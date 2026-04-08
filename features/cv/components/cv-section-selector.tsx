@@ -13,14 +13,14 @@ interface CvSectionSelectorProps {
 }
 
 export function CvSectionSelector({
-                                    opportunityType,
-                                    selectedSections,
-                                    onChange,
-                                  }: CvSectionSelectorProps) {
+  opportunityType,
+  selectedSections,
+  onChange,
+}: CvSectionSelectorProps) {
   const recommended = RECOMMENDATIONS_BY_OPPORTUNITY[opportunityType] || [];
   const allSectionTypes = Object.values(CvSectionType)
-    .filter(item => item !== CvSectionType.LANGUAGES)
-    .filter(item => item !== CvSectionType.SUMMARY);
+    .filter((item) => item !== CvSectionType.LANGUAGES)
+    .filter((item) => item !== CvSectionType.SUMMARY);
 
   const toggleSection = (section: CvSectionType) => {
     const isSelected = selectedSections.includes(section);
@@ -30,7 +30,7 @@ export function CvSectionSelector({
       onChange([...selectedSections, section]);
     }
   };
-  
+
   const orderOfSections: Record<CvSectionType, number> = {
     [CvSectionType.SUMMARY]: 0,
     [CvSectionType.CONTACT]: 1,
@@ -68,7 +68,7 @@ export function CvSectionSelector({
               Orden de llenado activo
             </span>
           )}
-        </div
+        </div>
 
         <p className="text-[10px] text-muted-foreground/60 px-1">
           * Selecciona en el orden que prefieras que aparezcan.

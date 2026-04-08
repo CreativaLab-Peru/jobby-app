@@ -1,8 +1,8 @@
 # WIP
 
 ## Fixes
-
-- [LV-86agpvwah](https://app.clickup.com/t/86agpvwah) Arreglado el orden en el que se muestran las secciones al crear un CV, además de arreglar los estilos para la parte mobil.
+- [LV-86agpvw8n](https://app.clickup.com/t/86agpvw8n) Fixed and added a reference to the creation of roadmaps, and improved the style.
+- [LV-86agpvwah](https://app.clickup.com/t/86agpvwah) Fixed the order in which sections are displayed when creating a resume, and we've also updated the styles for the mobile version.
 - [Al terminar todos los pasos, solo aparece que el final estuviera terminado](https://app.clickup.com/t/86agpvwu1)
 - [El nombre de producto dice jobby, pero deberia decir Levely](https://app.clickup.com/t/86agpvx2y)
 - [El monto esta mal (deberia aparecer 49.90 y no 19.90)](https://app.clickup.com/t/86agpvx9d)

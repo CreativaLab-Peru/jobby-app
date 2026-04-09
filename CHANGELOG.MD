@@ -1,7 +1,8 @@
-# v1.2.8 - 2026-04-09
+# v1.2.8 and v1.2.9 - 2026-04-09
 
 ## Fixes
 - [LV-86agtehq5](https://app.clickup.com/t/86agrxq1b) No procesa, evalua y obtiene oportunidades luego de terminar de pagar y el onboarding
+- [JB-86agtfvww](https://app.clickup.com/t/86agtfvww) Luego del proceso rapido de pago, subida, evaluacion y obtencion de oportunidades no se actualiza la ruta en la interfaz
 
 # v1.2.7 - 2026-04-09
 

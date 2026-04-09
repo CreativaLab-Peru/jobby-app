@@ -1,4 +1,4 @@
-# v1.2.6 - 2026-04-08
+# v1.2.7 - 2026-04-09
 ## Enhancements
 - Es necesario volver a correr ```conf_cv_sections.ts``` de nuevo para actualizar las secciones de los CVs, asi como complementos e intereses
 

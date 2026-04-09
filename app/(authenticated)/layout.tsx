@@ -8,7 +8,6 @@ import {ThemeSync} from "@/components/theme-sync";
 import {PaddleProvider} from "@/features/billing/components/paddle-provider";
 import {getRoutesForUser} from "@/features/routes/actions/get-routes-for-user";
 import {RouteProvider} from "@/features/routes/components/route-provider";
-import {getPendingRoadmapStep} from "@/features/roadmap/actions/get-pending-roadmap-step";
 import {CreditsProvider} from "@/providers/credits-provider";
 
 export const dynamic = "force-dynamic";

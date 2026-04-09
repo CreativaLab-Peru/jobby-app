@@ -118,7 +118,40 @@ function buildSectionsPayload(cvData: CVData) {
 
   for (const [key, meta] of Object.entries(map)) {
     const sectionData = cvData[key as keyof CVData];
-    if (sectionData && "items" in sectionData) {
+
+    if (!sectionData) continue;
+
+    // COMPLEMENTS
+    if (key === "complements" && typeof sectionData === "object") {
+      const complementsData = sectionData as {
+        title?: string;
+        description?: string;
+        content?: string;
+        items?: unknown[];
+      };
+      const hasDirectContent =
+        typeof complementsData.title === "string" ||
+        typeof complementsData.description === "string" ||
+        typeof complementsData.content === "string";
+
+      const content =
+        hasDirectContent || !Array.isArray(complementsData.items)
+          ? {
+              title: complementsData.title ?? "",
+              description: complementsData.description ?? "",
+              content: complementsData.content ?? "",
+            }
+          : complementsData.items;
+
+      payload.push({
+        type: meta.type,
+        content,
+        defaultTitle: meta.title,
+      });
+      continue;
+    }
+
+    if (typeof sectionData === "object" && "items" in sectionData) {
       payload.push({
         type: meta.type,
         content: sectionData.items, // Guardamos directamente el array de items

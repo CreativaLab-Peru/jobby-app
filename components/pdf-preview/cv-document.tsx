@@ -8,8 +8,10 @@ import { linkedinDisplay } from "@/lib/utils";
 import {i18n} from "@/const/i18n";
 import {
   getNonEmptyCertificationItems,
+  getNonEmptyInterestsItems,
   getNonEmptyProjectItems,
   getNonEmptyVolunteeringItems,
+  normalizeComplementsItems,
 } from "@/features/cv/helpers/non-empty-section-items";
 
 // Font Arial
@@ -127,6 +129,12 @@ const styles = StyleSheet.create({
 export function CvDocument({ data, sections, lang = "ES" }: { data: CVData; sections: CVSection[], lang?: "ES" | "EN" }) {
   const t = i18n[lang] || i18n.ES;
   const certificationsItems = getNonEmptyCertificationItems(data.certifications?.items ?? null);
+  const complementsItems = normalizeComplementsItems(
+    data.complements?.items && data.complements.items.length > 0
+      ? data.complements.items
+      : data.complements ?? null
+  );
+  const interestsItems = getNonEmptyInterestsItems(data.interests?.items ?? null);
   const projectsItems = getNonEmptyProjectItems(data.projects?.items ?? null);
   const volunteeringItems = getNonEmptyVolunteeringItems(data.volunteering?.items ?? null);
 
@@ -361,6 +369,50 @@ export function CvDocument({ data, sections, lang = "ES" }: { data: CVData; sect
                 {data.skills.soft.join(", ")}
               </Text>
             ) : null}
+          </View>
+        </View>
+      ) : null,
+
+    complements: () =>
+      complementsItems.length ? (
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>{t.complements}</Text>
+          <View style={styles.sectionDivider} />
+          <View>
+            {complementsItems.map((item, index) => {
+              const text = item.content || item.description;
+              if (!item.title && !text) return null;
+
+              return (
+                <Text key={item.id ?? index} style={styles.simpleList}>
+                  {item.title ? <Text style={{ fontWeight: "bold" }}>{item.title}:</Text> : null}
+                  {item.title && text ? " " : ""}
+                  {text}
+                </Text>
+              );
+            })}
+          </View>
+        </View>
+      ) : null,
+
+    interests: () =>
+      interestsItems.length ? (
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>{t.interests}</Text>
+          <View style={styles.sectionDivider} />
+          <View>
+            {interestsItems.map((item, index) => {
+              const text = item.content || item.description;
+              if (!item.title && !text) return null;
+
+              return (
+                <Text key={item.id ?? index} style={styles.simpleList}>
+                  {item.title ? <Text style={{ fontWeight: "bold" }}>{item.title}:</Text> : null}
+                  {item.title && text ? " " : ""}
+                  {text}
+                </Text>
+              );
+            })}
           </View>
         </View>
       ) : null,

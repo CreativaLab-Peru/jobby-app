@@ -15,6 +15,14 @@ export function transformCVToDTO(cv: CVWithSections): CVData {
   const certifications = parseJsonArray(getSection(CvSectionType.CERTIFICATIONS)?.contentJson);
   const achievements = parseJsonArray(getSection(CvSectionType.ACHIEVEMENTS)?.contentJson);
   const volunteering = parseJsonArray(getSection(CvSectionType.VOLUNTEERING)?.contentJson);
+  const complementsRaw = getSection(CvSectionType.COMPLEMENTS)?.contentJson as any;
+  const complements = Array.isArray(complementsRaw)
+    ? complementsRaw
+    : complementsRaw && typeof complementsRaw === "object"
+      ? [complementsRaw]
+      : [];
+  const interests = parseJsonArray(getSection(CvSectionType.INTERESTS)?.contentJson);
+  const firstComplement = complements[0] ?? {};
 
   const summary = getSection(CvSectionType.SUMMARY)?.contentJson as
     | { text?: string }
@@ -113,6 +121,29 @@ export function transformCVToDTO(cv: CVWithSections): CVData {
         position: item.position ?? "",
         duration: item.duration ?? "",
         responsibilities: item.responsibilities ?? "",
+      })),
+    },
+    complements: {
+      title: firstComplement.title ?? "",
+      description: firstComplement.description ?? "",
+      content: firstComplement.content ?? "",
+      ...(Array.isArray(complementsRaw)
+        ? {
+            items: complements.map((item) => ({
+              id: item.id,
+              title: item.title ?? "",
+              description: item.description ?? "",
+              content: item.content ?? "",
+            })),
+          }
+        : {}),
+    },
+    interests: {
+      items: interests.map((item) => ({
+        id: item.id,
+        title: item.title ?? "",
+        description: item.description ?? "",
+        content: item.content ?? "",
       })),
     },
   };

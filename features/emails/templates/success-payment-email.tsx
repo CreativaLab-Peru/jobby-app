@@ -50,12 +50,12 @@ export const SuccessPaymentEmail = ({
 
           <Text style={text}>
             Hola <strong>{displayIdentifier}</strong>, hemos recibido tu pago correctamente.
-            Tu cuenta ha sido activada y ya tienes acceso total.
+            Tus créditos ya están disponibles y tienes acceso a tu cuenta en Levely.
           </Text>
 
           <Section style={{ textAlign: "center", margin: "32px 0" }}>
             <Text style={{ ...text, marginBottom: "16px", fontSize: "14px" }}>
-              Haz clic abajo para configurar tu cuenta y empezar:
+              Haz clic abajo para entrar a tu cuenta y empezar a usarlos:
             </Text>
             <Link href={magicLink} style={button}>Ingresar ahora</Link>
           </Section>

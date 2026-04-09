@@ -1,8 +1,14 @@
+# WIP
+
+## Fixes
+- [JB-86agpvy9d](https://app.clickup.com/t/86agpvy9d) Se tarda en cambiar estado de una tarea (parece lento para el usuario)
+- [JB-86agp593z](https://app.clickup.com/t/86agp593z) Mejorar el diseño y contenido de los correos
+- [LV-86agrxq5f](https://app.clickup.com/t/86agrxq5f) Ahora se renderizan Complementos e Intereses, además de poder modificar los ejemplos y tips desde admin
+- [LV-86agrxq1b](https://app.clickup.com/t/86agrxq1b) Todos los CVs desde la vista admin, tienen las 10 secciones mapeadas
+
 # v1.2.6 - 2026-04-08
 
 ## Fixes
-- [LV-86agrxq5f](https://app.clickup.com/t/86agrxq5f) Ahora se renderizan Complementos e Intereses, además de poder modificar los ejemplos y tips desde admin
-- [LV-86agrxq1b](https://app.clickup.com/t/86agrxq1b) Todos los CVs desde la vista admin, tienen las 10 secciones mapeadas
 - [JB-86agrt0tb](https://app.clickup.com/t/86agrt0tb) Despues de hacer analisis de un cv no se muestra el detalle
 
 # v1.2.3, v1.2.4 and v1.2.5 - 2026-04-08
@@ -12,7 +18,7 @@
 
 ## Fixes
 - [LV-86agpvx6g](https://app.clickup.com/t/86agpvx6g) Added price in USD
-- [LV-86agpvy8f](https://app.clickup.com/t/86agpvy8f) Hidden the section Career Acelerator
+- [LV-86agpvy8f](https://app.clickup.com/t/86agpvy8f) Hidden the section Career Accelerator
 - [LV-86agpvydd](https://app.clickup.com/t/86agpvydd) Hidden the “Upload” and “Create Resume” buttons on the page listing all resumes
 - [LV-86agpvy83](https://app.clickup.com/t/86agpvy83) Fixed Cookie redirection
 - [LV-86agpvw8n](https://app.clickup.com/t/86agpvw8n) Fixed and added a reference to the creation of roadmaps, and improved the style.

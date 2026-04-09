@@ -1,4 +1,4 @@
-# WIP
+# v1.2.7 - 2026-04-09
 
 ## Fixes
 - [JB-86agpvy9d](https://app.clickup.com/t/86agpvy9d) Se tarda en cambiar estado de una tarea (parece lento para el usuario)

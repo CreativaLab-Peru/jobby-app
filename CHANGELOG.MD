@@ -7,6 +7,8 @@
 # v1.2.6 - 2026-04-08
 
 ## Fixes
+- [LV-86agrxq5f](https://app.clickup.com/t/86agrxq5f) Ahora se renderizan Complementos e Intereses, además de poder modificar los ejemplos y tips desde admin
+- [LV-86agrxq1b](https://app.clickup.com/t/86agrxq1b) Todos los CVs desde la vista admin, tienen las 10 secciones mapeadas
 - [JB-86agrt0tb](https://app.clickup.com/t/86agrt0tb) Despues de hacer analisis de un cv no se muestra el detalle
 
 # v1.2.3, v1.2.4 and v1.2.5 - 2026-04-08

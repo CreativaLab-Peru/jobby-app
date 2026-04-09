@@ -111,6 +111,7 @@ const SECTION_ID_TO_CONFIG_KEY: Record<string, string> = {
   PROJECTS: "projects",
   VOLUNTEERING: "volunteering",
   CERTIFICATIONS: "certifications",
+  COMPLEMENTS: "complements",
   ACHIEVEMENTS: "achievements",
   INTERESTS: "interests",
 };
@@ -123,6 +124,7 @@ const CONFIG_KEY_TO_SECTION_ID: Record<string, string> = {
   projects: "PROJECTS",
   volunteering: "VOLUNTEERING",
   certifications: "CERTIFICATIONS",
+  complements: "COMPLEMENTS",
   achievements: "ACHIEVEMENTS",
   interests: "INTERESTS",
 };
@@ -697,6 +699,33 @@ const baseSectionsMap = {
       },
     ],
   },
+  COMPLEMENTS: {
+    id: "COMPLEMENTS",
+    title: {
+      es: "Complementos",
+      en: "Complements",
+    },
+    icon: "PlusCircle",
+    fields: [
+      {
+        name: "content",
+        type: "textarea",
+        required: false,
+        label: {
+          es: "Información Adicional",
+          en: "Additional Information",
+        },
+        tip: {
+          es: "Cualquier dato relevante que no encaje en las otras secciones",
+          en: "Any relevant information that doesn't fit into the other sections",
+        },
+        example: {
+          es: "Disponibilidad para viajar y reubicación internacional.",
+          en: "Willingness to travel and international relocation.",
+        },
+      },
+    ],
+  },
   ACHIEVEMENTS: {
     id: "ACHIEVEMENTS",
     title: {
@@ -797,18 +826,24 @@ const ALL_SECTION_IDS = [
   "PROJECTS",
   "VOLUNTEERING",
   "CERTIFICATIONS",
+  "COMPLEMENTS",
   "ACHIEVEMENTS",
   "INTERESTS",
 ];
 
 // --- 2. FUNCIÓN CONSTRUCTORA DE JSON ---
 function buildFullSectionJson(customConfig: any) {
-  // Usar la lista de secciones específica si existe, si no la base
-  const sectionIds = Array.isArray(customConfig.sections) && customConfig.sections.length > 0
+  // Mantener el orden/configuración específica y completar con secciones base faltantes.
+  const configuredSectionIds = Array.isArray(customConfig.sections) && customConfig.sections.length > 0
     ? customConfig.sections
       .map((s: string) => CONFIG_KEY_TO_SECTION_ID[s.toLowerCase()] || s.toUpperCase())
       .filter((s: string) => Boolean(baseSectionsMap[s]))
+    : [];
+
+  const sectionIds = configuredSectionIds.length > 0
+    ? Array.from(new Set([...ALL_SECTION_IDS, ...configuredSectionIds]))
     : ALL_SECTION_IDS;
+
   return sectionIds.map((id: string) => {
     const base = baseSectionsMap[id];
     if (!base) return null;

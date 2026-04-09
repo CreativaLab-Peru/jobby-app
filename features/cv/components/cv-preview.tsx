@@ -6,8 +6,10 @@ import { linkedinHref, linkedinDisplay } from "@/lib/utils"
 import {i18n} from "@/const/i18n";
 import {
   getNonEmptyCertificationItems,
+  getNonEmptyInterestsItems,
   getNonEmptyProjectItems,
   getNonEmptyVolunteeringItems,
+  normalizeComplementsItems,
 } from "@/features/cv/helpers/non-empty-section-items"
 
 interface CVPreviewProps {
@@ -29,6 +31,12 @@ export function CVPreview({
 
   const t = i18n[language] || i18n.ES;
   const certificationsItems = getNonEmptyCertificationItems(data.certifications?.items ?? null)
+  const complementsItems = normalizeComplementsItems(
+    data.complements?.items && data.complements.items.length > 0
+      ? data.complements.items
+      : data.complements ?? null
+  )
+  const interestsItems = getNonEmptyInterestsItems(data.interests?.items ?? null)
   const projectsItems = getNonEmptyProjectItems(data.projects?.items ?? null)
   const volunteeringItems = getNonEmptyVolunteeringItems(data.volunteering?.items ?? null)
 
@@ -209,6 +217,50 @@ export function CVPreview({
                 {data.skills.soft.join(", ")}
               </p>
             )}
+          </div>
+        </div>
+      ) : null,
+
+    complements: () =>
+      complementsItems.length ? (
+        <div className="mt-1.5 mb-0">
+          <h2 className={sectionTitleClasses}>{t.complements}</h2>
+          <div className={sectionDividerClasses} />
+          <div>
+            {complementsItems.map((item, index) => {
+              const text = item.content || item.description;
+              if (!item.title && !text) return null;
+
+              return (
+                <p key={item.id || index} className={`${bodyTextClasses} mb-1.5`}>
+                  {item.title ? <span className="font-bold">{item.title}:</span> : null}
+                  {item.title && text ? " " : ""}
+                  {text}
+                </p>
+              );
+            })}
+          </div>
+        </div>
+      ) : null,
+
+    interests: () =>
+      interestsItems.length ? (
+        <div className="mt-1.5 mb-0">
+          <h2 className={sectionTitleClasses}>{t.interests}</h2>
+          <div className={sectionDividerClasses} />
+          <div>
+            {interestsItems.map((item, index) => {
+              const text = item.content || item.description;
+              if (!item.title && !text) return null;
+
+              return (
+                <p key={item.id || index} className={`${bodyTextClasses} mb-1.5`}>
+                  {item.title ? <span className="font-bold">{item.title}:</span> : null}
+                  {item.title && text ? " " : ""}
+                  {text}
+                </p>
+              );
+            })}
           </div>
         </div>
       ) : null,

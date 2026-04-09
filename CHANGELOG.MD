@@ -1,3 +1,8 @@
+# WIP
+
+## Fixes
+- [JB-86agtfvww](https://app.clickup.com/t/86agtfvww) Luego del proceso rapido de pago, subida, evaluacion y obtencion de oportunidades no se actualiza la ruta en la interfaz
+
 # v1.2.8 - 2026-04-09
 
 ## Fixes

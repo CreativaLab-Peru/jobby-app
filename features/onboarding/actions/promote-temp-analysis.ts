@@ -19,6 +19,10 @@ export async function promoteTempAnalysisAction({
       return {success: false, error: "Usuario no autenticado."};
     }
 
+    if (!tempCvEvaluationId || !temporalUserId) {
+      return {success: false, error: "Faltan datos para iniciar la migración."};
+    }
+
     // 1. Buscar si ya existe un CV o un proceso activo para este usuario
     const existingJob = await prisma.queueJob.findFirst({
       where: {
@@ -41,14 +45,14 @@ export async function promoteTempAnalysisAction({
         console.warn(`[PROMOTE_TEMP_ANALYSIS]: Proceso previo fallido para userId=${currentUser.id}. Creando uno nuevo.`);
         return {success: false, error: "Fallo el analisis."};
       }
-    }
 
-    if (!existingJob.cvId) {
-      console.warn(`[PROMOTE_TEMP_ANALYSIS]: Job existente sin cvId para userId=${currentUser.id}, jobId=${existingJob.id}.`);
-      return {
-        success: false,
-        error: "Se encontró un proceso previo incompleto. Intenta nuevamente."
-      };
+      if (!existingJob.cvId) {
+        console.warn(`[PROMOTE_TEMP_ANALYSIS]: Job existente sin cvId para userId=${currentUser.id}, jobId=${existingJob.id}.`);
+        return {
+          success: false,
+          error: "Se encontró un proceso previo incompleto. Intenta nuevamente."
+        };
+      }
     }
 
     // 2. Transacción Atómica: Crear CV + Crear Job de Seguimiento

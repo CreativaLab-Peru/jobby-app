@@ -1,3 +1,8 @@
+# v1.2.8 - 2026-04-09
+
+## Fixes
+- [LV-86agtehq5](https://app.clickup.com/t/86agrxq1b) No procesa, evalua y obtiene oportunidades luego de terminar de pagar y el onboarding
+
 # v1.2.7 - 2026-04-09
 
 ## Fixes

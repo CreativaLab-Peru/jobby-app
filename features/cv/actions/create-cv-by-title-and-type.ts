@@ -61,7 +61,11 @@ export const createCVByTitleAndType = async (body: CreateCvBody) => {
         // Inicializamos contenido vacío según el tipo
         contentJson: (sectionType === "CONTACT"
           ? { fullName: "", email: "", phone: "", linkedin: "", address: "" }
-          : sectionType === "SUMMARY" ? { text: "" } : []) as JsonObject,
+          : sectionType === "SUMMARY"
+            ? { text: "" }
+            : sectionType === "COMPLEMENTS"
+              ? { title: "", description: "", content: "" }
+              : []) as JsonObject,
       };
     });
 

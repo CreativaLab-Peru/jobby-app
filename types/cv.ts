@@ -96,10 +96,14 @@ export interface CVData {
     languages?: string[]
   },
   complements?: {
+    title?: string
+    description?: string
+    content?: string
     items?: Array<{
       id?: string
-      title?: string       // Ej: "Disponibilidad", "Licencia de conducir"
-      description?: string // Ej: "Inmediata para reubicación", "Categoría A-I"
+      title?: string
+      description?: string
+      content?: string
     }>
   },
   interests?: {
@@ -107,6 +111,7 @@ export interface CVData {
       id?: string
       title?: string       // Ej: "Disponibilidad", "Licencia de conducir"
       description?: string // Ej: "Inmediata para reubicación", "Categoría A-I"
+      content?: string
     }>
   }
 }

@@ -33,6 +33,8 @@ const SECTION_ID_TO_CV_KEY: Record<string, keyof CVData> = {
   SKILLS: "skills",
   CERTIFICATIONS: "certifications",
   VOLUNTEERING: "volunteering",
+  COMPLEMENTS: "complements",
+  INTERESTS: "interests",
 }
 
 function getCvDataKey(sectionId: string): keyof CVData {
@@ -77,7 +79,7 @@ export function PreviewCVComponent({
       };
     }).filter(s => {
       // 3. Lógica de visibilidad (No mostrar secciones vacías)
-      if (s.id === "CONTACT") return true;
+      if (s.id === "personal") return true;
 
       const data = s.data;
       if (!data) return false;
@@ -88,8 +90,8 @@ export function PreviewCVComponent({
       }
 
       // Si es Skills
-      if (s.id === "SKILLS") {
-        return (data.technical?.length > 0 || data.soft?.length > 0);
+      if (s.id === "skills") {
+        return (data.technical?.length > 0 || data.soft?.length > 0 || data.languages?.length > 0);
       }
 
       // Si es un campo directo (como el summary que a veces viene en personal)

@@ -6,6 +6,10 @@ import path from "path";
 import type { CVData, CVSection } from "@/types/cv";
 import { linkedinDisplay } from "@/lib/utils";
 import {i18n} from "@/const/i18n";
+import {
+  getNonEmptyInterestsItems,
+  normalizeComplementsItems,
+} from "@/features/cv/helpers/non-empty-section-items";
 
 // Font Arial
 Font.register({
@@ -195,6 +199,12 @@ function BulletList({ text }: { text: string }) {
 
 export function CvDocumentEuropass({ data, sections, lang }: { data: CVData; sections: CVSection[], lang?: "ES" | "EN" }) {
   const t = i18n[lang] || i18n.ES;
+  const complementsItems = normalizeComplementsItems(
+    data.complements?.items && data.complements.items.length > 0
+      ? data.complements.items
+      : data.complements ?? null
+  );
+  const interestsItems = getNonEmptyInterestsItems(data.interests?.items ?? null);
   const sectionRenderers: Record<string, () => React.ReactElement | null> = {
     experience: () =>
       data.experience?.items?.length ? (
@@ -361,6 +371,46 @@ export function CvDocumentEuropass({ data, sections, lang }: { data: CVData; sec
               {vol.responsibilities && <BulletList text={vol.responsibilities} />}
             </View>
           ))}
+        </View>
+      ) : null,
+
+    complements: () =>
+      complementsItems.length ? (
+        <View>
+          <Text style={styles.sectionTitle}>{t.complements}</Text>
+          {complementsItems.map((item, i) => {
+            const text = item.content || item.description;
+            if (!item.title && !text) return null;
+
+            return (
+              <View key={item.id ?? i} style={styles.itemSection} wrap={false}>
+                <Text style={styles.itemBody}>
+                  {item.title ? <Text style={styles.metaLabel}>{item.title}: </Text> : null}
+                  {text}
+                </Text>
+              </View>
+            );
+          })}
+        </View>
+      ) : null,
+
+    interests: () =>
+      interestsItems.length ? (
+        <View>
+          <Text style={styles.sectionTitle}>{t.interests}</Text>
+          {interestsItems.map((item, i) => {
+            const text = item.content || item.description;
+            if (!item.title && !text) return null;
+
+            return (
+              <View key={item.id ?? i} style={styles.itemSection} wrap={false}>
+                <Text style={styles.itemBody}>
+                  {item.title ? <Text style={styles.metaLabel}>{item.title}: </Text> : null}
+                  {text}
+                </Text>
+              </View>
+            );
+          })}
         </View>
       ) : null,
   };

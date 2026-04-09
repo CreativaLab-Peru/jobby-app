@@ -6,10 +6,13 @@ import { linkedinHref, linkedinDisplay } from "@/lib/utils"
 import { Phone, Mail, Linkedin, MapPin } from "lucide-react"
 import {
   getNonEmptyCertificationItems,
+  getNonEmptyInterestsItems,
   getNonEmptyProjectItems,
   getNonEmptyVolunteeringItems,
+  normalizeComplementsItems,
 } from "@/features/cv/helpers/non-empty-section-items"
 import {Language} from "@prisma/client";
+import { i18n } from "@/const/i18n";
 
 interface CVPreviewEuropassProps {
   data: CVData
@@ -97,7 +100,14 @@ export function CVPreviewEuropass({
                                     sections,
                                     language
 }: CVPreviewEuropassProps) {
+  const t = i18n[language] || i18n.ES
   const certificationsItems = getNonEmptyCertificationItems(data.certifications?.items ?? null)
+  const complementsItems = normalizeComplementsItems(
+    data.complements?.items && data.complements.items.length > 0
+      ? data.complements.items
+      : data.complements ?? null
+  )
+  const interestsItems = getNonEmptyInterestsItems(data.interests?.items ?? null)
   const projectsItems = getNonEmptyProjectItems(data.projects?.items ?? null)
   const volunteeringItems = getNonEmptyVolunteeringItems(data.volunteering?.items ?? null)
 
@@ -288,6 +298,46 @@ export function CVPreviewEuropass({
               {vol.responsibilities && <BulletList text={vol.responsibilities} />}
             </div>
           ))}
+        </div>
+      ) : null,
+
+    complements: () =>
+      complementsItems.length ? (
+        <div>
+          <SectionTitle>{t.complements}</SectionTitle>
+          {complementsItems.map((item, i) => {
+            const text = item.content || item.description
+            if (!item.title && !text) return null
+
+            return (
+              <div key={item.id || i} className="mb-[3px]">
+                <p className="text-[9px]">
+                  {item.title ? <span className="font-bold">{item.title}: </span> : null}
+                  {text}
+                </p>
+              </div>
+            )
+          })}
+        </div>
+      ) : null,
+
+    interests: () =>
+      interestsItems.length ? (
+        <div>
+          <SectionTitle>{t.interests}</SectionTitle>
+          {interestsItems.map((item, i) => {
+            const text = item.content || item.description
+            if (!item.title && !text) return null
+
+            return (
+              <div key={item.id || i} className="mb-[3px]">
+                <p className="text-[9px]">
+                  {item.title ? <span className="font-bold">{item.title}: </span> : null}
+                  {text}
+                </p>
+              </div>
+            )
+          })}
         </div>
       ) : null,
   }

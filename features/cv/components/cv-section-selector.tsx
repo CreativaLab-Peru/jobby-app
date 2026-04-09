@@ -23,8 +23,6 @@ export function CvSectionSelector({
     .filter((item) => item !== CvSectionType.LANGUAGES)
     .filter((item) => item !== CvSectionType.SUMMARY);
 
-  // Estado para la sección actualmente abierta
-  const [openSection, setOpenSection] = useState<CvSectionType | null>(null);
 
   const toggleSection = (section: CvSectionType) => {
     const isSelected = selectedSections.includes(section);
@@ -33,11 +31,6 @@ export function CvSectionSelector({
     } else {
       onChange([...selectedSections, section]);
     }
-  };
-
-  // Toggle collapse estándar: si clicas en la misma sección, se cierra; otra sección → se abre y cierra la anterior
-  const toggleCollapse = (section: CvSectionType) => {
-    setOpenSection((prev) => (prev === section ? null : section));
   };
 
   const orderOfSections: Record<CvSectionType, number> = {
@@ -61,7 +54,7 @@ export function CvSectionSelector({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-0.5">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-1 gap-1">
           <Label className="flex items-center gap-1 text-sm">
@@ -86,14 +79,13 @@ export function CvSectionSelector({
           {renderOrder.map((section) => {
             const isSelected = selectedSections.includes(section);
             const isRecommended = recommended.includes(section);
-            const isOpen = openSection === section;
 
             return (
               <div key={section} className="w-full">
                 {/* Botón para abrir/cerrar */}
                 <button
                   type="button"
-                  onClick={() => toggleCollapse(section)}
+                  onClick={() => toggleSection(section)}
                   className={cn(
                     "w-full flex items-center justify-between px-4 py-2 rounded-lg text-sm font-semibold transition-all border cursor-pointer duration-200",
                     isSelected
@@ -111,43 +103,13 @@ export function CvSectionSelector({
                     )}
                     <span>{SECTION_LABELS[section]}</span>
                   </div>
-
-                  <div className="flex items-center gap-3">
-                    {isSelected && (
-                      <span className="text-[12px] text-muted-foreground">
-                        {selectedSections.indexOf(section) + 1}
-                      </span>
-                    )}
-                    <span
-                      className={cn(
-                        "transition-transform duration-300",
-                        isOpen ? "rotate-90" : "rotate-0"
-                      )}
-                    >
-                      ▶
+                  {isSelected && (
+                    <span className="text-[12px] text-muted-foreground">
+                      {selectedSections.indexOf(section) + 1}
                     </span>
-                  </div>
+                  )}
                 </button>
-
-                {/* Contenido desplegable */}
-                {isOpen && (
-                  <div className="px-6 py-3 bg-background/80 border border-border rounded-b-lg text-sm text-muted-foreground">
-                    <p>
-                      Aquí va la descripción o contenido adicional de la sección{" "}
-                      <strong>{SECTION_LABELS[section]}</strong>.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => toggleSection(section)}
-                      className={cn(
-                        "mt-2 px-3 py-1 rounded bg-accent text-accent-foreground font-semibold",
-                        isSelected ? "opacity-100" : "opacity-70"
-                      )}
-                    >
-                      {isSelected ? "Quitar sección" : "Agregar sección"}
-                    </button>
-                  </div>
-                )}
+                
               </div>
             );
           })}

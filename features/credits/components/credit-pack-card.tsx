@@ -5,14 +5,28 @@ import { Check, Sparkles, Star, ArrowRight } from "lucide-react";
 import { PaymentMethodModal, PaymentMethod } from "./payment-method-modal";
 import { CreditPackOffer } from "@/features/credits/consts";
 
+type DisplayCurrency = "PEN" | "USD";
+
 interface PackProps {
   pack: CreditPackOffer;
   onPurchase: (packId: string, method: PaymentMethod) => void;
   isAuthenticated?: boolean;
+  displayCurrency?: DisplayCurrency;
 }
 
-export function CreditPackCard({ pack, onPurchase, isAuthenticated = true }: PackProps) {
+export function CreditPackCard({
+  pack,
+  onPurchase,
+  isAuthenticated = true,
+  displayCurrency = "PEN",
+}: PackProps) {
   const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
+
+  const currencyToShow =
+    displayCurrency === "USD" && pack.priceUSD != null ? "USD" : "PEN";
+  const visiblePrice =
+    currencyToShow === "USD" ? Number(pack.priceUSD) : Number(pack.price);
+  const currencySymbol = currencyToShow === "USD" ? "$" : "S/";
 
   return (
     <>
@@ -34,14 +48,8 @@ export function CreditPackCard({ pack, onPurchase, isAuthenticated = true }: Pac
 
           <div className="flex items-end justify-center gap-3">
             <span className="text-4xl font-extrabold text-zinc-900 dark:text-white leading-none">
-              S/ {Number(pack.price).toFixed(2)}
+              {currencySymbol} {visiblePrice.toFixed(2)}
             </span>
-
-            {pack.priceUSD !== undefined && (
-              <span className="text-lg font-semibold text-zinc-500 dark:text-gray-400 mb-1">
-                $ {Number(pack.priceUSD).toFixed(2)}
-              </span>
-            )}
           </div>
 
           <p className="text-xs text-muted-foreground mt-2 uppercase font-semibold tracking-wider">

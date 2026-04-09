@@ -1,14 +1,14 @@
 # WIP
 
 ## Fixes
-- [JB-86agpvy9d](https://app.clickup.com/t/86agpvy9d) Se tarda cambiar estado de una tarea (parece lento para el usuario)
+- [JB-86agpvy9d](https://app.clickup.com/t/86agpvy9d) Se tarda en cambiar estado de una tarea (parece lento para el usuario)
 - [JB-86agp593z](https://app.clickup.com/t/86agp593z) Mejorar el diseño y contenido de los correos
+- [LV-86agrxq5f](https://app.clickup.com/t/86agrxq5f) Ahora se renderizan Complementos e Intereses, además de poder modificar los ejemplos y tips desde admin
+- [LV-86agrxq1b](https://app.clickup.com/t/86agrxq1b) Todos los CVs desde la vista admin, tienen las 10 secciones mapeadas
 
 # v1.2.6 - 2026-04-08
 
 ## Fixes
-- [LV-86agrxq5f](https://app.clickup.com/t/86agrxq5f) Ahora se renderizan Complementos e Intereses, además de poder modificar los ejemplos y tips desde admin
-- [LV-86agrxq1b](https://app.clickup.com/t/86agrxq1b) Todos los CVs desde la vista admin, tienen las 10 secciones mapeadas
 - [JB-86agrt0tb](https://app.clickup.com/t/86agrt0tb) Despues de hacer analisis de un cv no se muestra el detalle
 
 # v1.2.3, v1.2.4 and v1.2.5 - 2026-04-08

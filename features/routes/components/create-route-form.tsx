@@ -94,8 +94,7 @@ export default function CreateRouteForm() {
               Crea tu primera ruta
             </h1>
             <p className="text-muted-foreground text-sm max-w-sm">
-              Una ruta te guiará paso a paso: crear tu CV, analizarlo con IA y
-              encontrar oportunidades que se ajusten a tu perfil.
+              Localizamos Becas Full Funded en USA/UK/EU, Fellowships y Grants para tus proyectos que encajan con tu perfil real.
             </p>
           </div>
         </div>

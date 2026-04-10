@@ -1,10 +1,13 @@
 
-import { CvSectionType, OpportunityType } from "@prisma/client";
+import { CvSectionType, OpportunityType, Prisma } from "@prisma/client";
 import type { EvaluateCvSectionsPayload } from "@/features/cv/helpers/types";
+
+type JsonInput = Prisma.JsonValue | null;
+type JsonRecord = Record<string, Prisma.JsonValue>;
 
 export type CvSectionInput = {
   sectionType?: CvSectionType | string;
-  contentJson?: unknown;
+  contentJson?: Prisma.JsonValue | null;
 };
 
 export interface AiEvaluationResult {
@@ -40,25 +43,45 @@ const REQUIRED_SECTIONS_BY_OPPORTUNITY: Record<OpportunityType, string[]> = {
   [OpportunityType.EMPLOYMENT]: ["personal", "experience", "skills", "education", "certifications"],
 };
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
+const isRecord = (value: JsonInput): value is JsonRecord =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-const toRecordArray = (value: unknown): Record<string, unknown>[] => {
+const toRecordArray = (value: JsonInput): JsonRecord[] => {
   if (Array.isArray(value)) return value.filter(isRecord);
   return isRecord(value) ? [value] : [];
 };
 
-const toStringArray = (value: unknown): string[] => {
+const toStringArray = (value: JsonInput): string[] => {
   if (!Array.isArray(value)) return [];
   return value
     .map((item) => (typeof item === "string" ? item : (isRecord(item) && typeof item.name === "string" ? item.name : "")))
+    .map((item) => item.trim())
     .filter(Boolean);
+};
+
+const hasText = (value: JsonInput): boolean => typeof value === "string" && value.trim().length > 0;
+
+const hasMeaningfulValue = (value: JsonInput): boolean => {
+  if (hasText(value)) return true;
+  if (Array.isArray(value)) return value.some(hasMeaningfulValue);
+  if (isRecord(value)) return Object.values(value).some(hasMeaningfulValue);
+  return false;
+};
+
+const filterNonEmptyRecords = (items: JsonRecord[]): JsonRecord[] =>
+  items.filter((item) => hasMeaningfulValue(item));
+
+const cleanPersonal = (value: JsonRecord): JsonRecord => {
+  const allowedKeys = ["fullName", "address", "linkedin", "phone", "email", "summary", "nationality"];
+  return Object.fromEntries(
+    Object.entries(value).filter(([key, val]) => allowedKeys.includes(key) && hasMeaningfulValue(val))
+  ) as JsonRecord;
 };
 
 export function buildMappedSectionsPayload(sections: CvSectionInput[]): EvaluateCvSectionsPayload {
   const payload: EvaluateCvSectionsPayload = {};
-  const personal: Record<string, unknown> = {};
-  const skills: Record<string, unknown> = {};
+  const personal: JsonRecord = {};
+  const skills: JsonRecord = {};
 
   for (const section of sections) {
     const content = section.contentJson;
@@ -66,18 +89,58 @@ export function buildMappedSectionsPayload(sections: CvSectionInput[]): Evaluate
 
     switch (section.sectionType) {
       case CvSectionType.SUMMARY:
-        if (typeof content === "string") personal.summary = content;
-        else if (isRecord(content) && typeof content.text === "string") personal.summary = content.text;
+        if (typeof content === "string" && content.trim()) personal.summary = content.trim();
+        else if (isRecord(content) && typeof content.text === "string" && content.text.trim()) {
+          personal.summary = content.text.trim();
+        }
         break;
       case CvSectionType.CONTACT:
-        if (isRecord(content)) Object.assign(personal, content);
+        if (isRecord(content)) Object.assign(personal, cleanPersonal(content));
         break;
-      case CvSectionType.EXPERIENCE: payload.experience = { items: toRecordArray(content) }; break;
-      case CvSectionType.EDUCATION: payload.education = { items: toRecordArray(content) }; break;
-      case CvSectionType.PROJECTS: payload.projects = { items: toRecordArray(content) }; break;
-      case CvSectionType.ACHIEVEMENTS: payload.achievements = { items: toRecordArray(content) }; break;
-      case CvSectionType.CERTIFICATIONS: payload.certifications = { items: toRecordArray(content) }; break;
-      case CvSectionType.VOLUNTEERING: payload.volunteering = { items: toRecordArray(content) }; break;
+      case CvSectionType.EXPERIENCE: {
+        const items = filterNonEmptyRecords(toRecordArray(content));
+        if (items.length) payload.experience = { items };
+        break;
+      }
+      case CvSectionType.EDUCATION: {
+        const items = filterNonEmptyRecords(toRecordArray(content));
+        if (items.length) payload.education = { items };
+        break;
+      }
+      case CvSectionType.PROJECTS: {
+        const items = filterNonEmptyRecords(toRecordArray(content));
+        if (items.length) payload.projects = { items };
+        break;
+      }
+      case CvSectionType.ACHIEVEMENTS: {
+        const items = filterNonEmptyRecords(toRecordArray(content));
+        if (items.length) payload.achievements = { items };
+        break;
+      }
+      case CvSectionType.CERTIFICATIONS: {
+        const items = filterNonEmptyRecords(toRecordArray(content));
+        if (items.length) payload.certifications = { items };
+        break;
+      }
+      case CvSectionType.VOLUNTEERING: {
+        const items = filterNonEmptyRecords(toRecordArray(content));
+        if (items.length) payload.volunteering = { items };
+        break;
+      }
+      case CvSectionType.COMPLEMENTS: {
+        if (Array.isArray(content)) {
+          const items = filterNonEmptyRecords(toRecordArray(content));
+          if (items.length) payload.complements = { items };
+        } else if (isRecord(content) && hasMeaningfulValue(content)) {
+          payload.complements = content;
+        }
+        break;
+      }
+      case CvSectionType.INTERESTS: {
+        const items = filterNonEmptyRecords(toRecordArray(content));
+        if (items.length) payload.interests = { items };
+        break;
+      }
       case CvSectionType.SKILLS:
         if (isRecord(content)) {
           skills.technical = toStringArray(content.technical);
@@ -93,7 +156,13 @@ export function buildMappedSectionsPayload(sections: CvSectionInput[]): Evaluate
   }
 
   if (Object.keys(personal).length > 0) payload.personal = personal;
-  if (Object.keys(skills).length > 0) payload.skills = skills;
+
+  const hasSkills =
+    (Array.isArray(skills.technical) && skills.technical.length > 0) ||
+    (Array.isArray(skills.soft) && skills.soft.length > 0) ||
+    (Array.isArray(skills.languages) && skills.languages.length > 0);
+  if (hasSkills) payload.skills = skills;
+
   return payload;
 }
 
@@ -104,13 +173,14 @@ export function filterSectionsByOpportunity(
   const allowed = REQUIRED_SECTIONS_BY_OPPORTUNITY[type as OpportunityType];
   if (!allowed) return payload;
 
-  return Object.keys(payload)
-    .filter((key) => allowed.includes(key))
-    .reduce((obj, key) => {
-      // @ts-ignore
-      obj[key] = payload[key];
-      return obj;
-    }, {} as EvaluateCvSectionsPayload);
+  const filtered: EvaluateCvSectionsPayload = {};
+  for (const key of Object.keys(payload) as (keyof EvaluateCvSectionsPayload)[]) {
+    if (allowed.includes(key as string)) {
+      filtered[key] = payload[key];
+    }
+  }
+
+  return filtered;
 }
 
 /**
@@ -119,7 +189,7 @@ export function filterSectionsByOpportunity(
  */
 export function buildCvPayloadForEvaluation(cv: {
   sections?: CvSectionInput[];
-  extractedJson?: any
+  extractedJson?: Prisma.JsonValue | null
 }): EvaluateCvSectionsPayload {
 
   // 1. Prioridad: Secciones estructuradas (Manuales/Editadas)
@@ -146,7 +216,7 @@ export function buildCvPayloadForEvaluation(cv: {
 /**
  * Función interna para normalizar un JSON plano (legacy) a la estructura de secciones.
  */
-function buildMappedSectionsFromLegacyExtractedJson(raw: Record<string, unknown>): EvaluateCvSectionsPayload {
+function buildMappedSectionsFromLegacyExtractedJson(raw: JsonRecord): EvaluateCvSectionsPayload {
   const mappedSections: CvSectionInput[] = [];
 
   // Mapeamos las llaves del JSON plano a los tipos de sección oficiales
@@ -161,10 +231,12 @@ function buildMappedSectionsFromLegacyExtractedJson(raw: Record<string, unknown>
     volunteering: CvSectionType.VOLUNTEERING,
     skills: CvSectionType.SKILLS,
     languages: CvSectionType.LANGUAGES,
+    complements: CvSectionType.COMPLEMENTS,
+    interests: CvSectionType.INTERESTS,
   };
 
   Object.entries(fieldMapping).forEach(([key, sectionType]) => {
-    if (raw[key] !== undefined) {
+    if (Object.prototype.hasOwnProperty.call(raw, key)) {
       mappedSections.push({
         sectionType,
         contentJson: raw[key],
@@ -183,13 +255,39 @@ const VALID_CV_SECTIONS = Object.values(CvSectionType);
  * Asegura que el string enviado por la IA sea un miembro válido del Enum.
  * Si no lo es, intenta convertirlo a mayúsculas o usa un fallback.
  */
-export const sanitizeSectionType = (rawType: string): CvSectionType => {
-  const normalized = rawType?.toUpperCase().trim() as CvSectionType;
+export const sanitizeSectionType = (rawType: string): CvSectionType | null => {
+  if (!rawType) return null;
+  const normalized = rawType.toUpperCase().trim() as CvSectionType;
 
   if (VALID_CV_SECTIONS.includes(normalized)) {
     return normalized;
   }
 
-  // Fallback: Si no lo reconoce, lo mandamos a COMPLEMENTS para no romper la DB
-  return CvSectionType.COMPLEMENTS;
+  return null;
+};
+
+export const allowedSectionTypesFromPayload = (payload: EvaluateCvSectionsPayload): Set<CvSectionType> => {
+  const allowed = new Set<CvSectionType>();
+
+  if (payload.personal && isRecord(payload.personal)) {
+    const personal = payload.personal as JsonRecord;
+    const hasSummary = hasText(personal.summary);
+    const hasContact = Object.entries(personal).some(
+      ([key, value]) => key !== "summary" && hasMeaningfulValue(value)
+    );
+    if (hasSummary) allowed.add(CvSectionType.SUMMARY);
+    if (hasContact) allowed.add(CvSectionType.CONTACT);
+  }
+
+  if (payload.experience) allowed.add(CvSectionType.EXPERIENCE);
+  if (payload.education) allowed.add(CvSectionType.EDUCATION);
+  if (payload.skills) allowed.add(CvSectionType.SKILLS);
+  if (payload.projects) allowed.add(CvSectionType.PROJECTS);
+  if (payload.volunteering) allowed.add(CvSectionType.VOLUNTEERING);
+  if (payload.certifications) allowed.add(CvSectionType.CERTIFICATIONS);
+  if (payload.achievements) allowed.add(CvSectionType.ACHIEVEMENTS);
+  if (payload.complements) allowed.add(CvSectionType.COMPLEMENTS);
+  if (payload.interests) allowed.add(CvSectionType.INTERESTS);
+
+  return allowed;
 };

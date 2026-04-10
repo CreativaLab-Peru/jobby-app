@@ -1,4 +1,5 @@
 import { OpportunityType } from "@prisma/client"
+import type { Prisma } from "@prisma/client"
 
 export const MAPPED_CV_SECTIONS = [
   "personal",
@@ -10,11 +11,13 @@ export const MAPPED_CV_SECTIONS = [
   "languages",
   "certifications",
   "volunteering",
+  "complements",
+  "interests",
 ] as const
 
 export type MappedCvSection = (typeof MAPPED_CV_SECTIONS)[number]
 
-export type EvaluateCvSectionsPayload = Partial<Record<MappedCvSection, unknown>>
+export type EvaluateCvSectionsPayload = Partial<Record<MappedCvSection, Prisma.JsonValue>>
 
 /**
  * Configuración de ejemplos personalizados por campo

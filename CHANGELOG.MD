@@ -1,3 +1,8 @@
+# WIP
+## Fixes:
+- [86agtfxnn](https://app.clickup.com/t/86agtfxnn) Fixed the bug where the analysis included unvalidated sections when creating or uploading CVs
+- [86agtgrck](https://app.clickup.com/t/86agtgrck) Improved prompt for not containt MD, and added REGEX validation before rendering
+
 # v1.2.8 and v1.2.9 - 2026-04-09
 
 ## Fixes

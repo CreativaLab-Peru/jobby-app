@@ -1,6 +1,6 @@
 "use client";
 
-import {useState, useTransition} from "react";
+import {useMemo, useState, useTransition} from "react";
 import {
   CheckCircle2,
   Sparkles,
@@ -51,6 +51,34 @@ const IMPACT_BADGE: Record<string, { label: string; cls: string }> = {
   LOW: {label: "Bajo", cls: "bg-blue-500/10 text-blue-600 border-blue-500/20"},
 };
 
+const stripMarkdown = (text: string) => {
+  if (!text) return "";
+
+  return text
+    .replace(/\r\n/g, "\n")
+    .replace(/```(?:\w+)?\n?([\s\S]*?)```/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, "$1")
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$1")
+    .replace(/^\s{0,3}>\s?/gm, "")
+    .replace(/^\s{0,3}#{1,6}\s+/gm, "")
+    .replace(/^\s*[-*+]\s+\[[ xX]\]\s+/gm, "")
+    .replace(/^\s*[-*+]\s+/gm, "")
+    .replace(/^\s*\d+\.\s+/gm, "")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/__([^_]+)__/g, "$1")
+    .replace(/~~([^~]+)~~/g, "$1")
+    .replace(/[\\]+([*_`~\[\]()])/g, "$1")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+};
+
+const toSuggestionLines = (text: string) =>
+  text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
 export function ImprovementsSection({
                                       cvId,
                                       improvedTexts,
@@ -59,6 +87,28 @@ export function ImprovementsSection({
   const [appliedSections, setAppliedSections] = useState<Set<string>>(new Set());
   const [isPending, startTransition] = useTransition();
   const [applyingSection, setApplyingSection] = useState<string | null>(null);
+
+  const sanitizedImprovedTexts = useMemo(
+    () =>
+      improvedTexts.map((item) => ({
+        ...item,
+        originalSnippet: stripMarkdown(item.originalSnippet),
+        improvedText: stripMarkdown(item.improvedText),
+        changeReason: stripMarkdown(item.changeReason),
+      })),
+    [improvedTexts]
+  );
+
+  const sanitizedSuggestedAdditions = useMemo(
+    () =>
+      suggestedAdditions.map((item) => ({
+        ...item,
+        title: stripMarkdown(item.title),
+        suggestedText: stripMarkdown(item.suggestedText),
+        reason: stripMarkdown(item.reason),
+      })),
+    [suggestedAdditions]
+  );
 
 
   const copyToClipboard = async (text: string) => {
@@ -78,7 +128,7 @@ export function ImprovementsSection({
 
   if (!improvedTexts?.length && !suggestedAdditions?.length) return null;
 
-  const pendingCount = improvedTexts.filter((t) => !appliedSections.has(t.sectionType)).length;
+  const pendingCount = sanitizedImprovedTexts.filter((t) => !appliedSections.has(t.sectionType)).length;
 
   return (
     <Tabs defaultValue="refinement" className="w-full space-y-6">
@@ -131,7 +181,7 @@ export function ImprovementsSection({
 
       {/* ── CONTENIDO: TEXTOS MEJORADOS ──────────────── */}
       <TabsContent value="refinement" className="mt-0 space-y-4 focus-visible:outline-none">
-        {improvedTexts.length > 0 ? (
+        {sanitizedImprovedTexts.length > 0 ? (
           <div
             className="divide-y divide-border rounded-xl border border-border bg-card overflow-hidden shadow-sm">
             <div className="flex items-center justify-between p-4">
@@ -157,7 +207,7 @@ export function ImprovementsSection({
               )}
             </div>
 
-            {improvedTexts.map((item, index) => {
+            {sanitizedImprovedTexts.map((item, index) => {
               const isApplied = appliedSections.has(item.sectionType);
               // const isLoading = applyingSection === item.sectionType;
               const label = SECTION_LABELS[item.sectionType] || item.sectionType;
@@ -227,12 +277,13 @@ export function ImprovementsSection({
 
       {/* ── CONTENIDO: SUGERENCIAS ──────────────────── */}
       <TabsContent value="additions" className="mt-0 space-y-4 focus-visible:outline-none">
-        {suggestedAdditions.length > 0 ? (
+        {sanitizedSuggestedAdditions.length > 0 ? (
           <div
             className="divide-y divide-border rounded-xl border border-border bg-card overflow-hidden shadow-sm">
-            {suggestedAdditions.map((item, i) => {
+            {sanitizedSuggestedAdditions.map((item, i) => {
               const badge = IMPACT_BADGE[item.impact] || IMPACT_BADGE.LOW;
               const label = SECTION_LABELS[item.sectionType] || item.sectionType;
+              const suggestionLines = toSuggestionLines(item.suggestedText);
 
               return (
                 <div key={i} className="p-4 space-y-3 transition-colors hover:bg-muted/30">
@@ -249,7 +300,18 @@ export function ImprovementsSection({
                     <p className="text-xs text-muted-foreground">{item.reason}</p>
                     <div
                       className="text-xs px-3 py-2 rounded-lg bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/50 dark:border-amber-800/50 leading-relaxed whitespace-pre-wrap">
-                      {item.suggestedText}
+                      {suggestionLines.length > 1 ? (
+                        <ul className="space-y-1">
+                          {suggestionLines.map((line, lineIndex) => (
+                            <li key={`${i}-${lineIndex}`} className="flex gap-2">
+                              <span className="shrink-0">•</span>
+                              <span>{line}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        item.suggestedText
+                      )}
                     </div>
                   </div>
                 </div>

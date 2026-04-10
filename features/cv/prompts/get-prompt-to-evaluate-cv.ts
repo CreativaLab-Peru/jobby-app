@@ -48,7 +48,7 @@ Return a valid JSON object following this schema:
     {
       "sectionType": one of them "SUMMARY | EXPERIENCE | EDUCATION | SKILLS | PROJECTS | VOLUNTEERING | CERTIFICATIONS | COMPLEMENTS | ACHIEVEMENTS | CONTACT",
       "originalSnippet": "Brief excerpt of what the user currently has  ${lang} (max 80 chars)",
-      "improvedText": The full improved version of this section content IN ${lang === 'EN' ? 'ENGLISH' : 'SPANISH'}. Must be ready to copy-paste.(not json, just plain text)",
+      "improvedText": The full improved version of this section content IN ${lang === 'EN' ? 'ENGLISH' : 'SPANISH'}. Must be ready to copy-paste.(not json, plain text only, no markdown),
       "changeReason": "Short explanation in SPANISH why this change improves the CV"
     }
   ],
@@ -56,7 +56,7 @@ Return a valid JSON object following this schema:
     {
       "sectionType": one of them "SUMMARY | EXPERIENCE | EDUCATION | SKILLS | PROJECTS | VOLUNTEERING | CERTIFICATIONS | COMPLEMENTS | ACHIEVEMENTS | CONTACT",
       "title": "Short title in Spanish",
-      "suggestedText": "The content to add, written IN ${lang === 'EN' ? 'ENGLISH' : 'SPANISH'}, ready to copy-paste (not json, just plain text)",
+      "suggestedText": "The content to add, written IN ${lang === 'EN' ? 'ENGLISH' : 'SPANISH'}, ready to copy-paste (not json, plain text only, no markdown)",
       "impact": "LOW | MEDIUM | HIGH",
       "reason": "Why adding this improves the CV in SPANISH"
     }
@@ -73,5 +73,6 @@ Return a valid JSON object following this schema:
 5. "suggestedAdditions" should recommend missing sections or content gaps. Max 5 items.
 6. Ensure all strings are properly escaped to maintain valid JSON integrity.
 7. NEVER include trailing commas.
+8. NO MARKDOWN ALLOWED in any string field: do not use headings (#), bullets (-, *, 1.), triple-backtick code fences, inline-code formatting, links in markdown format, bold/italic markdown markers, or blockquotes (>).
 `;
 };

@@ -5,6 +5,7 @@ import { getPromptToEvaluateCv } from "@/features/cv/prompts/get-prompt-to-evalu
 import { queryGemini } from "@/features/cv/queries/query-gemini";
 import {consumeCredits, ConsumeCreditsParams} from "@/features/credits/actions/consume-credits";
 import {
+  allowedSectionTypesFromPayload,
   AiEvaluationResult,
   buildCvPayloadForEvaluation,
   sanitizeSectionType
@@ -38,10 +39,10 @@ export const evaluateCv = inngest.createFunction(
     });
 
     // 2. Preparación de Datos
-    const { filteredSections, cv } = await step.run("prepare-data", async () => {
+    const { filteredSections, cv, allowedSectionTypes } = await step.run("prepare-data", async () => {
       const cvData = await prisma.cv.findUnique({
         where: { id: cvId },
-        include: { sections: true }
+        include: { sections: { where: { isVisible: true } } }
       });
 
       const fullPayload = buildCvPayloadForEvaluation({
@@ -49,7 +50,9 @@ export const evaluateCv = inngest.createFunction(
       });
       console.log("[fullPayload]", fullPayload)
 
-      return { filteredSections: fullPayload, cv: cvData };
+      const allowed = Array.from(allowedSectionTypesFromPayload(fullPayload));
+
+      return { filteredSections: fullPayload, cv: cvData, allowedSectionTypes: allowed };
     });
 
     if (Object.keys(filteredSections).length === 0) {
@@ -76,24 +79,47 @@ export const evaluateCv = inngest.createFunction(
       await step.run("persist-evaluation-results", async () => {
         const { data } = aiResult;
 
+        const allowedSet = new Set(allowedSectionTypes);
+
         // 1. Mapeamos y sanitizamos los scores
-        const scoresToCreate = (data.sectionScores || []).map((score) => ({
-          evaluationId: evaluation!.id as string,
-          sectionType: sanitizeSectionType(score.sectionType),
-          score: Number(score.score) || 0,
-          detailsJson: score.details || {},
-        }));
+        const scoresToCreate = (data.sectionScores || [])
+          .map((score) => {
+            const sectionType = sanitizeSectionType(score.sectionType);
+            if (!sectionType || !allowedSet.has(sectionType)) return null;
+
+            return {
+              evaluationId: evaluation!.id as string,
+              sectionType,
+              score: Number(score.score) || 0,
+              detailsJson: score.details || {},
+            };
+          })
+          .filter(Boolean);
 
         // 2. Mapeamos y sanitizamos los textos mejorados (dentro del JSON)
-        const improvedTexts = (data.improvedTexts || []).map((item) => ({
-          ...item,
-          sectionType: sanitizeSectionType(item.sectionType),
-        }));
+        const improvedTexts = (data.improvedTexts || [])
+          .map((item) => {
+            const sectionType = sanitizeSectionType(item.sectionType);
+            if (!sectionType || !allowedSet.has(sectionType)) return null;
 
-        const suggestedAdditions = (data.suggestedAdditions || []).map((item) => ({
-          ...item,
-          sectionType: sanitizeSectionType(item.sectionType),
-        }));
+            return {
+              ...item,
+              sectionType,
+            };
+          })
+          .filter(Boolean);
+
+        const suggestedAdditions = (data.suggestedAdditions || [])
+          .map((item) => {
+            const sectionType = sanitizeSectionType(item.sectionType);
+            if (!sectionType || !allowedSet.has(sectionType)) return null;
+
+            return {
+              ...item,
+              sectionType,
+            };
+          })
+          .filter(Boolean);
 
         // 3. Ejecutamos la transacción con datos limpios
         await prisma.$transaction([

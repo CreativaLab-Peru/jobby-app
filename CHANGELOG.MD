@@ -5,6 +5,7 @@
 - [LV-86agvnxph](https://app.clickup.com/t/86agvnxph) Account verification route redirection is not correct
 - [LV-86agvnxzk](https://app.clickup.com/t/86agvnxzk) Improve opportunities (UI/UX)
 - [LV-86agvnyb3](https://app.clickup.com/t/86agvnyb3) Hide the "Apply" buttons (they are not being used correctly)
+- [LV-86agvpjhk](https://app.clickup.com/t/86agvpjhk) Improve onboarding steps (UI/UX)
 
 # v1.2.10 - 2026-04-10
 

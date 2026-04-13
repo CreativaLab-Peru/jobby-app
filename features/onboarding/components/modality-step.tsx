@@ -31,7 +31,11 @@ export function ModalityStep() {
       <div className="space-y-6">
         <div className="text-center sm:text-left">
           <h2 className="text-2xl font-bold tracking-tight">Modalidad preferida</h2>
-          <p className="text-muted-foreground italic text-sm">Puedes seleccionar múltiples opciones.</p>
+          <div className="max-w-lg mx-auto">
+            <p className="text-muted-foreground italic text-sm">
+              ¿Buscas inmersión total en el extranjero o prefieres escalar globalmente desde casa?
+            </p>
+          </div>
         </div>
 
         {errors.workModality && (

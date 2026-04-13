@@ -1,5 +1,4 @@
 import Footer from "@/components/footer";
-import NavbarPublic from "@/components/navbar-public";
 import { getSession } from "@/features/authentication/actions/get-session";
 import {redirect} from "next/navigation";
 import {routes} from "@/lib/routes";

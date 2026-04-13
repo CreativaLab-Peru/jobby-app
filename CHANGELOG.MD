@@ -4,7 +4,7 @@
 - [LV-86agvmdgg](https://app.clickup.com/t/86agvmdgg) Mostrar publicidad en roadmaps
 - [LV-86agvnxph](https://app.clickup.com/t/86agvnxph) Redireccion de verificacion de cuenta no esta bien
 - [LV-86agvnxzk](https://app.clickup.com/t/86agvnxzk) Mejorar las oportunidades (UI/UX)
-- [LV-86agvnyb3](https://app.clickup.com/t/86agvnyb3) Eliminar butones para aplicar (no estan usadas correctamente)
+- [LV-86agvnyb3](https://app.clickup.com/t/86agvnyb3) Ocultar botones para aplicar (no estan usadas correctamente)
 
 # v1.2.10 - 2026-04-10
 

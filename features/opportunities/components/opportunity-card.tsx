@@ -137,26 +137,41 @@ export default function OpportunityCard({
         </div>
       </CardContent>
 
-      <CardFooter className="grid grid-cols-2 gap-3 pt-4">
+      <CardFooter className="flex gap-2 pt-4">
+        {/* Botón de Detalles - Ahora pequeño (Icon-only) */}
         <Button
           variant="secondary"
-          className="rounded-xl font-bold text-xs h-10 border border-border/40"
+          size="icon"
+          className="rounded-xl border border-border/40 shrink-0 h-10 w-10"
           asChild
         >
           <Link href={`/opportunities/${opportunity.id}/cv/${opportunity.cvId}/details`}>
-            Detalles
-            <Eye className="w-3.5 h-3.5 ml-2"/>
+            <Eye className="w-4 h-4" />
           </Link>
         </Button>
 
+        {/* Botón Principal: GENERAR ROADMAP */}
+        <Button
+          variant="default" // O el variant que uses para acciones principales
+          className="flex-1 rounded-xl font-bold text-xs h-10 shadow-lg shadow-primary/10 gap-2"
+          onClick={() => {
+            // Tu lógica para generar el roadmap aquí
+            router.push(`/my-roadmaps?openedModal=true&oppId=${opportunity.id}`);
+          }}
+        >
+          <Sparkles className="w-4 h-4" />
+          <span>Generar Roadmap</span>
+        </Button>
+
+        {/* Botón de Enlace Externo - Ahora pequeño (Icon-only) */}
         <Button
           variant="accent"
-          className="rounded-xl font-bold text-xs h-10 shadow-lg shadow-accent/10"
+          size="icon"
+          className="rounded-xl shrink-0 h-10 w-10 shadow-lg shadow-accent/10"
           asChild
         >
           <a href={opportunity.linkUrl} target="_blank" rel="noopener noreferrer">
-            Postular
-            <ExternalLink className="w-3.5 h-3.5 ml-2"/>
+            <ExternalLink className="w-4 h-4" />
           </a>
         </Button>
       </CardFooter>

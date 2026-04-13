@@ -3,7 +3,15 @@ import MyRoadmapsScreen from "@/features/roadmap/components/my-roadmaps-screen";
 import { getOpportunitiesForActiveRoute } from "@/features/routes/actions/get-opportunities-for-active-route";
 import { getStatisticsForUser } from "@/features/dashboard/actions/get-statistics-for-user";
 
-export default async function MyRoadmapsPage() {
+interface MyRoadmapsPageProps {
+  searchParams?: Promise<{
+    openedModal?: boolean;
+  }>
+}
+
+export default async function MyRoadmapsPage({searchParams}: MyRoadmapsPageProps) {
+  const {openedModal = false} = await searchParams;
+
   const [data, opportunitiesData, stats] = await Promise.all([
     getRoadmapsForUser({ skip: 0, take: 10 }),
     getOpportunitiesForActiveRoute({ skip: 0, take: 10 }),
@@ -21,6 +29,7 @@ export default async function MyRoadmapsPage() {
       initialOpportunities={opportunitiesData?.opportunities ?? []}
       hasCv={opportunitiesData?.hasCv ?? false}
       planTier={planTier}
+      openedModal={openedModal}
     />
   );
 }

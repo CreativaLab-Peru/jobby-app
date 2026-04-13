@@ -21,6 +21,7 @@ import type { RoadmapDetail } from "@/features/roadmap/actions/get-roadmap-by-id
 import { formatDate } from "@/utils/format-date";
 import { MentorBadge } from "@/features/booking/components/mentor-badge";
 import { BookingModal } from "@/features/booking/components/booking-modal";
+import {RouteDossier} from "@/features/booking/actions/get-route-dossier";
 
 const OPPORTUNITY_LABELS: Record<string, string> = {
   INTERNSHIP: "Pasantía",
@@ -33,11 +34,13 @@ const OPPORTUNITY_LABELS: Record<string, string> = {
 interface RoadmapDetailScreenProps {
   roadmap: RoadmapDetail;
   canViewFull: boolean;
+  dossier: Extract<RouteDossier, { success: true }>["data"];
 }
 
 export function RoadmapDetailScreen({
                                       roadmap,
                                       canViewFull,
+                                      dossier,
                                     }: RoadmapDetailScreenProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const opp = roadmap.opportunity;
@@ -133,7 +136,7 @@ export function RoadmapDetailScreen({
                   <div className="relative h-14 w-14 rounded-full border border-border overflow-hidden shrink-0">
                     <Image
                       src="/people/darita.jpeg"
-                      alt="Mentor"
+                      alt="Dara Mariluz"
                       fill
                       className="object-cover"
                     />
@@ -163,7 +166,7 @@ export function RoadmapDetailScreen({
                 </Button>
 
                 <p className="text-[10px] text-center text-muted-foreground">
-                  Acelera tu roadmap con una mentoria
+                  Acelera tu roadmap con una mentoría
                 </p>
               </Card>
             </div>
@@ -175,9 +178,9 @@ export function RoadmapDetailScreen({
       <BookingModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        userName="Usuario" // Aquí idealmente pasas el nombre del usuario logueado
-        userEmail=""
-        score={80} // Opcional
+        userName={dossier.userName}
+        userEmail={dossier.userEmail}
+        score={dossier.cv.score}
       />
     </main>
   );

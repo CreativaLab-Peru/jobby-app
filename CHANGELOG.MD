@@ -1,19 +1,25 @@
+# WIP
+
+## Features
+- [LV-86ag1p6bt](https://app.clickup.com/t/86ag1p6bt) Interview simulator feature added
+
 # v1.2.10 - 2026-04-10
-## Fixes:
-- [86agtfxnn](https://app.clickup.com/t/86agtfxnn) Fixed the bug where the analysis included unvalidated sections when creating or uploading CVs
-- [86agtgrck](https://app.clickup.com/t/86agtgrck) Improved prompt for not containt MD, and added REGEX validation before rendering
+
+## Fixes
+- [LV-86agtfxnn](https://app.clickup.com/t/86agtfxnn) Fixed the bug where the analysis included unvalidated sections when creating or uploading CVs
+- [LV-86agtgrck](https://app.clickup.com/t/86agtgrck) Improved prompt for not containt MD, and added REGEX validation before rendering
 
 # v1.2.8 and v1.2.9 - 2026-04-09
 
 ## Fixes
 - [LV-86agtehq5](https://app.clickup.com/t/86agrxq1b) No procesa, evalua y obtiene oportunidades luego de terminar de pagar y el onboarding
-- [JB-86agtfvww](https://app.clickup.com/t/86agtfvww) Luego del proceso rapido de pago, subida, evaluacion y obtencion de oportunidades no se actualiza la ruta en la interfaz
+- [LV-86agtfvww](https://app.clickup.com/t/86agtfvww) Luego del proceso rapido de pago, subida, evaluacion y obtencion de oportunidades no se actualiza la ruta en la interfaz
 
 # v1.2.7 - 2026-04-09
 
 ## Fixes
-- [JB-86agpvy9d](https://app.clickup.com/t/86agpvy9d) Se tarda en cambiar estado de una tarea (parece lento para el usuario)
-- [JB-86agp593z](https://app.clickup.com/t/86agp593z) Mejorar el diseño y contenido de los correos
+- [LV-86agpvy9d](https://app.clickup.com/t/86agpvy9d) Se tarda en cambiar estado de una tarea (parece lento para el usuario)
+- [LV-86agp593z](https://app.clickup.com/t/86agp593z) Mejorar el diseño y contenido de los correos
 - [LV-86agrxq5f](https://app.clickup.com/t/86agrxq5f) Ahora se renderizan Complementos e Intereses, además de poder modificar los ejemplos y tips desde admin
 - [LV-86agrxq1b](https://app.clickup.com/t/86agrxq1b) Todos los CVs desde la vista admin, tienen las 10 secciones mapeadas
 

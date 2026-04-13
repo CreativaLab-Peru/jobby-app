@@ -169,20 +169,20 @@ export default function MyOpportunitiesScreen({
           ) : (
             <>
               {/* Barra de filtros */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-lg border border-border bg-card/50">
-                <div className="relative max-w-xs w-full group">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                  <Input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Buscar puesto o empresa..."
-                    className="pl-10 border-border/40 bg-card/50 rounded-xl h-10 text-sm"
-                  />
-                </div>
-                <span className="text-xs text-muted-foreground">
-                  {totalCount} {totalCount === 1 ? "oportunidad" : "oportunidades"}
-                </span>
-              </div>
+              {/*<div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-lg border border-border bg-card/50">*/}
+              {/*  <div className="relative max-w-xs w-full group">*/}
+              {/*    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />*/}
+              {/*    <Input*/}
+              {/*      value={searchQuery}*/}
+              {/*      onChange={(e) => setSearchQuery(e.target.value)}*/}
+              {/*      placeholder="Buscar puesto o empresa..."*/}
+              {/*      className="pl-10 border-border/40 bg-card/50 rounded-xl h-10 text-sm"*/}
+              {/*    />*/}
+              {/*  </div>*/}
+              {/*  <span className="text-xs text-muted-foreground">*/}
+              {/*    {totalCount} {totalCount === 1 ? "oportunidad" : "oportunidades"}*/}
+              {/*  </span>*/}
+              {/*</div>*/}
 
               {/* Lista */}
               <div className="relative min-h-[400px]">

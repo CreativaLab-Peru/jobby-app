@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { Map, Search, Plus } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { PageHeader } from "@/components/shared/page-header";
-import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
-import { LoadMoreButton } from "@/components/shared/load-more-button";
-import { RoadmapCard } from "@/features/roadmap/components/roadmap-card";
-import { Button } from "@/components/ui/button";
+import {useState, useEffect, useTransition} from "react";
+import {useSearchParams, useRouter} from "next/navigation";
+import {motion, AnimatePresence} from "framer-motion";
+import {Map, Search, Plus} from "lucide-react";
+import {Input} from "@/components/ui/input";
+import {PageHeader} from "@/components/shared/page-header";
+import {EmptyPlaceholder} from "@/components/shared/empty-placeholder";
+import {LoadMoreButton} from "@/components/shared/load-more-button";
+import {RoadmapCard} from "@/features/roadmap/components/roadmap-card";
+import {Button} from "@/components/ui/button";
 import {
   RoadmapListItem,
   getRoadmapsForUser,
@@ -18,7 +18,9 @@ import {
   RouteOpportunity,
   getOpportunitiesForActiveRoute,
 } from "@/features/routes/actions/get-opportunities-for-active-route";
-import { SelectOpportunityRoadmapModal } from "@/features/roadmap/components/select-opportunity-roadmap-modal";
+import {
+  SelectOpportunityRoadmapModal
+} from "@/features/roadmap/components/select-opportunity-roadmap-modal";
 
 interface MyRoadmapsScreenProps {
   initialData: RoadmapListItem[];
@@ -27,16 +29,18 @@ interface MyRoadmapsScreenProps {
   initialOpportunities: RouteOpportunity[];
   hasCv: boolean;
   planTier: "FREE" | "STARTER" | "PRO";
+  openedModal?: boolean;
 }
 
 export default function MyRoadmapsScreen({
-  initialData,
-  hasMoreProp,
-  totalCount: initialTotal,
-  initialOpportunities,
-  hasCv,
-  planTier,
-}: MyRoadmapsScreenProps) {
+                                           initialData,
+                                           hasMoreProp,
+                                           totalCount: initialTotal,
+                                           initialOpportunities,
+                                           hasCv,
+                                           planTier,
+                                           openedModal,
+                                         }: MyRoadmapsScreenProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [roadmaps, setRoadmaps] = useState(initialData);
@@ -44,15 +48,15 @@ export default function MyRoadmapsScreen({
   const [totalCount, setTotalCount] = useState(initialTotal);
   const [generatedRoadmapsCount, setGeneratedRoadmapsCount] = useState(initialTotal);
   const [opportunities, setOpportunities] = useState<RouteOpportunity[]>(initialOpportunities);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    useEffect(() => {
-      if (searchParams?.get("openCreate") === "1") {
-        setIsCreateModalOpen(true);
-        const params = new URLSearchParams(Array.from(searchParams.entries()));
-        params.delete("openCreate");
-        router.replace(`?${params.toString()}`, { scroll: false });
-      }
-    }, [searchParams, router]);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(openedModal);
+  useEffect(() => {
+    if (searchParams?.get("openCreate") === "1") {
+      setIsCreateModalOpen(true);
+      const params = new URLSearchParams(Array.from(searchParams.entries()));
+      params.delete("openCreate");
+      router.replace(`?${params.toString()}`, {scroll: false});
+    }
+  }, [searchParams, router]);
   const [isPending, startTransition] = useTransition();
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -94,9 +98,9 @@ export default function MyRoadmapsScreen({
   const handleRoadmapGenerated = () => {
     startTransition(async () => {
       const [roadmapsResult, opportunitiesResult, countResult] = await Promise.all([
-        getRoadmapsForUser({ skip: 0, take: 10, query: debouncedQuery || undefined }),
-        getOpportunitiesForActiveRoute({ skip: 0, take: 10 }),
-        getRoadmapsForUser({ skip: 0, take: 1 }),
+        getRoadmapsForUser({skip: 0, take: 10, query: debouncedQuery || undefined}),
+        getOpportunitiesForActiveRoute({skip: 0, take: 10}),
+        getRoadmapsForUser({skip: 0, take: 1}),
       ]);
 
       if (roadmapsResult) {
@@ -129,8 +133,8 @@ export default function MyRoadmapsScreen({
 
       <div className="mx-auto max-w-7xl">
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{opacity: 0, y: 10}}
+          animate={{opacity: 1, y: 0}}
           className="space-y-8"
         >
           <PageHeader
@@ -138,15 +142,17 @@ export default function MyRoadmapsScreen({
             description="Planes paso a paso generados por IA para conseguir tus oportunidades."
             actions={
               <Button onClick={() => setIsCreateModalOpen(true)} className="rounded-xl">
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus className="w-4 h-4 mr-2"/>
                 Crear roadmap
               </Button>
             }
           />
 
-          <div className="flex items-center justify-between gap-4 p-4 rounded-lg border border-border bg-card/50">
+          <div
+            className="flex items-center justify-between gap-4 p-4 rounded-lg border border-border bg-card/50">
             <div className="relative max-w-xs w-full group">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors"/>
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -163,9 +169,9 @@ export default function MyRoadmapsScreen({
             <AnimatePresence>
               {isPending && roadmaps.length > 0 && (
                 <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
+                  initial={{opacity: 0}}
+                  animate={{opacity: 1}}
+                  exit={{opacity: 0}}
                   className="absolute inset-0 bg-background/20 backdrop-blur-[2px] z-10 rounded-xl flex items-center justify-center"
                 >
                   <div className="bg-card p-4 rounded-2xl shadow-xl border border-border">
@@ -183,11 +189,11 @@ export default function MyRoadmapsScreen({
                   {roadmaps.map((roadmap) => (
                     <motion.div
                       key={roadmap.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
+                      initial={{opacity: 0, y: 10}}
+                      animate={{opacity: 1, y: 0}}
+                      exit={{opacity: 0, y: -10}}
                     >
-                      <RoadmapCard roadmap={roadmap} />
+                      <RoadmapCard roadmap={roadmap}/>
                     </motion.div>
                   ))}
                 </AnimatePresence>

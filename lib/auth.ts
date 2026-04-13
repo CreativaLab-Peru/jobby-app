@@ -19,11 +19,28 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
-    sendVerificationEmail: async ({user, url}) => {
+    sendVerificationEmail: async ({ user, token }) => {
+      // 1. Definimos la base del endpoint de autenticación de tu API
+      // Asegúrate de que BETTER_AUTH_URL sea "https://tu-dominio.com"
+      const authUrl = process.env.BETTER_AUTH_URL!;
+
+      // 2. Construimos la URL de verificación programáticamente
+      const verificationUrl = new URL(`${authUrl}/api/auth/verify-email`);
+
+      // 3. Inyectamos los parámetros necesarios
+      verificationUrl.searchParams.append("token", token);
+      verificationUrl.searchParams.append("callbackURL", "/dashboard");
+
+      // 4. Renderizamos el template con la URL final controlada
       const html = await render(
-        VerificationAndResetPasswordEmail({name: user.name, url: url, isPasswordReset: false})
+        VerificationAndResetPasswordEmail({
+          name: user.name,
+          url: verificationUrl.toString(),
+          isPasswordReset: false
+        })
       );
 
+      // 5. Despacho vía Resend
       await resend.emails.send({
         from: "Levely <contacto@joinlevely.com>",
         to: user.email,

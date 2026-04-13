@@ -57,15 +57,15 @@ export default function OpportunityCard({
               {OPPORTUNITY_MAP[opportunity.type] || "Oportunidad"}
             </Badge>
           </div>
-          <div className="flex items-center gap-1 text-[10px] text-muted-foreground/70 font-medium">
-            <span
-              className="line-clamp-1 max-w-[120px] italic text-primary transition-colors cursor-default hover:text-primary/80 cursor-pointer"
-              title={opportunity?.cv?.title} // Tooltip nativo para ver el nombre completo al pasar el mouse
-              onClick={()=>router.push('/cv?id=' + opportunity.cvId)}
-            >
-                  {opportunity?.cv?.title || "Sin título"}
-                </span>
-          </div>
+          {/*<div className="flex items-center gap-1 text-[10px] text-muted-foreground/70 font-medium">*/}
+          {/*  <span*/}
+          {/*    className="line-clamp-1 max-w-[120px] italic text-primary transition-colors cursor-default hover:text-primary/80 cursor-pointer"*/}
+          {/*    title={opportunity?.cv?.title} // Tooltip nativo para ver el nombre completo al pasar el mouse*/}
+          {/*    onClick={()=>router.push('/cv?id=' + opportunity.cvId)}*/}
+          {/*  >*/}
+          {/*        {opportunity?.cv?.title || "Sin título"}*/}
+          {/*      </span>*/}
+          {/*</div>*/}
 
           <div className={cn(
             "flex items-center gap-1 font-black text-sm px-2 py-1 rounded-lg",

@@ -2,6 +2,7 @@
 
 ## Fixes
 
+- [LV-86agvnwk6](https://app.clickup.com/t/86agvnwk6) Fixed double charging of IA Actions credits and CV credits. Manual for new users
 - [LV-86agv3my9](https://app.clickup.com/t/86agv3my9) Now the route generation mode only allows generating a roadmap depending on the plan
 - [LV-86agv3kgk](https://app.clickup.com/t/86agv3kgk) Fixed the redirect to prices from View Builder and Accelerator, as well as updating the names
 - [LV-86agpvxe4](https://app.clickup.com/t/86agpvxe4) Now you can only match opportunities by route

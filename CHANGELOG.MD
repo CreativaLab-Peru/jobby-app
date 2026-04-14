@@ -1,6 +1,8 @@
 # WIP
 
 ## Fixes
+
+- [LV-86agv3gvm](https://app.clickup.com/t/86agv3gvm) KISS applied to the main page when there are no routes
 - [LV-86agvmdgg](https://app.clickup.com/t/86agvmdgg) Display advertising on road maps
 - [LV-86agvnxph](https://app.clickup.com/t/86agvnxph) Account verification route redirection is not correct
 - [LV-86agvnxzk](https://app.clickup.com/t/86agvnxzk) Improve opportunities (UI/UX)
@@ -10,18 +12,21 @@
 # v1.2.10 - 2026-04-10
 
 ## Fixes
+
 - [LV-86agtfxnn](https://app.clickup.com/t/86agtfxnn) Fixed the bug where the analysis included unvalidated sections when creating or uploading CVs
 - [86agtgrck](https://app.clickup.com/t/86agtgrck) Improved prompt for not containt MD, and added REGEX validation before rendering
 
 # v1.2.8 and v1.2.9 - 2026-04-09
 
 ## Fixes
+
 - [LV-86agtehq5](https://app.clickup.com/t/86agrxq1b) No procesa, evalua y obtiene oportunidades luego de terminar de pagar y el onboarding
 - [LV-86agtfvww](https://app.clickup.com/t/86agtfvww) Luego del proceso rapido de pago, subida, evaluacion y obtencion de oportunidades no se actualiza la ruta en la interfaz
 
 # v1.2.7 - 2026-04-09
 
 ## Fixes
+
 - [LV-86agpvy9d](https://app.clickup.com/t/86agpvy9d) Se tarda en cambiar estado de una tarea (parece lento para el usuario)
 - [LV-86agp593z](https://app.clickup.com/t/86agp593z) Mejorar el diseño y contenido de los correos
 - [LV-86agrxq5f](https://app.clickup.com/t/86agrxq5f) Ahora se renderizan Complementos e Intereses, además de poder modificar los ejemplos y tips desde admin
@@ -30,14 +35,17 @@
 # v1.2.6 - 2026-04-08
 
 ## Fixes
+
 - [JB-86agrt0tb](https://app.clickup.com/t/86agrt0tb) Despues de hacer analisis de un cv no se muestra el detalle
 
 # v1.2.3, v1.2.4 and v1.2.5 - 2026-04-08
 
 ## Features
+
 - [JB-86agq5b8r](https://app.clickup.com/t/86agq5b8r) New letter page
 
 ## Fixes
+
 - [LV-86agpvx6g](https://app.clickup.com/t/86agpvx6g) Added price in USD
 - [LV-86agpvy8f](https://app.clickup.com/t/86agpvy8f) Hidden the section Career Accelerator
 - [LV-86agpvydd](https://app.clickup.com/t/86agpvydd) Hidden the “Upload” and “Create Resume” buttons on the page listing all resumes
@@ -326,10 +334,10 @@
 
 ## Features
 
-* **Settings & preferences**: Users can now update their username, change their password (for
+- **Settings & preferences**: Users can now update their username, change their password (for
   email/password accounts), and have their dark/light theme preference saved per user in the
   database.
-* **Registration & onboarding improvements**: Added a confirm password field to registration flows
+- **Registration & onboarding improvements**: Added a confirm password field to registration flows
   and implemented a terms acceptance gate before continuing or signing up with Google.
 
 ## Technical
@@ -346,10 +354,10 @@
 
 ## Fixes
 
-* **Bug fixes (theme & onboarding)**: Fixed theme flash for unauthenticated users by always writing
+- **Bug fixes (theme & onboarding)**: Fixed theme flash for unauthenticated users by always writing
   the `theme` cookie, corrected onboarding step 10 validation to include `confirmPassword`, and
   added the opportunity type field in onboarding.
-* **UX & visibility fixes**: Restored visibility of current resources for users, fixed styling
+- **UX & visibility fixes**: Restored visibility of current resources for users, fixed styling
   issues in the progress analysis view, mapped recommendation titles in the analysis summary, and
   improved performance and text on the public CV builder page.
 
@@ -538,5 +546,3 @@
 - Modified schema: added VOLUNTEERING to CvSectionType, and renamed all CvType names for clarity
 - Talent onboarding
 - Email service integration
-
-

@@ -37,8 +37,9 @@ export function SelectOpportunityRoadmapModal({
   const [selectedOpportunityId, setSelectedOpportunityId] = useState<string | null>(null);
   const isFreePlan = planTier === "FREE";
   const isStarterPlan = planTier === "STARTER";
+  const freeRouteLimitReached = isFreePlan && generatedRoadmapsCount >= 1;
   const starterLimitReached = isStarterPlan && generatedRoadmapsCount >= 1;
-  const hasLockedByFree = isFreePlan && opportunities.length > 1;
+  const hasLockedByFree = isFreePlan && opportunities.length > 1 && !freeRouteLimitReached;
 
   const isOpportunityLocked = (index: number) => {
     if (starterLimitReached) return true;
@@ -96,6 +97,17 @@ export function SelectOpportunityRoadmapModal({
     [opportunities, selectedOpportunityId],
   );
 
+  const selectedOpportunityIndex = useMemo(
+    () => opportunities.findIndex((opportunity) => opportunity.id === selectedOpportunityId),
+    [opportunities, selectedOpportunityId],
+  );
+
+  const isSelectedOpportunityLocked =
+    selectedOpportunityIndex < 0 ? true : isOpportunityLocked(selectedOpportunityIndex);
+
+  // UI simplificada: si la selección está bloqueada o Free ya agotó su cupo de ruta, no se puede generar.
+  const canGenerateInSelection = !isSelectedOpportunityLocked && !freeRouteLimitReached;
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -118,6 +130,11 @@ export function SelectOpportunityRoadmapModal({
                   {hasLockedByFree && (
                     <p className="text-xs text-muted-foreground mt-3">
                       Plan Free: solo puedes generar roadmap para tu primera oportunidad.
+                    </p>
+                  )}
+                  {isFreePlan && freeRouteLimitReached && (
+                    <p className="text-xs text-muted-foreground mt-3">
+                      Plan Free: ya generaste 1 roadmap en esta ruta.
                     </p>
                   )}
                   {starterLimitReached && (
@@ -214,15 +231,33 @@ export function SelectOpportunityRoadmapModal({
                 <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-4 text-center space-y-2">
                   <div className="inline-flex items-center gap-2 text-primary text-xs font-bold">
                     <Lock className="w-4 h-4" />
-                    Desbloquea todas las oportunidades
+                    Primera oportunidad en Free
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Pasa a Builder o Accelerator para generar roadmap en más oportunidades.
+                    En Free se habilita roadmap solo para la primera oportunidad de tu ruta.
                   </p>
                   <Button size="sm" className="rounded-lg text-xs font-bold" asChild>
                     <Link href="/credits">
                       <Sparkles className="w-3.5 h-3.5 mr-1.5" />
-                      Ver packs de créditos
+                      Ver planes
+                    </Link>
+                  </Button>
+                </div>
+              )}
+
+              {isFreePlan && freeRouteLimitReached && (
+                <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-4 text-center space-y-2">
+                  <div className="inline-flex items-center gap-2 text-primary text-xs font-bold">
+                    <Lock className="w-4 h-4" />
+                    Límite Free alcanzado
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Con Free solo puedes generar 1 roadmap por ruta.
+                  </p>
+                  <Button size="sm" className="rounded-lg text-xs font-bold" asChild>
+                    <Link href="/credits">
+                      <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+                      Ver planes
                     </Link>
                   </Button>
                 </div>
@@ -232,14 +267,13 @@ export function SelectOpportunityRoadmapModal({
                 <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-4 text-center space-y-2">
                   <div className="inline-flex items-center gap-2 text-primary text-xs font-bold">
                     <Sparkles className="w-4 h-4" />
-                    Límite de Builder alcanzado
+                    Límite Starter alcanzado
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Con Builder puedes generar 1 roadmap. Mejora a Accelerator para crear roadmaps
-                    ilimitados.
+                    Con Starter puedes generar 1 roadmap por ruta. Mejora a Pro para crear más.
                   </p>
                   <Button size="sm" className="rounded-lg text-xs font-bold" asChild>
-                    <Link href="/credits">Ir a Accelerator</Link>
+                    <Link href="/credits">Ir a Pro</Link>
                   </Button>
                 </div>
               )}
@@ -263,7 +297,7 @@ export function SelectOpportunityRoadmapModal({
                     <Map className="w-4 h-4 mr-2" />
                     Verificando...
                   </Button>
-                ) : existingRoadmap ? (
+                ) : existingRoadmap?.status === "SUCCEEDED" ? (
                   <div className="space-y-2 text-center">
                     <Button
                       disabled
@@ -288,7 +322,7 @@ export function SelectOpportunityRoadmapModal({
                     opportunityId={selectedOpportunity.id}
                     cvId={selectedOpportunity.cvId}
                     routeId={selectedOpportunity.routeId}
-                    existingStatus={null}
+                    existingStatus={existingRoadmap?.status ?? null}
                     onGenerated={(roadmapId) => {
                       if (roadmapId) {
                         // Redirigir al roadmap generado
@@ -297,14 +331,13 @@ export function SelectOpportunityRoadmapModal({
                         onGenerated("");
                       }
                     }}
-                    canGenerate={
-                      !starterLimitReached &&
-                      (!isFreePlan || selectableOpportunities[0]?.id === selectedOpportunity.id)
-                    }
+                    canGenerate={canGenerateInSelection}
                     blockedMessage={
                       starterLimitReached
                         ? "Con Starter puedes generar 1 roadmap. Mejora a Pro para generar más."
-                        : "Con Free solo puedes generar roadmap para la primera oportunidad."
+                        : freeRouteLimitReached
+                          ? "Con Free solo puedes generar 1 roadmap por ruta. Mejora a Starter o Pro para más."
+                          : "Con Free solo puedes generar roadmap para la primera oportunidad de tu ruta."
                     }
                   />
                 )

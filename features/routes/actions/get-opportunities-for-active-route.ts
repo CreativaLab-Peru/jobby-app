@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
-import { Opportunity } from "@prisma/client";
+import { JobStatus, Opportunity, RouteStatus } from "@prisma/client";
 
 export type RouteOpportunity = Opportunity & {
   match: number;
@@ -29,11 +29,26 @@ export const getOpportunitiesForActiveRoute = async (options: RouteOpportunityOp
     // Get active route's cvId
     const activeRoute = await prisma.route.findFirst({
       where: { userId: user.id, isActive: true },
-      select: { cvId: true },
+      select: {
+        cvId: true,
+        status: true,
+        _count: {
+          select: {
+            opportunities: true,
+          },
+        },
+      },
     });
 
     if (!activeRoute?.cvId) {
-      return { opportunities: [], hasMore: false, totalCount: 0, hasCv: false };
+      return {
+        opportunities: [],
+        hasMore: false,
+        totalCount: 0,
+        hasCv: false,
+        hasMatchedOnce: false,
+        isMatchingInProgress: false,
+      };
     }
 
     const whereClause: any = {
@@ -48,7 +63,7 @@ export const getOpportunitiesForActiveRoute = async (options: RouteOpportunityOp
       ];
     }
 
-    const [data, count] = await Promise.all([
+    const [data, count, latestMatchJob] = await Promise.all([
       prisma.opportunity.findMany({
         where: whereClause,
         orderBy: [{ match: "desc" }, { createdAt: "desc" }],
@@ -57,7 +72,36 @@ export const getOpportunitiesForActiveRoute = async (options: RouteOpportunityOp
         take,
       }),
       prisma.opportunity.count({ where: whereClause }),
+      prisma.queueJob.findFirst({
+        where: {
+          cvId: activeRoute.cvId,
+          type: "GET_OPPORTUNITIES",
+          status: {
+            in: [JobStatus.IN_PROGRESS, JobStatus.SUCCEEDED],
+          },
+        },
+        orderBy: { createdAt: "desc" },
+        select: { status: true },
+      }),
     ]);
+
+    const statusesWithMatchExecuted: RouteStatus[] = [
+      RouteStatus.OPPORTUNITIES_PENDING,
+      RouteStatus.OPPORTUNITIES_DONE,
+      RouteStatus.ROADMAP_PENDING,
+      RouteStatus.ROADMAP_IN_PROGRESS,
+      RouteStatus.ROADMAP_DONE,
+      RouteStatus.PROGRAM_PENDING,
+      RouteStatus.PROGRAM_IN_PROGRESS,
+      RouteStatus.PROGRAM_DONE,
+    ];
+
+    const routeHasExecutedMatch = statusesWithMatchExecuted.includes(activeRoute.status);
+    const hasMatchedOnce =
+      Boolean(latestMatchJob) || routeHasExecutedMatch || activeRoute._count.opportunities > 0;
+    const isMatchingInProgress =
+      latestMatchJob?.status === JobStatus.IN_PROGRESS ||
+      activeRoute.status === RouteStatus.OPPORTUNITIES_PENDING;
 
     const opportunities = JSON.parse(
       JSON.stringify(
@@ -75,10 +119,11 @@ export const getOpportunitiesForActiveRoute = async (options: RouteOpportunityOp
       hasMore: skip + take < count,
       totalCount: count,
       hasCv: true,
+      hasMatchedOnce,
+      isMatchingInProgress,
     };
   } catch (error) {
     console.error("[GET_OPPORTUNITIES_FOR_ACTIVE_ROUTE_ERROR]", error);
     return null;
   }
 };
-

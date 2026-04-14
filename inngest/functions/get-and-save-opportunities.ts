@@ -6,7 +6,7 @@ import { consumeCredits } from "@/features/credits/actions/consume-credits";
 import { transformCvToAnalysis } from "@/inngest/utils/cv-transformer";
 import {
   getOpportunitiesFromEngine,
-  MatchAnalysis
+  MatchAnalysis,
 } from "@/features/opportunities/get-opportunities-from-engine";
 import { saveOpportunities } from "@/features/opportunities/save-opportunities";
 
@@ -50,9 +50,9 @@ export const getAndSaveOpportunities = inngest.createFunction(
         const [cvData, prefsData] = await Promise.all([
           prisma.cv.findUnique({
             where: { id: cvId },
-            include: { sections: true, opportunities: true }
+            include: { sections: true, opportunities: true },
           }),
-          prisma.userPreference.findUnique({ where: { userId } })
+          prisma.userPreference.findUnique({ where: { userId } }),
         ]);
         return { cv: cvData, userPrefs: prefsData };
       });
@@ -98,7 +98,7 @@ export const getAndSaveOpportunities = inngest.createFunction(
           cv_data: cvAnalysis as any,
           preferences: {
             top_k: 5,
-          }
+          },
         });
       });
 
@@ -116,8 +116,19 @@ export const getAndSaveOpportunities = inngest.createFunction(
         },
       });
 
+      const route = await prisma.route.findFirst({
+        where: { cvId, userId },
+      });
+
       if (!opportunities?.matches?.length || opportunities.matches.length === 0) {
-        await logsService.createLog({ userId, action: LogAction.OPPORTUNITY, level: LogLevel.WARNING, entity: "CV_OPPORTUNITY", entityId: cvId, message: "No matches found" });
+        await logsService.createLog({
+          userId,
+          action: LogAction.OPPORTUNITY,
+          level: LogLevel.WARNING,
+          entity: "CV_OPPORTUNITY",
+          entityId: cvId,
+          message: "No matches found",
+        });
 
         // ✅ Mark job as SUCCEEDED (no matches is not a failure)
         await prisma.queueJob.update({
@@ -125,12 +136,19 @@ export const getAndSaveOpportunities = inngest.createFunction(
           data: { status: JobStatus.SUCCEEDED, finishedAt: new Date() },
         });
 
+        if (
+          route &&
+          (route.status === RouteStatus.ANALYSIS_DONE ||
+            route.status === RouteStatus.OPPORTUNITIES_PENDING)
+        ) {
+          await prisma.route.update({
+            where: { id: route.id },
+            data: { status: RouteStatus.OPPORTUNITIES_DONE },
+          });
+        }
+
         return { message: "No matches found" };
       }
-
-      const route = await prisma.route.findFirst({
-        where: { cvId, userId },
-      });
 
       if (!route) {
         return { message: "No matches found" };
@@ -191,10 +209,11 @@ export const getAndSaveOpportunities = inngest.createFunction(
         data: { status: JobStatus.SUCCEEDED, finishedAt: new Date() },
       });
 
-      if (route && (
-        route.status === RouteStatus.ANALYSIS_DONE ||
-        route.status === RouteStatus.OPPORTUNITIES_PENDING
-      )) {
+      if (
+        route &&
+        (route.status === RouteStatus.ANALYSIS_DONE ||
+          route.status === RouteStatus.OPPORTUNITIES_PENDING)
+      ) {
         await prisma.route.update({
           where: { id: route.id },
           data: { status: RouteStatus.OPPORTUNITIES_DONE },
@@ -212,7 +231,6 @@ export const getAndSaveOpportunities = inngest.createFunction(
       });
 
       return { success: result, count: opportunities.matches.length };
-
     } catch (err: any) {
       console.error("❌ Opportunities processing failed:", err);
 
@@ -243,5 +261,5 @@ export const getAndSaveOpportunities = inngest.createFunction(
 
       throw err;
     }
-  }
+  },
 );

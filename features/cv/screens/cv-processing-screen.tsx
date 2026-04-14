@@ -150,7 +150,7 @@ export function CvProcessingScreen({ cvId }: CvProcessingScreenProps) {
               ? "No pudimos extraer la información de tu PDF. Intenta con un archivo que no esté protegido por contraseña."
               : status === "SUCCEEDED"
                 ? "Hemos terminado de estructurar tu CV. Redirigiéndote a la previsualización..."
-                : "Nuestra IA está trabajando para extraer y organizar tu experiencia profesional automáticamente."
+                : "Nuestra IA está contrastando tu trayectoria con los estándares de selección de las becas Full-Funded de UK, EEUU, Europa y los principales fondos globales."
             }
           </p>
         </div>

@@ -36,40 +36,40 @@ export function BasicDataStep() {
         </div>
 
         {/* Grid para agrupar Fecha y País en Desktop, apilados en Mobile */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="grid gap-2">
-            <DateInput
-              label="Fecha de nacimiento"
-              value={formData.birthDate}
-              onChange={(val) => updateFormData({ birthDate: val })}
-              // Asegúrate que DateInput use internamente un estilo similar al Input h-12
-            />
-            {errors.birthDate && (
-              <p className="text-sm text-red-600 mt-1">{errors.birthDate}</p>
-            )}
-          </div>
+        {/*<div className="grid grid-cols-1 md:grid-cols-2 gap-6">*/}
+        {/*  <div className="grid gap-2">*/}
+        {/*    <DateInput*/}
+        {/*      label="Fecha de nacimiento"*/}
+        {/*      value={formData.birthDate}*/}
+        {/*      onChange={(val) => updateFormData({ birthDate: val })}*/}
+        {/*      // Asegúrate que DateInput use internamente un estilo similar al Input h-12*/}
+        {/*    />*/}
+        {/*    {errors.birthDate && (*/}
+        {/*      <p className="text-sm text-red-600 mt-1">{errors.birthDate}</p>*/}
+        {/*    )}*/}
+        {/*  </div>*/}
 
-          <div className="grid gap-2">
-            <Label className="text-sm font-bold ml-1 text-slate-700">País</Label>
-            <Select
-              value={formData.country}
-              onValueChange={(val) => updateFormData({ country: val })}
-            >
-              <SelectTrigger className="h-12 text-base rounded-xl border-slate-200 shadow-sm">
-                <SelectValue placeholder="¿Dónde resides?" />
-              </SelectTrigger>
-              <SelectContent className="max-h-[250px] rounded-xl border-slate-200 shadow-lg">
-                <SelectItem value="PE">🇵🇪 Perú</SelectItem>
-                <SelectItem value="AR">🇦🇷 Argentina</SelectItem>
-                <SelectItem value="CL">🇨🇱 Chile</SelectItem>
-                <SelectItem value="CO">🇨🇴 Colombia</SelectItem>
-                <SelectItem value="MX">🇲🇽 México</SelectItem>
-                <SelectItem value="ES">🇪🇸 España</SelectItem>
-                <SelectItem value="US">🇺🇸 Estados Unidos</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+        {/*  <div className="grid gap-2">*/}
+        {/*    <Label className="text-sm font-bold ml-1 text-slate-700">País</Label>*/}
+        {/*    <Select*/}
+        {/*      value={formData.country}*/}
+        {/*      onValueChange={(val) => updateFormData({ country: val })}*/}
+        {/*    >*/}
+        {/*      <SelectTrigger className="h-12 text-base rounded-xl border-slate-200 shadow-sm">*/}
+        {/*        <SelectValue placeholder="¿Dónde resides?" />*/}
+        {/*      </SelectTrigger>*/}
+        {/*      <SelectContent className="max-h-[250px] rounded-xl border-slate-200 shadow-lg">*/}
+        {/*        <SelectItem value="PE">🇵🇪 Perú</SelectItem>*/}
+        {/*        <SelectItem value="AR">🇦🇷 Argentina</SelectItem>*/}
+        {/*        <SelectItem value="CL">🇨🇱 Chile</SelectItem>*/}
+        {/*        <SelectItem value="CO">🇨🇴 Colombia</SelectItem>*/}
+        {/*        <SelectItem value="MX">🇲🇽 México</SelectItem>*/}
+        {/*        <SelectItem value="ES">🇪🇸 España</SelectItem>*/}
+        {/*        <SelectItem value="US">🇺🇸 Estados Unidos</SelectItem>*/}
+        {/*      </SelectContent>*/}
+        {/*    </Select>*/}
+        {/*  </div>*/}
+        {/*</div>*/}
       </div>
     </div>
   );

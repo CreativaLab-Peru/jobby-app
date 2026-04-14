@@ -159,24 +159,25 @@ export function ImprovementsSection({
         </TabsList>
 
         {/* Acción Global solo visible en la tab de Refinamiento */}
-        <TabsContent value="refinement" className="m-0">
-          {pendingCount > 0 && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleApplyAll}
-              disabled={isPending}
-              className="text-xs font-bold rounded-lg border-emerald-500/20 hover:bg-emerald-500/10"
-            >
-              {isPending && !applyingSection ? (
-                <Loader2 className="w-3 h-3 mr-1.5 animate-spin"/>
-              ) : (
-                <CheckCircle2 className="w-3 h-3 mr-1.5 text-emerald-600"/>
-              )}
-              Aplicar todas
-            </Button>
-          )}
-        </TabsContent>
+        {/*<TabsContent value="refinement" className="m-0">*/}
+        {/*  /!* Todo: pending to finish *!/*/}
+        {/*  {pendingCount > 0 && (*/}
+        {/*    <Button*/}
+        {/*      size="sm"*/}
+        {/*      variant="outline"*/}
+        {/*      onClick={handleApplyAll}*/}
+        {/*      disabled={isPending}*/}
+        {/*      className="text-xs font-bold rounded-lg border-emerald-500/20 hover:bg-emerald-500/10"*/}
+        {/*    >*/}
+        {/*      {isPending && !applyingSection ? (*/}
+        {/*        <Loader2 className="w-3 h-3 mr-1.5 animate-spin"/>*/}
+        {/*      ) : (*/}
+        {/*        <CheckCircle2 className="w-3 h-3 mr-1.5 text-emerald-600"/>*/}
+        {/*      )}*/}
+        {/*      Aplicar todas*/}
+        {/*    </Button>*/}
+        {/*  )}*/}
+        {/*</TabsContent>*/}
       </div>
 
       {/* ── CONTENIDO: TEXTOS MEJORADOS ──────────────── */}
@@ -189,22 +190,23 @@ export function ImprovementsSection({
                 <Sparkles className="w-4 h-4 text-emerald-600"/>
                 <h2 className="text-base font-bold">Textos Mejorados</h2>
               </div>
-              {pendingCount > 0 && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={handleApplyAll}
-                  disabled={isPending}
-                  className="text-xs font-bold rounded-lg"
-                >
-                  {isPending && !applyingSection ? (
-                    <Loader2 className="w-3 h-3 mr-1.5 animate-spin"/>
-                  ) : (
-                    <CheckCircle2 className="w-3 h-3 mr-1.5"/>
-                  )}
-                  Aplicar todas
-                </Button>
-              )}
+              {/* Todo: pending to finish */}
+              {/*{pendingCount > 0 && (*/}
+              {/*  <Button*/}
+              {/*    size="sm"*/}
+              {/*    variant="outline"*/}
+              {/*    onClick={handleApplyAll}*/}
+              {/*    disabled={isPending}*/}
+              {/*    className="text-xs font-bold rounded-lg"*/}
+              {/*  >*/}
+              {/*    {isPending && !applyingSection ? (*/}
+              {/*      <Loader2 className="w-3 h-3 mr-1.5 animate-spin"/>*/}
+              {/*    ) : (*/}
+              {/*      <CheckCircle2 className="w-3 h-3 mr-1.5"/>*/}
+              {/*    )}*/}
+              {/*    Aplicar todas*/}
+              {/*  </Button>*/}
+              {/*)}*/}
             </div>
 
             {sanitizedImprovedTexts.map((item, index) => {

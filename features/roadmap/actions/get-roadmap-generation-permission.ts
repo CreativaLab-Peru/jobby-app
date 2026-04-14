@@ -7,18 +7,40 @@ import { PAYMENT_PRO_ID, PAYMENT_STARTER_ID } from "@/features/billing/consts/pa
 
 export type RoadmapPlanTier = "FREE" | "STARTER" | "PRO";
 
+export type RoadmapGenerationBlockReason =
+  | "NONE"
+  | "UNAUTHENTICATED"
+  | "ROUTE_NOT_FOUND"
+  | "FREE_ONLY_FIRST_OPPORTUNITY"
+  | "ALREADY_EXISTS_FOR_OPPORTUNITY"
+  | "ALREADY_PROCESSING_FOR_OPPORTUNITY"
+  | "ROUTE_LIMIT_REACHED_FREE"
+  | "ROUTE_LIMIT_REACHED_STARTER"
+  | "ROUTE_LIMIT_PENDING_FREE"
+  | "ROUTE_LIMIT_PENDING_STARTER";
+
 export type RoadmapGenerationPermission = {
   canGenerate: boolean;
   planTier: RoadmapPlanTier;
   message: string | null;
+  reason: RoadmapGenerationBlockReason;
 };
 
 export async function getRoadmapGenerationPermissionByUser(
   userId: string,
-  _opportunityId: string,
+  opportunityId: string,
   _cvId: string,
   routeId: string,
 ): Promise<RoadmapGenerationPermission> {
+  if (!routeId) {
+    return {
+      canGenerate: false,
+      planTier: "FREE",
+      message: "No se pudo identificar la ruta activa para esta oportunidad.",
+      reason: "ROUTE_NOT_FOUND",
+    };
+  }
+
   const activePaidPlans = await prisma.userPayment.findMany({
     where: {
       userId,
@@ -32,40 +54,99 @@ export async function getRoadmapGenerationPermissionByUser(
   const hasStarter = activePaidPlans.some((payment) => payment.planId === PAYMENT_STARTER_ID);
   const planTier: RoadmapPlanTier = hasPro ? "PRO" : hasStarter ? "STARTER" : "FREE";
 
-
-  // Para saber si ya existe un roadmap en esta ruta para el usuario
-  const existingRoadmap = await prisma.roadmap.findFirst({
+  const routeRoadmaps = await prisma.roadmap.findMany({
     where: {
       userId,
       routeId,
-      status: JobStatus.SUCCEEDED,
+      status: {
+        in: [JobStatus.PENDING, JobStatus.IN_PROGRESS, JobStatus.SUCCEEDED],
+      },
     },
-    select: { id: true },
+    select: {
+      opportunityId: true,
+      status: true,
+    },
   });
+
+  const roadmapForOpportunity = routeRoadmaps.find(
+    (roadmap) => roadmap.opportunityId === opportunityId,
+  );
+
+  if (roadmapForOpportunity?.status === JobStatus.SUCCEEDED) {
+    return {
+      canGenerate: false,
+      planTier,
+      message: "Ya existe un roadmap generado para esta oportunidad en esta ruta.",
+      reason: "ALREADY_EXISTS_FOR_OPPORTUNITY",
+    };
+  }
+
+  if (
+    roadmapForOpportunity?.status === JobStatus.PENDING ||
+    roadmapForOpportunity?.status === JobStatus.IN_PROGRESS
+  ) {
+    return {
+      canGenerate: false,
+      planTier,
+      message: "Ya hay un roadmap en proceso para esta oportunidad.",
+      reason: "ALREADY_PROCESSING_FOR_OPPORTUNITY",
+    };
+  }
+
+  const generatedCount = routeRoadmaps.filter(
+    (roadmap) => roadmap.status === JobStatus.SUCCEEDED,
+  ).length;
+  const processingCount = routeRoadmaps.filter(
+    (roadmap) => roadmap.status === JobStatus.PENDING || roadmap.status === JobStatus.IN_PROGRESS,
+  ).length;
+
+  if (planTier === "FREE") {
+    const firstRouteOpportunity = await prisma.opportunity.findFirst({
+      where: {
+        routeId,
+        cv: {
+          userId,
+        },
+      },
+      orderBy: [{ match: "desc" }, { createdAt: "desc" }, { id: "asc" }],
+      select: { id: true },
+    });
+
+    if (firstRouteOpportunity && firstRouteOpportunity.id !== opportunityId) {
+      return {
+        canGenerate: false,
+        planTier,
+        message: "Con Free solo puedes generar roadmap para la primera oportunidad de tu ruta.",
+        reason: "FREE_ONLY_FIRST_OPPORTUNITY",
+      };
+    }
+  }
 
   if (planTier === "PRO") {
     return {
       canGenerate: true,
       planTier,
       message: null,
+      reason: "NONE",
     };
   }
 
   if (planTier === "STARTER") {
-    // Starter: solo 1 roadmap por ruta
-    const generatedCount = await prisma.roadmap.count({
-      where: {
-        userId,
-        routeId,
-        status: JobStatus.SUCCEEDED,
-      },
-    });
-
     if (generatedCount >= 1) {
       return {
         canGenerate: false,
         planTier,
         message: "Con Starter puedes generar 1 roadmap por ruta. Mejora a Pro para generar más.",
+        reason: "ROUTE_LIMIT_REACHED_STARTER",
+      };
+    }
+
+    if (processingCount >= 1) {
+      return {
+        canGenerate: false,
+        planTier,
+        message: "Ya tienes un roadmap en proceso en esta ruta. Espera a que termine.",
+        reason: "ROUTE_LIMIT_PENDING_STARTER",
       };
     }
 
@@ -73,22 +154,34 @@ export async function getRoadmapGenerationPermissionByUser(
       canGenerate: true,
       planTier,
       message: null,
+      reason: "NONE",
     };
   }
 
-  // FREE: solo permitir crear un roadmap por ruta
-  if (!existingRoadmap) {
+  if (generatedCount >= 1) {
     return {
-      canGenerate: true,
+      canGenerate: false,
       planTier,
-      message: null,
+      message:
+        "Con Free solo puedes generar 1 roadmap incompleto por ruta. Mejora a Starter o Pro para más.",
+      reason: "ROUTE_LIMIT_REACHED_FREE",
+    };
+  }
+
+  if (processingCount >= 1) {
+    return {
+      canGenerate: false,
+      planTier,
+      message: "Ya tienes un roadmap en proceso en esta ruta. Espera a que termine.",
+      reason: "ROUTE_LIMIT_PENDING_FREE",
     };
   }
 
   return {
-    canGenerate: false,
+    canGenerate: true,
     planTier,
-    message: "Con Free solo puedes generar 1 roadmap por ruta. Mejora a Starter o Pro para desbloquear más.",
+    message: null,
+    reason: "NONE",
   };
 }
 
@@ -103,6 +196,7 @@ export async function getRoadmapGenerationPermission(
       canGenerate: false,
       planTier: "FREE",
       message: "Usuario no autenticado.",
+      reason: "UNAUTHENTICATED",
     };
   }
 

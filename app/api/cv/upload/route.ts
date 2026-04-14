@@ -1,15 +1,15 @@
-import {inngest} from "@/inngest/functions/client";
-import {prisma} from "@/lib/prisma";
-import {v4 as uuidv4} from "uuid";
-import {CreditBalanceType, CvType, Language, OpportunityType} from "@prisma/client";
-import {savePdf} from "@/features/upload-cv/actions/save-pdf";
-import {NextResponse} from "next/server";
-import {getCurrentUser} from "@/features/share/actions/get-current-user";
-import {getTextFromPdfApi} from "@/utils/get-text-from-pdf-api";
-import {detectCv} from "@/features/cv/actions/verify-cv";
-import {getCurrentCreditLimits} from "@/features/credits/actions/get-current-credits-limits";
-import {getPromptToGetCv} from "@/features/cv/prompts/get-prompt-to-get-cv";
-import {queryGemini} from "@/features/cv/queries/query-gemini";
+import { inngest } from "@/inngest/functions/client";
+import { prisma } from "@/lib/prisma";
+import { v4 as uuidv4 } from "uuid";
+import { CreditBalanceType, CvType, Language, OpportunityType } from "@prisma/client";
+import { savePdf } from "@/features/upload-cv/actions/save-pdf";
+import { NextResponse } from "next/server";
+import { getCurrentUser } from "@/features/share/actions/get-current-user";
+import { getTextFromPdfApi } from "@/utils/get-text-from-pdf-api";
+import { detectCv } from "@/features/cv/actions/verify-cv";
+import { getCurrentCreditLimits } from "@/features/credits/actions/get-current-credits-limits";
+import { getPromptToGetCv } from "@/features/cv/prompts/get-prompt-to-get-cv";
+import { queryGemini } from "@/features/cv/queries/query-gemini";
 
 export async function POST(req: Request) {
   try {
@@ -17,23 +17,23 @@ export async function POST(req: Request) {
     const file = formData.get("pdf") as File;
 
     if (!file) {
-      return NextResponse.json({success: false, message: "Archivo necesario"}, {status: 400});
+      return NextResponse.json({ success: false, message: "Archivo necesario" }, { status: 400 });
     }
 
     const currentUser = await getCurrentUser();
     if (!currentUser) {
-      return NextResponse.json({success: false, message: "User not found"}, {status: 404});
+      return NextResponse.json({ success: false, message: "User not found" }, { status: 404 });
     }
 
-    // Verify credit limits
+    // Verify manual CV credit limits
     const creditLimits = await getCurrentCreditLimits();
-    if (creditLimits.aiActionsLimit <= 0) {
+    if (creditLimits.manageCvsLimit <= 0) {
       return NextResponse.json(
         {
           success: false,
-          message: "No tienes intentos disponibles para subir CVs. Por favor, actualiza tu plan."
+          message: "No tienes créditos de CV Manual disponibles. Por favor, actualiza tu plan.",
         },
-        {status: 403}
+        { status: 403 },
       );
     }
 
@@ -42,12 +42,9 @@ export async function POST(req: Request) {
     // Save PDF file
     const buffer = Buffer.from(await file.arrayBuffer());
     const fileName = `CV-${uuidv4()}-${file.name}`;
-    const {error, url} = await savePdf(file, {buffer, fileName});
+    const { error, url } = await savePdf(file, { buffer, fileName });
     if (error) {
-      return NextResponse.json(
-        {success: false, message: error},
-        {status: 400}
-      );
+      return NextResponse.json({ success: false, message: error }, { status: 400 });
     }
 
     // Extract text from PDF and verify if it's a CV
@@ -55,8 +52,8 @@ export async function POST(req: Request) {
     const result = detectCv(textFromPdf);
     if (!result.isCv) {
       return NextResponse.json(
-        {success: false, message: "El archivo subido no parece ser un CV válido."},
-        {status: 400}
+        { success: false, message: "El archivo subido no parece ser un CV válido." },
+        { status: 400 },
       );
     }
 
@@ -66,8 +63,8 @@ export async function POST(req: Request) {
 
     if (!aiResult.success) {
       return NextResponse.json(
-        {success: false, message: "Error al procesar el contenido del CV"},
-        {status: 500}
+        { success: false, message: "Error al procesar el contenido del CV" },
+        { status: 500 },
       );
     }
 
@@ -82,11 +79,11 @@ export async function POST(req: Request) {
     const normalizedCvType = rawCvType.trim().toUpperCase();
 
     const matchedOpportunityType = (Object.values(OpportunityType) as string[]).find(
-      (value) => value.toUpperCase() === normalizedOpportunityType
+      (value) => value.toUpperCase() === normalizedOpportunityType,
     ) as OpportunityType | undefined;
 
     const matchedCvType = (Object.values(CvType) as string[]).find(
-      (value) => value.toUpperCase() === normalizedCvType
+      (value) => value.toUpperCase() === normalizedCvType,
     ) as CvType | undefined;
 
     let opportunityType: OpportunityType;
@@ -97,7 +94,7 @@ export async function POST(req: Request) {
       if (rawOpportunityType) {
         console.warn(
           "[CV Upload] Unknown opportunityType from AI, falling back to default:",
-          rawOpportunityType
+          rawOpportunityType,
         );
       }
     }
@@ -108,10 +105,7 @@ export async function POST(req: Request) {
     } else {
       cvType = CvType.TECHNOLOGY_ENGINEERING;
       if (rawCvType) {
-        console.warn(
-          "[CV Upload] Unknown cvType from AI, falling back to default:",
-          rawCvType
-        );
+        console.warn("[CV Upload] Unknown cvType from AI, falling back to default:", rawCvType);
       }
     }
 
@@ -150,26 +144,26 @@ export async function POST(req: Request) {
 
     if (!cv) {
       return NextResponse.json(
-        {success: false, message: "Error al crear nuevo cv"},
-        {status: 400}
+        { success: false, message: "Error al crear nuevo cv" },
+        { status: 400 },
       );
     }
 
     // Consume credits safely using transaction and locking
     try {
-      const { consumeCredits } = await import('@/features/credits/actions/consume-credits');
+      const { consumeCredits } = await import("@/features/credits/actions/consume-credits");
       await consumeCredits({
         userId: currentUser.id,
-        type: CreditBalanceType.AI_ACTIONS,
+        type: CreditBalanceType.MANAGE_CVS,
         amount: 1,
-        description: `CV upload: ${cv.id}`,
+        description: `Carga de CV manual: ${cv.id}`,
       });
     } catch (error) {
       // Si falla el consumo de créditos, eliminar el CV creado
       await prisma.cv.delete({ where: { id: cv.id } });
       return NextResponse.json(
         { success: false, message: "No tienes créditos disponibles" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -184,12 +178,9 @@ export async function POST(req: Request) {
     //   data: { cvId: cv.id, userId: currentUser.id },
     // });
 
-    return Response.json({success: true, cvId: cv.id});
+    return Response.json({ success: true, cvId: cv.id });
   } catch (error) {
     console.error("Error uploading CV:", error);
-    return NextResponse.json(
-      {success: false, message: "Internal server error"},
-      {status: 500}
-    );
+    return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 });
   }
 }

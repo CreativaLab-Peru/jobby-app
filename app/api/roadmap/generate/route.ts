@@ -1,10 +1,8 @@
-import {inngest} from "@/inngest/functions/client";
-import {NextResponse} from "next/server";
-import {getCurrentUser} from "@/features/share/actions/get-current-user";
-import {prisma} from "@/lib/prisma";
-import {
-  getRoadmapGenerationPermissionByUser
-} from "@/features/roadmap/actions/get-roadmap-generation-permission";
+import { inngest } from "@/inngest/functions/client";
+import { NextResponse } from "next/server";
+import { getCurrentUser } from "@/features/share/actions/get-current-user";
+import { prisma } from "@/lib/prisma";
+import { getRoadmapGenerationPermissionByUser } from "@/features/roadmap/actions/get-roadmap-generation-permission";
 
 interface GenerateRoadmapBody {
   opportunityId: string;
@@ -15,24 +13,22 @@ interface GenerateRoadmapBody {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const {opportunityId, cvId, routeId}: GenerateRoadmapBody = body;
+    const { opportunityId, cvId, routeId }: GenerateRoadmapBody = body;
 
-    if (!opportunityId || !cvId) {
+    if (!opportunityId || !cvId || !routeId) {
       return NextResponse.json(
-        {success: false, message: "opportunityId y cvId son requeridos."},
-        {status: 400},
+        { success: false, message: "opportunityId, cvId y routeId son requeridos." },
+        { status: 400 },
       );
     }
 
     const currentUser = await getCurrentUser();
     if (!currentUser) {
       return NextResponse.json(
-        {success: false, message: "Usuario no encontrado."},
-        {status: 404},
+        { success: false, message: "Usuario no encontrado." },
+        { status: 404 },
       );
     }
-
-
 
     // Verify opportunity belongs to user's CV
     const opportunity = await prisma.opportunity.findFirst({
@@ -40,13 +36,13 @@ export async function POST(request: Request) {
         id: opportunityId,
         cvId,
         routeId,
-        cv: {userId: currentUser.id},
+        cv: { userId: currentUser.id },
       },
     });
     if (!opportunity) {
       return NextResponse.json(
-        {success: false, message: "Oportunidad no encontrada."},
-        {status: 404},
+        { success: false, message: "Oportunidad no encontrada." },
+        { status: 404 },
       );
     }
 
@@ -66,9 +62,20 @@ export async function POST(request: Request) {
         {
           success: true,
           message: "Ya existe un roadmap para esta oportunidad.",
-          data: {roadmapId: existing.id},
+          data: { roadmapId: existing.id },
         },
-        {status: 200},
+        { status: 200 },
+      );
+    }
+
+    if (existing?.status === "PENDING" || existing?.status === "IN_PROGRESS") {
+      return NextResponse.json(
+        {
+          success: true,
+          message: "Ya estamos generando un roadmap para esta oportunidad.",
+          data: { roadmapId: existing.id },
+        },
+        { status: 202 },
       );
     }
 
@@ -85,7 +92,7 @@ export async function POST(request: Request) {
           success: false,
           message: permission.message || "No puedes generar roadmap para esta oportunidad.",
         },
-        {status: 403},
+        { status: 403 },
       );
     }
 
@@ -95,7 +102,7 @@ export async function POST(request: Request) {
         opportunityId,
         cvId,
         userId: currentUser.id,
-        routeId
+        routeId,
       },
     });
 
@@ -103,16 +110,15 @@ export async function POST(request: Request) {
       {
         success: true,
         message: "Generación de roadmap iniciada.",
-        data: {opportunityId, cvId},
+        data: { opportunityId, cvId },
       },
-      {status: 202},
+      { status: 202 },
     );
   } catch (error) {
     console.error("❌ [GENERATE_ROADMAP] Error:", error);
     return NextResponse.json(
-      {success: false, message: "Error al iniciar la generación del roadmap."},
-      {status: 500},
+      { success: false, message: "Error al iniciar la generación del roadmap." },
+      { status: 500 },
     );
   }
 }
-

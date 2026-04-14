@@ -30,7 +30,9 @@ export function SelectOpportunityRoadmapModal({
   hasCv,
   onGenerated,
 }: SelectOpportunityRoadmapModalProps) {
-  const [existingRoadmap, setExistingRoadmap] = useState<{ id: string; status: string } | null>(null);
+  const [existingRoadmap, setExistingRoadmap] = useState<{ id: string; status: string } | null>(
+    null,
+  );
   const [checkingRoadmap, setCheckingRoadmap] = useState(false);
   const [selectedOpportunityId, setSelectedOpportunityId] = useState<string | null>(null);
   const isFreePlan = planTier === "FREE";
@@ -84,7 +86,9 @@ export function SelectOpportunityRoadmapModal({
       }
     }
     checkExistingRoadmap();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [selectedOpportunityId, opportunities]);
 
   const selectedOpportunity = useMemo(
@@ -105,7 +109,9 @@ export function SelectOpportunityRoadmapModal({
             <div className="sticky top-0 p-6 border-b bg-background z-10">
               <div className="flex justify-between items-start gap-4">
                 <div>
-                  <h2 className="text-2xl font-bold text-foreground tracking-tight">Selecciona una oportunidad</h2>
+                  <h2 className="text-2xl font-bold text-foreground tracking-tight">
+                    Selecciona una oportunidad
+                  </h2>
                   <p className="text-sm text-muted-foreground mt-1">
                     Genera un roadmap con IA desde las oportunidades de tu ruta activa.
                   </p>
@@ -165,10 +171,14 @@ export function SelectOpportunityRoadmapModal({
                             <div className="flex items-center gap-3">
                               <div
                                 className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                                  isSelected ? "border-primary bg-primary" : "border-muted-foreground"
+                                  isSelected
+                                    ? "border-primary bg-primary"
+                                    : "border-muted-foreground"
                                 }`}
                               >
-                                {isSelected && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                                {isSelected && (
+                                  <div className="w-1.5 h-1.5 bg-white rounded-full" />
+                                )}
                               </div>
                               <p className="font-semibold truncate">{opportunity.title}</p>
                             </div>
@@ -187,7 +197,10 @@ export function SelectOpportunityRoadmapModal({
                             </div>
                           </div>
 
-                          <Badge variant="secondary" className="rounded-lg text-[10px] uppercase tracking-wider">
+                          <Badge
+                            variant="secondary"
+                            className="rounded-lg text-[10px] uppercase tracking-wider"
+                          >
                             {OPPORTUNITY_MAP[opportunity.type] || opportunity.type}
                           </Badge>
                         </div>
@@ -204,12 +217,12 @@ export function SelectOpportunityRoadmapModal({
                     Desbloquea todas las oportunidades
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Pasa a Starter o Pro para generar roadmap en más oportunidades.
+                    Pasa a Builder o Accelerator para generar roadmap en más oportunidades.
                   </p>
                   <Button size="sm" className="rounded-lg text-xs font-bold" asChild>
-                    <Link href="/billing">
+                    <Link href="/credits">
                       <Sparkles className="w-3.5 h-3.5 mr-1.5" />
-                      Ver Starter y Pro
+                      Ver packs de créditos
                     </Link>
                   </Button>
                 </div>
@@ -219,13 +232,14 @@ export function SelectOpportunityRoadmapModal({
                 <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-4 text-center space-y-2">
                   <div className="inline-flex items-center gap-2 text-primary text-xs font-bold">
                     <Sparkles className="w-4 h-4" />
-                    Límite de Starter alcanzado
+                    Límite de Builder alcanzado
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Con Starter puedes generar 1 roadmap. Mejora a Pro para crear roadmaps ilimitados.
+                    Con Builder puedes generar 1 roadmap. Mejora a Accelerator para crear roadmaps
+                    ilimitados.
                   </p>
                   <Button size="sm" className="rounded-lg text-xs font-bold" asChild>
-                    <Link href="/billing">Ir a Pro</Link>
+                    <Link href="/credits">Ir a Accelerator</Link>
                   </Button>
                 </div>
               )}
@@ -242,23 +256,31 @@ export function SelectOpportunityRoadmapModal({
 
               {selectedOpportunity ? (
                 checkingRoadmap ? (
-                  <Button disabled className="h-11 px-8 rounded-xl font-black text-xs uppercase tracking-widest animate-pulse">
+                  <Button
+                    disabled
+                    className="h-11 px-8 rounded-xl font-black text-xs uppercase tracking-widest animate-pulse"
+                  >
                     <Map className="w-4 h-4 mr-2" />
                     Verificando...
                   </Button>
                 ) : existingRoadmap ? (
                   <div className="space-y-2 text-center">
-                    <Button disabled className="h-11 px-8 rounded-xl font-black text-xs uppercase tracking-widest">
+                    <Button
+                      disabled
+                      className="h-11 px-8 rounded-xl font-black text-xs uppercase tracking-widest"
+                    >
                       <Map className="w-4 h-4 mr-2" />
                       Ya tienes un roadmap generado
                     </Button>
                     <p className="text-xs text-muted-foreground max-w-sm mx-auto">
                       Ya generaste un roadmap para esta oportunidad.
                     </p>
-                    <Button asChild variant="secondary" className="h-10 px-6 rounded-xl font-bold text-xs mt-2">
-                      <Link href={`/my-roadmaps/${existingRoadmap.id}`}>
-                        Ver roadmap existente
-                      </Link>
+                    <Button
+                      asChild
+                      variant="secondary"
+                      className="h-10 px-6 rounded-xl font-bold text-xs mt-2"
+                    >
+                      <Link href={`/my-roadmaps/${existingRoadmap.id}`}>Ver roadmap existente</Link>
                     </Button>
                   </div>
                 ) : (
@@ -275,7 +297,10 @@ export function SelectOpportunityRoadmapModal({
                         onGenerated("");
                       }
                     }}
-                    canGenerate={!starterLimitReached && (!isFreePlan || selectableOpportunities[0]?.id === selectedOpportunity.id)}
+                    canGenerate={
+                      !starterLimitReached &&
+                      (!isFreePlan || selectableOpportunities[0]?.id === selectedOpportunity.id)
+                    }
                     blockedMessage={
                       starterLimitReached
                         ? "Con Starter puedes generar 1 roadmap. Mejora a Pro para generar más."
@@ -284,7 +309,10 @@ export function SelectOpportunityRoadmapModal({
                   />
                 )
               ) : (
-                <Button disabled className="h-11 px-8 rounded-xl font-black text-xs uppercase tracking-widest">
+                <Button
+                  disabled
+                  className="h-11 px-8 rounded-xl font-black text-xs uppercase tracking-widest"
+                >
                   <Map className="w-4 h-4 mr-2" />
                   Generar roadmap
                 </Button>

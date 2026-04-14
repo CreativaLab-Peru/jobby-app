@@ -8,20 +8,21 @@ import { getRoadmapGenerationPermissionByUser } from "@/features/roadmap/actions
 interface GenerateRoadmapParams {
   opportunityId: string;
   cvId: string;
-  routeId: string;
+  routeId: string | null;
 }
 
-export async function generateRoadmapAction({ opportunityId, cvId, routeId }: GenerateRoadmapParams) {
-
-
-  if (!opportunityId || !cvId) {
+export async function generateRoadmapAction({
+  opportunityId,
+  cvId,
+  routeId,
+}: GenerateRoadmapParams) {
+  if (!opportunityId || !cvId || !routeId) {
     return {
       success: false,
-      message: "opportunityId y cvId son requeridos.",
+      message: "opportunityId, cvId y routeId son requeridos.",
       status: 400,
     };
   }
-
 
   const currentUser = await getCurrentUser();
   if (!currentUser) {
@@ -31,9 +32,6 @@ export async function generateRoadmapAction({ opportunityId, cvId, routeId }: Ge
       status: 404,
     };
   }
-
-
-
 
   // Verify opportunity belongs to user's CV
   const opportunity = await prisma.opportunity.findFirst({
@@ -51,7 +49,6 @@ export async function generateRoadmapAction({ opportunityId, cvId, routeId }: Ge
       status: 404,
     };
   }
-
 
   // Check if a roadmap already exists and is succeeded
   const existing = await prisma.roadmap.findUnique({
@@ -73,6 +70,14 @@ export async function generateRoadmapAction({ opportunityId, cvId, routeId }: Ge
     };
   }
 
+  if (existing?.status === "PENDING" || existing?.status === "IN_PROGRESS") {
+    return {
+      success: true,
+      message: "Ya estamos generando un roadmap para esta oportunidad.",
+      data: { roadmapId: existing.id },
+      status: 202,
+    };
+  }
 
   const permission = await getRoadmapGenerationPermissionByUser(
     currentUser.id,
@@ -88,7 +93,6 @@ export async function generateRoadmapAction({ opportunityId, cvId, routeId }: Ge
       status: 403,
     };
   }
-
 
   await inngest.send({
     name: "generate.roadmap",

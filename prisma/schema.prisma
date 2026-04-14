@@ -624,7 +624,7 @@ model Roadmap {
   userId         String
   cvId           String
   opportunityId  String
-  routeId        String    @unique
+  routeId        String   // Quitado por que ahora una ruta puede tener múltiples roadmaps depemdiendo de la cantidad de oportunidades (especialmente para PRO)
   status         JobStatus @default(PENDING)
   title          String?
   summary        String?   @db.Text

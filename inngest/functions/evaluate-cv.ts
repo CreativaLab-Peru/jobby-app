@@ -74,8 +74,6 @@ export const evaluateCv = inngest.createFunction(
       });
     });
 
-    console.log("[becaPrompt] becaPrompt", becaPrompt);
-
     if (Object.keys(filteredSections).length === 0) {
       throw new Error("CV insufficient data for evaluation type");
     }

@@ -626,7 +626,7 @@ model Roadmap {
   userId         String
   cvId           String
   opportunityId  String
-  routeId        String   // Quitado por que ahora una ruta puede tener múltiples roadmaps depemdiendo de la cantidad de oportunidades (especialmente para PRO)
+  routeId        String // Quitado por que ahora una ruta puede tener múltiples roadmaps depemdiendo de la cantidad de oportunidades (especialmente para PRO)
   status         JobStatus @default(PENDING)
   title          String?
   summary        String?   @db.Text
@@ -683,7 +683,7 @@ model CvSectionConfiguration {
 
   // Almacenaremos el JSON que me pasaste aquí
   // Usamos Json de Prisma para consultas eficientes y tipado
-  sections        Json
+  sections Json
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -707,22 +707,23 @@ model TempCvWithEvaluation {
 }
 
 model CvEvaluationPrompt {
-  id           String       @id @default(uuid())
-  beca         String
-  prompt       String       @db.Text
-  metadata     Json?
-  createdAt    DateTime     @default(now())
+  id        String   @id @default(uuid())
+  beca      String
+  prompt    String   @db.Text
+  metadata  Json?
+  createdAt DateTime @default(now())
 
+  @@index([beca, createdAt])
   @@map("cv_evaluation_prompt")
 }
 
 model UserBecaParam {
-  id           String       @id @default(uuid())
+  id           String    @id @default(uuid())
   userId       String
   beca         String
   usedAt       DateTime?
   evaluationId String?
-  createdAt    DateTime     @default(now())
+  createdAt    DateTime  @default(now())
 
   user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   evaluation CvEvaluation? @relation(fields: [evaluationId], references: [id], onDelete: SetNull)

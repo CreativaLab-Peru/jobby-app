@@ -31,7 +31,7 @@ export const createAdminCvEvaluationPrompt = async (
       data: {
         beca: input.beca.trim(),
         prompt: input.prompt.trim(),
-        metadata: input.metadata ?? undefined,
+        metadata: input.metadata as any ?? undefined,
       },
     });
 

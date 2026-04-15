@@ -41,11 +41,11 @@ export default function CreateRouteForm() {
       if (!res.success) throw new Error(res.message);
 
       const routes = await getRoutesForUser();
-      if (!routes.success) throw new Error(routes.message);
+      if (routes.success) {
+        hydrate(routes.routes);
+      }
 
-      hydrate(routes.routes);
-      router.push("/dashboard");
-      router.refresh();
+      router.replace("/dashboard");
     } catch (err: any) {
       setError(err.message || "Algo falló.");
     } finally {

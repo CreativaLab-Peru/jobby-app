@@ -71,6 +71,11 @@ export const routes = {
         root: "/admin/interviews",
         detail: (sessionId: string) => `/admin/interviews/${sessionId}`,
       },
+      cvEvaluationPrompts: {
+        root: "/admin/cv-evaluation-prompts",
+        detail: (promptId: string) => `/admin/cv-evaluation-prompts/${promptId}`,
+        edit: (promptId: string) => `/admin/cv-evaluation-prompts/${promptId}/edit`,
+      },
     },
 
     evaluations: {

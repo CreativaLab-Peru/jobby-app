@@ -1,3 +1,11 @@
+# v1.2.12 - 2026-04-15
+
+## Fixes
+
+- [LV-86agwg5t2](https://app.clickup.com/t/86agwg5t2) Solved redirect after click in the CV modal
+- [LV-86agwg4wj](https://app.clickup.com/t/86agwg4wj) Solved recomended sections when you close the modal
+- [LV-86agwg10m](https://app.clickup.com/t/86agwg10m) Solved redirection after create a new route
+
 # v1.2.11 - 2026-04-14
 
 ## Fixes

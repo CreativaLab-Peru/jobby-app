@@ -2,6 +2,9 @@
 
 ## Fixes
 
+- [LV-86agwg5t2](https://app.clickup.com/t/86agwg5t2) Solved redirect after click in the CV modal
+- [LV-86agwg4wj](https://app.clickup.com/t/86agwg4wj) Solved recomended sections when you close the modal
+- [LV-86agwg10m](https://app.clickup.com/t/86agwg10m) Solved redirection after create a new route
 - [LV-86agvnwk6](https://app.clickup.com/t/86agvnwk6) Fixed double charging of IA Actions credits and CV credits. Manual for new users
 - [LV-86agv3my9](https://app.clickup.com/t/86agv3my9) Now the route generation mode only allows generating a roadmap depending on the plan
 - [LV-86agv3kgk](https://app.clickup.com/t/86agv3kgk) Fixed the redirect to prices from View Builder and Accelerator, as well as updating the names

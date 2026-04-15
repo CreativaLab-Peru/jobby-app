@@ -1,7 +1,7 @@
 "use client";
 
 import {useCallback, useEffect, useMemo, useState, useTransition} from "react"; // Añadimos useState
-import {useRouter} from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import {toast} from "sonner";
 
 import {useOnboardingStore} from "@/features/onboarding/store/talent-onboarding-store";
@@ -20,14 +20,10 @@ import {ModalityStep} from "@/features/onboarding/components/modality-step";
 import {AvailabilityStep} from "@/features/onboarding/components/availability-step";
 import {AccountStep} from "@/features/onboarding/components/account-step";
 import {authClient} from "@/lib/auth-client";
-import {useDebug} from "@/hooks/use-debug";
-import {completeOnboardingDebugAction} from "@/features/onboarding/actions/onboarding-debug-action";
-import {timeout} from "d3-timer";
 import {checkExistingUser} from "@/features/authentication/actions/existing-user";
 import {getUserByEmail} from "@/features/authentication/actions/get-user-by-email";
 import {verifyOAuthUser} from "@/features/authentication/actions/verify-oauth-user";
 import {OpportunityTypeStep} from "@/features/onboarding/components/opportunity-type-step";
-import {useAnalysisStore} from "@/hooks/use-analysis-store";
 import {getTempAnalysisByUserEmail} from "@/features/onboarding/actions/get-temp-analysis";
 import {routes} from "@/lib/routes";
 
@@ -47,6 +43,7 @@ export function OnboardingForm() {
   } = useOnboardingStore();
 
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [isInitializing, setIsInitializing] = useState(true);
 
@@ -76,6 +73,16 @@ export function OnboardingForm() {
   useEffect(() => {
     initSession();
   }, [initSession]);
+
+  useEffect(() => {
+    const becaParam = searchParams.get("beca");
+    if (!becaParam) return;
+
+    const trimmed = becaParam.trim();
+    if (!trimmed || formData.beca) return;
+
+    updateFormData({beca: trimmed});
+  }, [formData.beca, searchParams, updateFormData]);
 
   /**
    * 2. Finalización del Onboarding

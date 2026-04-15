@@ -55,6 +55,7 @@ model User {
   routes                     Route[]
   roadmaps                   Roadmap[]
   queueJobs                  QueueJob[]
+  becaParams                 UserBecaParam[]
 
   @@map("user")
 }
@@ -373,6 +374,7 @@ model CvEvaluation {
   cv               Cv                @relation(fields: [cvId], references: [id])
   scores           EvaluationScore[]
   recommendations  Recommendation[]
+  becaParams       UserBecaParam[]
 
   @@index([cvId])
   @@index([status])
@@ -534,7 +536,7 @@ model CreditPackage {
 model Invoice {
   id           String        @id @default(uuid())
   userId       String
-  amountTotal  Int // Total pagado en centavos
+  amountTotal  Int // Total pagado in centavos
   currency     String
   status       PaymentStatus @default(PENDING)
   provider     String // "STRIPE", "PAYPAL"
@@ -702,6 +704,31 @@ model TempCvWithEvaluation {
   updatedAt DateTime @updatedAt
 
   @@map("temp_cv_with_evaluation")
+}
+
+model CvEvaluationPrompt {
+  id           String       @id @default(uuid())
+  beca         String
+  prompt       String       @db.Text
+  metadata     Json?
+  createdAt    DateTime     @default(now())
+
+  @@map("cv_evaluation_prompt")
+}
+
+model UserBecaParam {
+  id           String       @id @default(uuid())
+  userId       String
+  beca         String
+  usedAt       DateTime?
+  evaluationId String?
+  createdAt    DateTime     @default(now())
+
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evaluation CvEvaluation? @relation(fields: [evaluationId], references: [id], onDelete: SetNull)
+
+  @@index([userId, usedAt])
+  @@map("user_beca_param")
 }
 
 enum RouteStatus {

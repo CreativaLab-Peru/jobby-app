@@ -58,6 +58,22 @@ export const evaluateCv = inngest.createFunction(
       },
     );
 
+    const becaContext = await step.run("load-beca-context", async () => {
+      return prisma.userBecaParam.findFirst({
+        where: { userId, usedAt: null },
+        orderBy: { createdAt: "desc" },
+      });
+    });
+
+    const becaPrompt = await step.run("load-beca-prompt", async () => {
+      if (!becaContext?.beca) return null;
+
+      return prisma.cvEvaluationPrompt.findFirst({
+        where: { beca: { equals: becaContext.beca, mode: "insensitive" } },
+        orderBy: { createdAt: "desc" },
+      });
+    });
+
     if (Object.keys(filteredSections).length === 0) {
       throw new Error("CV insufficient data for evaluation type");
     }
@@ -98,9 +114,21 @@ export const evaluateCv = inngest.createFunction(
           cv?.cvType,
           cv?.opportunityType,
           cv?.language,
+          becaContext?.beca,
+          becaPrompt?.prompt,
         );
+
         const response = await queryGemini({ prompt, type: "JSON" });
-        return response as { success: boolean; data: AiEvaluationResult; message?: string };
+        const result = response as { success: boolean; data: AiEvaluationResult; message?: string };
+
+        if (result.success && becaContext) {
+          await prisma.userBecaParam.update({
+            where: { id: becaContext.id },
+            data: { usedAt: new Date(), evaluationId: evaluation.id },
+          });
+        }
+
+        return result;
       });
 
       if (!aiResult.success) throw new Error(aiResult.message);

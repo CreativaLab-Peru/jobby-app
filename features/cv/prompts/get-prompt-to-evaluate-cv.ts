@@ -4,15 +4,22 @@ export const getPromptToEvaluateCv = (
   sections: EvaluateCvSectionsPayload,
   cvType?: string | null,
   opportunityType?: string | null,
-  lang?: 'ES' | 'EN'
+  lang?: "ES" | "EN",
+  beca?: string | null,
+  customInstructions?: string | null,
 ) => {
   const contextBlock = [
     cvType && `- CV Category: ${cvType}`,
     opportunityType && `- Target Opportunity: ${opportunityType}`,
-    `- CV Language: ${lang === 'EN' ? 'English' : 'Spanish'}`,
+    beca && `- Beca Focus: ${beca}`,
+    `- CV Language: ${lang === "EN" ? "English" : "Spanish"}`,
   ]
     .filter(Boolean)
     .join("\n");
+
+  const customBlock = customInstructions
+    ? `\n### CUSTOM INSTRUCTIONS\n${customInstructions}\n`
+    : "";
 
   return `
 ### ROLE
@@ -20,7 +27,7 @@ Expert Technical Recruiter, Career Coach, and CV Optimization Specialist.
 
 ### CONTEXT
 ${contextBlock || "No additional context provided."}
-
+${customBlock}
 ### TASK
 Analyze the provided CV and generate:
 
@@ -48,7 +55,7 @@ Return a valid JSON object following this schema:
     {
       "sectionType": one of them "SUMMARY | EXPERIENCE | EDUCATION | SKILLS | PROJECTS | VOLUNTEERING | CERTIFICATIONS | COMPLEMENTS | ACHIEVEMENTS | CONTACT",
       "originalSnippet": "Brief excerpt of what the user currently has  ${lang} (max 80 chars)",
-      "improvedText": The full improved version of this section content IN ${lang === 'EN' ? 'ENGLISH' : 'SPANISH'}. Must be ready to copy-paste.(not json, plain text only, no markdown),
+      "improvedText": The full improved version of this section content IN ${lang === "EN" ? "ENGLISH" : "SPANISH"}. Must be ready to copy-paste.(not json, plain text only, no markdown),
       "changeReason": "Short explanation in SPANISH why this change improves the CV"
     }
   ],
@@ -56,7 +63,7 @@ Return a valid JSON object following this schema:
     {
       "sectionType": one of them "SUMMARY | EXPERIENCE | EDUCATION | SKILLS | PROJECTS | VOLUNTEERING | CERTIFICATIONS | COMPLEMENTS | ACHIEVEMENTS | CONTACT",
       "title": "Short title in Spanish",
-      "suggestedText": "The content to add, written IN ${lang === 'EN' ? 'ENGLISH' : 'SPANISH'}, ready to copy-paste (not json, plain text only, no markdown)",
+      "suggestedText": "The content to add, written IN ${lang === "EN" ? "ENGLISH" : "SPANISH"}, ready to copy-paste (not json, plain text only, no markdown)",
       "impact": "LOW | MEDIUM | HIGH",
       "reason": "Why adding this improves the CV in SPANISH"
     }
@@ -68,7 +75,7 @@ Return a valid JSON object following this schema:
 2. If a section is missing in the CV, OMIT it from "sectionScores" and "improvedTexts", but you CAN suggest it in "suggestedAdditions".
 3. 3. LANGUAGE SEPARATION (CRITICAL):
    - **Spanish**: Use for "summary", "recommendations.text", "changeReason", "suggestedAdditions.title", and "suggestedAdditions.reason".
-   - **${lang === 'EN' ? 'English' : 'Spanish'}**: Use ONLY for "improvedText" and "suggestedText". These will be copied directly into a ${lang} CV.
+   - **${lang === "EN" ? "English" : "Spanish"}**: Use ONLY for "improvedText" and "suggestedText". These will be copied directly into a ${lang} CV.
 4. "improvedTexts" must contain at least one entry for every section that scores below 80.
 5. "suggestedAdditions" should recommend missing sections or content gaps. Max 5 items.
 6. Ensure all strings are properly escaped to maintain valid JSON integrity.

@@ -32,6 +32,7 @@ export const talentOnboardingBaseSchema = z.object({
   }),
   opportunityTypes: z.array(z.string()).min(1, "Selecciona al menos un tipo de oportunidad"),
   image: z.string().optional().nullable(),
+  beca: z.string().optional().or(z.literal("")),
 });
 
 // 2. Esquema Final (Con refinamientos para el registro final)

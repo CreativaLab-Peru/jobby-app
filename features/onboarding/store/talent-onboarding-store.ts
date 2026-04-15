@@ -40,6 +40,7 @@ const initialFormData: TalentOnboardingFormData = {
   confirmPassword: "",
   acceptedTerms: false,
   opportunityTypes: [],
+  beca: "",
 };
 
 export const useOnboardingStore = create<OnboardingStore>()(

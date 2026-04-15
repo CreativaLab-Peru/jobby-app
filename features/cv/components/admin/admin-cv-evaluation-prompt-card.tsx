@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Edit, Eye, Trash2 } from "lucide-react";
+import {Copy, Edit, Eye, Trash2} from "lucide-react";
 import { toast } from "sonner";
 
 import { Card } from "@/components/ui/card";
@@ -41,6 +41,20 @@ export function AdminCvEvaluationPromptCard({ prompt }: AdminCvEvaluationPromptC
     setIsDeleting(false);
   };
 
+  const copyOnboardingLink = async (becaSlug: string) => {
+    const baseUrl = process.env.NEXT_PUBLIC_URL || "https://joinlevely.com";
+    const link = `${baseUrl}/onboarding/talents?beca=${becaSlug}`;
+
+    try {
+      await navigator.clipboard.writeText(link);
+      toast.success("Enlace de onboarding copiado", {
+        description: `Beca: ${becaSlug}`,
+      });
+    } catch (err) {
+      toast.error("No se pudo copiar el enlace");
+    }
+  };
+
   return (
     <>
       <Card className="rounded-2xl border border-border/60 p-5 space-y-4">
@@ -52,6 +66,13 @@ export function AdminCvEvaluationPromptCard({ prompt }: AdminCvEvaluationPromptC
         <div className="text-[11px] text-muted-foreground">Creado: {formatDate(prompt.createdAt, "d MMM, yyyy")}</div>
 
         <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => copyOnboardingLink(prompt.beca)}
+          >
+            <Copy className="h-4 w-4" />
+          </Button>
           <Button
             variant="secondary"
             size="sm"

@@ -113,6 +113,25 @@ export async function completeOnboardingDebugAction(id: string, body: TalentOnbo
         },
       });
 
+      if (data.beca && data.beca.trim().length > 0) {
+        const existingBeca = await tx.userBecaParam.findFirst({
+          where: {
+            userId: user.id,
+            beca: data.beca.trim(),
+            usedAt: null,
+          },
+        });
+
+        if (!existingBeca) {
+          await tx.userBecaParam.create({
+            data: {
+              userId: user.id,
+              beca: data.beca.trim(),
+            },
+          });
+        }
+      }
+
       const creditsResult = await createBasicCredits(user.id, tx);
       if (!creditsResult) {
         throw new Error("CREDITS_GRANT_FAILED");

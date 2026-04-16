@@ -1,3 +1,10 @@
+# v1.2.13 - 2026-04-16
+
+## Fixes
+
+- [LV-86agxbt3r](https://app.clickup.com/t/86agxbt3r) Analisis y obtencion de oportunidades guiadas por una beca en especifico
+- [LV-86agxcnpq](https://app.clickup.com/t/86agxcnpq) Crear interfaces de administrador de prompts para evaluaciones relacionadas a una beca
+
 # v1.2.12 - 2026-04-15
 
 ## Fixes

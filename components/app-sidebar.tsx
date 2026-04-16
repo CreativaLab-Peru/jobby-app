@@ -76,6 +76,7 @@ const adminNavItems = [
   { title: "Usuarios", href: "/admin/users", icon: Users },
   { title: "CVs", href: "/admin/cv", icon: FileText },
   { title: "Evaluaciones", href: "/admin/evaluations", icon: BarChart3 },
+  { title: "Prompts CV", href: "/admin/cv-evaluation-prompts", icon: MessageSquare },
   { title: "Oportunidades", href: "/admin/opportunities", icon: Briefcase },
   { title: "Pagos", href: "/admin/payments", icon: CreditCard },
   { title: "Monetización", href: "/admin/plans", icon: Tag },
@@ -120,7 +121,7 @@ export default function AppSidebar({
     if (path === "/admin/plans") {
       return pathname.startsWith("/admin/plans") || pathname.startsWith("/admin/credit-packages");
     }
-    
+
     if (path === "/my-cv" && pathname.startsWith("/cv/")) return true;
     return pathname === path || pathname.startsWith(`${path}/`);
   };

@@ -2,37 +2,12 @@
 
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+import { useAuthCtaRedirect } from "@/hooks/use-auth-cta-redirect";
 
 export function CTASection() {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
-  const [href, setHref] = useState("/onboarding/talents");
-
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const { data: session } = await authClient.getSession();
-        if (session?.user) {
-          setHref("/dashboard");
-        } else {
-          setHref("/onboarding/talents");
-        }
-      } catch (error) {
-        setHref("/onboarding/talents");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkSession();
-  }, []);
-
-  const handleClick = () => {
-    router.push(href);
-  };
+  const { isLoading, goToCtaDestination } = useAuthCtaRedirect({
+    authenticatedHref: "/dashboard",
+  });
 
   return (
     <section className="section-paddin">
@@ -63,7 +38,7 @@ export function CTASection() {
             </p>
 
             <Button
-              onClick={handleClick}
+              onClick={goToCtaDestination}
               disabled={isLoading}
               className="cursor-pointer bg-lime-300 text-gray-900 hover:bg-lime-400 font-semibold"
               size="xl"

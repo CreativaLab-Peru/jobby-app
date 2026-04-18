@@ -2,9 +2,7 @@
 
 import { ArrowRight, CheckCircle2, Circle, Lock, Map, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+import { useAuthCtaRedirect } from "@/hooks/use-auth-cta-redirect";
 
 const steps = [
   {
@@ -30,32 +28,13 @@ const steps = [
 ];
 
 export function RoadmapPreview() {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
-  const [ctaHref, setCtaHref] = useState("/onboarding/talents");
+  const { isLoading, goToCtaDestination } = useAuthCtaRedirect({
+    authenticatedHref: "/my-roadmaps",
+  });
 
   const totalSteps = steps.length;
   const completedSteps = steps.filter((step) => step.status === "done").length;
   const progressPercentage = (completedSteps / totalSteps) * 100;
-
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const { data: session } = await authClient.getSession();
-        if (session?.user) {
-          setCtaHref("/my-roadmaps");
-        } else {
-          setCtaHref("/onboarding/talents");
-        }
-      } catch {
-        setCtaHref("/onboarding/talents");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkSession();
-  }, []);
 
   return (
     <section className="section-padding bg-background">
@@ -106,7 +85,7 @@ export function RoadmapPreview() {
 
               <Button
                 size="lg"
-                onClick={() => router.push(ctaHref)}
+                onClick={goToCtaDestination}
                 disabled={isLoading}
                 className="bg-levely-green text-black hover:bg-levely-green/90 font-semibold cursor-pointer"
               >

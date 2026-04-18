@@ -2,6 +2,7 @@
 
 ## Fixes
 
+- [86agyg3pd](https://app.clickup.com/t/86agyg3pd) Arreglada la redirección cuando en el card cuando se esta logeado o no
 - [86agyg47c](https://app.clickup.com/t/86agyg47c) Ocultado Career Acelerator en el Footer
 - [86agyg4n0](https://app.clickup.com/t/86agyg4n0) Ocultado temporalmente los card de "Beneficios para partnerts"
 - [86agyg57f](https://app.clickup.com/t/86agyg57f) Cambiado el estilo de NewsLetter para que tenga más relacion con la pagina

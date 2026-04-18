@@ -1,3 +1,9 @@
+# WIP
+
+## Fixes
+
+- [86agyg67w](https://app.clickup.com/t/86agyg67w) Tips cambiados a espaniol, tanto para lenguajes en ingles, como en espaniol.
+
 # v1.2.13 - 2026-04-16
 
 ## Fixes

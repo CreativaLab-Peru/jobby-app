@@ -16,11 +16,6 @@ const steps = [
     status: "current",
   },
   {
-    title: "Simulación de Entrevistas",
-    description: "Prácticas y feedback en tiempo real",
-    status: "upcoming",
-  },
-  {
     title: "Posicionamiento",
     description: "Estrategias de negociación y crecimiento",
     status: "locked",

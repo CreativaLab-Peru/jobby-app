@@ -2,6 +2,7 @@
 
 ## Fixes
 
+- [86agyg47c](https://app.clickup.com/t/86agyg47c) Ocultado Career Acelerator en el Footer
 - [86agyg4n0](https://app.clickup.com/t/86agyg4n0) Ocultado temporalmente los card de "Beneficios para partnerts"
 - [86agyg57f](https://app.clickup.com/t/86agyg57f) Cambiado el estilo de NewsLetter para que tenga más relacion con la pagina
 - [86agyg5re](https://app.clickup.com/t/86agyg5re) Cambiada la clase que hacia que las fuentes esten muy sepadaras

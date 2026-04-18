@@ -2,8 +2,9 @@
 
 ## Fixes
 
-- [86agyg5re](https://app.clickup.com/t/86agyg5re) Cambiada la clase que hacia que las fuentes esten muy sepadaras.
-- [86agyg67w](https://app.clickup.com/t/86agyg67w) Tips cambiados a espaniol, tanto para lenguajes en ingles, como en espaniol.
+- [86agyg57f](https://app.clickup.com/t/86agyg57f) Cambiado el estilo de NewsLetter para que tenga más relacion con la pagina
+- [86agyg5re](https://app.clickup.com/t/86agyg5re) Cambiada la clase que hacia que las fuentes esten muy sepadaras
+- [86agyg67w](https://app.clickup.com/t/86agyg67w) Tips cambiados a espaniol, tanto para lenguajes en ingles, como en espaniol
 
 # v1.2.13 - 2026-04-16
 

@@ -138,12 +138,12 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
               </div>
               <div>
                 <DialogTitle className="text-lg font-bold">
-                  {step === 1 ? "Importar archivo" : "Configuración de extracción"}
+                  {step === 1 ? "Importar archivo" : "Configuración de datos"}
                 </DialogTitle>
                 <DialogDescription className="text-xs">
                   {step === 1
                     ? "Selecciona el PDF de tu CV actual."
-                    : "Confirma cómo la IA procesará tu información."}
+                    : "Confirma cómo se procesarán los datos extraídos."}
                 </DialogDescription>
               </div>
             </div>

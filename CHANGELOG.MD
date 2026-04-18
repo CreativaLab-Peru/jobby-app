@@ -2,6 +2,7 @@
 
 ## Fixes
 
+- [86agyg1cv](https://app.clickup.com/t/86agyg1cv) Modificados los titulos y contenidos del card de creacion/subida de CVs
 - [86agyg30e](https://app.clickup.com/t/86agyg30e) Agregado un card que hace referencia a la creación de roadmaps
 - [86agyg3pd](https://app.clickup.com/t/86agyg3pd) Arreglada la redirección cuando en el card cuando se esta logeado o no
 - [86agyg47c](https://app.clickup.com/t/86agyg47c) Ocultado Career Acelerator en el Footer

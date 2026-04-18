@@ -1,10 +1,16 @@
-"use client"
+"use client";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Language } from "@prisma/client";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { FormField } from "@/components/form-field";
 import { CVFormData, cvFormSchema } from "@/features/cv/schema";
 import { cvTypes, languages, opportunities, RECOMMENDATIONS_BY_OPPORTUNITY } from "@/const";
@@ -58,34 +64,41 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
 
   return (
     <div className="flex flex-col md:grid md:grid-cols-2 h-full w-full bg-background overflow-hidden">
-
       {/* COLUMNA 1: Configuración Principal */}
       <div className="md:hidden flex border-b border-border">
         <button
           onClick={() => setActiveTab("identidad")}
-          className={cn("flex-1 py-3 text-sm font-semibold transition", activeTab === "identidad"
-            ? "text-primary border-b-2 border-primary"
-            : "text-muted-foreground"
+          className={cn(
+            "flex-1 py-3 text-sm font-semibold transition",
+            activeTab === "identidad"
+              ? "text-primary border-b-2 border-primary"
+              : "text-muted-foreground",
           )}
         >
           01 Identidad
         </button>
         <button
           onClick={() => setActiveTab("estructura")}
-          className={cn("flex-1 py-3 text-sm font-semibold transition", activeTab === "estructura"
-            ? "text-primary border-b-2 border-primary"
-            : "text-muted-foreground"
+          className={cn(
+            "flex-1 py-3 text-sm font-semibold transition",
+            activeTab === "estructura"
+              ? "text-primary border-b-2 border-primary"
+              : "text-muted-foreground",
           )}
         >
           02 Estructura
         </button>
       </div>
 
-      <div className={cn("flex flex-col md:border-r border-border min-h-0", activeTab === "identidad" ? "flex" : "hidden", "md:flex md:h-full")}>
+      <div
+        className={cn(
+          "flex flex-col md:border-r border-border min-h-0",
+          activeTab === "identidad" ? "flex" : "hidden",
+          "md:flex md:h-full",
+        )}
+      >
         <div className="shrink-0 p-6 md:p-8">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-primary">
-            01. Identidad
-          </h3>
+          <h3 className="text-xs font-bold uppercase tracking-wider text-primary">01. Identidad</h3>
           <p className="text-xs text-muted-foreground">
             Define los parámetros básicos de tu documento.
           </p>
@@ -94,7 +107,7 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
         <div className="flex-1 overflow-y-auto px-6 pb-6 md:px-8 md:pb-8 space-y-6">
           <FormField
             label="Nombre del CV"
-            placeholder="Ej: CV Backend Senior"
+            placeholder="Ej: CV John Doe"
             register={register("title")}
             error={errors.title?.message}
           />
@@ -138,20 +151,27 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
               </SelectTrigger>
               <SelectContent>
                 {cvTypes.map((t) => (
-                  <SelectItem key={t.key} value={t.key}>{t.value}</SelectItem>
+                  <SelectItem key={t.key} value={t.key}>
+                    {t.value}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             {errors.cvType && (
-              <p className="text-[10px] font-medium text-destructive mt-1 italic">{errors.cvType.message}</p>
+              <p className="text-[10px] font-medium text-destructive mt-1 italic">
+                {errors.cvType.message}
+              </p>
             )}
           </div>
         </div>
       </div>
 
       <div
-        className={cn("flex flex-col bg-secondary/5 min-h-0", 
-        activeTab === "estructura" ? "flex" : "hidden", "md:flex md:h-full")}
+        className={cn(
+          "flex flex-col bg-secondary/5 min-h-0",
+          activeTab === "estructura" ? "flex" : "hidden",
+          "md:flex md:h-full",
+        )}
       >
         <div className="shrink-0 p-6 md:p-8">
           <h3 className="text-xs font-bold uppercase tracking-wider text-primary">
@@ -166,7 +186,9 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
           <div className="bg-background border border-border rounded-xl p-5 shadow-sm">
             <CvSectionSelector
               selectedSections={watch("sections") || []}
-              onChange={(newSections) => setValue("sections", newSections, { shouldValidate: true })}
+              onChange={(newSections) =>
+                setValue("sections", newSections, { shouldValidate: true })
+              }
               opportunityType={watch("opportunityType") as any}
             />
           </div>
@@ -181,5 +203,5 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

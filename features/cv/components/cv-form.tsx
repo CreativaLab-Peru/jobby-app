@@ -118,7 +118,7 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
               value={watch("templateId")}
               options={[
                 { key: "harvard", value: "Harvard" },
-                { key: "europass", value: "Moderno" },
+                { key: "europass", value: "Europass" },
               ]}
               onChange={(v) => setValue("templateId", v as any, { shouldValidate: true })}
             />

@@ -55,7 +55,7 @@ export function RoadmapPreview() {
               </h2>
 
               <p className="text-lg text-white/70 mb-8">
-                Descubre el camino exacto hacia tu próximo salto profesional. Generamos un plan de
+                Descubre el camino exacto hacia tu próxima beca/fellowship. Generamos un plan de
                 acción paso a paso adaptado a tus objetivos y mercado.
               </p>
 

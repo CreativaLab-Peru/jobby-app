@@ -6,14 +6,29 @@ const partnerLogos = [
     dark: "/partners/Continental-dark.png",
   },
   {
+    name: "PROinnóvate",
+    light: "/partners/PROINNOVATE-light.png",
+    dark: "/partners/PROINNOVATE-dark.png",
+  },
+  {
     name: "Mujeres Digitales",
     light: "/partners/MujeresDigitales-light.png",
     dark: "/partners/MujeresDigitales-dark.png",
   },
   {
+    name: "STARTUP PERÚ",
+    light: "/partners/STARTUP-light.png",
+    dark: "/partners/STARTUP-dark.png",
+  },
+  {
     name: "Data Science Perú",
     light: "/partners/data_science-light.png",
     dark: "/partners/data_science-dark.png",
+  },
+  {
+    name: "Ministerio de la Producción",
+    light: "/partners/MINISTERIO-light.png",
+    dark: "/partners/MINISTERIO-dark.png",
   },
 ];
 
@@ -36,7 +51,7 @@ export function LogosSection() {
                 key={`${partner.name}-${index}`}
                 className="group flex items-center justify-center shrink-0"
               >
-                <div className="w-36 h-20 sm:w-65 sm:h-30 rounded-xl bg-transparent borde flex items-center justify-center group-hover:border-levely-blue/30 group-hover:shadow-md transition-all duration-300 p-2">
+                <div className="w-36 h-20 sm:w-65 sm:h-30 rounded-xl bg-transparent borde flex items-center justify-center transition-all duration-300 p-2">
                   {/* Logo para modo claro */}
                   <img
                     src={partner.light}

@@ -1,14 +1,22 @@
-import { Button } from "@/components/ui/button";
 import { LogosSection } from "@/components/ui/app/public/partners/logos-section";
+import PartnersHero from "@/components/ui/app/public/partners/hero";
+import PartnerTypes from "@/components/ui/app/public/partners/partner-types";
+import Comparison from "@/components/ui/app/public/partners/comparison";
+import TrustLevelyGrid from "@/components/ui/app/public/partners/trust-levely-grid";
+import PartnersCTA from "@/components/ui/app/public/partners/cta";
 import {
   GraduationCap,
   ArrowRight,
   CheckCircle2,
+  XCircle,
   BarChart3,
   Users,
   Award,
   Building2,
   Handshake,
+  Info,
+  AlertCircle,
+  CheckCircle2Icon,
 } from "lucide-react";
 
 const benefits = [
@@ -40,165 +48,111 @@ const benefits = [
 const partnerTypes = [
   {
     icon: GraduationCap,
-    title: "Universidades",
-    description: "Mejora las métricas de empleabilidad de tus egresados.",
+    title: "Universidades e Instituciones Educativas",
+    description:
+      "Tienes estudiantes con potencial para Chevening, Fulbright o DAAD — pero sin orientación estructurada ni datos para medir quién está listo.",
+    words: ["200 - 500 estudiantes", "Programa de becas"],
   },
   {
     icon: Building2,
-    title: "Institutos",
-    description: "Potencia la inserción laboral de tus estudiantes técnicos.",
+    title: "Aceleradoras e Incubadoras",
+    description:
+      "Tus emprendedores quieren aplicar a YCombinator, Techstars o fondos internacionales — pero sus perfiles no están preparados para pasar el filtro.",
+    words: ["10 - 100 emprendedores", "Cohortes activas"],
   },
   {
     icon: Award,
-    title: "Bootcamps",
-    description: "Aumenta el value prop de tus programas intensivos.",
+    title: "ONGs y Programas de Desarrollo",
+    description:
+      "Trabajas con jóvenes talentos de comunidades sub-representadas que necesitan acceso a oportunidades globales con orientación personalizada",
+    words: ["Impacto Social", "Talento emergentes"],
+  },
+];
+
+const parameters = [
+  {
+    value: "10x",
+    description: "más rápido por candidato",
+  },
+  {
+    value: "2 min",
+    description: "análisis completo por perfil",
+  },
+  {
+    value: "+100",
+    description: "perfiles analizados en LATAM",
+  },
+];
+
+const whitoutLevely = [
+  {
+    title: "Sin Levely",
+    items: [
+      "No sabes quién está listo",
+      "CVs rechazados en el primer filtro",
+      "Seguimiento manual imposible",
+      "Sin datos para directivos",
+      "Resultados inconsistentes",
+    ],
+  },
+  {
+    title: "Con Levely",
+    items: [
+      "Dashboard con score de cada uno",
+      "CV correcto para cada beca",
+      "IA analiza 100 perfiles en minutos",
+      "Reporte exportable para directivos",
+      "Roadmap personalizado por beca",
+    ],
+  },
+];
+
+const TrustLevely = [
+  {
+    title: "10x más rápido que hacerlo manualmente",
+    icon: Info,
+    description:
+      "Lo que antes tomaba días de revisión individual, Levely lo hace en minutos. Analiza cohortes completas sin esfuerzo humano.",
+  },
+  {
+    title: "Datos reales para justificar presupuesto",
+    icon: BarChart3,
+    description:
+      "Scores de empleabilidad, progreso por fase y tasas de preparación — todo exportable para presentarle a tus directivos con números.",
+  },
+  {
+    title: "Seguimiento personalizado a escala",
+    icon: Users,
+    description:
+      "Cada miembro recibe feedback específico para su beca meta — aunque tengas 200 personas. Sin que tú revises cada CV.",
+  },
+  {
+    title: "Candidatos más competitivos en cada convocatoria",
+    icon: CheckCircle2Icon,
+    description:
+      "CV en el formato correcto para cada beca, roadmap personalizado y textos mejorados por IA — todo en un solo lugar.",
   },
 ];
 
 export default function Partners() {
   return (
     <>
-      {/* Hero */}
-      <section className="section-padding bg-gradient-to-br from-secondary via-background to-levely-blue/5 dark:from-[#19282D] dark:via-[#1a2a2f] dark:to-[#19282D]">
-        <div className="container-levely">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-levely-blue/10 dark:bg-levely-blue/20 text-levely-blue text-sm font-medium mb-6">
-              <GraduationCap className="w-4 h-4" />
-              Para instituciones educativas
-            </div>
-
-            <h1 className="headline-xl mb-6 text-foreground">
-              Impulsa la empleabilidad de tus estudiantes
-            </h1>
-
-            <p className="text-xl text-muted-foreground mb-8">
-              Únete a la red de instituciones que utilizan Levely para mejorar los resultados de
-              empleabilidad y posicionar a sus graduados.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
-                href="https://calendly.com/joinlevely/30min"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button className="cursor-pointer" variant="hero" size="xl">
-                  Solicitar demo
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
-              </a>
-              {/*<Button variant="outline" size="lg"*/}
-              {/*        className="cursor-pointer dark:border-white/20 dark:text-white dark:hover:bg-white/10">*/}
-              {/*  Descargar brochure*/}
-              {/*</Button>*/}
-            </div>
-          </div>
-        </div>
-      </section>
+      <PartnersHero parameters={parameters} />
 
       {/* Logos Section */}
       <LogosSection />
 
       {/* Partner types */}
-      <section className="section-padding bg-background">
-        <div className="container-levely">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="headline-lg text-foreground">¿Para quién es?</h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Soluciones adaptadas a diferentes tipos de instituciones
-            </p>
-          </div>
+      <PartnerTypes partnerTypes={partnerTypes} />
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {partnerTypes.map((type) => (
-              <div key={type.title} className="text-center group">
-                <div className="w-20 h-20 mx-auto rounded-2xl bg-levely-blue/10 dark:bg-levely-blue/20 flex items-center justify-center mb-6 group-hover:bg-levely-blue/20 dark:group-hover:bg-levely-blue/30 transition-colors">
-                  <type.icon className="w-10 h-10 text-blue" />
-                </div>
-                <h3 className="text-xl font-bold mb-3 text-foreground">{type.title}</h3>
-                <p className="text-muted-foreground">{type.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Comparison: Sin Levely vs Con Levely */}
+      <Comparison whitoutLevely={whitoutLevely} />
 
-      {/* TODO: Quitado temporalmente porque no se tiene dicha implementación en la app */}
-      {/* Benefits - Dynamic Cards */}
-      {/* <section className="section-padding bg-secondary dark:bg-[#19282D]">
-        <div className="container-levely">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="headline-lg text-foreground">Beneficios para partners</h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Herramientas y métricas para impulsar el éxito de tus estudiantes
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {benefits.map((benefit, index) => (
-              <div
-                key={benefit.title}
-                className="group relative overflow-hidden rounded-2xl border border-border/50 bg-card dark:bg-slate-900/80 backdrop-blur-sm p-6 hover:border-levely-blue/50 hover:shadow-xl hover:shadow-levely-blue/5 transition-all duration-300"
-              > */}
-      {/* Floating number indicator */}
-      {/* <span className="absolute top-4 right-4 text-6xl font-bold text-muted-foreground/5 group-hover:text-levely-blue/10 transition-colors">
-                  0{index + 1}
-                </span> */}
-
-      {/* Gradient overlay on hover */}
-      {/* <div className="absolute inset-0 bg-gradient-to-br from-levely-blue/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                <div className="relative flex gap-4">
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-levely-blue to-levely-blue/80 flex items-center justify-center flex-shrink-0 shadow-lg shadow-levely-blue/20 group-hover:scale-110 transition-transform">
-                    <benefit.icon className="w-7 h-7 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2 text-foreground group-hover:text-levely-blue transition-colors">
-                      {benefit.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      {benefit.description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section> */}
+      {/* Trust levely grid */}
+      <TrustLevelyGrid TrustLevely={TrustLevely} />
 
       {/* CTA */}
-      <section className="section-padding bg-background">
-        <div className="container-levely">
-          <div className="relative overflow-hidden rounded-3xl bg-primary dark:bg-gradient-to-br dark:from-levely-blue dark:to-levely-blue/80 text-primary-foreground p-8 sm:p-12 lg:p-16 text-center">
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-              <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
-            </div>
-
-            <div className="relative max-w-2xl mx-auto">
-              <h2 className="headline-lg mb-6 text-white">Conviértete en partner de Levely</h2>
-              <p className="text-lg text-white/80 mb-8">
-                Agenda una llamada con nuestro equipo para explorar cómo podemos ayudar a mejorar
-                los resultados de empleabilidad de tu institución.
-              </p>
-              <a
-                href="https://calendly.com/joinlevely/30min"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button
-                  size="xl"
-                  className="cursor-pointer bg-white text-primary hover:bg-white/90 dark:text-levely-blue"
-                >
-                  Agendar llamada
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PartnersCTA />
     </>
   );
 }

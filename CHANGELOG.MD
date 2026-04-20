@@ -2,6 +2,7 @@
 
 ## Fixes
 
+- [86agzvjht](https://app.clickup.com/t/86agzvjht) Aniadidos 3 logos más para la pagina principal y partners, ademas de cambiarse de cards a carusel
 - [86agzfm0c](https://app.clickup.com/t/86agzfm0c) Mejorada la pagina de Partners, agregando diferencias y separando los componentes
 - [86agyg1cv](https://app.clickup.com/t/86agyg1cv) Modificados los titulos y contenidos del card de creacion/subida de CVs
 - [86agyg30e](https://app.clickup.com/t/86agyg30e) Agregado un card que hace referencia a la creación de roadmaps

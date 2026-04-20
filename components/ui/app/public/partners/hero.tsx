@@ -10,28 +10,20 @@ export default function PartnersHero({ parameters }: { parameters: Param[] }) {
   return (
     <section className="section-padding bg-gradient-to-br from-secondary via-background to-levely-blue/5 dark:from-[#19282D] dark:via-[#1a2a2f] dark:to-[#19282D]">
       <div className="container-levely">
-        <div className="max-w-3xl mx-auto text-center">
+        <div className="max-w-5xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-levely-blue/10 dark:bg-levely-blue/20 text-levely-blue text-sm font-medium mb-6">
             <GraduationCap className="w-4 h-4" />
             Para Instituciones · LATAM
           </div>
 
-          <h1 className="headline-xl mb-6 text-foreground">
-            Inteligencia de talento para organizaciones
+          <h1 className="headline-xl mb-6 text-foreground max-w-5xl mx-auto">
+            Convierte estudiantes en candidatos globales{" "}
+            <span className="text-levely-blue">10x más rápido.</span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-foreground mb-4 font-medium">
-            Tu institución tiene talento.
-            <span className="block">
-              Levely te muestra quién está listo{" "}
-              <span className="text-levely-blue">hasta 10 veces más rápido.</span>
-            </span>
-          </p>
-
           <p className="text-xl text-muted-foreground mb-8">
-            Convierte a tus estudiantes en candidatos globales. IA que analiza cada perfil y genera
-            un plan de acción, para que tu cohorte llegue preparado a cada beca u oportunidad
-            internacional.
+            IA que analiza cada perfil y genera un plan de acción, para que tu cohorte llegue
+            preparado a cada beca u oportunidad internacional.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

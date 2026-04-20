@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { Rocket, GraduationCap, Flame, MailSearch } from "lucide-react";
+import { Rocket, GraduationCap, Flame, MailSearch, FlagIcon } from "lucide-react";
 import Link from "next/link";
 import ConvertKitForm from "@/components/convert-kit-form";
 
@@ -42,49 +41,45 @@ export const Newsletter = () => {
   return (
     <div className="min-h-screen font-sans bg-background text-foreground">
       {/* Hero Section */}
-      <main className="px-6 md:px-12 pt-12 pb-24 max-w-6xl mx-auto">
-        {/* 1. Agregamos mx-auto para centrar el bloque, flex flex-col e items-center para centrar los elementos, y text-center para el texto */}
-        <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
-          <span className="inline-block text-[10px] font-black uppercase border border-primary/30 bg-primary/10 text-primary px-4 py-1.5 mb-10 rounded-full">
-            CARRERA GLOBAL
-          </span>
+      <section className="section-padding bg-background">
+        <div className="container-levely">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
+              <FlagIcon className="w-4 h-4" />
+              Carrera Global
+            </div>
 
-          <h1 className="text-5xl md:text-8xl font-black tracking-tight leading-[0.95] mb-8">
-            La ruta al <span className="text-primary">top 3%</span> del talento global
-          </h1>
+            <h1 className="headline-xl mb-6 text-foreground max-w-3xl mx-auto">
+              La ruta al <span className="text-primary">top 3%</span> del talento global
+            </h1>
 
-          {/* 2. Agregamos justify-center para que el texto y la línea queden en el medio */}
-          <div className="flex items-center justify-center gap-3 mb-8">
-            <div className="h-[1px] w-12 bg-border"></div>
-            <p className="text-lg md:text-xl font-medium">
-              Carrera Global{" "}
-              <span className="text-muted-foreground font-light">— by Dara Mariluz</span>
-            </p>
-            {/* Opcional: agregué una segunda línea aquí para que haya simetría al estar centrado, 
-          puedes quitar este div si prefieres la línea solo a la izquierda */}
-            <div className="h-[1px] w-12 bg-border"></div>
-          </div>
+            <div className="flex items-center justify-center gap-3 mb-8 text-muted-foreground">
+              <div className="h-[1px] w-12"></div>
+              <p className="text-base md:text-lg font-medium">
+                Carrera Global{" "}
+                <span className="text-muted-foreground font-light">— by Dara Mariluz</span>
+              </p>
+              <div className="h-[1px] w-12"></div>
+            </div>
 
-          {/* 3. Como este h2 tiene un ancho máximo (max-w-2xl), en algunos casos necesita mx-auto para no irse a la izquierda, 
-        aunque el flex-col items-center del padre ya debería bastar. */}
-          <h2 className="text-xl md:text-2xl leading-relaxed mb-12 max-w-2xl mx-auto text-muted-foreground font-medium">
-            Un boletín semanal donde te compartimos la ruta para entrar al top 3% del talento global
-            que gana becas, fellowships, startups y oportunidades internacionales para que empieces
-            a calificar.
-          </h2>
+            <h2 className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto font-medium">
+              Un boletín semanal donde te compartimos la ruta para entrar al top 3% del talento
+              global que gana becas, fellowships, startups y oportunidades internacionales para que
+              empieces a calificar.
+            </h2>
 
-          {/* KitForm */}
-          <div className="w-full flex flex-col items-center">
-            <ConvertKitForm uid={"bfc8a3a54f"} />
-            <p className="text-xs text-muted-foreground opacity-60 italic mt-3 text-center">
-              Únete a +2,000 profesionales. Sin spam, solo valor.
-            </p>
+            <div className="w-full max-w-md mx-auto flex flex-col items-center">
+              <ConvertKitForm uid={"bfc8a3a54f"} />
+              <p className="text-xs text-muted-foreground opacity-60 italic mt-3 text-center">
+                Únete a +2,000 profesionales. Sin spam, solo valor.
+              </p>
+            </div>
           </div>
         </div>
-      </main>
+      </section>
 
       {/* Grid Section */}
-      <section className="px-6 md:px-12 py-24 border-t border-border bg-secondary/5">
+      <section className="px-6 md:px-12 py-24 bg-secondary/5">
         <div className="max-w-6xl mx-auto">
           <div className="mb-16 text-center max-w-2xl mx-auto">
             <h2 className="text-3xl md:text-5xl font-bold mb-4">¿Qué encontrarás?</h2>

@@ -298,10 +298,10 @@
 /* ========================================================= */
 
 :root {
-  --duration-exit: 160ms;
-  --duration-enter: 220ms;
-  --duration-move: 320ms;
-  --slide-y-offset: 10px;
+  --duration-exit: 200ms;
+  --duration-enter: 200ms;
+  --duration-move: 300ms;
+  --slide-y-offset: 8px;
 }
 
 @keyframes fade {
@@ -320,10 +320,11 @@
 }
 
 ::view-transition-old(.fade-out) {
-  animation: var(--duration-exit) ease-out fade reverse;
+  animation: none;
+  opacity: 0;
 }
 ::view-transition-new(.fade-in) {
-  animation: var(--duration-enter) ease-out var(--duration-exit) both fade;
+  animation: var(--duration-enter) ease-out both fade;
 }
 
 ::view-transition-old(.slide-down) {
@@ -442,4 +443,8 @@
 /* Evitar el spinner que descuadra el diseño */
 .formkit-spinner {
   display: none !important;
+}
+
+::view-transition-old(root) {
+  display: none;
 }

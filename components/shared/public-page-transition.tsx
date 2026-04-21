@@ -7,8 +7,9 @@ interface PublicPageTransitionProps {
 
 export function PublicPageTransition({ children }: PublicPageTransitionProps) {
   return (
-    <ViewTransition enter="scale-in" exit="scale-out" default="none">
+    <ViewTransition enter="fade-in" exit="fade-out" default="none">
       {children}
     </ViewTransition>
   );
 }
+

@@ -4,16 +4,19 @@ import SellingScholarshipScreen from "@/features/onboarding/screens/selling-scho
 interface OnboardingPageProps {
   searchParams?: Promise<{
     beca?: string;
-    next?: boolean;
   }>
+}
+
+enum Scholarships {
+  CHEVENING = "chevening",
 }
 
 export default async function OnboardingPage({
                                                searchParams
                                              }: OnboardingPageProps) {
-  const {beca, next = false} = await searchParams;
-  if (beca && !next) {
-    return <SellingScholarshipScreen beca={beca} />;
+  const {beca} = await searchParams;
+  if (beca && beca === Scholarships.CHEVENING) {
+    return <SellingScholarshipScreen beca={beca}/>;
   }
   return (
     <main className="min-h-screen bg-background flex flex-col items-center justify-center p-4">

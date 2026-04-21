@@ -5,6 +5,8 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 const faqs = [
   { q: "¿Funciona si mi CV está en español?", a: "Sí. Levely analiza tu CV en cualquier idioma y genera la versión Harvard directamente en inglés." },
   { q: "¿Puedo usar Builder para otras becas?", a: "Sí. Incluye 3 análisis. Úsalos para Chevening, DAAD, Fulbright o Eiffel." },
+  { q: "¿Qué tan específico es el análisis para Chevening?", a: "La IA evalúa tu CV contra los criterios reales de Chevening: liderazgo, impacto en tu comunidad, visión de retorno al país, perfil académico y experiencia profesional relevante." },
+  { q: "¿Hay garantía si no me gusta?", a: "Sí. Si en las primeras 24 horas sientes que el análisis no fue útil, te devolvemos el pago sin preguntas." },
 ];
 
 export function CheveningFAQ() {

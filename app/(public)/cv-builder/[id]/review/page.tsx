@@ -2,6 +2,7 @@ import {redirect} from "next/navigation";
 import {getTempCvAnalysis} from "@/features/temp-evaluation/actions/get-temp-cv-analysis";
 import AnalysisResultsScreen from "@/features/temp-evaluation/screens/analysis-results-screen";
 import {getCreditPackOffers} from "@/features/credits/actions/get-credit-pack-offers";
+import { PublicPageTransition } from "@/components/shared/public-page-transition";
 
 interface CVReviewPageProps {
   params: Promise<{
@@ -19,15 +20,17 @@ export default async function CVReviewPage({params}: CVReviewPageProps) {
   if (result.error) redirect("/cv-builder");
 
   return (
-    <main className="min-h-screen py-12">
-      <div className="max-w-5xl mx-auto px-4">
-        <AnalysisResultsScreen
-          initialData={result.data}
-          score={result.score}
-          id={id}
-          packs={packs}
-        />
-      </div>
-    </main>
+    <PublicPageTransition>
+      <main className="min-h-screen py-12">
+        <div className="max-w-5xl mx-auto px-4">
+          <AnalysisResultsScreen
+            initialData={result.data}
+            score={result.score}
+            id={id}
+            packs={packs}
+          />
+        </div>
+      </main>
+    </PublicPageTransition>
   );
 }

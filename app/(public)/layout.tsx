@@ -13,10 +13,14 @@ export default async function PublicLayout({ children }: { children: React.React
       <PaddleProvider>
         <main className="flex-1 pt-16 lg:pt-20">{children}</main>
       </PaddleProvider>
-      <Footer />
+      <div style={{ viewTransitionName: "public-footer" }}>
+        <Footer />
+      </div>
 
       {/* El banner se renderiza al final para que el z-index sea efectivo */}
-      <CookieBanner />
+      <div style={{ viewTransitionName: "public-cookie-banner" }}>
+        <CookieBanner />
+      </div>
     </div>
   );
 }

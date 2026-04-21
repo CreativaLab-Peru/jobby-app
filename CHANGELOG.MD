@@ -12,6 +12,7 @@
 - [LV-86agyg57f](https://app.clickup.com/t/86agyg57f) Cambiado el estilo de NewsLetter para que tenga más relacion con la pagina
 - [LV-86agyg5re](https://app.clickup.com/t/86agyg5re) Cambiada la clase que hacia que las fuentes esten muy sepadaras
 - [LV-86agyg67w](https://app.clickup.com/t/86agyg67w) Tips cambiados a espaniol, tanto para lenguajes en ingles, como en espaniol
+- [LV-86ah0r7qw](https://app.clickup.com/t/86ah0r7qw) Integrar las view transitions en las paginas publicas
 
 # v1.2.13 - 2026-04-16
 

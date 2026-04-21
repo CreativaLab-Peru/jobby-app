@@ -4,6 +4,7 @@ import PartnerTypes from "@/components/ui/app/public/partners/partner-types";
 import Comparison from "@/components/ui/app/public/partners/comparison";
 import TrustLevelyGrid from "@/components/ui/app/public/partners/trust-levely-grid";
 import PartnersCTA from "@/components/ui/app/public/partners/cta";
+import { PublicPageTransition } from "@/components/shared/public-page-transition";
 import {
   GraduationCap,
   ArrowRight,
@@ -136,23 +137,25 @@ const TrustLevely = [
 
 export default function Partners() {
   return (
-    <>
-      <PartnersHero parameters={parameters} />
+    <PublicPageTransition>
+      <>
+        <PartnersHero parameters={parameters} />
 
-      {/* Logos Section */}
-      <LogosSection />
+        {/* Logos Section */}
+        <LogosSection />
 
-      {/* Partner types */}
-      <PartnerTypes partnerTypes={partnerTypes} />
+        {/* Partner types */}
+        <PartnerTypes partnerTypes={partnerTypes} />
 
-      {/* Comparison: Sin Levely vs Con Levely */}
-      <Comparison whitoutLevely={whitoutLevely} />
+        {/* Comparison: Sin Levely vs Con Levely */}
+        <Comparison whitoutLevely={whitoutLevely} />
 
-      {/* Trust levely grid */}
-      <TrustLevelyGrid TrustLevely={TrustLevely} />
+        {/* Trust levely grid */}
+        <TrustLevelyGrid TrustLevely={TrustLevely} />
 
-      {/* CTA */}
-      <PartnersCTA />
-    </>
+        {/* CTA */}
+        <PartnersCTA />
+      </>
+    </PublicPageTransition>
   );
 }

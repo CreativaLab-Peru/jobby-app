@@ -2,16 +2,16 @@
 
 ## Fixes
 
-- [86agzvjht](https://app.clickup.com/t/86agzvjht) Aniadidos 3 logos más para la pagina principal y partners, ademas de cambiarse de cards a carusel
-- [86agzfm0c](https://app.clickup.com/t/86agzfm0c) Mejorada la pagina de Partners, agregando diferencias y separando los componentes
-- [86agyg1cv](https://app.clickup.com/t/86agyg1cv) Modificados los titulos y contenidos del card de creacion/subida de CVs
-- [86agyg30e](https://app.clickup.com/t/86agyg30e) Agregado un card que hace referencia a la creación de roadmaps
-- [86agyg3pd](https://app.clickup.com/t/86agyg3pd) Arreglada la redirección cuando en el card cuando se esta logeado o no
-- [86agyg47c](https://app.clickup.com/t/86agyg47c) Ocultado Career Acelerator en el Footer
-- [86agyg4n0](https://app.clickup.com/t/86agyg4n0) Ocultado temporalmente los card de "Beneficios para partnerts"
-- [86agyg57f](https://app.clickup.com/t/86agyg57f) Cambiado el estilo de NewsLetter para que tenga más relacion con la pagina
-- [86agyg5re](https://app.clickup.com/t/86agyg5re) Cambiada la clase que hacia que las fuentes esten muy sepadaras
-- [86agyg67w](https://app.clickup.com/t/86agyg67w) Tips cambiados a espaniol, tanto para lenguajes en ingles, como en espaniol
+- [LV-86agzvjht](https://app.clickup.com/t/86agzvjht) Aniadidos 3 logos más para la pagina principal y partners, ademas de cambiarse de cards a carusel
+- [LV-86agzfm0c](https://app.clickup.com/t/86agzfm0c) Mejorada la pagina de Partners, agregando diferencias y separando los componentes
+- [LV-86agyg1cv](https://app.clickup.com/t/86agyg1cv) Modificados los titulos y contenidos del card de creacion/subida de CVs
+- [LV-86agyg30e](https://app.clickup.com/t/86agyg30e) Agregado un card que hace referencia a la creación de roadmaps
+- [LV-LV-86agyg3pd](https://app.clickup.com/t/86agyg3pd) Arreglada la redirección cuando en el card cuando se esta logeado o no
+- [LV-86agyg47c](https://app.clickup.com/t/86agyg47c) Ocultado Career Acelerator en el Footer
+- [LV-86agyg4n0](https://app.clickup.com/t/86agyg4n0) Ocultado temporalmente los card de "Beneficios para partnerts"
+- [LV-86agyg57f](https://app.clickup.com/t/86agyg57f) Cambiado el estilo de NewsLetter para que tenga más relacion con la pagina
+- [LV-86agyg5re](https://app.clickup.com/t/86agyg5re) Cambiada la clase que hacia que las fuentes esten muy sepadaras
+- [LV-86agyg67w](https://app.clickup.com/t/86agyg67w) Tips cambiados a espaniol, tanto para lenguajes en ingles, como en espaniol
 
 # v1.2.13 - 2026-04-16
 

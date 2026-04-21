@@ -37,7 +37,7 @@ interface ActionsSidebarProps {
   language: Language;
 }
 
-const SUPPORTED_LANGUAGES = [
+const SUPPORTED_LANGUAGES: { label: string; value: Language }[] = [
   { label: "ES", value: Language.ES },
   { label: "EN", value: Language.EN },
 ];
@@ -94,12 +94,14 @@ export function ActionsSidebar({
       const DocumentComponent = templateId === "europass" ? CvDocumentEuropass : CvDocument;
 
       const blob = await pdf(
-        <DocumentComponent data={cvData} sections={sections} lang={language} />,
+        <DocumentComponent data={cvData} sections={sections} lang={lang} />,
       ).toBlob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `${cvData.personal.fullName || "mi-cv"}.pdf`;
+      // Limpiamos los caracteres raros para que sea un nombre de archivo válido
+      const safeFileName = (cvData.personal.fullName || "mi-cv").replace(/[^a-zA-Z0-9 -]/g, "");
+      link.download = `${safeFileName}.pdf`;
       link.click();
       URL.revokeObjectURL(url);
     } catch (error) {
@@ -294,18 +296,25 @@ export function ActionsSidebar({
           <div className="space-y-3 mt-2">
             <div className="flex items-center justify-between">
               <label className="text-sm flex items-center gap-2">
-                <Languages className="w-3 h-3" /> El titulo de los ecabezados y secciones se
+                <Languages className="w-3 h-3" /> El título de los encabezados y secciones se
                 mostrarán en:
               </label>
               {updatingLang && <Loader2 className="w-3 h-3 animate-spin text-primary" />}
             </div>
 
-            <div className="flex p-1 bg-secondary/50 rounded-lg border border-border">
+            <div
+              className="flex p-1 bg-secondary/50 rounded-lg border border-border"
+              role="toolbar"
+              aria-busy={updatingLang}
+              aria-live="polite"
+            >
               {SUPPORTED_LANGUAGES.map((item) => (
                 <button
                   key={item.value}
                   disabled={isDisabled || updatingLang}
                   onClick={() => handleLanguageChange(item.value)}
+                  aria-pressed={lang === item.value}
+                  aria-label={`Idioma ${item.label}`}
                   className={cn(
                     "flex-1 py-1.5 text-xs font-bold rounded-md transition-all",
                     lang === item.value

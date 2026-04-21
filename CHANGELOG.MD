@@ -1,3 +1,7 @@
+# WIP - 2016-04-20
+
+- [LV-86ah04zc8](https://app.clickup.com/t/86ah04zc8) Agregado links para terminos, y politica de privacidad
+
 # v1.2.13 - 2026-04-16
 
 ## Fixes

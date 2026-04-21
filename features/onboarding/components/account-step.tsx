@@ -7,6 +7,7 @@ import { authClient } from "@/lib/auth-client";
 import { GoogleOAuthButton } from "@/features/authentication/components/google-oauth-button";
 import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/avatar-user";
+import Link from "next/link";
 
 interface AccountStepProps {
   user: {
@@ -34,7 +35,9 @@ export function AccountStep({ user, isSignedIn }: AccountStepProps) {
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="space-y-2 text-center">
         <h2 className="text-2xl font-bold">
-          {formData?.name ? `¡Hola de nuevo, ${formData?.name?.split(" ")?.[0]}!` : "Crea tu cuenta"}
+          {formData?.name
+            ? `¡Hola de nuevo, ${formData?.name?.split(" ")?.[0]}!`
+            : "Crea tu cuenta"}
         </h2>
         <p className="text-muted-foreground">
           {user
@@ -115,20 +118,50 @@ export function AccountStep({ user, isSignedIn }: AccountStepProps) {
       )}
 
       {/* Checkbox de términos */}
-      <div className="flex flex-col gap-3 pt-2">
-        <label className="flex items-center gap-2 text-sm cursor-pointer">
-          <input
-            type="checkbox"
-            className="w-4 h-4 accent-primary"
-            checked={formData.acceptedTerms}
-            onChange={(e) => updateFormData({ acceptedTerms: e.target.checked })}
-          />
-          <span className="text-muted-foreground">
-            Acepto los términos y políticas de privacidad.
-          </span>
-        </label>
+      <div className="flex items-start gap-2 text-sm">
+        <input
+          type="checkbox"
+          className="w-4 h-4 accent-primary mt-0.5"
+          checked={formData.acceptedTerms}
+          onChange={(e) => updateFormData({ acceptedTerms: e.target.checked })}
+        />
+
+        <span className="text-muted-foreground leading-snug">
+          Al crear tu cuenta aceptas los{" "}
+          <Link
+            href="/terminos-y-condiciones"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            términos y condiciones
+          </Link>{" "}
+          y la{" "}
+          <Link
+            href="/politica-de-privacidad"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            política de privacidad
+          </Link>
+          .
+        </span>
+      </div>
+
+      {/* Login + error centrados */}
+      <div className="flex flex-col items-center gap-2 text-sm">
+        <div>
+          <span className="text-muted-foreground">¿Ya tienes una cuenta? </span>
+          <Link href="/login" className="text-primary hover:underline">
+            Inicia sesión
+          </Link>
+        </div>
+
         {errors.acceptedTerms && (
-          <span className="text-destructive text-xs font-medium">{errors.acceptedTerms}</span>
+          <span className="text-destructive text-xs font-medium text-center">
+            {errors.acceptedTerms}
+          </span>
         )}
       </div>
     </div>

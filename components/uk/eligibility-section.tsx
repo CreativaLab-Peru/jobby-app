@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import {Button} from '@/components/ui/button';
 import {
   Zap,
   ShieldCheck,
@@ -11,14 +11,20 @@ import {
   Star
 } from 'lucide-react';
 
-const EligibilitySection: React.FC = () => {
+interface EligibilityProps {
+  onActionClick: () => void;
+}
+
+const EligibilitySection: React.FC<EligibilityProps> = ({onActionClick}) => {
   return (
-    <section className="py-20 px-4 text-center bg-background">
+    <section className="pb-10 px-4 text-center bg-background">
       {/* Botón de Llamado a la Acción Principal */}
       <div className="relative max-w-lg mx-auto mb-6 group">
         {/* Glow effect para el botón principal */}
-        <div className="absolute -inset-1 bg-primary/20 rounded-xl blur-lg group-hover:bg-primary/30 transition duration-1000" />
+        <div
+          className="absolute -inset-1 bg-primary/20 rounded-xl blur-lg group-hover:bg-primary/30 transition duration-1000"/>
         <Button
+          onClick={onActionClick}
           size="lg"
           className="relative w-full text-lg font-bold shadow-xl transition-transform hover:scale-[1.02] py-7"
         >
@@ -40,7 +46,7 @@ const EligibilitySection: React.FC = () => {
         </div>
         <div className="flex items-center gap-0.5 text-amber-400">
           {[...Array(5)].map((_, i) => (
-            <Star key={i} size={16} fill="currentColor" />
+            <Star key={i} size={16} fill="currentColor"/>
           ))}
         </div>
         <div className="text-sm font-medium text-muted-foreground">
@@ -49,17 +55,18 @@ const EligibilitySection: React.FC = () => {
       </div>
 
       {/* Badges de confianza con Lucide */}
-      <div className="flex flex-wrap justify-center gap-8 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80 mb-20">
+      <div
+        className="flex flex-wrap justify-center gap-8 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80 mb-20">
         <div className="flex items-center gap-2">
-          <Zap size={16} className="text-primary" />
+          <Zap size={16} className="text-primary"/>
           Acceso inmediato
         </div>
         <div className="flex items-center gap-2">
-          <ShieldCheck size={16} className="text-primary" />
+          <ShieldCheck size={16} className="text-primary"/>
           Garantía 7 días
         </div>
         <div className="flex items-center gap-2">
-          <Lock size={16} className="text-primary" />
+          <Lock size={16} className="text-primary"/>
           Pago seguro Hotmart
         </div>
       </div>
@@ -72,9 +79,10 @@ const EligibilitySection: React.FC = () => {
         Hecha para candidatos LATAM que buscan UK.
       </p>
 
-      <div className="max-w-3xl mx-auto bg-card p-8 md:p-12 rounded-[2.5rem] text-left border border-border shadow-sm relative overflow-hidden">
+      <div
+        className="max-w-3xl mx-auto bg-card p-8 md:p-12 rounded-[2.5rem] text-left border border-border shadow-sm relative overflow-hidden">
         {/* Sutil gradiente de fondo en la tarjeta */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -z-10" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -z-10"/>
 
         <ul className="space-y-6 text-card-foreground">
           {[
@@ -85,15 +93,16 @@ const EligibilitySection: React.FC = () => {
             'Quieres ver cartas de motivación reales que funcionaron — no plantillas.',
           ].map((item, index) => (
             <li key={index} className="flex items-start gap-4 group">
-              <CheckCircle2 size={22} className="text-primary flex-shrink-0 mt-0.5 transition-transform group-hover:scale-110" />
+              <CheckCircle2 size={22}
+                            className="text-primary flex-shrink-0 mt-0.5 transition-transform group-hover:scale-110"/>
               <span className="leading-tight text-[15px] md:text-base font-medium">{item}</span>
             </li>
           ))}
         </ul>
 
-        <div className="border-t border-border/50 my-12" />
+        <div className="border-t border-border/50 my-12"/>
 
-        <h3 className="text-sm font-black text-destructive uppercase tracking-[0.2em] mb-8">
+        <h3 className="text-sm font-black text-red-500 mb-8">
           Esta guía NO es para ti si:
         </h3>
         <ul className="space-y-6 text-muted-foreground/80">
@@ -102,7 +111,7 @@ const EligibilitySection: React.FC = () => {
             'Tu objetivo es estudiar en otro país que no sea UK.',
           ].map((item, index) => (
             <li key={index} className="flex items-start gap-4">
-              <XCircle size={20} className="text-destructive/50 flex-shrink-0 mt-0.5" />
+              <XCircle size={20} className="text-red-500/50 flex-shrink-0 mt-0.5"/>
               <span className="leading-tight text-sm md:text-base">{item}</span>
             </li>
           ))}

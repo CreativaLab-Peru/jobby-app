@@ -27,28 +27,33 @@ const notionFeatures = [
   {
     icon: <Database size={24} />,
     title: 'Base de datos completa de becas UK',
-    text: 'Chevening, Commonwealth, Gates Cambridge y más — con fechas de apertura, cierre, montos y requisitos.'
+    text: 'Chevening, Commonwealth, Gates Cambridge y más — con fechas de apertura, cierre, montos y requisitos.',
+    active: false,
   },
   {
     icon: <GraduationCap size={24} />,
     title: 'Programas de 10+ universidades',
-    text: 'Rankings, costos, requisitos y enlaces directos a cada programa en negocios, innovación y emprendimiento.'
+    text: 'Rankings, costos, requisitos y enlaces directos a cada programa en negocios, innovación y emprendimiento.',
+    active: false,
   },
   {
     icon: <CheckCircle2 size={24} />,
     title: 'Checklist de aplicación paso a paso',
-    text: 'Documentos, plazos y orden correcto — para que no se te pase nada antes del cierre.'
+    text: 'Documentos, plazos y orden correcto — para que no se te pase nada antes del cierre.',
+    active: false,
   },
   {
     icon: <AlertTriangle size={24} />,
     title: 'Errores que eliminan candidatos',
-    text: 'Lo que aprendí leyendo rechazos reales — y cómo evitarlos en tu aplicación.'
+    text: 'Lo que aprendí leyendo rechazos reales — y cómo evitarlos en tu aplicación.',
+    active: false,
   },
   {
     icon: <Mail size={24} />,
     title: 'BONO · Ensayos ganadores reales',
     tag: 'Solo hoy',
-    text: 'Mis cartas de motivación que me hicieron entrar a LSE, Leeds y Edimburgo — con comentarios de por qué cada párrafo funciona.'
+    text: 'Mis cartas de motivación que me hicieron entrar a LSE, Leeds y Edimburgo — con comentarios de por qué cada párrafo funciona.',
+    active: true,
   },
 ];
 
@@ -94,28 +99,43 @@ const ContentSection: React.FC = () => {
         <h2 className="text-3xl font-extrabold text-center mb-16 text-foreground">
           Todo lo que incluye el Notion
         </h2>
-        <div className="bg-card border border-border rounded-[3rem] p-8 md:p-14 shadow-2xl shadow-black/5 relative overflow-hidden">
+        <div className="bg-card border border-border rounded-[3rem] p-4 md:p-6 shadow-2xl shadow-black/5 relative overflow-hidden">
           {/* Decoración de fondo sutil */}
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
 
-          <ul className="space-y-12">
+          <ul className="space-y-4">
             {notionFeatures.map((feat, idx) => (
-              <li key={idx} className="flex gap-6 group items-start">
-                <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-300 border border-border/50 shadow-inner">
+              <li
+                key={idx}
+                className={`flex gap-6 p-6 rounded-[2rem] transition-all duration-300 items-start ${
+                  feat.active
+                    ? 'bg-zinc-800 text-white shadow-xl scale-[1.02] ring-1 ring-white/10'
+                    : 'hover:bg-secondary/50 group'
+                }`}
+              >
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-300 border border-border/50 shadow-inner ${
+                  feat.active
+                    ? 'bg-white/10 text-primary-foreground'
+                    : 'bg-secondary group-hover:bg-primary/10 group-hover:text-primary'
+                }`}>
                   {feat.icon}
                 </div>
                 <div className="flex-grow pt-1">
                   <div className="flex flex-wrap items-center gap-3 mb-2">
-                    <h4 className="font-bold text-xl text-card-foreground leading-tight tracking-tight">
+                    <h4 className={`font-bold text-xl leading-tight tracking-tight ${
+                      feat.active ? 'text-white' : 'text-card-foreground'
+                    }`}>
                       {feat.title}
                     </h4>
                     {feat.tag && (
-                      <span className="bg-destructive/10 text-destructive text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-tighter animate-pulse border border-destructive/20">
+                      <span className="bg-destructive text-destructive-foreground text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-tighter border border-white/20">
                         {feat.tag}
                       </span>
                     )}
                   </div>
-                  <p className="text-muted-foreground leading-relaxed text-[15px]">
+                  <p className={`leading-relaxed text-[15px] ${
+                    feat.active ? 'text-zinc-300' : 'text-muted-foreground'
+                  }`}>
                     {feat.text}
                   </p>
                 </div>

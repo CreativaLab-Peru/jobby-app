@@ -2,6 +2,7 @@
 
 ## Fixes
 
+- [LV-86ah04qrr](https://app.clickup.com/t/86ah04qrr) Arreglado el blur para tapar las oportunidades cuando no se tiene una suscripcion activa
 - [LV-86ah051qk](https://app.clickup.com/t/86ah051qk) Aniadido CRUD de Sugerencias al momento de crear una nueva ruta
 
 # v1.2.14 - 2026-04-21

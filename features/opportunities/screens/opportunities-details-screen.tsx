@@ -90,8 +90,36 @@ export function OpportunityDetailsScreen({
     : opportunity.minSalary ? `${opportunity.minSalary}+` : (opportunity.salary || "A convenir");
 
   return (
-    <main className="min-h-screen p-4 md:p-12 bg-background/50">
-      <div className="mx-auto max-w-5xl space-y-10">
+    <main className="min-h-screen p-4 md:p-12 bg-background/50 relative">
+      {opportunity.isLocked && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/60 backdrop-blur-md">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="max-w-md w-full bg-card p-10 rounded-[3rem] border border-border shadow-2xl text-center space-y-6"
+          >
+            <div className="inline-flex p-4 rounded-[2rem] bg-primary/10">
+              <Sparkles className="h-10 w-10 text-primary" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-2xl font-black italic">Oportunidad Bloqueada</h2>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Esta es una oportunidad premium. Actualiza tu plan para ver todos los detalles, requisitos y el link oficial de postulación.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 pt-4">
+              <Button size="lg" className="rounded-2xl h-14 font-black shadow-xl" asChild>
+                <Link href="/credits">Ver Planes y Precios</Link>
+              </Button>
+              <Button variant="ghost" className="rounded-2xl h-12 font-bold text-muted-foreground" asChild>
+                <Link href="/my-opportunities">Volver a mis oportunidades</Link>
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      <div className={cn("mx-auto max-w-5xl space-y-10", opportunity.isLocked && "filter blur-[2px] pointer-events-none")}>
 
         {/* Top Nav */}
         <div className="flex justify-between items-center px-2">
@@ -188,15 +216,20 @@ export function OpportunityDetailsScreen({
                 variant="secondary"
                 size="lg"
                 className="w-full rounded-2xl h-16 font-black text-lg shadow-2xl shadow-black/20"
-                asChild
+                asChild={!opportunity.isLocked}
+                disabled={opportunity.isLocked}
               >
-                <a href={opportunity.linkUrl} target="_blank" rel="noopener noreferrer">
-                  Postular Ahora
-                  <ExternalLink className="w-5 h-5 ml-3" />
-                </a>
+                {!opportunity.isLocked ? (
+                  <a href={opportunity.linkUrl} target="_blank" rel="noopener noreferrer">
+                    Postular Ahora
+                    <ExternalLink className="w-5 h-5 ml-3" />
+                  </a>
+                ) : (
+                  <span>Contenido Bloqueado</span>
+                )}
               </Button>
               <p className="text-[10px] text-center mt-4 font-bold opacity-60 uppercase tracking-widest">
-                Serás redirigido al sitio oficial
+                {opportunity.isLocked ? "Actualiza tu plan para postular" : "Serás redirigido al sitio oficial"}
               </p>
             </Card>
           </div>

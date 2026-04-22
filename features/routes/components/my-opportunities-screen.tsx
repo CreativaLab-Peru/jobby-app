@@ -55,7 +55,6 @@ export default function MyOpportunitiesScreen({
   const { onOpen, setSelectedCvId } = useQuickMatchModalStore();
   const { credits } = useCreditsStore();
   const searchParams = useSearchParams();
-  const [isLockedMode, setIsLockedMode] = useState(false);
   const router = useRouter();
   const hasOpenedFromMatchParamRef = useRef(false);
 
@@ -101,14 +100,6 @@ export default function MyOpportunitiesScreen({
     })();
   }, [hasCv, cvId, searchParams, router, onOpen, setSelectedCvId, isQuickMatchBlocked]);
 
-  // Aplicar blur mode para cuentas sin suscripción (mostrar solo la primera oportunidad)
-  useEffect(() => {
-    if (!hasSubscription && totalCount > 1) {
-      setIsLockedMode(true);
-      return;
-    }
-    setIsLockedMode(false);
-  }, [hasSubscription, totalCount]);
 
   // Debounce
   useEffect(() => {
@@ -247,33 +238,34 @@ export default function MyOpportunitiesScreen({
                             <div className="relative">
                               <div
                                 className={
-                                  isLockedMode && index !== 0
+                                  opt.isLocked
                                     ? "filter blur-sm grayscale-[40%] pointer-events-none select-none"
                                     : ""
                                 }
                               >
                                 <OpportunityCard opportunity={opt} />
                               </div>
+
+                              {opt.isLocked && (
+                                <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+                                  <div className="max-w-[280px] w-full mx-4 text-center p-6 rounded-2xl border border-border bg-background/90 backdrop-blur-sm shadow-xl pointer-events-auto">
+                                    <p className="font-bold text-foreground mb-1 text-sm">Contenido bloqueado</p>
+                                    <p className="text-[10px] text-muted-foreground mb-4 leading-tight">
+                                      Actualiza a Starter o Pro para ver los detalles.
+                                    </p>
+                                    <div className="flex justify-center">
+                                      <Button size="sm" className="h-8 text-[10px] px-4 rounded-xl" onClick={() => router.push("/credits")}>
+                                        Ver planes
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           </motion.div>
                         ))}
                       </AnimatePresence>
                     </div>
-                    {isLockedMode && opportunities.length > 1 && (
-                      <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
-                        <div className="max-w-sm w-full mx-4 text-center p-6 rounded-2xl border border-border bg-background/90 backdrop-blur-sm shadow-xl pointer-events-auto">
-                          <p className="font-bold text-foreground mb-2">Contenido bloqueado</p>
-                          <p className="text-sm text-muted-foreground mb-4">
-                            Actualiza a Starter o Pro para ver todas las oportunidades.
-                          </p>
-                          <div className="flex justify-center">
-                            <Button size="sm" onClick={() => router.push("/credits")}>
-                              Ver planes
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
                     <LoadMoreButton
                       handleLoadMore={handleLoadMore}
                       hasMore={hasMore}

@@ -47,15 +47,12 @@ export function HeroSection() {
             className="mt-6 text-lg sm:text-xl text-muted-foreground max-w-2xl text-balance animate-fade-up"
             style={{ animationDelay: "0.2s" }}
           >
-            Accede a prácticas, trabajos y becas con guía inteligente y
-            oportunidades alineadas a tu perfil.
+            Accede a prácticas, trabajos y becas con guía inteligente y oportunidades alineadas a tu
+            perfil.
           </p>
 
           {/* CTA */}
-          <div
-            className="mt-10 animate-fade-up"
-            style={{ animationDelay: "0.3s" }}
-          >
+          <div className="mt-10 animate-fade-up" style={{ animationDelay: "0.3s" }}>
             <Link href="/onboarding/talents">
               <Button variant="hero" size="xl" className="cursor-pointer">
                 Empezar
@@ -92,8 +89,8 @@ export function HeroSection() {
               ))}
             </div>
             <p>
-              <span className="font-semibold text-foreground">+500</span>{" "}
-              profesionales ya optimizaron su perfil
+              <span className="font-semibold text-foreground">+500</span> profesionales ya
+              optimizaron su perfil
             </p>
           </div>
         </div>

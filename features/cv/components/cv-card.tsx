@@ -3,8 +3,14 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
-  FileText, Edit, Trash2,
-  Calendar, Target, MoreVertical, ExternalLink, Briefcase
+  FileText,
+  Edit,
+  Trash2,
+  Calendar,
+  Target,
+  MoreVertical,
+  ExternalLink,
+  Briefcase,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -24,8 +30,8 @@ import { CvWithRelations } from "../actions/get-cv-for-current-user";
 import { softDeleteCv } from "../actions/soft-delete-cv";
 import { updateCvTitle } from "@/features/cv/actions/update-title";
 import { CV_TYPE_CONFIG, OPPORTUNITY_CONFIG } from "@/features/cv/consts";
-import {ConfirmModal} from "@/components/shared/confirm-modal";
-import {cn} from "@/lib/utils";
+import { ConfirmModal } from "@/components/shared/confirm-modal";
+import { cn } from "@/lib/utils";
 
 interface CVCardProps {
   cv: CvWithRelations;
@@ -69,11 +75,7 @@ export function CVCard({ cv }: CVCardProps) {
             <Icon className="h-6 w-6" />
           </div>
         }
-        subtitle={
-          <StatusBadge variant="outline">
-            {config.label}
-          </StatusBadge>
-        }
+        subtitle={<StatusBadge variant="outline">{config.label}</StatusBadge>}
         title={
           <TitleAndForm
             title={cv.title || "Sin título"}
@@ -97,12 +99,19 @@ export function CVCard({ cv }: CVCardProps) {
         actions={
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-muted-foreground">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-full text-muted-foreground"
+              >
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40 rounded-xl">
-              <DropdownMenuItem onClick={() => router.push(`/cv/${cv.id}/edit`)} className="cursor-pointer font-medium">
+              <DropdownMenuItem
+                onClick={() => router.push(`/cv/${cv.id}/edit`)}
+                className="cursor-pointer font-medium"
+              >
                 <Edit className="mr-2 h-4 w-4" /> Editar
               </DropdownMenuItem>
               {/*<DropdownMenuItem*/}
@@ -153,7 +162,11 @@ export function CVCard({ cv }: CVCardProps) {
         loading={isDeleting}
         title="¿Eliminar currículum?"
         description={
-          <>Esta acción ocultará el CV <span className="text-foreground font-bold italic">"{cv.title}"</span>. Podrás restaurarlo después.</>
+          <>
+            Esta acción ocultará el CV{" "}
+            <span className="text-foreground font-bold italic">"{cv.title}"</span>. Podrás
+            restaurarlo después.
+          </>
         }
       />
     </>

@@ -4,7 +4,7 @@ import { InstagramIcon, LinkedinIcon } from "lucide-react";
 const footerLinks = {
   Producto: [
     { name: "CV Builder", href: "/cv-builder" },
-    { name: "Career Accelerator", href: "/career-accelerator" },
+    // { name: "Career Accelerator", href: "/career-accelerator" },
     { name: "News letter", href: "/newsletter" },
     //{ name: "Resources", href: "/resources" },
   ],
@@ -26,9 +26,7 @@ export function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="inline-block">
-              <span className="text-2xl font-extrabold tracking-tight">
-                Levely
-              </span>
+              <span className="text-2xl font-extrabold tracking-tight">Levely</span>
             </Link>
             <p className="mt-4 text-sm text-gray-600 dark:text-gray-400 max-w-xs">
               Optimiza tu perfil profesional y accede a oportunidades alineadas con tu potencial.

@@ -61,13 +61,13 @@ const HeroSection: React.FC = () => {
           </div>
         </div>
 
-        <h1 className="text-5xl md:text-7xl font-extrabold leading-[1.1] mb-8 text-foreground tracking-tight">
+        <h1 className="text-5xl md:text-6xl font-extrabold leading-[1.1] mb-8 text-foreground tracking-tight">
           Aplica a tu <span className="text-primary">postgrado en UK</span> en 30 días con la guía que armé en +4 meses
         </h1>
 
         <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-16 leading-relaxed">
           +10 universidades UK con programas ya investigados:
-          <span className="text-foreground font-semibold"> requisitos, fechas, y enlaces directos</span>.
+          <span className="text-foreground font-semibold underline underline-offset-4"> requisitos, fechas, y enlaces directos</span>.
           Yo tardé +4 meses armándolo desde cero — tú lo tienes en un solo lugar.
         </p>
 

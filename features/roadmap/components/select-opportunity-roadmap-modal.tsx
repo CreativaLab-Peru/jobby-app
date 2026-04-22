@@ -218,7 +218,7 @@ export function SelectOpportunityRoadmapModal({
                             variant="secondary"
                             className="rounded-lg text-[10px] uppercase tracking-wider"
                           >
-                            {OPPORTUNITY_MAP[opportunity.type] || opportunity.type}
+                            {OPPORTUNITY_MAP[opportunity.type]?.label || opportunity.type}
                           </Badge>
                         </div>
                       </button>

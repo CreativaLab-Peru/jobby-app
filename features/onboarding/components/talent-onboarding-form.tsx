@@ -27,7 +27,7 @@ import {OpportunityTypeStep} from "@/features/onboarding/components/opportunity-
 import {getTempAnalysisByUserEmail} from "@/features/onboarding/actions/get-temp-analysis";
 import {routes} from "@/lib/routes";
 
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 5;
 
 export function OnboardingForm() {
   const {
@@ -225,14 +225,14 @@ export function OnboardingForm() {
       <div className="min-h-[450px] flex flex-col justify-center">
         {step === 1 && <WelcomeStep/>}
         {step === 2 && <BasicDataStep/>}
-        {step === 3 && <AreaAndRoleStep/>}
-        {step === 4 && <OpportunityTypeStep/>}
+        {/* {step === 3 && <AreaAndRoleStep/>} */}
+        {step === 3 && <OpportunityTypeStep/>}
         {/*{step === 5 && <SkillsStep/>}*/}
-        {step === 5 && <ModalityStep/>}
-        {step === 6 && <AvailabilityStep/>}
-        {step === 7 && <ExperienceLevelStep/>}
+        {/* {step === 5 && <ModalityStep/>} */}
+        {/* {step === 6 && <AvailabilityStep/>} */}
+        {step === 4 && <ExperienceLevelStep/>}
         {/*{step === 9 && <PortfolioStep/>}*/}
-        {step === 8 && (
+        {step === 5 && (
           <AccountStep
             user={userMemo}
             isSignedIn={isOAuth}

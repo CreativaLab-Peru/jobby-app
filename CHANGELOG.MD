@@ -1,8 +1,9 @@
-# WIP - 2016-04-20
+# WIP
 
+- [LV-86ah04pbj](https://app.clickup.com/t/86ah04pbj) Eliminados algunos pasos en el omboarding, y aniadidos descripciones en tipos de oportunidades
 - [LV-86ah04zc8](https://app.clickup.com/t/86ah04zc8) Agregado links para terminos, y politica de privacidad
 
-# v1.2.13 - 2026-04-21
+# v1.2.14 - 2026-04-21
 
 ## Fixes
 

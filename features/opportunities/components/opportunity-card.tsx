@@ -54,7 +54,7 @@ export default function OpportunityCard({
           <div className="flex flex-col gap-2"> {/* Contenedor para los Badges */}
             <Badge variant="secondary"
                    className="w-fit font-bold rounded-lg text-[10px] uppercase tracking-wider">
-              {OPPORTUNITY_MAP[opportunity.type] || "Oportunidad"}
+              {OPPORTUNITY_MAP[opportunity.type]?.label || "Oportunidad"}
             </Badge>
           </div>
           {/*<div className="flex items-center gap-1 text-[10px] text-muted-foreground/70 font-medium">*/}

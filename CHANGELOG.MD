@@ -1,4 +1,10 @@
-# WIP
+# WIP 
+
+## Fixes
+
+- [LV-86ah051qk](https://app.clickup.com/t/86ah051qk) Aniadido CRUD de Sugerencias al momento de crear una nueva ruta
+
+# v1.2.14 - 2026-04-21
 
 ## Fixes
 
@@ -6,7 +12,7 @@
 - [LV-86agzfm0c](https://app.clickup.com/t/86agzfm0c) Mejorada la pagina de Partners, agregando diferencias y separando los componentes
 - [LV-86agyg1cv](https://app.clickup.com/t/86agyg1cv) Modificados los titulos y contenidos del card de creacion/subida de CVs
 - [LV-86agyg30e](https://app.clickup.com/t/86agyg30e) Agregado un card que hace referencia a la creación de roadmaps
-- [LV-LV-86agyg3pd](https://app.clickup.com/t/86agyg3pd) Arreglada la redirección cuando en el card cuando se esta logeado o no
+- [LV-86agyg3pd](https://app.clickup.com/t/86agyg3pd) Arreglada la redirección cuando en el card cuando se esta logeado o no
 - [LV-86agyg47c](https://app.clickup.com/t/86agyg47c) Ocultado Career Acelerator en el Footer
 - [LV-86agyg4n0](https://app.clickup.com/t/86agyg4n0) Ocultado temporalmente los card de "Beneficios para partnerts"
 - [LV-86agyg57f](https://app.clickup.com/t/86agyg57f) Cambiado el estilo de NewsLetter para que tenga más relacion con la pagina

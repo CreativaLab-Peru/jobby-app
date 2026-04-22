@@ -2,6 +2,7 @@
 
 ## Fixes
 
+- [LV-86ah04rx8](https://app.clickup.com/t/86ah04rx8) Arreglado referencias a planes antiguos, ahora se acualiza con el nombre que tiene el plan desde admin
 - [LV-86ah04qrr](https://app.clickup.com/t/86ah04qrr) Arreglado el blur para tapar las oportunidades cuando no se tiene una suscripcion activa
 - [LV-86ah051qk](https://app.clickup.com/t/86ah051qk) Aniadido CRUD de Sugerencias al momento de crear una nueva ruta
 

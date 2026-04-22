@@ -7,6 +7,7 @@ import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
 import { PageHeader } from "@/components/shared/page-header";
 import { getOpportunitiesForActiveRoute } from "@/features/routes/actions/get-opportunities-for-active-route";
 import { getFirstUserPayment } from "@/features/billing/actions/get-first-user-payment";
+import { prisma } from "@/lib/prisma";
 
 export default async function MyOpportunitiesPage() {
   const activeRoute = await getActiveRoute();
@@ -57,6 +58,17 @@ export default async function MyOpportunitiesPage() {
     userPayment?.subscription && ["starter", "pro"].includes(userPayment.subscription.plan.slug),
   );
 
+  // Fetch dynamic plan names for the UI messages
+  const plans = await prisma.paymentPlan.findMany({
+    where: { slug: { in: ["starter", "pro"] } },
+    select: { slug: true, name: true },
+  });
+
+  const planNames = {
+    starter: plans.find((p) => p.slug === "starter")?.name || "Starter",
+    pro: plans.find((p) => p.slug === "pro")?.name || "Pro",
+  };
+
   return (
     <MyOpportunitiesScreen
       initialData={data?.opportunities ?? []}
@@ -65,6 +77,7 @@ export default async function MyOpportunitiesPage() {
       hasCv={data?.hasCv ?? false}
       cvId={activeRoute.cvId ?? null}
       hasSubscription={hasSubscription}
+      planNames={planNames}
       hasMatchedOnce={data?.hasMatchedOnce ?? false}
       isMatchingInProgress={data?.isMatchingInProgress ?? false}
     />

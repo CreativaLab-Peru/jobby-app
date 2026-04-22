@@ -30,6 +30,7 @@ interface Props {
   canViewFullRoadmap?: boolean;
   canGenerateRoadmap?: boolean;
   roadmapBlockedMessage?: string | null;
+  planNames: { starter: string; pro: string };
 }
 
 const StatCard = ({ icon: Icon, label, value, colorClass = "text-primary/60" }: any) => (
@@ -52,6 +53,7 @@ export function OpportunityDetailsScreen({
                                            canViewFullRoadmap = false,
                                            canGenerateRoadmap = true,
                                            roadmapBlockedMessage = null,
+                                           planNames,
                                          }: Props) {
 
   // Normalización de requisitos (Array para badges)
@@ -104,7 +106,7 @@ export function OpportunityDetailsScreen({
             <div className="space-y-2">
               <h2 className="text-2xl font-black italic">Oportunidad Bloqueada</h2>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Esta es una oportunidad premium. Actualiza tu plan para ver todos los detalles, requisitos y el link oficial de postulación.
+                Esta es una oportunidad premium. Actualiza a {planNames.starter} o {planNames.pro} para ver todos los detalles, requisitos y el link oficial de postulación.
               </p>
             </div>
             <div className="flex flex-col gap-3 pt-4">

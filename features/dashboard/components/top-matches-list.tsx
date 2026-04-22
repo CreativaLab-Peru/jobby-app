@@ -49,7 +49,7 @@ export function TopMatchesList({ topOpportunities }: { topOpportunities: TopOppo
                   </h4>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-muted-foreground font-bold">
-                      {OPPORTUNITY_MAP[opt.type as keyof typeof OPPORTUNITY_MAP] || "Tipo Desconocido"}
+                      {OPPORTUNITY_MAP[opt.type as keyof typeof OPPORTUNITY_MAP]?.label || "Tipo Desconocido"}
                     </span>
                   </div>
                 </div>

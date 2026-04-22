@@ -66,21 +66,21 @@ export const useOnboardingStore = create<OnboardingStore>()(
         // 1. Definimos los esquemas base
         const stepSchemas: Record<number, any> = {
           2: talentOnboardingBaseSchema.pick({ name: true }),
-          3: talentOnboardingBaseSchema.pick({ targetIndustries: true }),
-          4: talentOnboardingBaseSchema.pick({ opportunityTypes: true }),
-          5: talentOnboardingBaseSchema.pick({ workModality: true, relocation: true }),
-          6: talentOnboardingBaseSchema.pick({ availability: true }),
-          7: talentOnboardingBaseSchema.pick({ expLevel: true }),
+          //3: talentOnboardingBaseSchema.pick({ targetIndustries: true }),
+          3: talentOnboardingBaseSchema.pick({ opportunityTypes: true }),
+          // 5: talentOnboardingBaseSchema.pick({ workModality: true, relocation: true }),
+          // 6: talentOnboardingBaseSchema.pick({ availability: true }),
+          4: talentOnboardingBaseSchema.pick({ expLevel: true }),
         };
 
-        // 2. Lógica especial para el Paso 8 (Cuenta)
-        if (step === 8) {
+        // 2. Lógica especial para el Paso 5 (Cuenta)
+        if (step === 5) {
           if (isOAuth) {
             // SI ESTÁ LOGUEADO: Solo validamos términos
-            stepSchemas[8] = talentOnboardingBaseSchema.pick({ acceptedTerms: true });
+            stepSchemas[5] = talentOnboardingBaseSchema.pick({ acceptedTerms: true });
           } else {
             // SI NO ESTÁ LOGUEADO: Validamos credenciales completas
-            stepSchemas[8] = talentOnboardingBaseSchema
+            stepSchemas[5] = talentOnboardingBaseSchema
               .pick({ email: true, password: true, confirmPassword: true, acceptedTerms: true })
               .superRefine((data, ctx) => {
                 if (data.password && data.password.length > 0 && data.password !== data.confirmPassword) {

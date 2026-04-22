@@ -122,7 +122,7 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
                           {CV_TYPE_CONFIG[config.cvType]?.label || config.cvType}
                         </span>
                         <span className="text-[10px] uppercase tracking-tighter opacity-60">
-                          {OPPORTUNITY_MAP[config.opportunityType] || config.opportunityType}
+                          {OPPORTUNITY_MAP[config.opportunityType]?.label || config.opportunityType}
                         </span>
                       </div>
                     </TabsTrigger>

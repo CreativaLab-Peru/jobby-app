@@ -43,12 +43,27 @@ export const cvTypes = [
   },
 ];
 
-export const OPPORTUNITY_MAP: Record<string, string> = {
-  // INTERNSHIP: "Pasantía",
-  SCHOLARSHIP: "Beca",
-  EXCHANGE_PROGRAM: "Intercambio",
-  // EMPLOYMENT: "Empleo",
-  STARTUP: "Aceleradora",
+export const OPPORTUNITY_MAP: Record<OpportunityType, { label: string; description: string }> = {
+  SCHOLARSHIP: {
+    label: "Becas de estudio",
+    description: "Maestrías, doctorados, programas full funded"
+  },
+  EXCHANGE_PROGRAM: {
+    label: "Intercambios Académicos",
+    description: "Semestres en el extranjero, programas de movilidad"
+  },
+  STARTUP: {
+    label: "Aceleradoras y fondos",
+    description: "Capital semilla, programas para emprendedores"
+  },
+  INTERNSHIP: {
+    label: "Pasantías",
+    description: "Prácticas pre-profesionales y profesionales"
+  },
+  EMPLOYMENT: {
+    label: "Trabajo Internacional",
+    description: "Empleos en empresas globales o ONGs"
+  },
 };
 
 export const SECTION_LABELS: Record<string, string> = {
@@ -79,7 +94,10 @@ export const MODALITIES_MAP = {
 
 export const MODALITIES: {key: string, value: string}[]  = Object.entries(MODALITIES_MAP).map(([key, value]) => ({ key, value }));
 
-export const opportunities: {key: string, value: string}[] = Object.entries(OPPORTUNITY_MAP).map(([key, value]) => ({ key, value }));
+export const opportunities: {key: string, value: string}[] = Object.entries(OPPORTUNITY_MAP).map(([key, value]) => ({ 
+  key, 
+  value: value.label 
+}));
 
 export const RECOMMENDATIONS_BY_OPPORTUNITY: Record<OpportunityType, CvSectionType[]> = {
   SCHOLARSHIP: ['CONTACT', 'EDUCATION', 'PROJECTS', 'VOLUNTEERING', 'ACHIEVEMENTS', 'SKILLS'],

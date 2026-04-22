@@ -1,12 +1,17 @@
 # WIP
 
+- [LV-86ah04pbj](https://app.clickup.com/t/86ah04pbj) Eliminados algunos pasos en el omboarding, y aniadidos descripciones en tipos de oportunidades
+- [LV-86ah04zc8](https://app.clickup.com/t/86ah04zc8) Agregado links para terminos, y politica de privacidad
+
+# v1.2.14 - 2026-04-21
+
 ## Fixes
 
 - [LV-86agzvjht](https://app.clickup.com/t/86agzvjht) Aniadidos 3 logos más para la pagina principal y partners, ademas de cambiarse de cards a carusel
 - [LV-86agzfm0c](https://app.clickup.com/t/86agzfm0c) Mejorada la pagina de Partners, agregando diferencias y separando los componentes
 - [LV-86agyg1cv](https://app.clickup.com/t/86agyg1cv) Modificados los titulos y contenidos del card de creacion/subida de CVs
 - [LV-86agyg30e](https://app.clickup.com/t/86agyg30e) Agregado un card que hace referencia a la creación de roadmaps
-- [LV-LV-86agyg3pd](https://app.clickup.com/t/86agyg3pd) Arreglada la redirección cuando en el card cuando se esta logeado o no
+- [LV-86agyg3pd](https://app.clickup.com/t/86agyg3pd) Arreglada la redirección cuando en el card cuando se esta logeado o no
 - [LV-86agyg47c](https://app.clickup.com/t/86agyg47c) Ocultado Career Acelerator en el Footer
 - [LV-86agyg4n0](https://app.clickup.com/t/86agyg4n0) Ocultado temporalmente los card de "Beneficios para partnerts"
 - [LV-86agyg57f](https://app.clickup.com/t/86agyg57f) Cambiado el estilo de NewsLetter para que tenga más relacion con la pagina

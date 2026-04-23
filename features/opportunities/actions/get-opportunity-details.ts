@@ -3,6 +3,8 @@
 import {prisma} from "@/lib/prisma";
 import {parseRequirements} from "@/utils/parse-requirements";
 import {getCurrentUser} from "@/features/share/actions/get-current-user";
+import { getFirstUserPayment } from "@/features/billing/actions/get-first-user-payment";
+import { UserRole } from "@prisma/client";
 
 export async function getOpportunityDetails(opportunityId: string, cvId: string) {
   try {
@@ -26,6 +28,27 @@ export async function getOpportunityDetails(opportunityId: string, cvId: string)
 
     if (!opportunity) {
       return null;
+    }
+
+    // Revisión de permisos
+    const userPayment = await getFirstUserPayment();
+    const hasSubscription = Boolean(
+      userPayment?.subscription && ["starter", "pro"].includes(userPayment.subscription.plan.slug),
+    );
+    const hasFullAccess = hasSubscription;
+
+    let isLocked = false;
+    if (!hasFullAccess) {
+      // Busca la primera oportunidad para este CV/Ruta para comprobar si es la única permitida para los usuarios gratuitos
+      const firstOpportunity = await prisma.opportunity.findFirst({
+        where: { cvId: opportunity.cvId },
+        orderBy: [{ match: "desc" }, { createdAt: "desc" }],
+        select: { id: true }
+      });
+      
+      if (firstOpportunity && firstOpportunity.id !== opportunity.id) {
+        isLocked = true;
+      }
     }
 
     // 1. Convertimos el Decimal a Number de JS inmediatamente
@@ -59,8 +82,23 @@ export async function getOpportunityDetails(opportunityId: string, cvId: string)
       cv: {
         id: opportunity.cv.id,
         title: opportunity.cv.title,
-      }
+      },
+      isLocked
     };
+
+    if (isLocked) {
+      return {
+        ...sanitizedOpportunity,
+        title: "Contenido Bloqueado",
+        company: "Empresa Protegida",
+        description: "Actualiza tu plan para ver los detalles de esta oportunidad.",
+        location: "Ubicación Oculta",
+        linkUrl: "#",
+        benefits: [],
+        requiredRequirements: [],
+        optionalRequirements: [],
+      };
+    }
     console.log(sanitizedOpportunity);
 
     return sanitizedOpportunity;

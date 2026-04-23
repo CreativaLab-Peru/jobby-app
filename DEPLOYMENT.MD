@@ -1,4 +1,11 @@
+# WIP
+
+## Enhacements
+
+- Es necesario correr el seed ```publicity-suggestion.ts``` para las recomendacion de las rutas al momento de crear roadmaps
+
 # v1.2.7 - 2026-04-09
+
 ## Enhancements
 - Es necesario volver a correr ```conf_cv_sections.ts``` de nuevo para actualizar las secciones de los CVs, asi como complementos e intereses
 

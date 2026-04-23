@@ -7,6 +7,7 @@ import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
 import { PageHeader } from "@/components/shared/page-header";
 import { getOpportunitiesForActiveRoute } from "@/features/routes/actions/get-opportunities-for-active-route";
 import { getFirstUserPayment } from "@/features/billing/actions/get-first-user-payment";
+import { getPlanNames } from "@/features/billing/actions/get-plan-names";
 
 export default async function MyOpportunitiesPage() {
   const activeRoute = await getActiveRoute();
@@ -57,6 +58,9 @@ export default async function MyOpportunitiesPage() {
     userPayment?.subscription && ["starter", "pro"].includes(userPayment.subscription.plan.slug),
   );
 
+  // Fetch dynamic plan names for the UI messages via Server Action
+  const planNames = await getPlanNames();
+
   return (
     <MyOpportunitiesScreen
       initialData={data?.opportunities ?? []}
@@ -65,6 +69,7 @@ export default async function MyOpportunitiesPage() {
       hasCv={data?.hasCv ?? false}
       cvId={activeRoute.cvId ?? null}
       hasSubscription={hasSubscription}
+      planNames={planNames}
       hasMatchedOnce={data?.hasMatchedOnce ?? false}
       isMatchingInProgress={data?.isMatchingInProgress ?? false}
     />

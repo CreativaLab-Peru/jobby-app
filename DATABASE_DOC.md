@@ -217,6 +217,15 @@ Paso individual dentro de un roadmap. Cada paso es accionable y ordenado cronol�
 
 ---
 
+## 📢 11. Dominio de Publicidad y Sugerencias
+
+### `route_publicity_suggestion` (Mapeado como `route_publicity_suggestion`)
+Sugerencias globales de publicidad o próximos pasos que se muestran en el flujo de creación de rutas.
+- **Campos:** `id`, `icon?` (Nombre del icono de Lucide), `title`, `description?`, `isActive`, `createdAt`, `updatedAt`.
+- **Uso:** Proporcionar opciones preconfiguradas (ej: "Potenciar Inglés", "Mejorar Soft Skills") durante el onboarding de la ruta para enriquecer la experiencia del usuario.
+
+---
+
 ## 🚦 Diccionario de Tipos (Enums Clave)
 
 | Enum | Propósito |

@@ -1,39 +1,30 @@
-# WIP 
-
-## Enhancements
-- [LV-86ah05441](https://app.clickup.com/t/86ah05441) Aniadida barra de progreso y secciones colapsables por pasos de rutas
-- [LV-86ah05a48](https://app.clickup.com/t/86ah05a48) Aniadido desplegables y nuevo disenio de los pasos de rutas
-- [LV-86ah051qk](https://app.clickup.com/t/86ah051qk) Aniadido CRUD de Sugerencias al momento de crear una nueva ruta
-
-## Fixes
-
-- [LV-86ah04rx8](https://app.clickup.com/t/86ah04rx8) Arreglado referencias a planes antiguos, ahora se acualiza con el nombre que tiene el plan desde admin
-- [LV-86ah04qrr](https://app.clickup.com/t/86ah04qrr) Arreglado el blur para tapar las oportunidades cuando no se tiene una suscripcion activa
-
-# v1.2.14 - 2026-04-21
+# v1.2.15 - 2026-04-23
 
 ## Enhancements
 
-- [LV-86ah04pbj](https://app.clickup.com/t/86ah04pbj) Eliminados algunos pasos en el omboarding, y aniadidos descripciones en tipos de oportunidades
-- [LV-86ah04zc8](https://app.clickup.com/t/86ah04zc8) Agregado links para terminos, y politica de privacidad
-- [LV-86ah1g1r7](https://app.clickup.com/t/86ah1g1r7) Nuevo screen de ventas para chevening
-
-# v1.2.14 - 2026-04-21
+- [LV-86ah05441](https://app.clickup.com/t/86ah05441) Barra de progreso y secciones colapsables por pasos de rutas
+- [LV-86ah05a48](https://app.clickup.com/t/86ah05a48) Rediseño de la interfaz de pasos de rutas y optimización de menús desplegables.
+- [LV-86ah051qk](https://app.clickup.com/t/86ah051qk) Gestión integral (CRUD) de sugerencias durante la creación de nuevas rutas.
+- [LV-86ah04pbj](https://app.clickup.com/t/86ah04pbj) Optimización del flujo de onboarding y actualización de descripciones en tipos de oportunidades.
+- [LV-86ah04zc8](https://app.clickup.com/t/86ah04zc8) Integración de enlaces legales: Términos y Condiciones y Política de Privacidad.
+- [LV-86ah1g1r7](https://app.clickup.com/t/86ah1g1r7) Nueva interfaz de ventas especializada para el programa de becas Chevening.
 
 ## Fixes
 
-- [LV-86agzvjht](https://app.clickup.com/t/86agzvjht) Aniadidos 3 logos más para la pagina principal y partners, ademas de cambiarse de cards a carusel
-- [LV-86agzfm0c](https://app.clickup.com/t/86agzfm0c) Mejorada la pagina de Partners, agregando diferencias y separando los componentes
-- [LV-86agyg1cv](https://app.clickup.com/t/86agyg1cv) Modificados los titulos y contenidos del card de creacion/subida de CVs
-- [LV-86agyg30e](https://app.clickup.com/t/86agyg30e) Agregado un card que hace referencia a la creación de roadmaps
-- [LV-86agyg3pd](https://app.clickup.com/t/86agyg3pd) Arreglada la redirección cuando en el card cuando se esta logeado o no
-- [LV-86agyg47c](https://app.clickup.com/t/86agyg47c) Ocultado Career Acelerator en el Footer
-- [LV-86agyg4n0](https://app.clickup.com/t/86agyg4n0) Ocultado temporalmente los card de "Beneficios para partnerts"
-- [LV-86agyg57f](https://app.clickup.com/t/86agyg57f) Cambiado el estilo de NewsLetter para que tenga más relacion con la pagina
-- [LV-86agyg5re](https://app.clickup.com/t/86agyg5re) Cambiada la clase que hacia que las fuentes esten muy sepadaras
-- [LV-86agyg67w](https://app.clickup.com/t/86agyg67w) Tips cambiados a espaniol, tanto para lenguajes en ingles, como en espaniol
-- [LV-86ah0r7qw](https://app.clickup.com/t/86ah0r7qw) Integrar las view transitions en las paginas publicas
-- [LV-86ah05bwb](https://app.clickup.com/t/86ah05bwb) Nuevas interfaces para las becas antes del onboarding
+- [LV-86ah04rx8](https://app.clickup.com/t/86ah04rx8) Sincronización dinámica de nombres de planes basada en la configuración del panel administrativo.
+- [LV-86ah04qrr](https://app.clickup.com/t/86ah04qrr) Corrección del efecto de desenfoque (blur) en la visualización de oportunidades para usuarios sin suscripción activa.
+- [LV-86agzvjht](https://app.clickup.com/t/86agzvjht) Integración de nuevos logos de partners y migración de grid estático a carrusel dinámico.
+- [LV-86agzfm0c](https://app.clickup.com/t/86agzfm0c) Refactorización de la página de Partners: separación de componentes y actualización de contenido.
+- [LV-86agyg1cv](https://app.clickup.com/t/86agyg1cv) Actualización de copys y metadatos en el componente de carga y creación de CV.
+- [LV-86agyg30e](https://app.clickup.com/t/86agyg30e) Implementación de tarjeta informativa para la funcionalidad de generación de roadmaps.
+- [LV-86agyg3pd](https://app.clickup.com/t/86agyg3pd) Corrección de la lógica de redirección condicional basada en el estado de autenticación (Auth).
+- [LV-86agyg47c](https://app.clickup.com/t/86agyg47c) Deshabilitación de la sección "Career Accelerator" en el footer de la plataforma.
+- [LV-86agyg4n0](https://app.clickup.com/t/86agyg4n0) Desactivación temporal del módulo de beneficios para partners en la interfaz.
+- [LV-86agyg57f](https://app.clickup.com/t/86agyg57f) Rediseño del componente Newsletter para alineación con la identidad visual del sitio.
+- [LV-86agyg5re](https://app.clickup.com/t/86agyg5re) Ajuste de clases CSS para corregir el espaciado tipográfico excesivo (letter-spacing).
+- [LV-86agyg67w](https://app.clickup.com/t/86agyg67w) Localización integral al español de la sección de "Tips" para todas las versiones de idioma.
+- [LV-86ah0r7qw](https://app.clickup.com/t/86ah0r7qw) Implementación de View Transitions API en rutas públicas para mejorar la experiencia de usuario.
+- [LV-86ah05bwb](https://app.clickup.com/t/86ah05bwb) Desarrollo de interfaces para la visualización de becas en el flujo previo al onboarding.
 
 # v1.2.13 - 2026-04-16
 

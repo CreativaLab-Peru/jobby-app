@@ -1,6 +1,6 @@
-# WIP
+# v1.2.15 - 2026-04-23
 
-## Enhacements
+## Enhancements
 
 - Es necesario correr el seed ```publicity-suggestion.ts``` para las recomendacion de las rutas al momento de crear roadmaps
 

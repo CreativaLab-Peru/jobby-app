@@ -7,6 +7,8 @@ import {TooltipProvider} from "@/components/ui/tooltip";
 import {ThemeProvider} from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner"
 import { cookies } from 'next/headers'
+import { FloatingTaskPanel } from '@/components/tasks/floating-task-panel'
+import { TaskHydrator } from '@/components/tasks/task-hydrator'
 
 // Configura la fuente Poppins
 const poppins = Poppins({
@@ -72,6 +74,8 @@ export default async function RootLayout({
           </Suspense>
           <TooltipProvider>
             <Suspense fallback={null}>{children}</Suspense>
+            <FloatingTaskPanel />
+            <TaskHydrator />
           </TooltipProvider>
           <Toaster />
         </ThemeProvider>

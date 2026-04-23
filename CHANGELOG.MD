@@ -1,6 +1,7 @@
 # WIP 
 
 ## Enhancements
+- [LV-86ah05441](https://app.clickup.com/t/86ah05441) Aniadida barra de progreso y secciones colapsables por pasos de rutas
 - [LV-86ah05a48](https://app.clickup.com/t/86ah05a48) Aniadido desplegables y nuevo disenio de los pasos de rutas
 - [LV-86ah051qk](https://app.clickup.com/t/86ah051qk) Aniadido CRUD de Sugerencias al momento de crear una nueva ruta
 

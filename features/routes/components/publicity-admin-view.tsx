@@ -1,117 +1,101 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Pencil, Trash2, CheckCircle2, XCircle, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, CheckCircle2, XCircle } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { 
-  getAllPublicitySuggestions, 
-  createPublicitySuggestion, 
-  updatePublicitySuggestion, 
-  deletePublicitySuggestion 
+import { useTransition } from "react";
+import { PublicityForm, PublicityFormValues } from "./publicity-form";
+import {
+  getAllPublicitySuggestions,
+  createPublicitySuggestion,
+  updatePublicitySuggestion,
+  deletePublicitySuggestion
 } from "@/features/routes/actions/publicity-actions";
+import { RoutePublicitySuggestion } from "@prisma/client";
 
-type Suggestion = {
-  id: string;
-  icon: string | null;
-  title: string;
-  description: string | null;
-  isActive: boolean;
-};
 
-export function PublicityAdminView({ initialSuggestions = [] }: { initialSuggestions?: Suggestion[] }) {
-  const [suggestions, setSuggestions] = useState<Suggestion[]>(initialSuggestions);
-  const [loading, setLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+
+export function PublicityAdminView({ initialSuggestions = [] }: { initialSuggestions?: RoutePublicitySuggestion[] }) {
+  const [suggestions, setSuggestions] = useState<RoutePublicitySuggestion[]>(initialSuggestions);
   const [editingId, setEditingId] = useState<string | null>(null);
-  
-  // Form state
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    icon: "Sparkles",
-    isActive: true,
-  });
+  const [editingSuggestion, setEditingSuggestion] = useState<RoutePublicitySuggestion | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   // fetchSuggestions is called only after mutations (create/update/delete)
   const fetchSuggestions = async () => {
     const res = await getAllPublicitySuggestions();
     if (res.success) {
-      setSuggestions(res.suggestions as Suggestion[]);
+      setSuggestions(res.suggestions);
     } else {
       toast.error(res.message);
     }
   };
 
-  const handleOpenDialog = (suggestion?: Suggestion) => {
+  const handleOpenDialog = (suggestion?: RoutePublicitySuggestion) => {
     if (suggestion) {
       setEditingId(suggestion.id);
-      setFormData({
-        title: suggestion.title,
-        description: suggestion.description || "",
-        icon: suggestion.icon || "Sparkles",
-        isActive: suggestion.isActive,
-      });
+      setEditingSuggestion(suggestion);
     } else {
       setEditingId(null);
-      setFormData({
-        title: "",
-        description: "",
-        icon: "Sparkles",
-        isActive: true,
-      });
+      setEditingSuggestion(null);
     }
     setIsOpen(true);
   };
 
-  const handleSave = async () => {
-    if (!formData.title.trim()) {
-      toast.error("El título es obligatorio");
-      return;
-    }
-
-    if (editingId) {
-      const res = await updatePublicitySuggestion(editingId, formData);
-      if (res.success) {
-        toast.success("Sugerencia actualizada");
-        fetchSuggestions();
-        setIsOpen(false);
+  const onSubmit = async (values: PublicityFormValues) => {
+    startTransition(async () => {
+      if (editingId) {
+        const res = await updatePublicitySuggestion(editingId, {
+          ...values,
+          description: values.description || undefined,
+          icon: values.icon || undefined,
+        });
+        if (res.success) {
+          toast.success("Sugerencia actualizada");
+          await fetchSuggestions();
+          setIsOpen(false);
+        } else {
+          toast.error(res.message);
+        }
       } else {
-        toast.error(res.message);
+        const res = await createPublicitySuggestion({
+          ...values,
+          description: values.description || undefined,
+          icon: values.icon || undefined,
+        });
+        if (res.success) {
+          toast.success("Sugerencia creada");
+          await fetchSuggestions();
+          setIsOpen(false);
+        } else {
+          toast.error(res.message);
+        }
       }
-    } else {
-      const res = await createPublicitySuggestion(formData);
-      if (res.success) {
-        toast.success("Sugerencia creada");
-        fetchSuggestions();
-        setIsOpen(false);
-      } else {
-        toast.error(res.message);
-      }
-    }
+    });
   };
 
   const handleDelete = async (id: string) => {
     if (confirm("¿Estás seguro de eliminar esta sugerencia?")) {
-      const res = await deletePublicitySuggestion(id);
-      if (res.success) {
-        toast.success("Sugerencia eliminada");
-        fetchSuggestions();
-      } else {
-        toast.error(res.message);
-      }
+      startTransition(async () => {
+        const res = await deletePublicitySuggestion(id);
+        if (res.success) {
+          toast.success("Sugerencia eliminada");
+          await fetchSuggestions();
+        } else {
+          toast.error(res.message);
+        }
+      });
     }
   };
 
   const renderIcon = (iconName: string | null) => {
-    const IconComponent = (LucideIcons as any)[iconName || "Sparkles"] || LucideIcons.Sparkles;
+    const icons = LucideIcons as unknown as Record<string, LucideIcons.LucideIcon>;
+    const IconComponent = icons[iconName || "Sparkles"] || LucideIcons.Sparkles;
     return <IconComponent className="h-5 w-5" />;
   };
 
@@ -127,7 +111,7 @@ export function PublicityAdminView({ initialSuggestions = [] }: { initialSuggest
         </Button>
       </div>
 
-      {loading ? (
+      {isPending && suggestions.length === 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
             <Card key={i} className="animate-pulse">
@@ -183,76 +167,14 @@ export function PublicityAdminView({ initialSuggestions = [] }: { initialSuggest
               Configura los detalles de la sugerencia que verá el usuario.
             </DialogDescription>
           </DialogHeader>
-          
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Título (Lo que se completará en el form)</Label>
-              <Input 
-                id="title" 
-                value={formData.title} 
-                onChange={(e) => setFormData({...formData, title: e.target.value})}
-                placeholder="Ej: Master en UK"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="description">Descripción (Informativa)</Label>
-              <Textarea 
-                id="description" 
-                value={formData.description} 
-                onChange={(e) => setFormData({...formData, description: e.target.value})}
-                placeholder="Explica de qué trata esta sugerencia..."
-              />
-            </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="icon">Icono (Nombre de Lucide)</Label>
-                <div className="flex gap-2">
-                  <Input 
-                    id="icon" 
-                    value={formData.icon} 
-                    onChange={(e) => setFormData({...formData, icon: e.target.value})}
-                    placeholder="Sparkles, GraduationCap..."
-                  />
-                  <div className="p-2 border rounded-md bg-muted flex items-center justify-center">
-                    {renderIcon(formData.icon)}
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {["Sparkles", "GraduationCap", "Map", "Briefcase", "Globe", "Rocket", "Heart", "Star", "Target", "Zap"].map(iconName => (
-                    <Button 
-                      key={iconName}
-                      type="button"
-                      variant="outline" 
-                      size="icon" 
-                      className="h-8 w-8"
-                      onClick={() => setFormData({...formData, icon: iconName})}
-                    >
-                      {(() => {
-                        const Icon = (LucideIcons as any)[iconName];
-                        return Icon ? <Icon className="h-4 w-4" /> : null;
-                      })()}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-end space-x-2 pt-8">
-                <Label htmlFor="is-active">Activo</Label>
-                <Switch 
-                  id="is-active" 
-                  checked={formData.isActive} 
-                  onCheckedChange={(val) => setFormData({...formData, isActive: val})}
-                />
-              </div>
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsOpen(false)}>Cancelar</Button>
-            <Button onClick={handleSave}>Guardar</Button>
-          </DialogFooter>
+          <PublicityForm 
+            key={editingId || "new"}
+            initialData={editingSuggestion}
+            onSubmit={onSubmit}
+            isPending={isPending}
+            onCancel={() => setIsOpen(false)}
+          />
         </DialogContent>
       </Dialog>
     </div>

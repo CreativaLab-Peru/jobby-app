@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { createRoute } from "@/features/routes/actions/create-route";
 import { getRoutesForUser } from "@/features/routes/actions/get-routes-for-user";
 import { useRouteStore } from "@/store/use-route-store";
+import { RoutePublicitySuggestion } from "@prisma/client";
 
 const steps = [
   { icon: User, title: "Perfil", label: "Sube tu trayectoria." },
@@ -18,14 +19,8 @@ const steps = [
   { icon: Route, title: "Ruta", label: "Visualiza tu camino." },
 ];
 
-type Suggestion = {
-  id: string;
-  icon: string | null;
-  title: string;
-  description: string | null;
-};
 
-export default function CreateRouteForm({ initialSuggestions = [] }: { initialSuggestions?: Suggestion[] }) {
+export default function CreateRouteForm({ initialSuggestions = [] }: { initialSuggestions?: RoutePublicitySuggestion[] }) {
   const router = useRouter();
   const { hydrate } = useRouteStore();
 

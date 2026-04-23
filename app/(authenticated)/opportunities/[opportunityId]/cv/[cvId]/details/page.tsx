@@ -6,7 +6,7 @@ import {
 import { getRoadmapForOpportunity } from "@/features/roadmap/actions/get-roadmap-for-opportunity";
 import { canViewFullRoadmap } from "@/features/roadmap/actions/can-view-full-roadmap";
 import { getRoadmapGenerationPermission } from "@/features/roadmap/actions/get-roadmap-generation-permission";
-import { prisma } from "@/lib/prisma";
+import { getPlanNames } from "@/features/billing/actions/get-plan-names";
 
 interface PageProps {
   params: Promise<{
@@ -26,20 +26,12 @@ export default async function OpportunityDetailsPage({ params }: PageProps) {
     notFound();
   }
 
-  const [roadmap, canViewFull, generationPermission, plans] = await Promise.all([
+  const [roadmap, canViewFull, generationPermission, planNames] = await Promise.all([
     getRoadmapForOpportunity(opportunityId, cvId, opportunity.routeId),
     canViewFullRoadmap(),
     getRoadmapGenerationPermission(opportunityId, cvId, opportunity.routeId ?? ""),
-    prisma.paymentPlan.findMany({
-      where: { slug: { in: ["starter", "pro"] } },
-      select: { slug: true, name: true },
-    }),
+    getPlanNames(),
   ]);
-
-  const planNames = {
-    starter: plans.find((p) => p.slug === "starter")?.name || "Starter",
-    pro: plans.find((p) => p.slug === "pro")?.name || "Pro",
-  };
 
   return (
     <OpportunityDetailsScreen

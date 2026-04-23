@@ -620,6 +620,18 @@ model Route {
   @@map("route")
 }
 
+model RoutePublicitySuggestion {
+  id          String   @id @default(uuid())
+  icon        String?  // Nome del icono de Lucide
+  title       String
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("route_publicity_suggestion")
+}
+
 // Roadmap generado por IA para una oportunidad específica
 model Roadmap {
   id             String    @id @default(uuid())

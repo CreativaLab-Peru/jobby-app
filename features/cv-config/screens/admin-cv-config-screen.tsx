@@ -2,10 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { motion } from "framer-motion";
-import {
-  Save, Settings2, GripVertical,
-  Type, List as ListIcon, Info
-} from "lucide-react";
+import { Save, Settings2, GripVertical, Type, List as ListIcon, Info } from "lucide-react";
 import { toast } from "sonner";
 import { CvSectionConfiguration } from "@prisma/client";
 
@@ -13,8 +10,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { PageHeader } from "@/components/shared/page-header";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { updateCvSectionConfig } from "@/features/cv-config/actions/admin/cv-config-actions";
@@ -30,16 +38,16 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
   const [isPending, startTransition] = useTransition();
   const [activeConfigId, setActiveConfigId] = useState<string>(initialConfigs[0]?.id || "");
   const [configs, setConfigs] = useState(initialConfigs);
-  const [activeLang, setActiveLang] = useState<'es' | 'en'>('es');
+  const [activeLang, setActiveLang] = useState<"es" | "en">("es");
 
   // Mantener la selección de config y refrescar la vista correctamente
-  const currentConfig = configs.find(c => c.id === activeConfigId);
+  const currentConfig = configs.find((c) => c.id === activeConfigId);
   const sections = (currentConfig?.sections as unknown as CvSectionConfigItem[]) || [];
 
   const updateLocalSections = (newSections: CvSectionConfigItem[]) => {
-    setConfigs(prev => prev.map(c =>
-      c.id === activeConfigId ? { ...c, sections: newSections as any } : c
-    ));
+    setConfigs((prev) =>
+      prev.map((c) => (c.id === activeConfigId ? { ...c, sections: newSections as any } : c)),
+    );
   };
 
   const handleSave = () => {
@@ -57,7 +65,6 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
     <main className="min-h-screen p-4 md:p-8 bg-background">
       <div className="mx-auto max-w-5xl">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-
           {/* Header con colores Primary */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border pb-6">
             <PageHeader
@@ -70,7 +77,11 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
               variant="default" // Usará el color primary de tu tema
               className="gap-2 shadow-sm font-bold"
             >
-              {isPending ? <Settings2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              {isPending ? (
+                <Settings2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
               Guardar Cambios
             </Button>
           </div>
@@ -79,17 +90,21 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
           <div className="flex items-center gap-4 mb-4">
             <Label className="text-xs font-bold">Idioma:</Label>
             <Button
-              variant={activeLang === 'es' ? 'default' : 'outline'}
+              variant={activeLang === "es" ? "default" : "outline"}
               size="sm"
-              onClick={() => setActiveLang('es')}
-              className={activeLang === 'es' ? 'font-bold' : ''}
-            >ES</Button>
+              onClick={() => setActiveLang("es")}
+              className={activeLang === "es" ? "font-bold" : ""}
+            >
+              ES
+            </Button>
             <Button
-              variant={activeLang === 'en' ? 'default' : 'outline'}
+              variant={activeLang === "en" ? "default" : "outline"}
               size="sm"
-              onClick={() => setActiveLang('en')}
-              className={activeLang === 'en' ? 'font-bold' : ''}
-            >EN</Button>
+              onClick={() => setActiveLang("en")}
+              className={activeLang === "en" ? "font-bold" : ""}
+            >
+              EN
+            </Button>
           </div>
 
           <Tabs value={activeConfigId} onValueChange={setActiveConfigId} className="w-full">
@@ -107,7 +122,7 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
                           {CV_TYPE_CONFIG[config.cvType]?.label || config.cvType}
                         </span>
                         <span className="text-[10px] uppercase tracking-tighter opacity-60">
-                          {OPPORTUNITY_MAP[config.opportunityType] || config.opportunityType}
+                          {OPPORTUNITY_MAP[config.opportunityType]?.label || config.opportunityType}
                         </span>
                       </div>
                     </TabsTrigger>
@@ -130,8 +145,10 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
                           <ListIcon className="h-5 w-5" />
                         </div>
                         <div>
-                          <p className="font-bold text-foreground">{section.title?.es ?? ''}</p>
-                          <p className="text-[10px] text-muted-foreground font-mono uppercase">Key: {section.id}</p>
+                          <p className="font-bold text-foreground">{section.title?.es ?? ""}</p>
+                          <p className="text-[10px] text-muted-foreground font-mono uppercase">
+                            Key: {section.id}
+                          </p>
                         </div>
                       </div>
                     </AccordionTrigger>
@@ -143,12 +160,12 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
                           <Label className="text-xs font-semibold">Título de Sección</Label>
                           <Input
                             className="bg-background"
-                            value={section.title?.es ?? ''}
+                            value={section.title?.es ?? ""}
                             onChange={(e) => {
                               const ns = [...sections];
                               ns[sIdx].title = {
                                 ...ns[sIdx].title,
-                                es: e.target.value
+                                es: e.target.value,
                               };
                               updateLocalSections(ns);
                             }}
@@ -166,39 +183,63 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
 
                         <div className="space-y-4">
                           {section.fields.map((field, fIdx) => (
-                            <div key={fIdx} className="flex flex-col gap-4 p-5 rounded-xl border border-border bg-card hover:border-primary/30 transition-colors group relative">
-
+                            <div
+                              key={fIdx}
+                              className="flex flex-col gap-4 p-5 rounded-xl border border-border bg-card hover:border-primary/30 transition-colors group relative"
+                            >
                               <div className="flex items-center gap-4">
                                 <GripVertical className="h-5 w-5 text-muted-foreground/30 cursor-grab hover:text-primary transition-colors" />
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1">
                                   <div className="space-y-1.5">
-                                    <Label className="text-[10px] uppercase font-black text-muted-foreground/70">Nombre del Campo</Label>
-                                    <Input className="h-9 text-xs font-medium" value={field.label?.es ?? ''} onChange={(e) => {
-                                      const ns = [...sections];
-                                      const f = {
-                                        ...ns[sIdx].fields[fIdx],
-                                        label: {
-                                          ...ns[sIdx].fields[fIdx].label,
-                                          es: e.target.value
-                                        }
-                                      };
-                                      ns[sIdx].fields[fIdx] = f;
-                                      updateLocalSections(ns);
-                                    }} />
+                                    <Label className="text-[10px] uppercase font-black text-muted-foreground/70">
+                                      Nombre del Campo
+                                    </Label>
+                                    <Input
+                                      className="h-9 text-xs font-medium"
+                                      value={field.label?.es ?? ""}
+                                      onChange={(e) => {
+                                        const ns = [...sections];
+                                        const f = {
+                                          ...ns[sIdx].fields[fIdx],
+                                          label: {
+                                            ...ns[sIdx].fields[fIdx].label,
+                                            es: e.target.value,
+                                          },
+                                        };
+                                        ns[sIdx].fields[fIdx] = f;
+                                        updateLocalSections(ns);
+                                      }}
+                                    />
                                   </div>
 
                                   <div className="space-y-1.5">
-                                    <Label className="text-[10px] uppercase font-black text-muted-foreground/70">Tipo</Label>
-                                    <Select value={field.type} onValueChange={(v: any) => {
-                                      const ns = [...sections];
-                                      ns[sIdx].fields[fIdx].type = v;
-                                      updateLocalSections(ns);
-                                    }}>
-                                      <SelectTrigger className="h-9 text-xs capitalize"><SelectValue /></SelectTrigger>
+                                    <Label className="text-[10px] uppercase font-black text-muted-foreground/70">
+                                      Tipo
+                                    </Label>
+                                    <Select
+                                      value={field.type}
+                                      onValueChange={(v: any) => {
+                                        const ns = [...sections];
+                                        ns[sIdx].fields[fIdx].type = v;
+                                        updateLocalSections(ns);
+                                      }}
+                                    >
+                                      <SelectTrigger className="h-9 text-xs capitalize">
+                                        <SelectValue />
+                                      </SelectTrigger>
                                       <SelectContent>
-                                        {["text", "textarea", "email", "tags", "date", "number"].map(t => (
-                                          <SelectItem key={t} value={t} className="capitalize">{t}</SelectItem>
+                                        {[
+                                          "text",
+                                          "textarea",
+                                          "email",
+                                          "tags",
+                                          "date",
+                                          "number",
+                                        ].map((t) => (
+                                          <SelectItem key={t} value={t} className="capitalize">
+                                            {t}
+                                          </SelectItem>
                                         ))}
                                       </SelectContent>
                                     </Select>
@@ -206,7 +247,9 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
 
                                   <div className="flex items-center gap-6 pt-6 justify-end">
                                     <div className="flex items-center gap-3 bg-secondary/20 px-3 py-1.5 rounded-full border border-secondary/30">
-                                      <span className="text-[10px] font-bold text-secondary-foreground">OBLIGATORIO</span>
+                                      <span className="text-[10px] font-bold text-secondary-foreground">
+                                        OBLIGATORIO
+                                      </span>
                                       <Switch
                                         checked={field.required}
                                         onCheckedChange={(v) => {
@@ -224,20 +267,21 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-9 border-t border-dashed border-border pt-4">
                                 <div className="space-y-1.5">
                                   <Label className="text-[10px] uppercase font-bold flex items-center gap-1.5">
-                                    <Info className="h-3.5 w-3.5" /> Sugerencia (Tip) ({activeLang.toUpperCase()})
+                                    <Info className="h-3.5 w-3.5" /> Sugerencia (Tip) (
+                                    {activeLang.toUpperCase()})
                                   </Label>
                                   <Input
                                     placeholder="Instrucción para el usuario..."
                                     className="h-9 text-xs bg-muted/20 border-transparent focus:bg-background transition-all"
-                                    value={field.tip?.[activeLang] ?? ''}
+                                    value={field.tip?.["es"] ?? ""}
                                     onChange={(e) => {
                                       const ns = [...sections];
                                       const f = {
                                         ...ns[sIdx].fields[fIdx],
                                         tip: {
                                           ...ns[sIdx].fields[fIdx].tip,
-                                          [activeLang]: e.target.value
-                                        }
+                                          [activeLang]: e.target.value,
+                                        },
                                       };
                                       ns[sIdx].fields[fIdx] = f;
                                       updateLocalSections(ns);
@@ -245,19 +289,21 @@ export function AdminCvConfigScreen({ initialConfigs }: AdminCvConfigScreenProps
                                   />
                                 </div>
                                 <div className="space-y-1.5">
-                                  <Label className="text-[10px] uppercase font-bold text-muted-foreground">Ejemplo de llenado ({activeLang.toUpperCase()})</Label>
+                                  <Label className="text-[10px] uppercase font-bold text-muted-foreground">
+                                    Ejemplo de llenado ({activeLang.toUpperCase()})
+                                  </Label>
                                   <Input
                                     placeholder="Ej: Google, Microsoft..."
                                     className="h-9 text-xs"
-                                    value={field.example?.[activeLang] ?? ''}
+                                    value={field.example?.[activeLang] ?? ""}
                                     onChange={(e) => {
                                       const ns = [...sections];
                                       const f = {
                                         ...ns[sIdx].fields[fIdx],
                                         example: {
                                           ...ns[sIdx].fields[fIdx].example,
-                                          [activeLang]: e.target.value
-                                        }
+                                          [activeLang]: e.target.value,
+                                        },
                                       };
                                       ns[sIdx].fields[fIdx] = f;
                                       updateLocalSections(ns);

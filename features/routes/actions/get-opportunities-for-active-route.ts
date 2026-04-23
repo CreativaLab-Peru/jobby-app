@@ -2,11 +2,13 @@
 
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
-import { JobStatus, Opportunity, RouteStatus } from "@prisma/client";
+import { JobStatus, Opportunity, RouteStatus, UserRole } from "@prisma/client";
+import { getFirstUserPayment } from "@/features/billing/actions/get-first-user-payment";
 
 export type RouteOpportunity = Opportunity & {
   match: number;
   cv: { id: string; title: string };
+  isLocked?: boolean;
 };
 
 export interface RouteOpportunityOptions {
@@ -103,16 +105,41 @@ export const getOpportunitiesForActiveRoute = async (options: RouteOpportunityOp
       latestMatchJob?.status === JobStatus.IN_PROGRESS ||
       activeRoute.status === RouteStatus.OPPORTUNITIES_PENDING;
 
-    const opportunities = JSON.parse(
-      JSON.stringify(
-        data.map((opt) => ({
-          ...opt,
-          match: Number(opt.match),
-          cv: { id: opt.cv.id, title: opt.cv.title },
-          routeId: opt.routeId,
-        })),
-      ),
-    ) as RouteOpportunity[];
+    // Verificación de suscripción para ocultar oportunidades del lado del servidor
+    const userPayment = await getFirstUserPayment();
+    const hasSubscription = Boolean(
+      userPayment?.subscription && ["starter", "pro"].includes(userPayment.subscription.plan.slug),
+    );
+    const hasFullAccess = hasSubscription;
+
+    const opportunities = data.map((opt, index) => {
+      const isFirst = skip === 0 && index === 0;
+      const isLocked = !hasFullAccess && !isFirst;
+
+      const baseOpt = {
+        ...opt,
+        match: Number(opt.match),
+        cv: { id: opt.cv.id, title: opt.cv.title },
+        routeId: opt.routeId,
+        isLocked,
+      };
+
+      if (isLocked) {
+        return {
+          ...baseOpt,
+          title: "Contenido Bloqueado",
+          company: "Empresa Protegida",
+          description: "Actualiza tu plan para ver los detalles de esta oportunidad.",
+          location: "Ubicación Oculta",
+          linkUrl: "#",
+          benefits: [],
+          requiredRequirements: [],
+          optionalRequirements: [],
+        };
+      }
+
+      return baseOpt;
+    }) as RouteOpportunity[];
 
     return {
       opportunities,

@@ -99,7 +99,7 @@ export function PreviewCVComponent({
     });
   }, [masterSections, cvData]);
 
-  const opportunityMapped = OPPORTUNITY_MAP[opportunityType] || "No especificado";
+  const opportunityMapped = OPPORTUNITY_MAP[opportunityType]?.label || "No especificado";
 
   const activeTips = useMemo(() => {
     const tips = [

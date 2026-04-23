@@ -15,11 +15,13 @@ export function StatusBadge({ children, variant = "default", className }: Status
   };
 
   return (
-    <span className={cn(
-      "inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-widest border transition-colors",
-      variants[variant],
-      className
-    )}>
+    <span
+      className={cn(
+        "inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase border transition-colors",
+        variants[variant],
+        className,
+      )}
+    >
       {children}
     </span>
   );

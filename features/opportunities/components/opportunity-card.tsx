@@ -17,14 +17,13 @@ interface Props {
     cv: {
       id: string;
       title: string;
-    }
+    };
+    isLocked?: boolean;
   };
-  blurred?: boolean;
 }
 
 export default function OpportunityCard({
                                           opportunity
-                                          , blurred
                                         }: Props) {
   const rawMatch = opportunity.match ?? 0;
   const matchValue = Math.round(rawMatch > 1 ? rawMatch : rawMatch * 100);
@@ -32,7 +31,6 @@ export default function OpportunityCard({
   const isHighMatch = matchValue >= 80;
 
   const router = useRouter();
-  const blurClass = blurred ? "filter blur-sm grayscale-[40%]" : "";
 
   const requirements = [
     ...(opportunity.requiredRequirements ?? []),
@@ -41,7 +39,7 @@ export default function OpportunityCard({
 
   return (
     <Card
-      className={`group relative overflow-hidden border-border/40 bg-card rounded-[2rem] hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 flex flex-col ${blurClass}`}>
+      className="group relative overflow-hidden border-border/40 bg-card rounded-[2rem] hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 flex flex-col">
 
       {isHighMatch && (
         <div className="absolute top-0 right-0 p-3">
@@ -54,7 +52,7 @@ export default function OpportunityCard({
           <div className="flex flex-col gap-2"> {/* Contenedor para los Badges */}
             <Badge variant="secondary"
                    className="w-fit font-bold rounded-lg text-[10px] uppercase tracking-wider">
-              {OPPORTUNITY_MAP[opportunity.type] || "Oportunidad"}
+              {OPPORTUNITY_MAP[opportunity.type]?.label || "Oportunidad"}
             </Badge>
           </div>
           {/*<div className="flex items-center gap-1 text-[10px] text-muted-foreground/70 font-medium">*/}
@@ -143,18 +141,28 @@ export default function OpportunityCard({
           variant="secondary"
           size="icon"
           className="rounded-xl border border-border/40 shrink-0 h-10 w-10"
-          asChild
+          asChild={!opportunity.isLocked}
+          disabled={opportunity.isLocked}
+          onClick={() => {
+            if (opportunity.isLocked) return;
+          }}
         >
-          <Link href={`/opportunities/${opportunity.id}/cv/${opportunity.cvId}/details`}>
+          {!opportunity.isLocked ? (
+            <Link href={`/opportunities/${opportunity.id}/cv/${opportunity.cvId}/details`}>
+              <Eye className="w-4 h-4" />
+            </Link>
+          ) : (
             <Eye className="w-4 h-4" />
-          </Link>
+          )}
         </Button>
 
         {/* Botón Principal: GENERAR ROADMAP */}
         <Button
           variant="default" // O el variant que uses para acciones principales
           className="flex-1 rounded-xl font-bold text-xs h-10 shadow-lg shadow-primary/10 gap-2"
+          disabled={opportunity.isLocked}
           onClick={() => {
+            if (opportunity.isLocked) return;
             // Tu lógica para generar el roadmap aquí
             router.push(`/my-roadmaps?openedModal=true&oppId=${opportunity.id}`);
           }}
@@ -168,26 +176,18 @@ export default function OpportunityCard({
           variant="accent"
           size="icon"
           className="rounded-xl shrink-0 h-10 w-10 shadow-lg shadow-accent/10"
-          asChild
+          asChild={!opportunity.isLocked}
+          disabled={opportunity.isLocked}
         >
-          <a href={opportunity.linkUrl} target="_blank" rel="noopener noreferrer">
+          {!opportunity.isLocked ? (
+            <a href={opportunity.linkUrl} target="_blank" rel="noopener noreferrer">
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          ) : (
             <ExternalLink className="w-4 h-4" />
-          </a>
+          )}
         </Button>
       </CardFooter>
-      {blurred && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center bg-background/70">
-          <div className="text-center p-6 rounded-2xl">
-            <p className="font-bold text-foreground mb-2">Contenido bloqueado</p>
-            <p className="text-sm text-muted-foreground mb-4">Actualiza a Starter o Pro para ver todas las oportunidades.</p>
-            <div className="flex justify-center">
-              <Button size="sm" onClick={() => router.push('/billing')}>
-                Ver planes
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </Card>
   );
 }

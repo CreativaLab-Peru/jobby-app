@@ -1,3 +1,31 @@
+# v1.2.15 - 2026-04-23
+
+## Enhancements
+
+- [LV-86ah05441](https://app.clickup.com/t/86ah05441) Barra de progreso y secciones colapsables por pasos de rutas
+- [LV-86ah05a48](https://app.clickup.com/t/86ah05a48) Rediseño de la interfaz de pasos de rutas y optimización de menús desplegables.
+- [LV-86ah051qk](https://app.clickup.com/t/86ah051qk) Gestión integral (CRUD) de sugerencias durante la creación de nuevas rutas.
+- [LV-86ah04pbj](https://app.clickup.com/t/86ah04pbj) Optimización del flujo de onboarding y actualización de descripciones en tipos de oportunidades.
+- [LV-86ah04zc8](https://app.clickup.com/t/86ah04zc8) Integración de enlaces legales: Términos y Condiciones y Política de Privacidad.
+- [LV-86ah1g1r7](https://app.clickup.com/t/86ah1g1r7) Nueva interfaz de ventas especializada para el programa de becas Chevening.
+
+## Fixes
+
+- [LV-86ah04rx8](https://app.clickup.com/t/86ah04rx8) Sincronización dinámica de nombres de planes basada en la configuración del panel administrativo.
+- [LV-86ah04qrr](https://app.clickup.com/t/86ah04qrr) Corrección del efecto de desenfoque (blur) en la visualización de oportunidades para usuarios sin suscripción activa.
+- [LV-86agzvjht](https://app.clickup.com/t/86agzvjht) Integración de nuevos logos de partners y migración de grid estático a carrusel dinámico.
+- [LV-86agzfm0c](https://app.clickup.com/t/86agzfm0c) Refactorización de la página de Partners: separación de componentes y actualización de contenido.
+- [LV-86agyg1cv](https://app.clickup.com/t/86agyg1cv) Actualización de copys y metadatos en el componente de carga y creación de CV.
+- [LV-86agyg30e](https://app.clickup.com/t/86agyg30e) Implementación de tarjeta informativa para la funcionalidad de generación de roadmaps.
+- [LV-86agyg3pd](https://app.clickup.com/t/86agyg3pd) Corrección de la lógica de redirección condicional basada en el estado de autenticación (Auth).
+- [LV-86agyg47c](https://app.clickup.com/t/86agyg47c) Deshabilitación de la sección "Career Accelerator" en el footer de la plataforma.
+- [LV-86agyg4n0](https://app.clickup.com/t/86agyg4n0) Desactivación temporal del módulo de beneficios para partners en la interfaz.
+- [LV-86agyg57f](https://app.clickup.com/t/86agyg57f) Rediseño del componente Newsletter para alineación con la identidad visual del sitio.
+- [LV-86agyg5re](https://app.clickup.com/t/86agyg5re) Ajuste de clases CSS para corregir el espaciado tipográfico excesivo (letter-spacing).
+- [LV-86agyg67w](https://app.clickup.com/t/86agyg67w) Localización integral al español de la sección de "Tips" para todas las versiones de idioma.
+- [LV-86ah0r7qw](https://app.clickup.com/t/86ah0r7qw) Implementación de View Transitions API en rutas públicas para mejorar la experiencia de usuario.
+- [LV-86ah05bwb](https://app.clickup.com/t/86ah05bwb) Desarrollo de interfaces para la visualización de becas en el flujo previo al onboarding.
+
 # v1.2.13 - 2026-04-16
 
 ## Fixes

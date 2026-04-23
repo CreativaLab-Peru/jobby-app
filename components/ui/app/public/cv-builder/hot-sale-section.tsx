@@ -101,6 +101,7 @@ export function HotSaleSection({ user = null }: HotSaleSectionProps) {
       }
     });
   };
+
   return (
     <>
       <section
@@ -202,7 +203,7 @@ export function HotSaleSection({ user = null }: HotSaleSectionProps) {
         isOpen={showMethodModal}
         onClose={() => setShowMethodModal(false)}
         onSelectMethod={handleMethodSelected}
-        packName="Levely Starter"
+        packName="Levely Builder"
         price={19.90}
       />
       <Dialog open={showAccountChoice} onOpenChange={setShowAccountChoice}>

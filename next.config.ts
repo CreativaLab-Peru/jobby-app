@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
 //   Add domain to allow images from Sentry
+  experimental: { viewTransition: true },
   images: {
     remotePatterns: [
       {

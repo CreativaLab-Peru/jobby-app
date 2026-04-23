@@ -20,34 +20,34 @@ interface MyCvScreenProps {
 export default function MyCvScreen({ cv, canCreate, routeHasCv }: MyCvScreenProps) {
   const { onOpenCreate, onOpenUpload } = useCvModalStore();
 
-  const actions = (
-    <>
-      {!routeHasCv && (
-        <>
-          <Button
-            variant="secondary"
-            disabled={!canCreate}
-            onClick={onOpenUpload}
-            className="rounded-lg font-bold text-xs h-9 border border-border/40"
-          >
-            <Upload className="mr-2 h-3.5 w-3.5" />
-            Subir CV
-          </Button>
-          <Button
-            variant="accent"
-            disabled={!canCreate}
-            onClick={onOpenCreate}
-            className="rounded-lg font-bold text-xs h-9 shadow-sm"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Crear CV
-          </Button>
-        </>
-      )}
-      <CreateCVModal />
-      <UploadCVModal reset={() => {}} />
-    </>
-  );
+  // const actions = (
+  //   <>
+  //     {!routeHasCv && (
+  //       <>
+  //         <Button
+  //           variant="secondary"
+  //           disabled={!canCreate}
+  //           onClick={onOpenUpload}
+  //           className="rounded-lg font-bold text-xs h-9 border border-border/40"
+  //         >
+  //           <Upload className="mr-2 h-3.5 w-3.5" />
+  //           Subir CV
+  //         </Button>
+  //         <Button
+  //           variant="accent"
+  //           disabled={!canCreate}
+  //           onClick={onOpenCreate}
+  //           className="rounded-lg font-bold text-xs h-9 shadow-sm"
+  //         >
+  //           <Plus className="mr-2 h-4 w-4" />
+  //           Crear CV
+  //         </Button>
+  //       </>
+  //     )}
+  //     <CreateCVModal />
+  //     <UploadCVModal reset={() => { }} />
+  //   </>
+  // );
 
   return (
     <main className="min-h-[90vh] p-4 md:p-8">
@@ -60,7 +60,7 @@ export default function MyCvScreen({ cv, canCreate, routeHasCv }: MyCvScreenProp
           <PageHeader
             title="Mi CV"
             description="El currículum vinculado a tu ruta activa."
-            actions={actions}
+          // actions={actions}
           />
 
           {cv ? (
@@ -79,28 +79,28 @@ export default function MyCvScreen({ cv, canCreate, routeHasCv }: MyCvScreenProp
                 icon={FileText}
                 title="Tu ruta aún no tiene un CV"
                 description="Crea o sube un CV para comenzar tu ruta profesional. Se vinculará automáticamente."
-                // action={
-                //   <div className="flex items-center gap-3">
-                //     <Button
-                //       variant="outline"
-                //       onClick={onOpenUpload}
-                //       disabled={!canCreate}
-                //       className="rounded-lg font-bold shadow-sm"
-                //     >
-                //       <Upload className="mr-2 h-4 w-4" />
-                //       Subir CV
-                //     </Button>
-                //     <Button
-                //       variant="default"
-                //       onClick={onOpenCreate}
-                //       disabled={!canCreate}
-                //       className="rounded-lg font-bold shadow-sm"
-                //     >
-                //       <Plus className="mr-2 h-4 w-4" />
-                //       Crear CV
-                //     </Button>
-                //   </div>
-                // }
+              // action={
+              //   <div className="flex items-center gap-3">
+              //     <Button
+              //       variant="outline"
+              //       onClick={onOpenUpload}
+              //       disabled={!canCreate}
+              //       className="rounded-lg font-bold shadow-sm"
+              //     >
+              //       <Upload className="mr-2 h-4 w-4" />
+              //       Subir CV
+              //     </Button>
+              //     <Button
+              //       variant="default"
+              //       onClick={onOpenCreate}
+              //       disabled={!canCreate}
+              //       className="rounded-lg font-bold shadow-sm"
+              //     >
+              //       <Plus className="mr-2 h-4 w-4" />
+              //       Crear CV
+              //     </Button>
+              //   </div>
+              // }
               />
             </div>
           )}

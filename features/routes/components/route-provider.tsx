@@ -18,11 +18,8 @@ export function RouteProvider({ routes, children }: RouteProviderProps) {
   const hydrate = useRouteStore((s) => s.hydrate);
 
   useEffect(() => {
-    if (!hydrated.current) {
-      hydrate(routes);
-      hydrated.current = true;
-    }
-  }, [[routes, hydrate]]);
+    hydrate(routes);
+  }, [routes, hydrate]);
 
   return <>{children}</>;
 }

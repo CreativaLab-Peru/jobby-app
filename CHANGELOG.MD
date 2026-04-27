@@ -2,6 +2,7 @@
 
 # Fixes
 
+- [LV-86ah46m4v](https://app.clickup.com/t/86ah46m4v) Cambiado el color del mensaje de estado de credito
 - [LV-86ah46kej](https://app.clickup.com/t/86ah46kej) Corrección de errores/tamanios de los botones en el componente de pasos de rutas
 - [LV-86ah46k4x](https://app.clickup.com/t/86ah46k4x) Responsive mejorado en el componente de pasos de rutas
 - [LV-86ah46hy0](https://app.clickup.com/t/86ah46hy0) Cambiado el nombre en el footer de "News letter" a "Newsletter"

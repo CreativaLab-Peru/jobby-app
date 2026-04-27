@@ -253,24 +253,24 @@ export default function RouteStepper({
 
   return (
     <main className="min-h-[90vh] p-4 md:p-8">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="space-y-6"
+          className="space-y-8"
         >
           <PageHeader
             title={routeName}
             description="Sigue estos pasos para completar tu ruta personalizada."
             actions={
-              <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground bg-muted/30 px-3 py-1 rounded-full border border-border/50">
-                <Sparkles className="h-3.5 w-3.5 text-primary" />
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Sparkles className="h-4 w-4 text-primary" />
                 Guía con IA
               </div>
             }
           />
 
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-6">
             {steps.map((step, i) => (
               <motion.div
                 key={step.id}
@@ -280,114 +280,155 @@ export default function RouteStepper({
               >
                 <div
                   className={cn(
-                    "relative flex flex-col md:flex-row items-start gap-5 p-5 rounded-2xl border transition-all duration-300",
+                    "relative flex flex-col md:flex-row items-start gap-5 p-6 rounded-2xl border transition-all duration-500",
                     step.status === "completed" &&
-                      "bg-gradient-to-r from-green-50/30 to-background border-green-100 dark:from-green-950/5 dark:border-green-900/30 opacity-90",
+                      "bg-gradient-to-r from-green-50/30 to-background border-green-100 dark:from-green-950/5 dark:border-green-900/30 opacity-90 hover:opacity-100",
                     step.status === "current" &&
                       (step.id === 5
-                        ? "bg-gradient-to-br from-indigo-50/80 via-white to-background dark:from-indigo-950/20 dark:to-background border-indigo-300 shadow-lg shadow-indigo-500/10 ring-1 ring-indigo-500/20"
-                        : "bg-gradient-to-br from-primary/10 via-primary/[0.02] to-background border-primary/40 shadow-xl shadow-primary/10 ring-1 ring-primary/20"),
+                        ? "bg-gradient-to-br from-indigo-50/80 via-white to-background dark:from-indigo-950/20 dark:to-background border-indigo-300 shadow-xl shadow-indigo-500/10 ring-1 ring-indigo-500/30"
+                        : "bg-gradient-to-br from-primary/10 via-primary/[0.02] to-background border-primary/40 shadow-2xl shadow-primary/20 ring-1 ring-primary/30"),
                     step.status === "locked" &&
                       "bg-muted/10 border-border/40 opacity-40 grayscale-[0.5]",
                   )}
                 >
+                  {/* Icono del paso */}
                   <div
                     className={cn(
-                      "flex items-center justify-center h-11 w-11 rounded-xl shrink-0 transition-all duration-500",
+                      "flex items-center justify-center h-12 w-12 rounded-xl shrink-0 transition-all duration-500",
                       step.status === "completed" &&
                         "bg-green-100 text-green-600 dark:bg-green-900/30",
                       step.status === "current" &&
                         (step.id === 5
-                          ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/40"
-                          : "bg-primary text-primary-foreground shadow-md shadow-primary/40"),
+                          ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/40"
+                          : "bg-primary text-primary-foreground shadow-lg shadow-primary/40"),
                       step.status === "locked" && "bg-muted/50 text-muted-foreground",
-                      step.status === "current" && "scale-105 rotate-2", // Menos agresivo
+                      step.status === "current" && "scale-110 rotate-3",
                     )}
                   >
                     {step.status === "completed" ? (
-                      <CheckCircle2 className="h-5 w-5" />
+                      <CheckCircle2 className="h-6 w-6" />
                     ) : step.status === "locked" ? (
-                      <Lock className="h-4 w-4" />
+                      <Lock className="h-5 w-5" />
                     ) : step.id === 5 ? (
-                      <Sparkles className="h-5 w-5" />
+                      <Sparkles className="h-6 w-6" />
                     ) : (
-                      <step.icon className="h-5 w-5" />
+                      <step.icon className="h-6 w-6" />
                     )}
                   </div>
 
                   <div className="flex-1 min-w-0 w-full">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <span className="text-[10px] font-bold text-muted-foreground/70 uppercase tracking-wider">
+                      <span className="text-xs font-semibold text-muted-foreground uppercase">
                         Paso {step.id}
                       </span>
+                      {step.status === "completed" && (
+                        <span className="text-[10px] font-bold text-green-700 bg-green-500/20 px-2 py-0.5 rounded-md uppercase tracking-wider">
+                          Completado
+                        </span>
+                      )}
+                      {step.status === "current" && (
+                        <span
+                          className={cn(
+                            "text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider animate-pulse",
+                            step.id === 1
+                              ? "text-green-700 bg-green-500/20"
+                              : step.id === 5
+                                ? "text-indigo-700 bg-indigo-500/20"
+                                : "text-primary-foreground bg-primary px-2 shadow-sm",
+                          )}
+                        >
+                          {step.id === 4 && routeStatus === "ROADMAP_IN_PROGRESS"
+                            ? "En progreso"
+                            : "Activo ahora"}
+                        </span>
+                      )}
+                      {step.status === "locked" && (
+                        <span className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-wider">
+                          {step.id === 2 && "Se desbloquea al subir tu CV"}
+                          {step.id === 3 && "Se desbloquea al optimizar"}
+                          {step.id === 4 && "Se desbloquea al ver matches"}
+                          {step.id === 5 && (
+                            <span className="text-indigo-600/70 font-black">{step.tierLabel}</span>
+                          )}
+                          {![2, 3, 4, 5].includes(step.id) && "Bloqueado"}
+                        </span>
+                      )}
                     </div>
+                    <h3 className="text-lg font-bold text-foreground">{step.title}</h3>
+                    <p className="text-sm text-muted-foreground mt-0.5">{step.description}</p>
 
-                    <h3 className="text-base font-bold text-foreground leading-none">
-                      {step.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mt-1 leading-snug">
-                      {step.description}
-                    </p>
-
-                    {/* Contenido Expandido */}
                     {step.status === "current" && step.expanded && (
-                      <div className="mt-5 space-y-4">
-                        <div className="flex flex-col sm:flex-row gap-2">
+                      <div className="mt-6 space-y-4">
+                        <div className="flex flex-col sm:flex-row gap-3">
                           <Button
                             variant="default"
                             className={cn(
-                              "w-full sm:flex-1 h-11 text-sm font-bold rounded-xl shadow-sm transition-all", // De py-7 a h-11 (aprox py-2.5)
+                              "w-full sm:flex-1 h-12 text-sm font-bold rounded-xl shadow-md transition-all", // Reducido de py-7 a h-12
                               isProcessing
-                                ? "bg-muted text-muted-foreground border-2 border-dashed"
-                                : "bg-primary hover:bg-primary/90 active:scale-[0.98]",
+                                ? "bg-muted text-muted-foreground cursor-not-allowed opacity-70 border-2 border-dashed border-border"
+                                : "bg-primary hover:bg-primary/90 hover:scale-[1.02]",
                             )}
                             onClick={step.expanded.primaryAction.onClick}
                             disabled={isProcessing}
                           >
                             {isProcessing ? (
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                             ) : (
                               step.expanded.primaryAction.icon && (
-                                <step.expanded.primaryAction.icon className="mr-2 h-4 w-4" />
+                                <step.expanded.primaryAction.icon className="mr-2 h-5 w-5" />
                               )
                             )}
                             {isProcessing
-                              ? "Procesando..."
+                              ? "Proceso en curso..."
                               : step.expanded.isReady
                                 ? step.expanded.primaryAction.readyLabel
                                 : step.expanded.primaryAction.label}
+                            {!isProcessing &&
+                              step.expanded.isReady &&
+                              !step.expanded.primaryAction.icon && (
+                                <ArrowRight className="ml-2 h-5 w-5" />
+                              )}
                           </Button>
 
                           {step.expanded.secondaryAction && !step.expanded.isReady && (
                             <Button
                               variant="secondary"
                               className={cn(
-                                "w-full sm:flex-1 h-11 text-sm font-bold rounded-xl border transition-all", // De py-7 a h-11
+                                "w-full sm:flex-1 h-12 text-sm font-bold rounded-xl border-2 shadow-sm transition-all", // Reducido de py-7 a h-12
                                 isProcessing
-                                  ? "opacity-50 border-dashed"
-                                  : "hover:bg-secondary/80 active:scale-[0.98]",
+                                  ? "bg-muted/50 text-muted-foreground cursor-not-allowed opacity-50 border-dashed"
+                                  : "hover:scale-[1.02]",
                               )}
                               onClick={step.expanded.secondaryAction.onClick}
                               disabled={isProcessing}
                             >
+                              {step.expanded.secondaryAction.icon && (
+                                <step.expanded.secondaryAction.icon className="mr-2 h-5 w-5" />
+                              )}
                               {step.expanded.secondaryAction.label}
                             </Button>
                           )}
                         </div>
 
-                        {/* Beneficios */}
-                        <div className="pt-4 border-t border-dashed border-primary/20">
-                          <p className="text-[10px] font-bold text-primary/70 uppercase tracking-widest mb-2">
+                        <div className="pt-5 border-t border-dashed border-primary/20">
+                          <p className="text-xs font-bold text-primary/80 uppercase tracking-widest mb-3">
                             {step.expanded.isReady
                               ? step.expanded.readyTitle
                               : step.expanded.pendingTitle}
                           </p>
-                          <div className="flex flex-wrap gap-1.5">
+                          <div className="flex flex-wrap gap-2">
                             {step.expanded.benefits.map((benefit, idx) => (
                               <Badge
                                 key={benefit}
                                 variant="secondary"
-                                className="font-semibold text-[10px] border-none py-0.5 px-2.5 bg-primary/5 text-primary"
+                                className={cn(
+                                  "font-bold border-none py-1 px-3",
+                                  idx === 0
+                                    ? "bg-levely-blue/10 text-primary"
+                                    : idx === 1
+                                      ? "bg-accent/10 text-primary"
+                                      : "bg-secondary/20 text-secondary-foreground",
+                                )}
                               >
                                 {benefit}
                               </Badge>
@@ -400,15 +441,13 @@ export default function RouteStepper({
 
                   {/* BOTÓN LATERAL */}
                   {step.status !== "locked" && (step.status === "completed" || step.id === 5) && (
-                    <div className="w-full md:w-auto flex flex-row md:flex-col items-center md:items-end gap-3 shrink-0 self-stretch md:self-center pt-4 md:pt-0 md:pl-5 md:border-l border-border/50 mt-4 md:mt-0">
+                    <div className="w-full md:w-auto flex flex-row md:flex-col items-center md:items-end gap-4 md:gap-2 shrink-0 self-stretch md:self-center pt-4 md:pt-0 md:pl-5 border-t md:border-t-0 md:border-l border-border/50 mt-4 md:mt-0">
                       {step.id === 5 && step.price && (
                         <div className="flex flex-col items-start md:items-end flex-1 md:flex-none">
-                          <span className="text-[9px] font-black text-muted-foreground uppercase tracking-tight">
+                          <span className="text-[10px] font-black text-muted-foreground uppercase tracking-tighter">
                             Precio
                           </span>
-                          <span className="text-sm font-black text-indigo-600 leading-none">
-                            {step.price}
-                          </span>
+                          <span className="text-base font-black text-indigo-600">{step.price}</span>
                         </div>
                       )}
                       <Button
@@ -420,23 +459,38 @@ export default function RouteStepper({
                             : "outline"
                         }
                         className={cn(
-                          "font-bold transition-all h-9 text-xs",
-                          step.status === "completed" ? "px-4 border-2" : "px-5",
+                          "font-bold transition-all shadow-sm w-full md:w-auto",
+                          step.status === "completed"
+                            ? "px-5 h-10 border-2 hover:bg-primary/5 hover:border-primary/50"
+                            : "px-6 h-11",
                         )}
-                        onClick={() => router.push(step.href)}
+                        disabled={isProcessing && step.status !== "completed"}
+                        onClick={() => {
+                          startTransition(() => {
+                            router.push(step.href);
+                          });
+                        }}
                       >
-                        {step.cta}
-                        <ArrowRight className="ml-2 h-3.5 w-3.5" />
+                        {isProcessing && step.status !== "completed" ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : null}
+                        {isProcessing && step.status !== "completed" ? "Procesando..." : step.cta}
+                        {(!isProcessing || step.status === "completed") && (
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        )}
                       </Button>
                     </div>
                   )}
                 </div>
+
                 {i < steps.length - 1 && (
-                  <div className="flex justify-start pl-[21px] py-0.5">
+                  <div className="flex justify-start pl-10 py-1">
                     <div
                       className={cn(
-                        "w-px h-4",
-                        step.status === "completed" ? "bg-green-200" : "bg-border/60",
+                        "w-0.5 h-6 rounded-full",
+                        step.status === "completed"
+                          ? "bg-green-300 dark:bg-green-700"
+                          : "bg-border",
                       )}
                     />
                   </div>
@@ -446,6 +500,9 @@ export default function RouteStepper({
           </div>
         </motion.div>
       </div>
+
+      <CreateCVModal />
+      <UploadCVModal reset={() => router.refresh()} />
     </main>
   );
 }

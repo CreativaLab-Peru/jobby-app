@@ -44,14 +44,14 @@ const HeroSection: React.FC = () => {
   return (
     <section className="text-center bg-background">
       {/* Banner de Urgencia Dinámico */}
-      <div className="bg-destructive text-destructive-foreground text-sm py-2 px-4 animate-pulse flex justify-center items-center gap-2">
-        <span className="font-medium">
-          Tu bono "Ensayos ganadores LSE + Leeds + Edimburgo" termina en
-        </span>
-        <span className="font-mono text-lg font-bold bg-black/20 px-2 rounded">
-          {timeLeft.days}d {timeLeft.hours}:{timeLeft.minutes}:{timeLeft.seconds}
-        </span>
-      </div>
+      {/*<div className="bg-destructive text-destructive-foreground text-sm py-2 px-4 animate-pulse flex justify-center items-center gap-2">*/}
+      {/*  <span className="font-medium">*/}
+      {/*    Tu bono "Ensayos ganadores LSE + Leeds + Edimburgo" termina en*/}
+      {/*  </span>*/}
+      {/*  <span className="font-mono text-lg font-bold bg-black/20 px-2 rounded">*/}
+      {/*    {timeLeft.days}d {timeLeft.hours}:{timeLeft.minutes}:{timeLeft.seconds}*/}
+      {/*  </span>*/}
+      {/*</div>*/}
 
       <div className="max-w-4xl mx-auto py-16 px-4">
         <div className="flex justify-center w-full">
@@ -61,17 +61,10 @@ const HeroSection: React.FC = () => {
           </div>
         </div>
 
-        <h1 className="text-5xl md:text-6xl font-extrabold leading-[1.1] mb-8 text-foreground tracking-tight">
-          Aplica a tu <span className="text-primary">postgrado en UK</span> en 30 días con la guía que armé en +4 meses
+        <h1 className="text-4xl md:text-5xl font-extrabold leading-[1.1] mb-8 text-foreground tracking-tight">
+          Aplica a tu <span className="text-primary">postgrado en UK</span> en días con el sistema que tardé 4 meses en armar
         </h1>
 
-        <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-16 leading-relaxed">
-          +10 universidades UK con programas ya investigados:
-          <span className="text-foreground font-semibold underline underline-offset-4"> requisitos, fechas, y enlaces directos</span>.
-          Yo tardé +4 meses armándolo desde cero — tú lo tienes en un solo lugar.
-        </p>
-
-        {/* Mockup del producto */}
         <div className="bg-card p-2 md:p-4 rounded-[2rem] shadow-2xl shadow-primary/10 relative border border-border overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent pointer-events-none z-10"/>
 
@@ -86,6 +79,15 @@ const HeroSection: React.FC = () => {
             />
           </div>
         </div>
+
+        <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-16 leading-relaxed mt-10">
+          +10 universidades UK con programas ya investigados:
+          <span className="text-foreground font-semibold underline underline-offset-4"> requisitos, fechas, y enlaces directos</span>.
+          Yo tardé 4 meses armándolo desde cero — tú lo tienes en un solo lugar.
+        </p>
+
+        {/* Mockup del producto */}
+
       </div>
     </section>
   );

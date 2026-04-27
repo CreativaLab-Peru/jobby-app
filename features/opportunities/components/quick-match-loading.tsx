@@ -18,7 +18,11 @@ export function QuickMatchLoading({ cvId }: QuickMatchLoadingModalProps) {
     if (!cvId || hasStartedRef.current) return;
     hasStartedRef.current = true;
 
-    startQuickMatchTask(cvId);
+    if (typeof startQuickMatchTask === "function") {
+      startQuickMatchTask(cvId);
+    } else {
+      console.error("startQuickMatchTask is not available in useBackgroundTasks");
+    }
     router.replace("/my-opportunities");
   }, [cvId, startQuickMatchTask, router]);
 

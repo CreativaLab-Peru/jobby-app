@@ -6,46 +6,51 @@ import { useBackgroundTasks } from "@/hooks/use-background-tasks";
 
 export function TaskHydrator() {
   const { tasks } = useTaskStore();
-  const { 
-    startAnalysisTask, 
-    startQuickMatchTask, 
-    startCvProcessingTask, 
-    startProgressTimelineTask 
-  } = useBackgroundTasks();
+  const { startAnalysisTask, startCvProcessingTask, startProgressTimelineTask, startRoadmapTask } =
+    useBackgroundTasks();
   const hydratedTasks = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    // El store ahora es un Record, iteramos sobre sus valores
-    Object.values(tasks).forEach((task) => {
-      if (task.status === "IN_PROGRESS" && !hydratedTasks.current.has(task.id)) {
-        hydratedTasks.current.add(task.id);
-        
+    Object.entries(tasks).forEach(([scopeId, task]) => {
+      if (task.status === "IN_PROGRESS" && !hydratedTasks.current.has(scopeId)) {
+        hydratedTasks.current.add(scopeId);
+
         // Reiniciar el polling según el tipo de tarea
         switch (task.type) {
           case "ANALYSIS":
             if (task.metadata?.tempCvEvaluationId && task.metadata?.temporalUserId) {
-                startAnalysisTask(task.metadata.tempCvEvaluationId, task.metadata.temporalUserId);
-            }
-            break;
-          case "QUICK_MATCH":
-            if (task.metadata?.cvId) {
-                startQuickMatchTask(task.metadata.cvId);
+              startAnalysisTask(task.metadata.tempCvEvaluationId, task.metadata.temporalUserId);
             }
             break;
           case "CV_PROCESSING":
             if (task.metadata?.cvId) {
-                startCvProcessingTask(task.metadata.cvId);
+              startCvProcessingTask(task.metadata.cvId);
             }
             break;
           case "PROGRESS_TIMELINE":
             if (task.metadata?.cvId) {
-                startProgressTimelineTask(task.metadata.cvId);
+              startProgressTimelineTask(task.metadata.cvId);
+            }
+            break;
+          case "ROADMAP_GENERATION":
+            if (task.metadata?.opportunityId && task.metadata?.cvId && task.metadata?.routeId) {
+              startRoadmapTask?.(
+                task.metadata.opportunityId,
+                task.metadata.cvId,
+                task.metadata.routeId,
+              );
             }
             break;
         }
       }
     });
-  }, [tasks, startAnalysisTask, startQuickMatchTask, startCvProcessingTask, startProgressTimelineTask]);
+  }, [
+    tasks,
+    startAnalysisTask,
+    startCvProcessingTask,
+    startProgressTimelineTask,
+    startRoadmapTask,
+  ]);
 
   return null;
 }

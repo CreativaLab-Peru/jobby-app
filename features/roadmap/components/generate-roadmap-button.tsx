@@ -25,7 +25,8 @@ export function GenerateRoadmapButton({
   blockedMessage = null,
 }: GenerateRoadmapButtonProps) {
   const { startRoadmapTask } = useBackgroundTasks();
-  const task = useTaskStore(state => state.tasks[`ROADMAP-${opportunityId}`]);
+  // Lookup por Scope ID (opportunityId)
+  const task = useTaskStore((state) => state.tasks[opportunityId]);
   const [isLocalTriggering, setIsLocalTriggering] = useState(false);
 
   const isProcessing = task?.status === "IN_PROGRESS";
@@ -63,8 +64,8 @@ export function GenerateRoadmapButton({
         size="sm"
         variant={task?.status === "FAILED" ? "destructive" : "default"}
         className={cn(
-            "rounded-xl font-bold text-xs transition-all duration-300",
-            isProcessing && "bg-primary/20 text-primary border-primary/20"
+          "rounded-xl font-bold text-xs transition-all duration-300",
+          isProcessing && "bg-primary/20 text-primary border-primary/20",
         )}
       >
         {isProcessing || isLocalTriggering ? (
@@ -74,14 +75,17 @@ export function GenerateRoadmapButton({
         ) : (
           <Map className="w-3.5 h-3.5 mr-2" />
         )}
-        {isProcessing ? `Diseñando Roadmap (${task.progress}%)` : 
-         task?.status === "FAILED" ? "Reintentar Roadmap" : "Generar Roadmap con IA"}
+        {isProcessing
+          ? `Diseñando Roadmap (${task.progress}%)`
+          : task?.status === "FAILED"
+            ? "Reintentar Roadmap"
+            : "Generar Roadmap con IA"}
       </Button>
-      
+
       {isProcessing && (
-          <p className="text-[10px] text-muted-foreground italic animate-pulse">
-            El proceso continúa en segundo plano. Puedes seguir explorando.
-          </p>
+        <p className="text-[10px] text-muted-foreground italic animate-pulse">
+          El proceso continúa en segundo plano. Puedes seguir explorando.
+        </p>
       )}
     </div>
   );

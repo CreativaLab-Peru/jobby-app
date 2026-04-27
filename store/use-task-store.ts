@@ -3,9 +3,22 @@ import { persist } from "zustand/middleware";
 
 export type TaskStatus = "PENDING" | "IN_PROGRESS" | "SUCCEEDED" | "FAILED";
 
+export interface TaskMetadata {
+  cvId?: string;
+  routeId?: string;
+  opportunityId?: string;
+  roadmapId?: string;
+  evaluateId?: string;
+  onSuccessPath?: string;
+  tempCvEvaluationId?: string;
+  temporalUserId?: string;
+  [key: string]: string | number | boolean | undefined | null | object;
+}
+
 export interface Task {
   id: string; // ID único (ej: type-scopeId)
   scopeId: string; // ID del contexto (cvId, evaluationId, etc)
+  contextName?: string; // Nombre ruta (ej: "Ruta A")
   type: "ANALYSIS" | "QUICK_MATCH" | "CV_PROCESSING" | "PROGRESS_TIMELINE" | "ROADMAP_GENERATION";
   status: TaskStatus;
   progress: number;
@@ -14,39 +27,42 @@ export interface Task {
   originPath: string; // URL base de origen
   routeParams?: Record<string, string>; // Parámetros dinámicos para reconstruir URL
   error?: string;
-  metadata?: any;
+  metadata?: TaskMetadata;
   createdAt: number;
 }
 
 interface TaskStore {
-  tasks: Record<string, Task>;
+  tasks: Record<string, Task>; // Key is scopeId (route/cvId/etc)
   addTask: (task: Omit<Task, "status" | "progress" | "createdAt">) => boolean;
-  updateTask: (id: string, updates: Partial<Pick<Task, "status" | "progress" | "description" | "error" | "metadata">>) => void;
-  removeTask: (id: string) => void;
+  updateTask: (
+    scopeId: string,
+    updates: Partial<Pick<Task, "status" | "progress" | "description" | "error" | "metadata">>,
+  ) => void;
+  removeTask: (scopeId: string) => void;
   reset: () => void;
-  hasTask: (id: string) => boolean;
+  hasTask: (scopeId: string) => boolean;
 }
 
 export const useTaskStore = create<TaskStore>()(
   persist(
     (set, get) => ({
       tasks: {},
-      
+
       reset: () => set({ tasks: {} }),
 
-      hasTask: (id) => !!get().tasks[id],
-      
+      hasTask: (scopeId) => !!get().tasks[scopeId],
+
       addTask: (task) => {
         const state = get();
-        // Evitar duplicados si ya está en curso
-        if (state.tasks[task.id] && state.tasks[task.id].status === "IN_PROGRESS") {
+        // Evitar duplicados si ya está en curso para este scope
+        if (state.tasks[task.scopeId] && state.tasks[task.scopeId].status === "IN_PROGRESS") {
           return false;
         }
 
         set((state) => ({
           tasks: {
             ...state.tasks,
-            [task.id]: {
+            [task.scopeId]: {
               ...task,
               status: "IN_PROGRESS",
               progress: 0,
@@ -57,25 +73,25 @@ export const useTaskStore = create<TaskStore>()(
         return true;
       },
 
-      updateTask: (id, updates) =>
+      updateTask: (scopeId, updates) =>
         set((state) => ({
           tasks: {
             ...state.tasks,
-            [id]: {
-              ...state.tasks[id],
+            [scopeId]: {
+              ...state.tasks[scopeId],
               ...updates,
             },
           },
         })),
 
-      removeTask: (id) =>
+      removeTask: (scopeId) =>
         set((state) => {
-          const { [id]: _, ...rest } = state.tasks;
+          const { [scopeId]: _, ...rest } = state.tasks;
           return { tasks: rest };
         }),
     }),
     {
       name: "task-storage",
-    }
-  )
+    },
+  ),
 );

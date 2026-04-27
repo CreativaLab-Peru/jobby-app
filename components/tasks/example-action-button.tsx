@@ -4,15 +4,13 @@ import { Button } from "@/components/ui/button";
 
 export function AnalyzeCvButton({ cvId }: { cvId: string }) {
   const { startCvProcessingTask } = useBackgroundTasks();
-  
-  // Patrón de Bloqueo Contextual:
-  // Verificamos si existe una tarea de tipo CV_PROCESSING vinculada a este cvId específico
-  const isProcessing = useTaskStore(state => 
-    state.tasks[`CV_PROCESSING-${cvId}`]?.status === "IN_PROGRESS"
-  );
+
+  // Patrón de Bloqueo Contextual (Scope-based):
+  // Verificamos si existe una tarea activa para este scope (cvId)
+  const isProcessing = useTaskStore((state) => state.tasks[cvId]?.status === "IN_PROGRESS");
 
   return (
-    <Button 
+    <Button
       disabled={isProcessing}
       onClick={() => startCvProcessingTask(cvId)}
       className="relative overflow-hidden"
@@ -22,9 +20,7 @@ export function AnalyzeCvButton({ cvId }: { cvId: string }) {
           <span className="opacity-0">Analizar este grupo</span>
           <div className="absolute inset-0 flex items-center justify-center gap-2 bg-primary/10 backdrop-blur-sm">
             <div className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-            <span className="text-[10px] font-bold uppercase tracking-tighter">
-                Procesando...
-            </span>
+            <span className="text-[10px] font-bold uppercase tracking-tighter">Procesando...</span>
           </div>
         </>
       ) : (

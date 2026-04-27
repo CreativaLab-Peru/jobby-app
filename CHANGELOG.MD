@@ -1,4 +1,4 @@
-# WIP
+# v1.2.16 - 2026-04-27
 
 ## Enhancements
 

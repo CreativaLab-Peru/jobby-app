@@ -1,4 +1,7 @@
-# v1.2.16 - 2026-04-27
+# v1.2.16 and v1.2.17 - 2026-04-27
+
+## System
+- new version of Inngest 3.54.0
 
 ## Enhancements
 

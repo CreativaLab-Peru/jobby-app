@@ -1,7 +1,12 @@
-# v1.2.16 and v1.2.17 - 2026-04-27
+# v1.2.16, v1.2.17 and v1.2.18 - 2026-04-27
 
 ## System
+
 - new version of Inngest 3.54.0
+
+## Fixes
+
+- [LV-86ah46jam](https://app.clickup.com/t/86ah46jam) UK page is not showing the correct content
 
 ## Enhancements
 

@@ -24,6 +24,9 @@ import { useCvModalStore } from "@/features/cv/hooks/use-cv-modal-store";
 import { CreateCVModal } from "@/features/cv/components/create-cv-modal";
 import { UploadCVModal } from "@/features/cv/components/upload-cv-modal";
 import { Badge } from "@/components/ui/badge";
+import { useTaskStore } from "@/store/use-task-store";
+import { useRouteStore } from "@/store/use-route-store";
+import { Loader2 } from "lucide-react";
 
 type StepStatus = "completed" | "current" | "locked";
 
@@ -110,6 +113,22 @@ export default function RouteStepper({
 }: RouteStepperProps) {
   const router = useRouter();
   const { onOpenCreate, onOpenUpload } = useCvModalStore();
+  const tasks = useTaskStore((state) => state.tasks);
+  const activeRoute = useRouteStore((state) => state.activeRoute);
+
+  // Verificamos si hay alguna tarea en curso para este CV o Ruta
+  const activeTask = Object.values(tasks).find((t) => {
+    if (t.status !== "IN_PROGRESS") return false;
+
+    return (
+      t.scopeId === cvId ||
+      t.metadata?.cvId === cvId ||
+      (activeRoute?.id && t.metadata?.routeId === activeRoute.id) ||
+      (activeRoute?.id && t.scopeId === activeRoute.id)
+    );
+  });
+
+  const isProcessing = !!activeTask;
 
   const isRoadmapDone = routeStatus === "ROADMAP_DONE";
   const isFullCompleted = routeStatus === "PROGRAM_DONE";
@@ -143,8 +162,8 @@ export default function RouteStepper({
           label: "Crear CV desde cero",
           onClick: onOpenCreate,
           icon: Plus,
-        }
-      }
+        },
+      },
     },
     {
       id: 2,
@@ -162,9 +181,12 @@ export default function RouteStepper({
         primaryAction: {
           label: "Analizar mi CV",
           readyLabel: "Ver mi análisis",
-          onClick: () => router.push(evaluationScore !== null ? "/my-evaluation" : "/my-evaluation?analyze=true"),
-        }
-      }
+          onClick: () =>
+            router.push(
+              evaluationScore !== null ? "/my-evaluation" : "/my-evaluation?analyze=true",
+            ),
+        },
+      },
     },
     {
       id: 3,
@@ -182,9 +204,12 @@ export default function RouteStepper({
         primaryAction: {
           label: "Buscar oportunidades con match",
           readyLabel: "Ver mis oportunidades",
-          onClick: () => router.push(opportunitiesCount > 0 ? "/my-opportunities" : "/my-opportunities?match=true"),
-        }
-      }
+          onClick: () =>
+            router.push(
+              opportunitiesCount > 0 ? "/my-opportunities" : "/my-opportunities?match=true",
+            ),
+        },
+      },
     },
     {
       id: 4,
@@ -210,8 +235,8 @@ export default function RouteStepper({
               router.push(hasRoadmap && roadmapId ? `/my-roadmaps/${roadmapId}` : "/my-roadmaps");
             }
           },
-        }
-      }
+        },
+      },
     },
     {
       id: 5,
@@ -258,27 +283,26 @@ export default function RouteStepper({
                     "relative flex items-start gap-5 p-6 rounded-2xl border transition-all duration-500",
                     // Completado: Elegante y compacto en verde
                     step.status === "completed" &&
-                    "bg-gradient-to-r from-green-50/30 to-background border-green-100 dark:from-green-950/5 dark:border-green-900/30 opacity-90 hover:opacity-100",
+                      "bg-gradient-to-r from-green-50/30 to-background border-green-100 dark:from-green-950/5 dark:border-green-900/30 opacity-90 hover:opacity-100",
                     // Activo: El foco principal, vibrante y expandido
-                    step.status === "current" && (
-                      step.id === 5
+                    step.status === "current" &&
+                      (step.id === 5
                         ? "bg-gradient-to-br from-indigo-50/80 via-white to-background dark:from-indigo-950/20 dark:to-background border-indigo-300 shadow-xl shadow-indigo-500/10 ring-1 ring-indigo-500/30"
-                        : "bg-gradient-to-br from-primary/10 via-primary/[0.02] to-background border-primary/40 shadow-2xl shadow-primary/20 ring-1 ring-primary/30"
-                    ),
+                        : "bg-gradient-to-br from-primary/10 via-primary/[0.02] to-background border-primary/40 shadow-2xl shadow-primary/20 ring-1 ring-primary/30"),
                     // Bloqueado: Mínimo y discreto
                     step.status === "locked" &&
-                    "bg-muted/10 border-border/40 opacity-40 grayscale-[0.5]",
+                      "bg-muted/10 border-border/40 opacity-40 grayscale-[0.5]",
                   )}
                 >
                   <div
                     className={cn(
                       "flex items-center justify-center h-12 w-12 rounded-xl shrink-0 transition-all duration-500",
-                      step.status === "completed" && "bg-green-100 text-green-600 dark:bg-green-900/30",
-                      step.status === "current" && (
-                        step.id === 5
+                      step.status === "completed" &&
+                        "bg-green-100 text-green-600 dark:bg-green-900/30",
+                      step.status === "current" &&
+                        (step.id === 5
                           ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/40"
-                          : "bg-primary text-primary-foreground shadow-lg shadow-primary/40"
-                      ),
+                          : "bg-primary text-primary-foreground shadow-lg shadow-primary/40"),
                       step.status === "locked" && "bg-muted/50 text-muted-foreground",
                       step.status === "current" && "scale-110 rotate-3",
                     )}
@@ -305,13 +329,19 @@ export default function RouteStepper({
                         </span>
                       )}
                       {step.status === "current" && (
-                        <span className={cn(
-                          "text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider animate-pulse",
-                          step.id === 1 ? "text-green-700 bg-green-500/20" :
-                            step.id === 5 ? "text-indigo-700 bg-indigo-500/20" :
-                              "text-primary-foreground bg-primary px-2 shadow-sm"
-                        )}>
-                          {step.id === 4 && routeStatus === "ROADMAP_IN_PROGRESS" ? "En progreso" : "Activo ahora"}
+                        <span
+                          className={cn(
+                            "text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider animate-pulse",
+                            step.id === 1
+                              ? "text-green-700 bg-green-500/20"
+                              : step.id === 5
+                                ? "text-indigo-700 bg-indigo-500/20"
+                                : "text-primary-foreground bg-primary px-2 shadow-sm",
+                          )}
+                        >
+                          {step.id === 4 && routeStatus === "ROADMAP_IN_PROGRESS"
+                            ? "En progreso"
+                            : "Activo ahora"}
                         </span>
                       )}
                       {step.status === "locked" && (
@@ -320,18 +350,14 @@ export default function RouteStepper({
                           {step.id === 3 && "Se desbloquea al optimizar"}
                           {step.id === 4 && "Se desbloquea al ver matches"}
                           {step.id === 5 && (
-                            <span className="text-indigo-600/70 font-black">
-                              {step.tierLabel}
-                            </span>
+                            <span className="text-indigo-600/70 font-black">{step.tierLabel}</span>
                           )}
                           {![2, 3, 4, 5].includes(step.id) && "Bloqueado"}
                         </span>
                       )}
                     </div>
                     <h3 className="text-lg font-bold text-foreground">{step.title}</h3>
-                    <p className="text-sm text-muted-foreground mt-0.5">
-                      {step.description}
-                    </p>
+                    <p className="text-sm text-muted-foreground mt-0.5">{step.description}</p>
 
                     {/* Contenido Expandido Reutilizable */}
                     {step.status === "current" && step.expanded && (
@@ -339,25 +365,45 @@ export default function RouteStepper({
                         <div className="space-y-3">
                           <Button
                             variant="default"
-                            className="w-full py-7 text-base font-bold rounded-xl shadow-md hover:scale-[1.02] transition-all bg-primary hover:bg-primary/90"
+                            className={cn(
+                              "w-full py-7 text-base font-bold rounded-xl shadow-md transition-all",
+                              isProcessing
+                                ? "bg-muted text-muted-foreground cursor-not-allowed opacity-70 border-2 border-dashed border-border"
+                                : "bg-primary hover:bg-primary/90 hover:scale-[1.02]",
+                            )}
                             onClick={step.expanded.primaryAction.onClick}
+                            disabled={isProcessing}
                           >
-                            {step.expanded.primaryAction.icon && (
-                              <step.expanded.primaryAction.icon className="mr-2 h-5 w-5" />
+                            {isProcessing ? (
+                              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                            ) : (
+                              step.expanded.primaryAction.icon && (
+                                <step.expanded.primaryAction.icon className="mr-2 h-5 w-5" />
+                              )
                             )}
-                            {step.expanded.isReady
-                              ? step.expanded.primaryAction.readyLabel
-                              : step.expanded.primaryAction.label}
-                            {step.expanded.isReady && !step.expanded.primaryAction.icon && (
-                              <ArrowRight className="ml-2 h-5 w-5" />
-                            )}
+                            {isProcessing
+                              ? "Proceso en curso..."
+                              : step.expanded.isReady
+                                ? step.expanded.primaryAction.readyLabel
+                                : step.expanded.primaryAction.label}
+                            {!isProcessing &&
+                              step.expanded.isReady &&
+                              !step.expanded.primaryAction.icon && (
+                                <ArrowRight className="ml-2 h-5 w-5" />
+                              )}
                           </Button>
 
                           {step.expanded.secondaryAction && !step.expanded.isReady && (
                             <Button
                               variant="secondary"
-                              className="w-full py-7 text-base font-bold rounded-xl border-2 shadow-sm hover:scale-[1.02] transition-all"
+                              className={cn(
+                                "w-full py-7 text-base font-bold rounded-xl border-2 shadow-sm transition-all",
+                                isProcessing
+                                  ? "bg-muted/50 text-muted-foreground cursor-not-allowed opacity-50 border-dashed"
+                                  : "hover:scale-[1.02]",
+                              )}
                               onClick={step.expanded.secondaryAction.onClick}
+                              disabled={isProcessing}
                             >
                               {step.expanded.secondaryAction.icon && (
                                 <step.expanded.secondaryAction.icon className="mr-2 h-5 w-5" />
@@ -369,7 +415,9 @@ export default function RouteStepper({
 
                         <div className="pt-5 border-t border-dashed border-primary/20">
                           <p className="text-xs font-bold text-primary/80 uppercase tracking-widest mb-3">
-                            {step.expanded.isReady ? step.expanded.readyTitle : step.expanded.pendingTitle}
+                            {step.expanded.isReady
+                              ? step.expanded.readyTitle
+                              : step.expanded.pendingTitle}
                           </p>
                           <div className="flex flex-wrap gap-2">
                             {step.expanded.benefits.map((benefit, idx) => (
@@ -378,9 +426,11 @@ export default function RouteStepper({
                                 variant="secondary"
                                 className={cn(
                                   "font-bold border-none py-1 px-3",
-                                  idx === 0 ? "bg-levely-blue/10 text-primary" :
-                                    idx === 1 ? "bg-accent/10 text-primary" :
-                                      "bg-secondary/20 text-secondary-foreground"
+                                  idx === 0
+                                    ? "bg-levely-blue/10 text-primary"
+                                    : idx === 1
+                                      ? "bg-accent/10 text-primary"
+                                      : "bg-secondary/20 text-secondary-foreground",
                                 )}
                               >
                                 {benefit}
@@ -392,36 +442,51 @@ export default function RouteStepper({
                     )}
                   </div>
 
-                  {step.status !== "locked" && (
+                  {step.status !== "locked" &&
                     // Mostrar botón derecho SOLO si es el paso 5 (siempre visible) o si el paso está COMPLETADO
                     (step.status === "completed" || step.id === 5) && (
                       <div className="flex items-center gap-6 shrink-0 self-center pl-4 border-l border-border/50 ml-4">
                         {step.id === 5 && step.price && (
                           <div className="flex flex-col items-end">
-                            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-tighter">Precio</span>
+                            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-tighter">
+                              Precio
+                            </span>
                             <span className="text-base font-black text-indigo-600">
                               {step.price}
                             </span>
                           </div>
                         )}
                         <Button
-                          variant={step.status === "current" ? (step.id === 5 ? "secondary" : "default") : "outline"}
+                          variant={
+                            step.status === "current"
+                              ? step.id === 5
+                                ? "secondary"
+                                : "default"
+                              : "outline"
+                          }
                           className={cn(
                             "font-bold transition-all shadow-sm",
-                            step.status === "completed" ? "px-5 py-2 h-10 border-2 hover:bg-primary/5 hover:border-primary/50" : "px-6 py-6 h-12"
+                            step.status === "completed"
+                              ? "px-5 py-2 h-10 border-2 hover:bg-primary/5 hover:border-primary/50"
+                              : "px-6 py-6 h-12",
                           )}
+                          disabled={isProcessing && step.status !== "completed"}
                           onClick={() => {
                             startTransition(() => {
                               router.push(step.href);
                             });
                           }}
                         >
-                          {step.cta}
-                          <ArrowRight className="ml-2 h-4 w-4" />
+                          {isProcessing && step.status !== "completed" ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : null}
+                          {isProcessing && step.status !== "completed" ? "Procesando..." : step.cta}
+                          {(!isProcessing || step.status === "completed") && (
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          )}
                         </Button>
                       </div>
-                    )
-                  )}
+                    )}
                 </div>
 
                 {i < steps.length - 1 && (

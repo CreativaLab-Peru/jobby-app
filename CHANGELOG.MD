@@ -1,3 +1,9 @@
+# WIP
+
+## Enhancements
+
+- [LV-86ah0572u](https://app.clickup.com/t/86ah0572u) Implementación de ventanas flotantes para los procesos realizados por el usuario
+
 # v1.2.15 - 2026-04-23
 
 ## Enhancements

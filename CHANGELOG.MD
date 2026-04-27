@@ -2,6 +2,7 @@
 
 # Fixes
 
+- [LV-86ah46k4x](https://app.clickup.com/t/86ah46k4x) Responsive mejorado en el componente de pasos de rutas
 - [LV-86ah46hy0](https://app.clickup.com/t/86ah46hy0) Cambiado el nombre en el footer de "News letter" a "Newsletter"
 
 # v1.2.16 and v1.2.17 - 2026-04-27

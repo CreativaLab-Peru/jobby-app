@@ -9,10 +9,12 @@ import {PaddleProvider} from "@/features/billing/components/paddle-provider";
 import {getRoutesForUser} from "@/features/routes/actions/get-routes-for-user";
 import {RouteProvider} from "@/features/routes/components/route-provider";
 import {CreditsProvider} from "@/providers/credits-provider";
+import { FloatingTaskPanel } from "@/components/tasks/floating-task-panel";
+import { TaskHydrator } from "@/components/tasks/task-hydrator";
 
 export const dynamic = "force-dynamic";
 
-export default async function RootLayout({
+export default async function AuthenticatedLayout({
                                            children,
                                          }: Readonly<{ children: React.ReactNode }>) {
   const user = await getUser();
@@ -59,6 +61,8 @@ export default async function RootLayout({
               </div>
             </div>
           </main>
+          <FloatingTaskPanel />
+          <TaskHydrator />
         </RouteProvider>
       </PaddleProvider>
       {/*<TermsModal isOpen={!isTermsAccepted} userId={user?.id}/>*/}

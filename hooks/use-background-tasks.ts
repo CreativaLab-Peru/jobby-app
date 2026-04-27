@@ -1,44 +1,57 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, startTransition } from "react";
 import { useTaskStore } from "@/store/use-task-store";
 import { promoteTempAnalysisAction } from "@/features/onboarding/actions/promote-temp-analysis";
 import { getPipelineStatus } from "@/features/onboarding/actions/get-pipeline-status";
 import { getCvProcessingStatus } from "@/features/cv/actions/get-cv-processing-status";
 import { getRoutesForUser } from "@/features/routes/actions/get-routes-for-user";
 import { useRouteStore } from "@/store/use-route-store";
+import { generateRoadmapAction } from "@/features/roadmap/actions/generate-roadmap";
+import { getRoadmapStatus } from "@/features/roadmap/actions/get-roadmap-status";
 import { JobStatus } from "@prisma/client";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { addTransitionType } from "react";
 
 const activeIntervals = new Map<string, NodeJS.Timeout>();
 
 export function useBackgroundTasks() {
-  const { tasks, addTask, updateTask } = useTaskStore();
+  const { addTask, updateTask } = useTaskStore();
   const { hydrate } = useRouteStore();
+  const router = useRouter();
+
+  const navigateWithTransition = useCallback((path: string, type?: string) => {
+    startTransition(() => {
+      if (type) addTransitionType(type);
+      router.push(path);
+    });
+  }, [router]);
+
+  const getOriginPath = () => typeof window !== "undefined" ? window.location.pathname : "/";
 
   const startAnalysisTask = useCallback(async (tempCvEvaluationId: string, temporalUserId: string) => {
-    const taskId = `analysis-${tempCvEvaluationId}`;
-    
-    // Si ya hay un intervalo corriendo para esta tarea, no hacer nada
+    if (!tempCvEvaluationId || !temporalUserId) return;
+    const taskId = `ANALYSIS-${tempCvEvaluationId}`;
     if (activeIntervals.has(taskId)) return;
 
     addTask({
       id: taskId,
+      scopeId: tempCvEvaluationId,
       type: "ANALYSIS",
       title: "Análisis de Perfil",
       description: "Iniciando protocolo de migración y auditoría IA...",
+      originPath: "/onboarding",
+      routeParams: { tempCvEvaluationId, temporalUserId },
       metadata: { tempCvEvaluationId, temporalUserId }
     });
 
     try {
       const result = await promoteTempAnalysisAction({ tempCvEvaluationId, temporalUserId });
-
       if (!result.success || !result.cvId) {
-        updateTask(taskId, { status: "FAILED", description: "Error crítico: No se pudo crear la estructura.", error: "Promotion failed" });
+        updateTask(taskId, { status: "FAILED", description: "Error en la creación de estructura.", error: "Promotion failed" });
         return;
       }
-
-      updateTask(taskId, { description: "Estructura de CV creada. Iniciando auditoría...", progress: 20 });
 
       const pollInterval = setInterval(async () => {
         try {
@@ -46,31 +59,23 @@ export function useBackgroundTasks() {
           if (!res.success) {
             clearInterval(pollInterval);
             activeIntervals.delete(taskId);
-            updateTask(taskId, { status: "FAILED", description: res.error || "Error al obtener el estado de la migración.", error: res.error });
+            updateTask(taskId, { status: "FAILED", description: (res as any).error || "Error de conexión.", error: (res as any).error });
             return;
           }
 
           const { steps } = res;
-          
           if (steps.matches === JobStatus.FAILED || steps.analysis === JobStatus.FAILED || steps.config === JobStatus.FAILED) {
             clearInterval(pollInterval);
             activeIntervals.delete(taskId);
-            updateTask(taskId, { status: "FAILED", description: "El protocolo de auditoría ha fallado.", error: "Pipeline failed" });
+            updateTask(taskId, { status: "FAILED", description: "El protocolo de auditoría ha fallado." });
             return;
           }
 
           let progress = 20;
           let description = "Analizando trayectoria...";
-
           if (steps.config === JobStatus.SUCCEEDED) progress = 40;
-          if (steps.analysis === JobStatus.IN_PROGRESS) {
-              progress = 60;
-              description = "IA: Evaluando score y habilidades...";
-          }
-          if (steps.matches === JobStatus.IN_PROGRESS) {
-              progress = 80;
-              description = "Engine: Escaneando mercado global...";
-          }
+          if (steps.analysis === JobStatus.IN_PROGRESS) { progress = 60; description = "IA: Evaluando score..."; }
+          if (steps.matches === JobStatus.IN_PROGRESS) { progress = 80; description = "Engine: Escaneando mercado..."; }
 
           updateTask(taskId, { progress, description });
 
@@ -83,213 +88,205 @@ export function useBackgroundTasks() {
               description: "¡Análisis completado con éxito!",
               metadata: { ...res, onSuccessPath: "/dashboard" }
             });
-            
             const routesResult = await getRoutesForUser();
-            if (routesResult.success) {
-              hydrate(routesResult.routes);
-            }
-            toast.success("¡Análisis de perfil completado!");
+            if (routesResult.success) hydrate(routesResult.routes);
+            toast.success("¡Análisis completado!");
           }
         } catch (e) {
           clearInterval(pollInterval);
           activeIntervals.delete(taskId);
-          updateTask(taskId, { 
-            status: "FAILED", 
-            description: "Se perdió la conexión con el servidor de monitoreo.",
-            error: String(e)
-          });
+          updateTask(taskId, { status: "FAILED", description: "Error de red." });
         }
       }, 3000);
-
       activeIntervals.set(taskId, pollInterval);
-
     } catch (error) {
-      updateTask(taskId, { status: "FAILED", description: "Ocurrió un error inesperado.", error: String(error) });
+      updateTask(taskId, { status: "FAILED", description: "Error inesperado." });
     }
   }, [addTask, updateTask, hydrate]);
 
-  const startQuickMatchTask = useCallback(async (cvId: string) => {
-    const taskId = `quick-match-${cvId}`;
-    if (activeIntervals.has(taskId)) return;
-
-    addTask({
-      id: taskId,
-      type: "QUICK_MATCH",
-      title: "Sincronizando Perfil",
-      description: "Buscando oportunidades compatibles...",
-      metadata: { cvId }
-    });
-
-    let progress = 0;
-    const duration = 10000;
-    const interval = 100;
-    const stepIncrement = (interval / duration) * 100;
-
-    const progressTimer = setInterval(async () => {
-      progress += stepIncrement;
-      if (progress >= 100) {
-        clearInterval(progressTimer);
-        activeIntervals.delete(taskId);
-        updateTask(taskId, { 
-            status: "SUCCEEDED", 
-            progress: 100, 
-            description: "¡Sincronización completada!",
-            metadata: { cvId, onSuccessPath: "/my-opportunities" }
-        });
-
-        const routesResult = await getRoutesForUser();
-        if (routesResult.success) {
-          hydrate(routesResult.routes);
-        }
-        toast.success("¡Match rápido completado!");
-        return;
-      }
-      updateTask(taskId, { progress });
-    }, interval);
-
-    activeIntervals.set(taskId, progressTimer);
-  }, [addTask, updateTask, hydrate]);
-
   const startCvProcessingTask = useCallback(async (cvId: string) => {
-    const taskId = `cv-processing-${cvId}`;
+    if (!cvId) return;
+    const taskId = `CV_PROCESSING-${cvId}`;
     if (activeIntervals.has(taskId)) return;
 
     addTask({
       id: taskId,
+      scopeId: cvId,
       type: "CV_PROCESSING",
       title: "Procesando CV",
-      description: "Extrayendo habilidades y estructurando secciones...",
+      description: "Extrayendo habilidades con IA...",
+      originPath: `/cv/${cvId}/processing`,
+      routeParams: { cvId },
       metadata: { cvId }
     });
-
-    const poll = async () => {
-      try {
-        const result = await getCvProcessingStatus(cvId);
-        if (!result.success) {
-           updateTask(taskId, { status: "FAILED", description: result.error || "Error de conexión con el servidor." });
-           return true;
-        }
-
-        if (result.status === "SUCCEEDED") {
-          updateTask(taskId, { 
-              status: "SUCCEEDED", 
-              progress: 100, 
-              description: "¡CV procesado con éxito!",
-              metadata: { cvId, onSuccessPath: `/cv/${cvId}/preview` }
-          });
-          
-          const routesResult = await getRoutesForUser();
-          if (routesResult.success) {
-            hydrate(routesResult.routes);
-          }
-          toast.success("¡CV procesado!");
-          return true;
-        } else if (result.status === "FAILED") {
-          updateTask(taskId, { 
-            status: "FAILED", 
-            description: result.error || "La IA no pudo procesar este archivo. Revisa que no tenga contraseña.",
-            error: result.error
-          });
-          return true;
-        }
-        
-        updateTask(taskId, { progress: 50, description: "La IA está trabajando en tu perfil..." });
-        return false;
-      } catch (e) {
-        updateTask(taskId, { status: "FAILED", description: "Error al consultar estado del proceso." });
-        return true;
-      }
-    };
-
-    const intervalId = setInterval(async () => {
-      const finished = await poll();
-      if (finished) {
-        clearInterval(intervalId);
-        activeIntervals.delete(taskId);
-      }
-    }, 3000);
-
-    activeIntervals.set(taskId, intervalId);
-  }, [addTask, updateTask, hydrate]);
-
-  const startProgressTimelineTask = useCallback(async (cvId: string) => {
-    const taskId = `timeline-${cvId}`;
-    if (activeIntervals.has(taskId)) return;
-
-    addTask({
-      id: taskId,
-      type: "PROGRESS_TIMELINE",
-      title: "Evaluando Potencial",
-      description: "Analizando fortalezas y mejoras con IA...",
-      metadata: { cvId }
-    });
-
-    let step = 0;
-    updateTask(taskId, { progress: 10 });
-
-    const timeoutId = setTimeout(() => {
-        step = 1;
-        updateTask(taskId, { progress: 40, description: "Evaluando perfil..." });
-    }, 3000);
 
     const pollInterval = setInterval(async () => {
         try {
-            const res = await fetch(`/api/cv/${cvId}/status`).then(r => r.json());
+            const result = await getCvProcessingStatus(cvId);
+            if (!result.success) {
+                updateTask(taskId, { status: "FAILED", description: (result as any).error || "Error de red." });
+                clearInterval(pollInterval);
+                activeIntervals.delete(taskId);
+                return;
+            }
+
+            if (result.status === "SUCCEEDED") {
+                updateTask(taskId, { 
+                    status: "SUCCEEDED", 
+                    progress: 100, 
+                    description: "¡CV procesado!",
+                    metadata: { cvId, onSuccessPath: `/cv/${cvId}/preview` }
+                });
+                const routesResult = await getRoutesForUser();
+                if (routesResult.success) hydrate(routesResult.routes);
+                clearInterval(pollInterval);
+                activeIntervals.delete(taskId);
+                toast.success("CV procesado");
+            } else if (result.status === "FAILED") {
+                updateTask(taskId, { status: "FAILED", description: "Fallo en el procesamiento." });
+                clearInterval(pollInterval);
+                activeIntervals.delete(taskId);
+            } else {
+                updateTask(taskId, { progress: 50, description: "IA está trabajando..." });
+            }
+        } catch (e) {
+            clearInterval(pollInterval);
+            activeIntervals.delete(taskId);
+            updateTask(taskId, { status: "FAILED", description: "Error de conexión." });
+        }
+    }, 3000);
+    activeIntervals.set(taskId, pollInterval);
+  }, [addTask, updateTask, hydrate]);
+
+  const startProgressTimelineTask = useCallback(async (cvId: string) => {
+    if (!cvId) return;
+    const taskId = `PROGRESS_TIMELINE-${cvId}`;
+    if (activeIntervals.has(taskId)) return;
+
+    addTask({
+      id: taskId,
+      scopeId: cvId,
+      type: "PROGRESS_TIMELINE",
+      title: "Evaluando Potencial",
+      description: "Analizando fortalezas con IA...",
+      originPath: `/process/${cvId}`,
+      routeParams: { cvId },
+      metadata: { cvId }
+    });
+
+    const pollInterval = setInterval(async () => {
+        try {
+            const res = await fetch(`/api/cv/${cvId}/status?t=${Date.now()}`, { cache: 'no-store' }).then(r => r.json());
             if (!res) return;
 
-            // Mapeo exhaustivo de estados según progress-timeline.tsx original
-            if (res.status === "CV_EVALUATION_IN_PROGRESS" || res.status === "CV_EVALUATION_PENDING_EVALUATION") {
-                updateTask(taskId, { progress: 70, description: "Generando reporte de IA..." });
+            if (res.status === "CV_EVALUATION_IN_PROGRESS") {
+                updateTask(taskId, { progress: 70, description: "Generando reporte..." });
             }
 
             if (res.status === "CV_EVALUATION_FAILED" || res.status === "CV_FAILED") {
                 clearInterval(pollInterval);
-                clearTimeout(timeoutId);
                 activeIntervals.delete(taskId);
-                updateTask(taskId, { 
-                    status: "FAILED", 
-                    description: res.error || "La evaluación ha fallado. Reintenta más tarde.",
-                    error: res.error
-                });
+                updateTask(taskId, { status: "FAILED", description: "Fallo en evaluación." });
             }
 
             if (res.status === "CV_EVALUATION_SUCCEEDED" || res.status === "CV_EVALUATION_FINISHED") {
                 clearInterval(pollInterval);
-                clearTimeout(timeoutId);
                 activeIntervals.delete(taskId);
-                
                 updateTask(taskId, { 
                     status: "SUCCEEDED", 
                     progress: 100, 
                     description: "¡Evaluación finalizada!",
                     metadata: { cvId, onSuccessPath: `/my-evaluation/${res.evaluateId}` }
                 });
-
                 const routesResult = await getRoutesForUser();
-                if (routesResult.success) {
-                  hydrate(routesResult.routes);
-                }
-                toast.success("¡Evaluación completada!");
+                if (routesResult.success) hydrate(routesResult.routes);
+                toast.success("Evaluación lista");
             }
         } catch (e) {
             clearInterval(pollInterval);
-            clearTimeout(timeoutId);
             activeIntervals.delete(taskId);
-            updateTask(taskId, { 
-                status: "FAILED", 
-                description: "Se perdió la conexión con el servidor de evaluación.",
-                error: String(e)
-            });
+            updateTask(taskId, { status: "FAILED", description: "Error de red." });
         }
     }, 3000);
-
     activeIntervals.set(taskId, pollInterval);
+  }, [addTask, updateTask, hydrate]);
+
+  const startRoadmapTask = useCallback(async (opportunityId: string, cvId: string, routeId: string) => {
+    if (!opportunityId || !cvId || !routeId) return;
+    const taskId = `ROADMAP-${opportunityId}`;
+    if (activeIntervals.has(taskId)) return;
+
+    addTask({
+      id: taskId,
+      scopeId: opportunityId,
+      type: "ROADMAP_GENERATION",
+      title: "Diseñando Roadmap",
+      description: "La IA está trazando tu plan de carrera...",
+      originPath: `/opportunities/${opportunityId}`,
+      routeParams: { opportunityId, cvId, routeId },
+      metadata: { opportunityId, cvId, routeId }
+    });
+
+    try {
+      const result = await generateRoadmapAction({ opportunityId, cvId, routeId });
+      if (!result.success) {
+        updateTask(taskId, { status: "FAILED", description: result.message || "Error al iniciar roadmap." });
+        return;
+      }
+
+      // Si ya existe (200), terminamos de inmediato
+      if (result.status === 200 && result.data?.roadmapId) {
+          updateTask(taskId, { 
+            status: "SUCCEEDED", 
+            progress: 100, 
+            description: "¡Roadmap listo!",
+            metadata: { roadmapId: result.data.roadmapId, onSuccessPath: `/my-roadmaps/${result.data.roadmapId}` }
+          });
+          const routesResult = await getRoutesForUser();
+          if (routesResult.success) hydrate(routesResult.routes);
+          return;
+      }
+
+      const pollInterval = setInterval(async () => {
+        try {
+          const res = await getRoadmapStatus(opportunityId, cvId, routeId);
+          
+          if (res.status === "SUCCEEDED") {
+            clearInterval(pollInterval);
+            activeIntervals.delete(taskId);
+            updateTask(taskId, { 
+              status: "SUCCEEDED", 
+              progress: 100, 
+              description: "¡Roadmap generado con éxito!",
+              metadata: { roadmapId: res.roadmapId, onSuccessPath: `/my-roadmaps/${res.roadmapId}` }
+            });
+            const routesResult = await getRoutesForUser();
+            if (routesResult.success) hydrate(routesResult.routes);
+            toast.success("¡Roadmap listo!");
+          } else if (res.status === "FAILED") {
+            clearInterval(pollInterval);
+            activeIntervals.delete(taskId);
+            updateTask(taskId, { status: "FAILED", description: "No se pudo generar el roadmap." });
+          } else {
+            updateTask(taskId, { progress: 60, description: "IA: Diseñando hitos y tareas..." });
+          }
+        } catch (e) {
+          clearInterval(pollInterval);
+          activeIntervals.delete(taskId);
+          updateTask(taskId, { status: "FAILED", description: "Error de red." });
+        }
+      }, 3000);
+      activeIntervals.set(taskId, pollInterval);
+    } catch (error) {
+      updateTask(taskId, { status: "FAILED", description: "Error inesperado." });
+    }
   }, [addTask, updateTask, hydrate]);
 
   return {
     startAnalysisTask,
-    startQuickMatchTask,
     startCvProcessingTask,
-    startProgressTimelineTask
+    startProgressTimelineTask,
+    startRoadmapTask,
+    navigateWithTransition
   };
 }

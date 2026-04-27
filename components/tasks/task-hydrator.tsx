@@ -15,8 +15,8 @@ export function TaskHydrator() {
   const hydratedTasks = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    // Buscar tareas que quedaron en IN_PROGRESS al recargar la página
-    tasks.forEach((task) => {
+    // El store ahora es un Record, iteramos sobre sus valores
+    Object.values(tasks).forEach((task) => {
       if (task.status === "IN_PROGRESS" && !hydratedTasks.current.has(task.id)) {
         hydratedTasks.current.add(task.id);
         

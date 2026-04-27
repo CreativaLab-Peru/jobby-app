@@ -3,8 +3,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  ChevronDown, 
-  ChevronUp, 
   X, 
   Loader2, 
   CheckCircle2, 
@@ -15,7 +13,6 @@ import {
   Sparkles,
   Rocket,
   Search,
-  ShieldCheck,
   FileText
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -32,13 +29,16 @@ const ICON_MAP = {
 };
 
 export function FloatingTaskPanel() {
-  const { tasks, removeTask } = useTaskStore();
+  const { tasks, removeTask, reset } = useTaskStore();
   const backgroundTasks = useBackgroundTasks();
   const [isMinimized, setIsMinimized] = useState(false);
 
-  if (tasks.length === 0) return null;
+  // Filtramos tareas inválidas o vacías para evitar "zombies"
+  const taskList = Object.values(tasks).filter(t => t.id && t.title);
+  
+  if (taskList.length === 0) return null;
 
-  const activeTasks = tasks.filter(t => t.status === "IN_PROGRESS");
+  const activeTasks = taskList.filter(t => t.status === "IN_PROGRESS");
 
   return (
     <div className="fixed top-6 right-6 z-[100] w-80 pointer-events-none">
@@ -68,6 +68,15 @@ export function FloatingTaskPanel() {
               <Button
                 variant="ghost"
                 size="icon"
+                className="h-7 w-7 rounded-full hover:bg-destructive/10 hover:text-destructive transition-colors"
+                title="Limpiar todo"
+                onClick={reset}
+              >
+                <X className="w-3 h-3" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-7 w-7 rounded-full"
                 onClick={() => setIsMinimized(!isMinimized)}
               >
@@ -77,22 +86,25 @@ export function FloatingTaskPanel() {
           </div>
 
           {/* Task List */}
-          <AnimatePresence>
+          <AnimatePresence initial={false}>
             {!isMinimized && (
               <motion.div
+                key="task-list-container"
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 className="p-4 space-y-4 overflow-y-auto"
               >
-                {tasks.map((task) => (
-                  <TaskItem 
-                    key={task.id} 
-                    task={task} 
-                    onRemove={() => removeTask(task.id)} 
-                    backgroundTasks={backgroundTasks}
-                  />
-                ))}
+                <AnimatePresence mode="popLayout">
+                    {taskList.map((task) => (
+                      <TaskItem 
+                        key={task.id} 
+                        task={task} 
+                        onRemove={() => removeTask(task.id)} 
+                        backgroundTasks={backgroundTasks}
+                      />
+                    ))}
+                </AnimatePresence>
               </motion.div>
             )}
           </AnimatePresence>
@@ -125,13 +137,10 @@ function TaskItem({
   const Icon = ICON_MAP[task.type] || Terminal;
 
   const handleRetry = () => {
-    onRemove(); // Quitar la tarea fallida antes de reintentar
+    onRemove();
     switch (task.type) {
       case "ANALYSIS":
         backgroundTasks.startAnalysisTask(task.metadata.tempCvEvaluationId, task.metadata.temporalUserId);
-        break;
-      case "QUICK_MATCH":
-        backgroundTasks.startQuickMatchTask(task.metadata.cvId);
         break;
       case "CV_PROCESSING":
         backgroundTasks.startCvProcessingTask(task.metadata.cvId);
@@ -139,6 +148,28 @@ function TaskItem({
       case "PROGRESS_TIMELINE":
         backgroundTasks.startProgressTimelineTask(task.metadata.cvId);
         break;
+    }
+  };
+
+  const handleNavigate = () => {
+    // Reconstrucción dinámica de URL para Deep Linking
+    let finalPath = task.originPath;
+    
+    if (task.routeParams) {
+        // Ejemplo: Si originPath es /cv/:cvId/processing y routeParams es {cvId: "123"}
+        // Reemplazamos los tokens si existen, o simplemente usamos la lógica guardada
+        Object.entries(task.routeParams).forEach(([key, value]) => {
+            finalPath = finalPath.replace(`:${key}`, value);
+        });
+    }
+
+    backgroundTasks.navigateWithTransition(finalPath, "nav-back");
+  };
+
+  const handleSeeResults = () => {
+    if (task.metadata?.onSuccessPath) {
+        backgroundTasks.navigateWithTransition(task.metadata.onSuccessPath, "nav-forward");
+        onRemove();
     }
   };
 
@@ -180,32 +211,41 @@ function TaskItem({
             )}
           </div>
           
-          <p className={cn(
-            "text-[10px] line-clamp-2 mb-2 leading-tight font-medium",
-            task.status === "FAILED" ? "text-destructive" : "text-muted-foreground"
-          )}>
-            {task.status === "FAILED" && task.error ? task.error : task.description}
-          </p>
+          <div className="flex flex-col gap-1 mb-2">
+            <p className={cn(
+                "text-[10px] line-clamp-2 leading-tight font-medium",
+                task.status === "FAILED" ? "text-destructive" : "text-muted-foreground"
+            )}>
+                {task.status === "FAILED" && task.error ? task.error : task.description}
+            </p>
+            <span className="text-[8px] text-muted-foreground/60 font-mono truncate">
+              ID: {task.scopeId}
+            </span>
+          </div>
           
           {task.status === "IN_PROGRESS" && (
-            <div className="space-y-1">
+            <div className="space-y-1 mb-2">
               <Progress value={task.progress} className="h-1 bg-primary/10" />
-              <div className="flex justify-end">
+              <div className="flex justify-between items-center">
+                <Button 
+                    variant="link" 
+                    className="h-auto p-0 text-[8px] text-muted-foreground underline"
+                    onClick={handleNavigate}
+                >
+                    Ir al origen
+                </Button>
                 <span className="text-[9px] font-bold text-primary">{Math.round(task.progress)}%</span>
               </div>
             </div>
           )}
 
           <div className="flex items-center gap-3">
-              {task.status === "SUCCEEDED" && task.metadata?.onSuccessPath && (
+              {task.status === "SUCCEEDED" && (
                 <Button 
                     variant="link" 
                     size="sm" 
                     className="h-auto p-0 text-[10px] font-bold uppercase text-primary"
-                    onClick={() => {
-                        window.location.href = task.metadata.onSuccessPath;
-                        onRemove();
-                    }}
+                    onClick={handleSeeResults}
                 >
                     Ver resultados
                 </Button>

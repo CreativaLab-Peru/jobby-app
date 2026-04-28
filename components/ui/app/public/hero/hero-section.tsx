@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Sparkles, ArrowRight } from "lucide-react";
 import Link from "next/link";
@@ -6,6 +8,16 @@ import heroBgLight from "@/public/hero/hero_black.png";
 import heroBgDark from "@/public/hero/hero_light.png";
 
 export function HeroSection() {
+  const words = ["la beca", "la pasantia", "el intercambio", "el ÉXITO"];
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % words.length);
+    }, 2000); // Cambia cada 2 segundos
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section className="relative overflow-hidden min-h-[90vh] flex items-center">
       {/* Background images for light and dark mode */}
@@ -39,26 +51,49 @@ export function HeroSection() {
             className="headline-xl max-w-4xl text-balance animate-fade-up text-[#1b292d] dark:text-white"
             style={{ animationDelay: "0.1s" }}
           >
-            Convierte tu perfil en oportunidades reales
+            Descubre si tu CV está listo para{" "}
+            <span className="inline-flex relative h-[1.2em] align-top overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={words[index]}
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -20, opacity: 0 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  className="text-primary dark:text-accent font-bold"
+                >
+                  {words[index]}
+                </motion.span>
+              </AnimatePresence>
+            </span>{" "}
+            que quieres ganar
           </h1>
 
-          {/* Subheadline */}
-          <p
-            className="mt-6 text-lg sm:text-xl text-muted-foreground max-w-2xl text-balance animate-fade-up"
+          <div
+            className="mt-6 flex flex-col items-center gap-1 animate-fade-up"
             style={{ animationDelay: "0.2s" }}
           >
-            Accede a prácticas, trabajos y becas con guía inteligente y oportunidades alineadas a tu
-            perfil.
-          </p>
+            <p className="text-lg sm:text-xl text-muted-foreground text-center">
+              Crea o sube tu CV y en 2 minutos obtienes tu score,
+            </p>
+            <span className="text-lg sm:text-xl font-bold text-primary dark:text-accent text-center px-2 py-0.5 rounded-lg">
+              recomendaciones específicas para Chevening, Fulbright o DAAD,
+            </span>
+            <p className="text-lg sm:text-xl text-muted-foreground text-center">
+              y un roadmap paso a paso para aplicar con ventaja.
+            </p>
+          </div>
 
           {/* CTA */}
           <div className="mt-10 animate-fade-up" style={{ animationDelay: "0.3s" }}>
-            <Link href="/onboarding/talents">
-              <Button variant="hero" size="xl" className="cursor-pointer">
-                Empezar
+            <Button asChild variant="hero" size="xl" className="cursor-pointer">
+              <Link href="/onboarding/talents">
+                Analizar mi CV gratis
                 <ArrowRight className="w-5 h-5 ml-1" />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
+
+            <span className="block text-sm text-muted-foreground mt-2">No necesitas tarjeta</span>
           </div>
 
           {/* Social proof */}

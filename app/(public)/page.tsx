@@ -16,11 +16,11 @@ const Index = () => {
         <HeroSection />
         <LogosSection />
         <CVBuilderPreview />
-        <RoadmapPreview />
+        {/*<RoadmapPreview />*/}
         {/*<CareerAcceleratorTeaser />*/}
-        <TargetAudience />
+        {/*<TargetAudience />*/}
         <TestimoniosCarousel />
-        <CTASection />
+        {/*<CTASection />*/}
       </div>
     </PublicPageTransition>
   );

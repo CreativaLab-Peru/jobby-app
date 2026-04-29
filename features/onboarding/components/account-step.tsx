@@ -35,9 +35,7 @@ export function AccountStep({ user, isSignedIn }: AccountStepProps) {
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="space-y-2 text-center">
         <h2 className="text-2xl font-bold">
-          {formData?.name
-            ? `¡Hola de nuevo, ${formData?.name?.split(" ")?.[0]}!`
-            : "Crea tu cuenta"}
+          {formData?.name ? `¡Hola, ${formData?.name?.split(" ")?.[0]}!` : "Crea tu cuenta"}
         </h2>
         <p className="text-muted-foreground">
           {user
@@ -112,21 +110,12 @@ export function AccountStep({ user, isSignedIn }: AccountStepProps) {
             text="Registrarse con Google"
             callbackURL="/onboarding/talents"
             mode="signUp"
-            disabled={!formData.acceptedTerms}
           />
         </div>
       )}
 
-      {/* Checkbox de términos */}
       <div className="flex items-start gap-2 text-sm">
-        <input
-          type="checkbox"
-          className="w-4 h-4 accent-primary mt-0.5"
-          checked={formData.acceptedTerms}
-          onChange={(e) => updateFormData({ acceptedTerms: e.target.checked })}
-        />
-
-        <span className="text-muted-foreground leading-snug">
+        <span className="text-muted-foreground leading-snug text-center w-full">
           Al crear tu cuenta aceptas los{" "}
           <Link
             href="/terminos-y-condiciones"
@@ -149,7 +138,6 @@ export function AccountStep({ user, isSignedIn }: AccountStepProps) {
         </span>
       </div>
 
-      {/* Login + error centrados */}
       <div className="flex flex-col items-center gap-2 text-sm">
         <div>
           <span className="text-muted-foreground">¿Ya tienes una cuenta? </span>
@@ -157,12 +145,6 @@ export function AccountStep({ user, isSignedIn }: AccountStepProps) {
             Inicia sesión
           </Link>
         </div>
-
-        {errors.acceptedTerms && (
-          <span className="text-destructive text-xs font-medium text-center">
-            {errors.acceptedTerms}
-          </span>
-        )}
       </div>
     </div>
   );

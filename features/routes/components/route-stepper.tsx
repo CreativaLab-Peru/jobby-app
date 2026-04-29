@@ -253,7 +253,7 @@ export default function RouteStepper({
 
   return (
     <main className="min-h-[90vh] p-4 md:p-8">
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-5xl">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -280,20 +280,18 @@ export default function RouteStepper({
               >
                 <div
                   className={cn(
-                    "relative flex items-start gap-5 p-6 rounded-2xl border transition-all duration-500",
-                    // Completado: Elegante y compacto en verde
+                    "relative flex flex-col md:flex-row items-start gap-5 p-6 rounded-2xl border transition-all duration-500",
                     step.status === "completed" &&
                       "bg-gradient-to-r from-green-50/30 to-background border-green-100 dark:from-green-950/5 dark:border-green-900/30 opacity-90 hover:opacity-100",
-                    // Activo: El foco principal, vibrante y expandido
                     step.status === "current" &&
                       (step.id === 5
                         ? "bg-gradient-to-br from-indigo-50/80 via-white to-background dark:from-indigo-950/20 dark:to-background border-indigo-300 shadow-xl shadow-indigo-500/10 ring-1 ring-indigo-500/30"
                         : "bg-gradient-to-br from-primary/10 via-primary/[0.02] to-background border-primary/40 shadow-2xl shadow-primary/20 ring-1 ring-primary/30"),
-                    // Bloqueado: Mínimo y discreto
                     step.status === "locked" &&
                       "bg-muted/10 border-border/40 opacity-40 grayscale-[0.5]",
                   )}
                 >
+                  {/* Icono del paso */}
                   <div
                     className={cn(
                       "flex items-center justify-center h-12 w-12 rounded-xl shrink-0 transition-all duration-500",
@@ -318,8 +316,8 @@ export default function RouteStepper({
                     )}
                   </div>
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
+                  <div className="flex-1 min-w-0 w-full">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
                       <span className="text-xs font-semibold text-muted-foreground uppercase">
                         Paso {step.id}
                       </span>
@@ -359,14 +357,13 @@ export default function RouteStepper({
                     <h3 className="text-lg font-bold text-foreground">{step.title}</h3>
                     <p className="text-sm text-muted-foreground mt-0.5">{step.description}</p>
 
-                    {/* Contenido Expandido Reutilizable */}
                     {step.status === "current" && step.expanded && (
                       <div className="mt-6 space-y-4">
-                        <div className="space-y-3">
+                        <div className="flex flex-col sm:flex-row gap-3">
                           <Button
                             variant="default"
                             className={cn(
-                              "w-full py-7 text-base font-bold rounded-xl shadow-md transition-all",
+                              "h-12 px-22 text-sm font-bold rounded-xl shadow-md transition-all",
                               isProcessing
                                 ? "bg-muted text-muted-foreground cursor-not-allowed opacity-70 border-2 border-dashed border-border"
                                 : "bg-primary hover:bg-primary/90 hover:scale-[1.02]",
@@ -397,7 +394,7 @@ export default function RouteStepper({
                             <Button
                               variant="secondary"
                               className={cn(
-                                "w-full py-7 text-base font-bold rounded-xl border-2 shadow-sm transition-all",
+                                "px-22 h-12 text-sm font-bold rounded-xl border-2 shadow-sm transition-all", // Reducido de py-7 a h-12
                                 isProcessing
                                   ? "bg-muted/50 text-muted-foreground cursor-not-allowed opacity-50 border-dashed"
                                   : "hover:scale-[1.02]",
@@ -442,51 +439,48 @@ export default function RouteStepper({
                     )}
                   </div>
 
-                  {step.status !== "locked" &&
-                    // Mostrar botón derecho SOLO si es el paso 5 (siempre visible) o si el paso está COMPLETADO
-                    (step.status === "completed" || step.id === 5) && (
-                      <div className="flex items-center gap-6 shrink-0 self-center pl-4 border-l border-border/50 ml-4">
-                        {step.id === 5 && step.price && (
-                          <div className="flex flex-col items-end">
-                            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-tighter">
-                              Precio
-                            </span>
-                            <span className="text-base font-black text-indigo-600">
-                              {step.price}
-                            </span>
-                          </div>
+                  {/* BOTÓN LATERAL */}
+                  {step.status !== "locked" && (step.status === "completed" || step.id === 5) && (
+                    <div className="w-full md:w-auto flex flex-row md:flex-col items-center md:items-end gap-4 md:gap-2 shrink-0 self-stretch md:self-center pt-4 md:pt-0 md:pl-5 border-t md:border-t-0 md:border-l border-border/50 mt-4 md:mt-0">
+                      {step.id === 5 && step.price && (
+                        <div className="flex flex-col items-start md:items-end flex-1 md:flex-none">
+                          <span className="text-[10px] font-black text-muted-foreground uppercase tracking-tighter">
+                            Precio
+                          </span>
+                          <span className="text-base font-black text-indigo-600">{step.price}</span>
+                        </div>
+                      )}
+                      <Button
+                        variant={
+                          step.status === "current"
+                            ? step.id === 5
+                              ? "secondary"
+                              : "default"
+                            : "outline"
+                        }
+                        className={cn(
+                          "font-bold transition-all shadow-sm w-full md:w-auto",
+                          step.status === "completed"
+                            ? "px-5 h-10 border-2 hover:bg-primary/5 hover:border-primary/50"
+                            : "px-6 h-11",
                         )}
-                        <Button
-                          variant={
-                            step.status === "current"
-                              ? step.id === 5
-                                ? "secondary"
-                                : "default"
-                              : "outline"
-                          }
-                          className={cn(
-                            "font-bold transition-all shadow-sm",
-                            step.status === "completed"
-                              ? "px-5 py-2 h-10 border-2 hover:bg-primary/5 hover:border-primary/50"
-                              : "px-6 py-6 h-12",
-                          )}
-                          disabled={isProcessing && step.status !== "completed"}
-                          onClick={() => {
-                            startTransition(() => {
-                              router.push(step.href);
-                            });
-                          }}
-                        >
-                          {isProcessing && step.status !== "completed" ? (
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          ) : null}
-                          {isProcessing && step.status !== "completed" ? "Procesando..." : step.cta}
-                          {(!isProcessing || step.status === "completed") && (
-                            <ArrowRight className="ml-2 h-4 w-4" />
-                          )}
-                        </Button>
-                      </div>
-                    )}
+                        disabled={isProcessing && step.status !== "completed"}
+                        onClick={() => {
+                          startTransition(() => {
+                            router.push(step.href);
+                          });
+                        }}
+                      >
+                        {isProcessing && step.status !== "completed" ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : null}
+                        {isProcessing && step.status !== "completed" ? "Procesando..." : step.cta}
+                        {(!isProcessing || step.status === "completed") && (
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
+                  )}
                 </div>
 
                 {i < steps.length - 1 && (

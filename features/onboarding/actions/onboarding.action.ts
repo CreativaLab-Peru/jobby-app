@@ -108,9 +108,13 @@ export async function completeOnboardingAction(id: string, body: TalentOnboardin
       });
 
 
-      // 2. Update user birthday (solo si existe y es válida)
+      // 2. Update user info
       const updateData: any = {
         name: data.name,
+        acceptedTermsAndConditions: true,
+        acceptedTermsAt: new Date(),
+        acceptedPrivacyPolicy: true,
+        acceptedPrivacyPolicyAt: new Date(),
       };
 
       if (data.birthDate && data.birthDate.trim() !== '') {

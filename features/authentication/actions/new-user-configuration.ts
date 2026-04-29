@@ -1,26 +1,26 @@
-"use server"
+"use server";
 
-import {prisma} from "@/lib/prisma";
-import {inngest} from "@/inngest/functions/client";
-import {PAYMENT_PLAN_ID_BY_DEFAULT} from "@/features/billing/consts/payment-plant-ids";
+import { prisma } from "@/lib/prisma";
+import { inngest } from "@/inngest/functions/client";
+import { PAYMENT_PLAN_ID_BY_DEFAULT } from "@/features/billing/consts/payment-plant-ids";
 
 export const newUserConfiguration = async (userId: string) => {
   try {
     const user = await prisma.user.findFirst({
       where: {
         id: userId,
-      }
-    })
+      },
+    });
     if (!user) {
-      console.error("[NOT_FOUND_USER]:", userId)
+      console.error("[NOT_FOUND_USER]:", userId);
       return false;
     }
 
     const planFree = await prisma.paymentPlan.findFirst({
       where: {
         id: PAYMENT_PLAN_ID_BY_DEFAULT,
-      }
-    })
+      },
+    });
     if (!planFree) {
       console.error("[PLAN_NOT_FOUND]", PAYMENT_PLAN_ID_BY_DEFAULT);
       return false;
@@ -30,12 +30,23 @@ export const newUserConfiguration = async (userId: string) => {
       data: {
         planId: PAYMENT_PLAN_ID_BY_DEFAULT,
         userId: user.id,
-      }
-    })
+      },
+    });
     if (!userPlan) {
       console.error("[CREATING_NEW_USER_PLAN_ERROR]:", userId);
       return false;
     }
+
+    // Actualizar términos y políticas
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        acceptedTermsAndConditions: true,
+        acceptedTermsAt: new Date(),
+        acceptedPrivacyPolicy: true,
+        acceptedPrivacyPolicyAt: new Date(),
+      },
+    });
 
     await inngest.send({
       name: "send/welcome",
@@ -43,7 +54,7 @@ export const newUserConfiguration = async (userId: string) => {
         email: user.email,
         name: user.name,
         userId: user.id,
-      }
+      },
     });
 
     return true;
@@ -51,4 +62,4 @@ export const newUserConfiguration = async (userId: string) => {
     console.error("[ERROR_NEW_USER_CONFIGURATION]", error);
     return false;
   }
-}
+};

@@ -138,7 +138,6 @@ export function AccountStep({ user, isSignedIn }: AccountStepProps) {
         </span>
       </div>
 
-      {/* Login centrados */}
       <div className="flex flex-col items-center gap-2 text-sm">
         <div>
           <span className="text-muted-foreground">¿Ya tienes una cuenta? </span>

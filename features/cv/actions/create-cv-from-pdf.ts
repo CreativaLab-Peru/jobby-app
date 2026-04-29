@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { v4 as uuidv4 } from "uuid";
-import { CreditBalanceType, Language, CvSectionType } from "@prisma/client";
+import { CreditBalanceType, Language, CvSectionType, RouteStatus } from "@prisma/client";
 import { savePdf } from "@/features/upload-cv/actions/save-pdf";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import { detectCv } from "@/features/cv/actions/verify-cv";
@@ -91,13 +91,28 @@ export async function createCvFromPdfAction(formData: FormData) {
         attachmentUrl: url,
         userId: currentUser.id,
         // Pasamos las secciones elegidas para que la IA sepa qué extraer prioritariamente
-        targetSections: selectedSections
+        targetSections: selectedSections,
       },
     });
 
     revalidatePath("/dashboard"); // O la ruta donde listes los CVs
-    return { success: true, cvId: cv.id };
 
+    // 8. Vincular a la ruta activa y actualizar progreso
+    const activeRoute = await prisma.route.findFirst({
+      where: { userId: currentUser.id, isActive: true, cvId: null },
+    });
+
+    if (activeRoute) {
+      await prisma.route.update({
+        where: { id: activeRoute.id },
+        data: {
+          cvId: cv.id,
+          status: RouteStatus.CV_CREATED,
+        },
+      });
+    }
+
+    return { success: true, cvId: cv.id };
   } catch (err) {
     console.error("[ERROR_CREATE_CV_FROM_PDF]", err);
     return { error: "No se pudo agregar tu CV" };

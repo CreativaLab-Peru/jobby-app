@@ -4,7 +4,7 @@ import { inngest } from "@/inngest/functions/client";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import { prisma } from "@/lib/prisma";
 import { getCurrentCreditLimits } from "@/features/credits/actions/get-current-credits-limits";
-import {JobStatus} from "@prisma/client";
+import { JobStatus } from "@prisma/client";
 
 export const analyzeCvById = async (cvId: string) => {
   try {
@@ -31,16 +31,17 @@ export const analyzeCvById = async (cvId: string) => {
     if (creditLimits.aiActionsLimit <= 0) {
       return {
         success: false,
-        message: "No tienes intentos disponibles para subir CVs. Por favor, actualiza tu plan."
+        message:
+          "No tienes créditos de IA disponibles para analizar CVs. Por favor, actualiza tu plan.",
       };
     }
 
     const newEvaluation = await prisma.cvEvaluation.create({
       data: {
         cvId: cvId,
-        status: JobStatus.IN_PROGRESS
-      }
-    })
+        status: JobStatus.IN_PROGRESS,
+      },
+    });
     if (!newEvaluation) {
       return { success: false, message: "Error al construir la evaluacion." };
     }
@@ -51,7 +52,7 @@ export const analyzeCvById = async (cvId: string) => {
       data: {
         cvId,
         userId: currentUser.id,
-        evaluationId: newEvaluation.id
+        evaluationId: newEvaluation.id,
       },
     });
 
@@ -60,12 +61,11 @@ export const analyzeCvById = async (cvId: string) => {
       message: "Análisis de CV iniciado.",
       data: { cvId },
     };
-
   } catch (error) {
     console.error("[ANALYZE_CV_BY_ID_ERROR]:", error);
     return {
       success: false,
-      message: "Error al iniciar el análisis del CV."
+      message: "Error al iniciar el análisis del CV.",
     };
   }
 };

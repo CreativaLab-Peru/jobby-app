@@ -37,7 +37,7 @@ const PAYMENT_METHODS: PaymentMethodOption[] = [
     name: "Pago en dolares",
     description: "Paddle",
     icon: CreditCard,
-    available: true,
+    available: false,
   },
 ]
 
@@ -111,6 +111,12 @@ export function PaymentMethodModal({
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">{method.description}</p>
                 </div>
+
+                {!method.available && (
+                  <span className="text-xs text-gray-400 font-semibold">
+                    En mantenimiento
+                  </span>
+                )}
               </button>
             )
           })}

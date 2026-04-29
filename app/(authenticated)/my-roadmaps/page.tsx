@@ -1,17 +1,28 @@
-import { getRoadmapsForUser } from "@/features/roadmap/actions/get-roadmaps-for-user";
+import {getRoadmapsForUser} from "@/features/roadmap/actions/get-roadmaps-for-user";
 import MyRoadmapsScreen from "@/features/roadmap/components/my-roadmaps-screen";
-import { getOpportunitiesForActiveRoute } from "@/features/routes/actions/get-opportunities-for-active-route";
-import { getStatisticsForUser } from "@/features/dashboard/actions/get-statistics-for-user";
+import {
+  getOpportunitiesForActiveRoute
+} from "@/features/routes/actions/get-opportunities-for-active-route";
+import {getStatisticsForUser} from "@/features/dashboard/actions/get-statistics-for-user";
 
-export default async function MyRoadmapsPage() {
+interface MyRoadmapsPageProps {
+  searchParams?: Promise<{
+    openedModal?: boolean;
+  }>
+}
+
+export default async function MyRoadmapsPage({searchParams}: MyRoadmapsPageProps) {
+  const {openedModal = false} = searchParams ? await searchParams : {};
+
   const [data, opportunitiesData, stats] = await Promise.all([
-    getRoadmapsForUser({ skip: 0, take: 10 }),
-    getOpportunitiesForActiveRoute({ skip: 0, take: 10 }),
+    getRoadmapsForUser({skip: 0, take: 10}),
+    getOpportunitiesForActiveRoute({skip: 0, take: 10}),
     getStatisticsForUser(),
   ]);
 
   const planSlug = stats?.subscription?.plan?.slug;
   const planTier = planSlug === "pro" ? "PRO" : planSlug === "starter" ? "STARTER" : "FREE";
+  const openedModalMapped = Boolean(openedModal) ?? false;
 
   return (
     <MyRoadmapsScreen
@@ -21,6 +32,7 @@ export default async function MyRoadmapsPage() {
       initialOpportunities={opportunitiesData?.opportunities ?? []}
       hasCv={opportunitiesData?.hasCv ?? false}
       planTier={planTier}
+      openedModal={openedModalMapped}
     />
   );
 }

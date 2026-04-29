@@ -4,16 +4,16 @@ export const talentOnboardingBaseSchema = z.object({
   name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
   birthDate: z.string().optional(),
   country: z.string().min(1, "El país es requerido"),
-  targetIndustries: z.array(z.string()).min(1, "Selecciona al menos una industria"),
-  preferredRoles: z.array(z.string()).min(1, "Selecciona al menos un rol"),
+  targetIndustries: z.array(z.string()).optional().default([]),
+  preferredRoles: z.array(z.string()).optional().default([]),
   expLevel: z.string().min(1, "Selecciona tu nivel de experiencia"),
-  workModality: z.array(z.string()).min(1, "Selecciona al menos una modalidad"),
+  workModality: z.array(z.string()).optional().default([]),
   relocation: z.boolean().default(false),
-  availability: z.array(z.string()).min(1, "Selecciona disponibilidad"),
+  availability: z.array(z.string()).optional().default([]),
   skills: z.array(z.object({
     name: z.string(),
     level: z.enum(['Intermedio', 'Avanzado'])
-  })).min(3, "Agrega al menos 3 habilidades"),
+  })).optional().default([]),
   portfolioUrl: z.string().optional().or(z.literal("")),
   minSalary: z.coerce.number().min(0).optional(),
   currency: z.enum(['PEN', 'USD']).default('USD'),
@@ -27,11 +27,10 @@ export const talentOnboardingBaseSchema = z.object({
     .optional()
     .or(z.literal("")),
   confirmPassword: z.string().optional().or(z.literal("")),
-  acceptedTerms: z.boolean().refine((val) => val === true, {
-    message: "Debes aceptar los términos y condiciones",
-  }),
+  acceptedTerms: z.boolean().default(true),
   opportunityTypes: z.array(z.string()).min(1, "Selecciona al menos un tipo de oportunidad"),
   image: z.string().optional().nullable(),
+  beca: z.string().optional().or(z.literal("")),
 });
 
 // 2. Esquema Final (Con refinamientos para el registro final)

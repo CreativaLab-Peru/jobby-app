@@ -44,9 +44,11 @@ export function AvailabilityStep() {
 
       <div className="text-center sm:text-left space-y-2">
         <h2 className="text-2xl font-bold tracking-tight">Tu disponibilidad</h2>
-        <p className="text-muted-foreground italic text-sm">
-          ¿Cómo te gustaría comprometerte? Puedes elegir varias opciones.
-        </p>
+        <div className="max-w-lg mx-auto">
+          <p className="text-muted-foreground italic text-sm">
+            Selecciona la intensidad de dedicación para tu ruta hacia las becas, programas y oportunidades globales
+          </p>
+        </div>
       </div>
 
       {errors.availability && (

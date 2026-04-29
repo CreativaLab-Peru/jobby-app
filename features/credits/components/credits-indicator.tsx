@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Zap, Sparkles, FileText, Plus } from "lucide-react";
 import { CreditLimits } from "@/features/credits/actions/get-current-credits-limits";
@@ -22,7 +18,8 @@ export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
   const router = useRouter();
 
   const collapsed = state === "collapsed";
-  const totalAvailable = limits.manageCvsLimit + limits.aiActionsLimit + limits.opportunitiesActionsLimit;
+  const totalAvailable =
+    limits.manageCvsLimit + limits.aiActionsLimit + limits.opportunitiesActionsLimit;
   const isEmpty = totalAvailable === 0;
 
   const handleRechargeCredits = () => {
@@ -35,14 +32,14 @@ export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
         <button
           className={cn(
             "group flex items-center gap-2 rounded-xl border border-border bg-card p-2 transition-all hover:bg-secondary/80 hover:shadow-sm",
-            collapsed ? "w-10 h-10 justify-center" : "w-full px-3 py-2"
+            collapsed ? "w-10 h-10 justify-center" : "w-full px-3 py-2",
           )}
         >
           <div className="relative">
             <Zap
               className={cn(
                 "h-5 w-5 transition-transform group-hover:scale-110",
-                isEmpty ? "text-muted-foreground" : "text-yellow-500 fill-yellow-500"
+                isEmpty ? "text-muted-foreground" : "text-yellow-500 fill-yellow-500",
               )}
             />
             {isEmpty && (
@@ -59,9 +56,7 @@ export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
                 className="flex flex-1 items-center justify-between"
               >
                 <div className="flex flex-col items-start leading-none">
-                  <span className="text-[10px] font-bold text-muted-foreground">
-                    Créditos
-                  </span>
+                  <span className="text-[10px] font-bold text-muted-foreground">Créditos</span>
                   <span className="text-xs font-bold text-foreground">
                     {totalAvailable} disponibles
                   </span>
@@ -106,13 +101,16 @@ export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
           <Separator className="bg-border/50" />
 
           {isEmpty ? (
-            <div className="space-y-3">
-              <p className="text-[11px] text-balance text-destructive font-medium text-center">
-                ¡Sin combustible! Recarga para seguir acelerando tu carrera.
-              </p>
+            <div className="space-y-3 w-full">
+              <div className="px-3 py-2 rounded-xl">
+                <p className="text-xs text-balance text-red-400 font-bold text-center flex items-center justify-center gap-1.5">
+                  ¡Sin combustible! Recarga para seguir acelerando.
+                </p>
+              </div>
+
               <Button
                 size="sm"
-                className="w-full font-bold"
+                className="w-full font-black uppercase tracking-tight h-10 shadow-md hover:scale-[1.02] transition-transform"
                 variant="accent"
                 onClick={handleRechargeCredits}
               >
@@ -136,7 +134,15 @@ export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
 }
 
 // Sub-componente interno para mantener el código limpio (KISS)
-function CreditRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) {
+function CreditRow({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: number;
+}) {
   return (
     <div className="flex items-center justify-between text-xs">
       <div className="flex items-center gap-2 text-muted-foreground text-xs">

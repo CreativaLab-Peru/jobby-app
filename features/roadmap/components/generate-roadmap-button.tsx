@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { Map, Loader2, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { getRoadmapStatus } from "@/features/roadmap/actions/get-roadmap-status";
-import { useRouteStore } from "@/store/use-route-store";
-import { getRoutesForUser } from "@/features/routes/actions/get-routes-for-user";
-import { generateRoadmapAction } from "@/features/roadmap/actions/generate-roadmap";
+import { useBackgroundTasks } from "@/hooks/use-background-tasks";
+import { useTaskStore } from "@/store/use-task-store";
+import { cn } from "@/lib/utils";
 
 interface GenerateRoadmapButtonProps {
   opportunityId: string;
@@ -23,123 +21,31 @@ export function GenerateRoadmapButton({
   opportunityId,
   cvId,
   routeId = null,
-  existingStatus,
-  onGenerated,
   canGenerate = true,
   blockedMessage = null,
 }: GenerateRoadmapButtonProps) {
-  const [status, setStatus] = useState(existingStatus);
-  const [isTriggering, setIsTriggering] = useState(false);
+  const { startRoadmapTask } = useBackgroundTasks();
+  // Lookup por Scope ID (opportunityId)
+  const task = useTaskStore((state) => state.tasks[opportunityId]);
+  const [isLocalTriggering, setIsLocalTriggering] = useState(false);
 
-  const isProcessing = status === "PENDING" || status === "IN_PROGRESS";
-  const showFullscreenLoading = isTriggering || isProcessing;
-
-  const {hydrate} = useRouteStore();
-
-  // Poll while processing
-  useEffect(() => {
-    if (!isProcessing) return;
-
-    const interval = setInterval(async () => {
-      const result = await getRoadmapStatus(opportunityId, cvId, routeId);
-      setStatus(result.status);
-
-      if (result.status === "SUCCEEDED") {
-        clearInterval(interval);
-
-        const routesResult = await getRoutesForUser();
-        if (!routesResult.success) {
-          toast.error(routesResult.message || "Roadmap generado, pero no se pudieron cargar las rutas.");
-          return;
-        }
-        hydrate(routesResult.routes);
-
-        toast.success("¡Roadmap generado!");
-        onGenerated(result.roadmapId || "");
-      } else if (result.status === "FAILED") {
-        clearInterval(interval);
-        toast.error("Error al generar el roadmap. Intenta de nuevo.");
-      }
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [isProcessing, opportunityId, cvId, onGenerated, routeId, hydrate]);
+  const isProcessing = task?.status === "IN_PROGRESS";
 
   const handleGenerate = useCallback(async () => {
-    setIsTriggering(true);
-    try {
-      const result = await generateRoadmapAction({ opportunityId, cvId, routeId });
+    if (!routeId) return;
+    setIsLocalTriggering(true);
+    await startRoadmapTask(opportunityId, cvId, routeId);
+    setIsLocalTriggering(false);
+  }, [opportunityId, cvId, routeId, startRoadmapTask]);
 
-      if (!result.success) {
-        toast.error(result.message || "Error al iniciar el roadmap.");
-        return;
-      }
-
-      if (result.status === 200) {
-        // Already exists
-        onGenerated(result.data?.roadmapId || "");
-        return;
-      }
-
-      setStatus("IN_PROGRESS");
-      toast.info("Generando roadmap con IA...");
-    } catch {
-      toast.error("Error de conexión.");
-    } finally {
-      setIsTriggering(false);
-    }
-  }, [opportunityId, cvId, routeId, onGenerated]);
-
-  if (isProcessing) {
-    return (
-      <>
-        <Button disabled size="sm" variant="outline" className="rounded-xl font-bold text-xs">
-          <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" />
-          Generando roadmap...
-        </Button>
-        {showFullscreenLoading && (
-          <div className="fixed inset-0 z-[120] bg-background/95 backdrop-blur-sm flex items-center justify-center">
-            <div className="text-center space-y-4 px-6">
-              <div className="mx-auto h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-                <Loader2 className="h-7 w-7 text-primary animate-spin" />
-              </div>
-              <div className="space-y-1">
-                <p className="text-lg font-black tracking-tight">Generando tu roadmap</p>
-                <p className="text-sm text-muted-foreground">
-                  Estamos construyendo tu plan personalizado. Esto puede tardar unos segundos.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-      </>
-    );
-  }
-
-  if (status === "FAILED") {
-    return (
-      <Button
-        onClick={handleGenerate}
-        disabled={isTriggering}
-        size="sm"
-        variant="destructive"
-        className="rounded-xl font-bold text-xs"
-      >
-        <RefreshCcw className="w-3.5 h-3.5 mr-2" />
-        Reintentar roadmap
-      </Button>
-    );
+  if (task?.status === "SUCCEEDED") {
+    return null;
   }
 
   if (!canGenerate) {
     return (
       <div className="space-y-2">
-        <Button
-          disabled
-          size="sm"
-          variant="outline"
-          className="rounded-xl font-bold text-xs"
-        >
+        <Button disabled size="sm" variant="outline" className="rounded-xl font-bold text-xs">
           <Map className="w-3.5 h-3.5 mr-2" />
           Roadmap bloqueado
         </Button>
@@ -150,42 +56,37 @@ export function GenerateRoadmapButton({
     );
   }
 
-  // No roadmap yet or needs generation
-  if (!status || status !== "SUCCEEDED") {
-    return (
-      <>
-        <Button
-          onClick={handleGenerate}
-          disabled={isTriggering}
-          size="sm"
-          className="rounded-xl font-bold text-xs"
-        >
-          {isTriggering ? (
-            <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" />
-          ) : (
-            <Map className="w-3.5 h-3.5 mr-2" />
-          )}
-          Generar Roadmap con IA
-        </Button>
-        {showFullscreenLoading && (
-          <div className="fixed inset-0 z-[120] bg-background/95 backdrop-blur-sm flex items-center justify-center">
-            <div className="text-center space-y-4 px-6">
-              <div className="mx-auto h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-                <Loader2 className="h-7 w-7 text-primary animate-spin" />
-              </div>
-              <div className="space-y-1">
-                <p className="text-lg font-black tracking-tight">Generando tu roadmap</p>
-                <p className="text-sm text-muted-foreground">
-                  Estamos construyendo tu plan personalizado. Esto puede tardar unos segundos.
-                </p>
-              </div>
-            </div>
-          </div>
+  return (
+    <div className="flex flex-col gap-2">
+      <Button
+        onClick={handleGenerate}
+        disabled={isProcessing || isLocalTriggering}
+        size="sm"
+        variant={task?.status === "FAILED" ? "destructive" : "default"}
+        className={cn(
+          "rounded-xl font-bold text-xs transition-all duration-300",
+          isProcessing && "bg-primary/20 text-primary border-primary/20",
         )}
-      </>
-    );
-  }
+      >
+        {isProcessing || isLocalTriggering ? (
+          <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" />
+        ) : task?.status === "FAILED" ? (
+          <RefreshCcw className="w-3.5 h-3.5 mr-2" />
+        ) : (
+          <Map className="w-3.5 h-3.5 mr-2" />
+        )}
+        {isProcessing
+          ? `Diseñando Roadmap (${task.progress}%)`
+          : task?.status === "FAILED"
+            ? "Reintentar Roadmap"
+            : "Generar Roadmap con IA"}
+      </Button>
 
-  return null;
+      {isProcessing && (
+        <p className="text-[10px] text-muted-foreground italic animate-pulse">
+          El proceso continúa en segundo plano. Puedes seguir explorando.
+        </p>
+      )}
+    </div>
+  );
 }
-

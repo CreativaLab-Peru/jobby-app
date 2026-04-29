@@ -26,7 +26,8 @@ import {
   LayoutDashboard, FileText, MessageSquare, MessageSquareWarning,
   Activity, Briefcase, CreditCard, Settings, Users, BarChart3,
   Tag, Wallet, Mic, Shield, Receipt, X, Map, Coins,
-  FileCheckIcon
+  FileCheckIcon,
+  LayoutDashboardIcon
 } from "lucide-react";
 
 import { ProfileButton } from "@/components/profile-button";
@@ -34,8 +35,8 @@ import { ThemeToggle } from "@/components/button-toggle-theme";
 import { CreditsIndicator } from "@/features/credits/components/credits-indicator";
 import { RouteSelector } from "@/features/routes/components/route-selector";
 import { CreditLimits } from "@/features/credits/actions/get-current-credits-limits";
-import {Button} from "@/components/ui/button";
-import {useCreditsStore} from "@/store/use-credits-store";
+import { Button } from "@/components/ui/button";
+import { useCreditsStore } from "@/store/use-credits-store";
 
 // --- Types & Fetcher ---
 export type NavbarUser = {
@@ -76,6 +77,7 @@ const adminNavItems = [
   { title: "Usuarios", href: "/admin/users", icon: Users },
   { title: "CVs", href: "/admin/cv", icon: FileText },
   { title: "Evaluaciones", href: "/admin/evaluations", icon: BarChart3 },
+  { title: "Prompts CV", href: "/admin/cv-evaluation-prompts", icon: MessageSquare },
   { title: "Oportunidades", href: "/admin/opportunities", icon: Briefcase },
   { title: "Pagos", href: "/admin/payments", icon: CreditCard },
   { title: "Monetización", href: "/admin/plans", icon: Tag },
@@ -84,14 +86,17 @@ const adminNavItems = [
   { title: "Entrevistas", href: "/admin/interviews", icon: Mic },
   { title: "Conf. Secciones", href: "/admin/cv-configs", icon: Settings },
   { title: "Jobs", href: "/admin/jobs", icon: Activity },
+];
 
+const AdvertisingItems = [
+  { title: "Rutas/Publicidad", href: "/admin/routes-publicity", icon: LayoutDashboardIcon },
 ];
 
 export default function AppSidebar({
-                                     userRole,
-                                     initialUser,
-                                     creditLimits
-                                   }: {
+  userRole,
+  initialUser,
+  creditLimits
+}: {
   userRole?: string;
   initialUser: NavbarUser;
   creditLimits: CreditLimits;
@@ -102,7 +107,7 @@ export default function AppSidebar({
   const isAdmin = userRole === "ADMIN";
 
   const user = initialUser;
-  const {credits} = useCreditsStore();
+  const { credits } = useCreditsStore();
 
   const creditsFinal: CreditLimits = {
     manageCvsLimit: credits?.manageCvsLimit ?? creditLimits.manageCvsLimit,
@@ -120,7 +125,7 @@ export default function AppSidebar({
     if (path === "/admin/plans") {
       return pathname.startsWith("/admin/plans") || pathname.startsWith("/admin/credit-packages");
     }
-    
+
     if (path === "/my-cv" && pathname.startsWith("/cv/")) return true;
     return pathname === path || pathname.startsWith(`${path}/`);
   };
@@ -222,15 +227,26 @@ export default function AppSidebar({
 
         {/* ADMIN NAV */}
         {isAdmin && (
-          <SidebarGroup>
-            <SidebarGroupLabel className={cn(collapsed ? "sr-only" : "text-amber-600 dark:text-amber-400 flex items-center gap-2")}>
-              <Shield className="h-3.5 w-3.5" />
-              Administración
-            </SidebarGroupLabel>
-            <SidebarMenu>
-              {adminNavItems.map((item) => renderNavItem(item, adminActive, adminInactive))}
-            </SidebarMenu>
-          </SidebarGroup>
+          <>
+            <SidebarGroup>
+              <SidebarGroupLabel className={cn(collapsed ? "sr-only" : "text-amber-600 dark:text-amber-400 flex items-center gap-2")}>
+                <Shield className="h-3.5 w-3.5" />
+                Administración
+              </SidebarGroupLabel>
+              <SidebarMenu>
+                {adminNavItems.map((item) => renderNavItem(item, adminActive, adminInactive))}
+              </SidebarMenu>
+            </SidebarGroup>
+
+            <SidebarGroup>
+              <SidebarGroupLabel className={cn(collapsed ? "sr-only" : "text-amber-600 dark:text-amber-400 flex items-center gap-2")}>
+                <Tag className="h-3.5 w-3.5" />
+                Publicidad</SidebarGroupLabel>
+              <SidebarMenu>
+                {AdvertisingItems.map((item) => renderNavItem(item, primaryActive, primaryInactive))}
+              </SidebarMenu>
+            </SidebarGroup>
+          </>
         )}
       </SidebarContent>
 

@@ -1,17 +1,10 @@
 "use client";
 
-import {AlertCircle, CreditCard, History} from "lucide-react";
+import { AlertCircle, CreditCard, History } from "lucide-react";
 import { motion } from "framer-motion";
 import { CreditBalance } from "@/features/credits/components/credit-balance";
-import { CreditPackCard } from "@/features/credits/components/credit-pack-card";
-import {useState, useTransition} from "react";
-import {
-  createPreferenceForAuthenticatedUser
-} from "@/features/billing/actions/create-preference-for-authenticated-user";
-import {CreditPackOffer} from "@/features/credits/consts";
-import { PaymentMethod } from "@/features/credits/components/payment-method-modal";
-import { createCheckoutForAuthenticatedUserPaddle } from "@/features/billing/actions/create-checkout-for-authenticated-user-paddle";
-import { usePaddle } from "@/features/billing/components/paddle-provider";
+import { PricingSection } from "@/features/credits/components/pricing-section";
+import { CreditPackOffer } from "@/features/credits/consts";
 import { PageHeader } from "@/components/shared/page-header";
 import Link from "next/link";
 
@@ -24,40 +17,24 @@ interface CreditLimits {
 interface MyCreditsScreenProps {
   currentCredit: CreditLimits;
   packs: CreditPackOffer[];
+  currentPlanId: string;
+  isAuthenticated?: boolean;
 }
 
-export function MyCreditsScreen({ currentCredit, packs }: MyCreditsScreenProps) {
-
-  const { openCheckout } = usePaddle();
-  const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState(null);
-
-  const handlePurchase = (packId: string, method: PaymentMethod) => {
-    if (isPending) return;
-
-    startTransition(async () => {
-      if (method === PaymentMethod.PADDLE) {
-        const result = await createCheckoutForAuthenticatedUserPaddle(packId);
-        if (result.success) {
-          openCheckout(result.transactionId);
-        } else {
-          setError(result.error);
-        }
-      } else {
-        const result = await createPreferenceForAuthenticatedUser(packId);
-        if (result.success) {
-          window.location.href = result.redirect;
-        } else {
-          setError(result.error);
-        }
-      }
-    });
-  }
-
+export function MyCreditsScreen({
+  currentCredit,
+  packs,
+  currentPlanId,
+  isAuthenticated = true,
+}: MyCreditsScreenProps) {
   return (
     <main className="min-h-[90vh] p-4 md:p-8">
       <div className="mx-auto max-w-7xl">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-8"
+        >
           <PageHeader
             title="Mis Créditos"
             description="Administra tus créditos y adquiere paquetes para desbloquear más funciones."
@@ -77,28 +54,19 @@ export function MyCreditsScreen({ currentCredit, packs }: MyCreditsScreenProps) 
             Ver historial de transacciones
           </Link>
 
-          { error && (
-            <div className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
-              <AlertCircle className="inline mr-2 w-5 h-5 align-middle" /> {error}
-            </div>
-          )}
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {packs.map((pack) => (
-              <CreditPackCard
-                key={pack.id}
-                pack={pack}
-                onPurchase={(id, method) => handlePurchase(id, method)}
-              />
-            ))}
-          </div>
+          <PricingSection
+            packs={packs}
+            currentPlanId={currentPlanId}
+            isAuthenticated={isAuthenticated}
+          />
 
           <footer className="border rounded-2xl p-6 flex flex-col items-center gap-3">
             <div className="flex items-center gap-2 font-semibold">
               <CreditCard className="h-5 w-5" /> Pago seguro
             </div>
             <p className="text-xs text-zinc-500 text-center max-w-sm">
-              Aceptamos tarjetas de crédito y débito. Tus créditos se activarán automáticamente tras el pago.
+              Aceptamos tarjetas de crédito y débito. Tus créditos se activarán automáticamente tras
+              el pago.
             </p>
           </footer>
         </motion.div>

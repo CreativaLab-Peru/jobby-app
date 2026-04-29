@@ -18,7 +18,9 @@ import {
   RouteOpportunity,
   getOpportunitiesForActiveRoute,
 } from "@/features/routes/actions/get-opportunities-for-active-route";
-import { SelectOpportunityRoadmapModal } from "@/features/roadmap/components/select-opportunity-roadmap-modal";
+import {
+  SelectOpportunityRoadmapModal
+} from "@/features/roadmap/components/select-opportunity-roadmap-modal";
 
 interface MyRoadmapsScreenProps {
   initialData: RoadmapListItem[];
@@ -27,6 +29,7 @@ interface MyRoadmapsScreenProps {
   initialOpportunities: RouteOpportunity[];
   hasCv: boolean;
   planTier: "FREE" | "STARTER" | "PRO";
+  openedModal?: boolean;
 }
 
 export default function MyRoadmapsScreen({
@@ -36,6 +39,7 @@ export default function MyRoadmapsScreen({
   initialOpportunities,
   hasCv,
   planTier,
+  openedModal,
 }: MyRoadmapsScreenProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -44,15 +48,15 @@ export default function MyRoadmapsScreen({
   const [totalCount, setTotalCount] = useState(initialTotal);
   const [generatedRoadmapsCount, setGeneratedRoadmapsCount] = useState(initialTotal);
   const [opportunities, setOpportunities] = useState<RouteOpportunity[]>(initialOpportunities);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    useEffect(() => {
-      if (searchParams?.get("openCreate") === "1") {
-        setIsCreateModalOpen(true);
-        const params = new URLSearchParams(Array.from(searchParams.entries()));
-        params.delete("openCreate");
-        router.replace(`?${params.toString()}`, { scroll: false });
-      }
-    }, [searchParams, router]);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(openedModal);
+  useEffect(() => {
+    if (searchParams?.get("openCreate") === "1") {
+      setIsCreateModalOpen(true);
+      const params = new URLSearchParams(Array.from(searchParams.entries()));
+      params.delete("openCreate");
+      router.replace(`?${params.toString()}`, { scroll: false });
+    }
+  }, [searchParams, router]);
   const [isPending, startTransition] = useTransition();
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -136,24 +140,26 @@ export default function MyRoadmapsScreen({
           <PageHeader
             title="Mis Roadmaps"
             description="Planes paso a paso generados por IA para conseguir tus oportunidades."
-            actions={
-              <Button onClick={() => setIsCreateModalOpen(true)} className="rounded-xl">
-                <Plus className="w-4 h-4 mr-2" />
-                Crear roadmap
-              </Button>
-            }
+          // actions={
+          //   <Button onClick={() => setIsCreateModalOpen(true)} className="rounded-xl">
+          //     <Plus className="w-4 h-4 mr-2" />
+          //     Crear roadmap
+          //   </Button>
+          // }
           />
 
-          <div className="flex items-center justify-between gap-4 p-4 rounded-lg border border-border bg-card/50">
-            <div className="relative max-w-xs w-full group">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+          <div
+            className="flex items-center justify-between gap-4 p-4 rounded-lg border border-border bg-card/50">
+            {/* <div className="relative max-w-xs w-full group">
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Buscar por oportunidad..."
                 className="pl-10 border-border/40 bg-card/50 rounded-xl h-10 text-sm"
               />
-            </div>
+            </div> */}
             <span className="text-xs text-muted-foreground shrink-0">
               {totalCount} {totalCount === 1 ? "roadmap" : "roadmaps"}
             </span>

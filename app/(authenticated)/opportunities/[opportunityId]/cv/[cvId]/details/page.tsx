@@ -6,6 +6,7 @@ import {
 import { getRoadmapForOpportunity } from "@/features/roadmap/actions/get-roadmap-for-opportunity";
 import { canViewFullRoadmap } from "@/features/roadmap/actions/can-view-full-roadmap";
 import { getRoadmapGenerationPermission } from "@/features/roadmap/actions/get-roadmap-generation-permission";
+import { getPlanNames } from "@/features/billing/actions/get-plan-names";
 
 interface PageProps {
   params: Promise<{
@@ -25,10 +26,11 @@ export default async function OpportunityDetailsPage({ params }: PageProps) {
     notFound();
   }
 
-  const [roadmap, canViewFull, generationPermission] = await Promise.all([
+  const [roadmap, canViewFull, generationPermission, planNames] = await Promise.all([
     getRoadmapForOpportunity(opportunityId, cvId, opportunity.routeId),
     canViewFullRoadmap(),
     getRoadmapGenerationPermission(opportunityId, cvId, opportunity.routeId ?? ""),
+    getPlanNames(),
   ]);
 
   return (
@@ -45,6 +47,7 @@ export default async function OpportunityDetailsPage({ params }: PageProps) {
       canViewFullRoadmap={canViewFull}
       canGenerateRoadmap={generationPermission.canGenerate}
       roadmapBlockedMessage={generationPermission.message}
+      planNames={planNames}
     />
   );
 }

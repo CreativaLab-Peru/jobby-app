@@ -108,9 +108,13 @@ export async function completeOnboardingAction(id: string, body: TalentOnboardin
       });
 
 
-      // 2. Update user birthday (solo si existe y es válida)
+      // 2. Update user info
       const updateData: any = {
         name: data.name,
+        acceptedTermsAndConditions: true,
+        acceptedTermsAt: new Date(),
+        acceptedPrivacyPolicy: true,
+        acceptedPrivacyPolicyAt: new Date(),
       };
 
       if (data.birthDate && data.birthDate.trim() !== '') {
@@ -124,6 +128,26 @@ export async function completeOnboardingAction(id: string, body: TalentOnboardin
         where: { id: user.id },
         data: updateData,
       });
+
+      if (data.beca && data.beca.trim().length > 0) {
+        const existingBeca = await tx.userBecaParam.findFirst({
+          where: {
+            userId: user.id,
+            beca: data.beca.trim(),
+            usedAt: null,
+          },
+        });
+
+        if (!existingBeca) {
+          await tx.userBecaParam.create({
+            data: {
+              userId: user.id,
+              beca: data.beca.trim(),
+            },
+          });
+        }
+      }
+
       const creditsResult = await createBasicCredits(user.id, tx);
       if (!creditsResult) {
         throw new Error("CREDITS_GRANT_FAILED");

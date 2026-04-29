@@ -151,19 +151,19 @@ export default function MyEvaluationScreen({
           <PageHeader
             title="Mi Análisis"
             description="Evaluaciones de IA del CV vinculado a tu ruta activa."
-            actions={
-              hasCv && (
-                <Button
-                  disabled={!canAnalyze}
-                  onClick={onOpen}
-                  size="sm"
-                  className="font-bold rounded-xl"
-                >
-                  <BarChart3 className="w-4 h-4 mr-2" />
-                  Analizar CV
-                </Button>
-              )
-            }
+          // actions={
+          //   hasCv && (
+          //     <Button
+          //       disabled={!canAnalyze}
+          //       onClick={onOpen}
+          //       size="sm"
+          //       className="font-bold rounded-xl"
+          //     >
+          //       <BarChart3 className="w-4 h-4 mr-2" />
+          //       Analizar CV
+          //     </Button>
+          //   )
+          // }
           />
 
           {!hasCv ? (

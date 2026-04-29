@@ -208,14 +208,37 @@ export function OnboardingForm() {
   return (
     <div className="max-w-2xl mx-auto py-10 px-4 md:px-0">
       {/* Barra de Progreso */}
-      <div className="mb-10 space-y-2">
+      <div className="mb-10 space-y-4">
         {step !== 1 && (
           <>
-            <div className="flex justify-between text-xs font-bold uppercase tracking-wider text-muted-foreground/60">
-              <span>{step === 0 ? "Comenzando" : `Paso ${step - 1}`}</span>
-              <span>{Math.round(((step - 1) / TOTAL_STEPS) * 100)}%</span>
+            {/* Etiquetas superiores */}
+            <div className="flex justify-between items-end text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/70">
+              <span>{step === 0 ? "Comenzando" : `Paso ${step - 1} de ${TOTAL_STEPS}`}</span>
+              <span className="text-primary/80">
+                {Math.round(((step - 1) / TOTAL_STEPS) * 100)}%
+              </span>
             </div>
-            <Progress value={((step - 1) / TOTAL_STEPS) * 100} className="h-2" />
+
+            {/* Barra de progreso segmentada */}
+            <div className="flex gap-2 h-1.5 w-full">
+              {Array.from({ length: TOTAL_STEPS }).map((_, i) => {
+                const isCompleted = i < step - 1;
+                const isCurrent = i === step - 1;
+
+                return (
+                  <div
+                    key={i}
+                    className={`h-full flex-1 rounded-full transition-all duration-500 ${
+                      isCompleted
+                        ? "bg-primary" // Completado: Color fuerte
+                        : isCurrent
+                          ? "bg-primary/40" // Actual: Tono bajo
+                          : "bg-primary/10" // Pendiente: Muy tenue
+                    }`}
+                  />
+                );
+              })}
+            </div>
           </>
         )}
       </div>

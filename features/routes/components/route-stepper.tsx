@@ -253,7 +253,7 @@ export default function RouteStepper({
 
   return (
     <main className="min-h-[90vh] p-4 md:p-8">
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-5xl">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -363,7 +363,7 @@ export default function RouteStepper({
                           <Button
                             variant="default"
                             className={cn(
-                              "w-full sm:flex-1 h-12 text-sm font-bold rounded-xl shadow-md transition-all", // Reducido de py-7 a h-12
+                              "h-12 px-22 text-sm font-bold rounded-xl shadow-md transition-all",
                               isProcessing
                                 ? "bg-muted text-muted-foreground cursor-not-allowed opacity-70 border-2 border-dashed border-border"
                                 : "bg-primary hover:bg-primary/90 hover:scale-[1.02]",
@@ -394,7 +394,7 @@ export default function RouteStepper({
                             <Button
                               variant="secondary"
                               className={cn(
-                                "w-full sm:flex-1 h-12 text-sm font-bold rounded-xl border-2 shadow-sm transition-all", // Reducido de py-7 a h-12
+                                "px-22 h-12 text-sm font-bold rounded-xl border-2 shadow-sm transition-all", // Reducido de py-7 a h-12
                                 isProcessing
                                   ? "bg-muted/50 text-muted-foreground cursor-not-allowed opacity-50 border-dashed"
                                   : "hover:scale-[1.02]",

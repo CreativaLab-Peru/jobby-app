@@ -1,20 +1,22 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Sparkles, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import heroBgLight from "@/public/hero/hero_black.png";
+import heroBgLight from "@/public/hero/hero_black_2.png";
 import heroBgDark from "@/public/hero/hero_light.png";
 
 export function HeroSection() {
-  const words = ["la beca", "la pasantia", "el intercambio", "el ÉXITO"];
+  const words = ["la beca", "el grant", "el fellowship"];
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % words.length);
-    }, 2000); // Cambia cada 2 segundos
+    }, 3000); // Cambia cada 3 segundos
     return () => clearInterval(timer);
   }, []);
 
@@ -41,13 +43,16 @@ export function HeroSection() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-levely-green/10 border dark:border-levely-green/20 border-levely-dark/20 mb-8 animate-fade-up backdrop-blur-sm">
             <Sparkles className="w-4 h-4 text-levely-dark dark:text-levely-green " />
-            <span className="text-sm font-medium text-levely-dark dark:text-levely-green">
+            {/* <span className="text-sm font-medium text-levely-dark dark:text-levely-green">
               Potenciado por IA
+            </span> */}
+            <span className="text-sm font-medium text-levely-dark dark:text-levely-green">
+              Tu copiloto de carrera con IA
             </span>
           </div>
 
           {/* Headline */}
-          <h1
+          {/* <h1
             className="headline-xl max-w-4xl text-balance animate-fade-up text-[#1b292d] dark:text-white"
             style={{ animationDelay: "0.1s" }}
           >
@@ -67,9 +72,16 @@ export function HeroSection() {
               </AnimatePresence>
             </span>{" "}
             que quieres ganar
+          </h1> */}
+
+          <h1 className="headline-xl max-w-4xl text-balance animate-fade-up text-[#1b292d] dark:text-white">
+            Mejora tu{" "}
+            <span className="inline-flex relative h-[1.2em] align-top overflow-hidden text-primary">
+              juego de carrera
+            </span>
           </h1>
 
-          <div
+          {/* <div
             className="mt-6 flex flex-col items-center gap-1 animate-fade-up"
             style={{ animationDelay: "0.2s" }}
           >
@@ -82,6 +94,16 @@ export function HeroSection() {
             <p className="text-lg sm:text-xl text-muted-foreground text-center">
               y un roadmap paso a paso para aplicar con ventaja.
             </p>
+          </div> */}
+          <div className="py-10">
+            <p className="text-lg sm:text-xl text-muted-foreground text-center">
+              Levely reúne <span className="text-foreground">agentes de IA</span> para perfeccionar
+              tu búsqueda de oportunidades.
+            </p>
+            <p className="text-lg sm:text-xl text-muted-foreground text-center">
+              Mejora tu <span className="text-primary">CV</span> y tu{" "}
+              <span className="text-primary">score</span> — todo en un solo lugar.
+            </p>
           </div>
 
           {/* CTA */}
@@ -93,7 +115,9 @@ export function HeroSection() {
               </Link>
             </Button>
 
-            <span className="block text-sm text-muted-foreground mt-2">No necesitas tarjeta</span>
+            <span className="block text-sm text-muted-foreground mt-2">
+              Sin tarjeta, siempre gratis
+            </span>
           </div>
 
           {/* Social proof */}

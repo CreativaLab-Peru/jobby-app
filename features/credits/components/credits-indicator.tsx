@@ -102,8 +102,8 @@ export function CreditsIndicator({ limits }: CreditsIndicatorProps) {
 
           {isEmpty ? (
             <div className="space-y-3 w-full">
-              <div className="px-3 py-2 rounded-xl bg-accent/10 dark:bg-accent/20 border border-accent/20">
-                <p className="text-[11px] text-balance text-accent font-bold text-center uppercase tracking-wider flex items-center justify-center gap-1.5">
+              <div className="px-3 py-2 rounded-xl">
+                <p className="text-xs text-balance text-red-400 font-bold text-center flex items-center justify-center gap-1.5">
                   ¡Sin combustible! Recarga para seguir acelerando.
                 </p>
               </div>

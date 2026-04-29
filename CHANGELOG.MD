@@ -1,5 +1,9 @@
 # WIP
 
+## Enhancements
+
+- [LV-86ah46uqa](https://app.clickup.com/t/86ah46uqa) Aniadidos nuevos cards, cambiados los contenidos de los pages y mejora en el componente de planes y créditos en la página principal y dentro de la app
+
 # Fixes
 
 - [LV-86ah46m4v](https://app.clickup.com/t/86ah46m4v) Cambiado el color del mensaje de estado de credito

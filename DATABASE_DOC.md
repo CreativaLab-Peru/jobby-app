@@ -226,15 +226,6 @@ Sugerencias globales de publicidad o próximos pasos que se muestran en el flujo
 
 ---
 
-## ⚙️ 12. Dominio de Configuración del Sistema
-
-### `app_config` (Mapeado como `app_config` — modelo `AppConfig`)
-Almacena variables de entorno dinámicas y parámetros configurables del sistema que pueden ser editados por un administrador desde el panel de control.
-- **Campos:** `id`, `key` (unique), `value`, `createdAt`, `updatedAt`.
-- **Uso:** Guardar configuraciones globales como tokens de APIs, mensajes de mantenimiento, o flags de funcionalidad sin requerir un nuevo despliegue de código (redeploy).
-
----
-
 ## 🚦 Diccionario de Tipos (Enums Clave)
 
 | Enum | Propósito |

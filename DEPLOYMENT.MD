@@ -1,3 +1,8 @@
+# WIP
+
+## Enhancements
+- Aniadida la tabla de configuraciones para poder gestionar las configuraciones del sistema desde el panel de administracion
+
 # v1.2.15 - 2026-04-23
 
 ## Enhancements

@@ -10,6 +10,7 @@
 
 # Fixes
 
+- [LV-86ah46r9c](https://app.clickup.com/t/86ah46r9c) Mejoras en la portada del onboarding
 - [LV-86ah46jte](https://app.clickup.com/t/86ah46jte) Romovido el checkbox de aceptar terminos, asi como guardar que el usuario acepto terminos y condiciones en BD
 - [LV-86ah46m4v](https://app.clickup.com/t/86ah46m4v) Cambiado el color del mensaje de estado de credito
 - [LV-86ah46kej](https://app.clickup.com/t/86ah46kej) Corrección de errores/tamanios de los botones en el componente de pasos de rutas

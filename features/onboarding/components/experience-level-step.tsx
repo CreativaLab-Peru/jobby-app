@@ -39,8 +39,8 @@ export function ExperienceLevelStep() {
 
       {/* Header Directo */}
       <div className="text-center sm:text-left space-y-2">
-        <h2 className="text-2xl font-bold tracking-tight">Etapa profesional</h2>
-        <p className="text-muted-foreground italic text-sm">
+        <h2 className="text-center text-2xl font-bold tracking-tight">Etapa profesional</h2>
+        <p className="text-center text-muted-foreground text-[15px]">
           Esto nos ayuda a filtrar las vacantes que mejor se adapten a ti.
         </p>
       </div>

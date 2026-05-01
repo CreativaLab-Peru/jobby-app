@@ -2,6 +2,7 @@
 
 ## Enhancements
 
+- [LV-86ah6jp4x](https://app.clickup.com/t/86ah6jp4x) Agregando la tabla de configuracion global de la aplicacion
 - [LV-86ah46uqa](https://app.clickup.com/t/86ah46uqa) Aniadidos nuevos cards, cambiados los contenidos de los pages y mejora en el componente de planes y créditos en la página principal y dentro de la app
 
 - [LV-86ah46ne2](https://app.clickup.com/t/86ah46ne2) Mejorado el disenio del primer paso del omboarding

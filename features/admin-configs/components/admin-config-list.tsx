@@ -12,7 +12,7 @@ interface AdminConfigListProps {
   isPending: boolean;
   onAdd: () => void;
   onEdit: (config: AppConfig) => void;
-  onDelete: (id: string) => void;
+  onDelete: (config: AppConfig) => void;
 }
 
 export function AdminConfigList({

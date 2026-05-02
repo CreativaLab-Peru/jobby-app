@@ -11,7 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 interface AdminConfigItemProps {
   config: AppConfig;
   onEdit: (config: AppConfig) => void;
-  onDelete: (id: string) => void;
+  onDelete: (config: AppConfig) => void;
 }
 
 export function AdminConfigItem({ config, onEdit, onDelete }: AdminConfigItemProps) {
@@ -69,7 +69,7 @@ export function AdminConfigItem({ config, onEdit, onDelete }: AdminConfigItemPro
               variant="outline"
               size="icon"
               className="h-9 w-9 rounded-xl hover:bg-destructive/5 hover:text-destructive transition-all"
-              onClick={() => onDelete(config.id)}
+              onClick={() => onDelete(config)}
             >
               <Trash2 className="h-4 w-4" />
             </Button>

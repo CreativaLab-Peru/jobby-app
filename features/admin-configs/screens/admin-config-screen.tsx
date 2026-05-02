@@ -4,6 +4,7 @@ import { useState, useTransition, useEffect } from "react";
 import { toast } from "sonner";
 import { AppConfig } from "@prisma/client";
 
+import { ConfirmModal } from "@/components/shared/confirm-modal";
 import { upsertConfig, deleteConfig } from "../actions/config-actions";
 import { AdminConfigDialog } from "../components/admin-config-dialog";
 import { AdminConfigHeader } from "../components/admin-config-header";
@@ -18,6 +19,7 @@ export function AdminConfigScreen({ initialConfigs }: AdminConfigScreenProps) {
   const [isPending, startTransition] = useTransition();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingConfig, setEditingConfig] = useState<AppConfig | null>(null);
+  const [configToDelete, setConfigToDelete] = useState<AppConfig | null>(null);
   const [formData, setFormData] = useState({ key: "", value: "" });
 
   useEffect(() => {
@@ -51,14 +53,19 @@ export function AdminConfigScreen({ initialConfigs }: AdminConfigScreenProps) {
     });
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("¿Estás seguro de eliminar esta configuración?")) return;
+  const handleDeleteRequest = (config: AppConfig) => {
+    setConfigToDelete(config);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!configToDelete) return;
 
     startTransition(async () => {
       try {
-        const result = await deleteConfig(id);
+        const result = await deleteConfig(configToDelete.id);
         if (result.success) {
           toast.success("Configuración eliminada");
+          setConfigToDelete(null);
         }
       } catch (error: any) {
         toast.error(error.message);
@@ -76,7 +83,7 @@ export function AdminConfigScreen({ initialConfigs }: AdminConfigScreenProps) {
           isPending={isPending}
           onAdd={handleOpenAdd}
           onEdit={handleOpenEdit}
-          onDelete={handleDelete}
+          onDelete={handleDeleteRequest}
         />
       </div>
 
@@ -88,6 +95,22 @@ export function AdminConfigScreen({ initialConfigs }: AdminConfigScreenProps) {
         formData={formData}
         onFormDataChange={setFormData}
         onSubmit={handleSubmit}
+      />
+
+      <ConfirmModal
+        isOpen={!!configToDelete}
+        onOpenChange={(open) => {
+          if (!open) setConfigToDelete(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        title="Eliminar configuración"
+        description={
+          configToDelete
+            ? `¿Estás seguro de eliminar la configuración ${configToDelete.key}? Esta acción no se puede deshacer.`
+            : "¿Estás seguro de eliminar esta configuración? Esta acción no se puede deshacer."
+        }
+        loading={isPending}
+        variant="destructive"
       />
     </main>
   );

@@ -1,29 +1,29 @@
-"use client";
-
 import { TestimoniosCarousel } from "@/components/testimonios";
 import { LogosSection } from "@/components/ui/app/public/partners/logos-section";
-import { CVBuilderPreview } from "@/components/ui/app/public/hero/cv-builder-preview";
-import { RoadmapPreview } from "@/components/ui/app/public/hero/roadmap-section";
-import { TargetAudience } from "@/components/ui/app/public/hero/target-audience";
-import { CTASection } from "@/components/ui/app/public/hero/cta-section";
+import { AnalysisResultSection } from "@/components/ui/app/public/hero/analisys-result-section";
+import { StepBuilderHero } from "@/components/ui/app/public/hero/steps-section";
+import { ScholarshipGrid } from "@/components/ui/app/public/hero/opportunities-section";
 import { HeroSection } from "@/components/ui/app/public/hero/hero-section";
 import { PublicPageTransition } from "@/components/shared/public-page-transition";
+import { HomePricing } from "@/features/credits/components/home-pricing";
 
-const Index = () => {
+export default async function IndexPage() {
   return (
     <PublicPageTransition>
-      <div>
+      <div className="space-y-24 pb-24">
         <HeroSection />
         <LogosSection />
-        <CVBuilderPreview />
-        <RoadmapPreview />
+        {/* <CVBuilderPreview /> */}
+        <AnalysisResultSection />
+        <StepBuilderHero />
+        <ScholarshipGrid />
+        {/*<RoadmapPreview />*/}
         {/*<CareerAcceleratorTeaser />*/}
-        <TargetAudience />
+        {/*<TargetAudience />*/}
+        <HomePricing />
         <TestimoniosCarousel />
-        <CTASection />
+        {/*<CTASection />*/}
       </div>
     </PublicPageTransition>
   );
-};
-
-export default Index;
+}

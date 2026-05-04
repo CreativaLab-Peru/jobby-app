@@ -27,9 +27,7 @@ export const talentOnboardingBaseSchema = z.object({
     .optional()
     .or(z.literal("")),
   confirmPassword: z.string().optional().or(z.literal("")),
-  acceptedTerms: z.boolean().refine((val) => val === true, {
-    message: "Debes aceptar los términos y condiciones",
-  }),
+  acceptedTerms: z.boolean().default(true),
   opportunityTypes: z.array(z.string()).min(1, "Selecciona al menos un tipo de oportunidad"),
   image: z.string().optional().nullable(),
   beca: z.string().optional().or(z.literal("")),

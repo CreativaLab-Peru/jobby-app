@@ -71,7 +71,7 @@ export function AdminCreateCvModal({ isOpen, onClose, onCreated }: AdminCreateCv
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[520px] rounded-[1.5rem] border-secondary/20 bg-background p-0 overflow-hidden shadow-2xl">
+      <DialogContent className="max-w-4xl max-h-[80vh] rounded-[1.5rem] border-secondary/20 bg-background p-0 overflow-hidden shadow-2xl overflow-y-auto">
         <div className="p-8">
           <DialogHeader className="items-center text-center space-y-4 mb-6">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-sm ring-1 ring-primary/20">

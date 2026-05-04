@@ -4,15 +4,42 @@ import { Badge } from "@/components/ui/badge";
 import { Check, Sparkles, Star, ArrowRight } from "lucide-react";
 import { PaymentMethodModal, PaymentMethod } from "./payment-method-modal";
 import { CreditPackOffer } from "@/features/credits/consts";
+import { useRouter } from "next/navigation";
 
 interface PackProps {
   pack: CreditPackOffer;
   onPurchase: (packId: string, method: PaymentMethod) => void;
   isAuthenticated?: boolean;
+  currentPlanId?: string;
 }
 
-export function CreditPackCard({ pack, onPurchase, isAuthenticated = true }: PackProps) {
+export function CreditPackCard({
+  pack,
+  onPurchase,
+  isAuthenticated = true,
+  currentPlanId = "FREE",
+}: PackProps) {
+  const router = useRouter();
   const [isMethodModalOpen, setIsMethodModalOpen] = useState(false);
+
+  const isFree = pack.id === "FREE";
+  const isCurrentPlan = currentPlanId === pack.id;
+
+  // Logic for button label and state
+  let buttonLabel = `Adquirir ${pack.name}`;
+  let isDisabled = false;
+
+  if (isFree) {
+    if (!isAuthenticated) {
+      buttonLabel = "Empezar gratis";
+      isDisabled = false;
+    } else {
+      isDisabled = true;
+      buttonLabel = isCurrentPlan ? "Plan actual" : "Ya incluido";
+    }
+  } else if (isCurrentPlan) {
+    buttonLabel = "Plan actual / Recargar";
+  }
 
   return (
     <>
@@ -45,23 +72,8 @@ export function CreditPackCard({ pack, onPurchase, isAuthenticated = true }: Pac
           </div>
 
           <p className="text-xs text-muted-foreground mt-2 uppercase font-semibold tracking-wider">
-            Pago único
+            {pack.subtitle}
           </p>
-        </div>
-
-        <div className="grid grid-cols-3 gap-2 mb-8 text-center text-[10px] font-bold uppercase">
-          <div className="bg-purple-50 p-2 rounded-xl border border-purple-100 dark:bg-purple-900/50 dark:text-purple-100 dark:border-purple-800">
-            <p>IA</p>
-            <p className="text-lg">+{pack.limits.aiActionsLimit}</p>
-          </div>
-          <div className="bg-blue-50 p-2 rounded-xl border border-blue-100 dark:bg-blue-900/50 dark:text-blue-100 dark:border-blue-800">
-            <p>Oport.</p>
-            <p className="text-lg">+{pack.limits.opportunitiesActionsLimit}</p>
-          </div>
-          <div className="bg-zinc-50 p-2 rounded-xl border border-zinc-100 dark:bg-zinc-900/50 dark:text-zinc-100 dark:border-zinc-800">
-            <p>CVs</p>
-            <p className="text-lg">{pack.limits.manageCvsLimit}</p>
-          </div>
         </div>
 
         <ul className="space-y-4 mb-10 flex-grow">
@@ -87,17 +99,23 @@ export function CreditPackCard({ pack, onPurchase, isAuthenticated = true }: Pac
 
         <Button
           variant={pack.variant}
+          disabled={isDisabled}
           className={`w-full py-6 rounded-2xl font-bold
-            ${pack.highlight ? "bg-primary/90 hover:bg-primary text-secondary" : ""}`}
+            ${pack.highlight ? "bg-primary/90 hover:bg-primary text-secondary" : ""}
+            ${isDisabled ? "opacity-70 cursor-not-allowed" : ""}`}
           onClick={() => {
             if (!isAuthenticated) {
-              onPurchase(pack.id, PaymentMethod.MERCADOPAGO);
+              if (isFree) {
+                router.push("/onboarding/talents");
+              } else {
+                onPurchase(pack.id, PaymentMethod.MERCADOPAGO);
+              }
               return;
             }
             setIsMethodModalOpen(true);
           }}
         >
-          Adquirir {pack.name} {pack.highlight && <ArrowRight className="ml-2 h-4 w-4" />}
+          {buttonLabel} {pack.highlight && !isDisabled && <ArrowRight className="ml-2 h-4 w-4" />}
         </Button>
       </div>
 

@@ -66,7 +66,6 @@ export const useVapi = () => {
     try {
       // 1. LLAMADA AL SERVER: Crear sesión y obtener contexto
       const context = await prepareInterviewSession(opportunityId, cvId);
-      console.log("[VARS.BETTER_AUTH_URL]:", VARS.BETTER_AUTH_URL)
       const call = await vapi.start(ASSISTANT_ID, {
         server: {
           url: `${VARS.BETTER_AUTH_URL}/api/webhooks/vapi`,
@@ -95,7 +94,7 @@ export const useVapi = () => {
           provider: 'openai',
         },
         // Opcional: Personalizar el primer mensaje dinámicamente
-        firstMessage: `Good morning DARITA, thank you for joining us. Hello, we are the Chevening scholarship panel. My name is James from Levely and I will be conducting this interview. Today we will cover four main topics over approximately 30 minutes: your leadership experience, your professional networks, your career plan, and your interest in the United Kingdom. Let's begin. Tell me about a time when you led a project or initiative that had a significant impact.`
+        firstMessage: `Good morning, thank you for joining us. Hello, we are the Chevening scholarship panel. My name is James from Levely and I will be conducting this interview. Today we will cover four main topics over approximately 30 minutes: your leadership experience, your professional networks, your career plan, and your interest in the United Kingdom. Let's begin. Tell me about a time when you led a project or initiative that had a significant impact.`
       });
       // 3. LLAMADA AL SERVER: Vincular el ID que nos dio Vapi
       if (call?.id) {

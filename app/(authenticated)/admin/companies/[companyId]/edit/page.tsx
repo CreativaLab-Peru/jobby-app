@@ -2,23 +2,37 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { AdminCompanyForm } from "@/features/company/components/admin/admin-company-form";
+import { getAdminCompanyById } from "@/features/company/actions/admin/get-admin-company-by-id";
 import { requireAdmin } from "@/features/share/actions/require-admin";
 import { routes } from "@/lib/routes";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
+interface AdminCompanyEditPageProps {
+  params: Promise<{
+    companyId: string;
+  }>;
+}
+
 export const metadata: Metadata = {
-  title: "Crear empresa | Levely Business",
-  description: "Crea una nueva empresa y configura su información.",
+  title: "Editar empresa | Levely Business",
+  description: "Edita la información de la empresa",
   robots: {
     index: false,
     follow: false,
   },
 };
 
-export default async function AdminCompanyNewPage() {
+export default async function AdminCompanyEditPage({ params }: AdminCompanyEditPageProps) {
   const admin = await requireAdmin();
   if (!admin.success) {
     redirect(routes.app.dashboard);
+  }
+
+  const { companyId } = await params;
+  const result = await getAdminCompanyById(companyId);
+
+  if (!result.success) {
+    redirect(routes.app.admin.companies.root);
   }
 
   return (
@@ -26,13 +40,13 @@ export default async function AdminCompanyNewPage() {
       <div className="mx-auto max-w-3xl">
         <Card>
           <CardHeader>
-            <CardTitle>Crear nueva empresa</CardTitle>
+            <CardTitle>Editar empresa</CardTitle>
             <CardDescription>
-              Ingresa los datos básicos de la empresa que deseas crear
+              Actualiza los datos de "{result.data.name}"
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <AdminCompanyForm />
+            <AdminCompanyForm company={result.data} />
           </CardContent>
         </Card>
       </div>

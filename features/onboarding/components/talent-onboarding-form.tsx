@@ -1,31 +1,31 @@
 "use client";
 
-import {useCallback, useEffect, useMemo, useState, useTransition} from "react"; // Añadimos useState
-import {useRouter, useSearchParams} from "next/navigation";
-import {toast} from "sonner";
+import { useCallback, useEffect, useMemo, useState, useTransition } from "react"; // Añadimos useState
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
-import {useOnboardingStore} from "@/features/onboarding/store/talent-onboarding-store";
-import {completeOnboardingAction} from "@/features/onboarding/actions/onboarding.action";
+import { useOnboardingStore } from "@/features/onboarding/store/talent-onboarding-store";
+import { completeOnboardingAction } from "@/features/onboarding/actions/onboarding.action";
 
-import {Progress} from "@/components/ui/progress";
-import {Button} from "@/components/ui/button";
-import {Loader2, ArrowRight, ArrowLeft} from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { Loader2, ArrowRight, ArrowLeft } from "lucide-react";
 
 // Componentes de los pasos
-import {WelcomeStep} from "@/features/onboarding/components/welcome-step";
-import {BasicDataStep} from "@/features/onboarding/components/basic-data-step";
-import {AreaAndRoleStep} from "@/features/onboarding/components/area-and-role-step";
-import {ExperienceLevelStep} from "@/features/onboarding/components/experience-level-step";
-import {ModalityStep} from "@/features/onboarding/components/modality-step";
-import {AvailabilityStep} from "@/features/onboarding/components/availability-step";
-import {AccountStep} from "@/features/onboarding/components/account-step";
-import {authClient} from "@/lib/auth-client";
-import {checkExistingUser} from "@/features/authentication/actions/existing-user";
-import {getUserByEmail} from "@/features/authentication/actions/get-user-by-email";
-import {verifyOAuthUser} from "@/features/authentication/actions/verify-oauth-user";
-import {OpportunityTypeStep} from "@/features/onboarding/components/opportunity-type-step";
-import {getTempAnalysisByUserEmail} from "@/features/onboarding/actions/get-temp-analysis";
-import {routes} from "@/lib/routes";
+import { WelcomeStep } from "@/features/onboarding/components/welcome-step";
+import { BasicDataStep } from "@/features/onboarding/components/basic-data-step";
+import { AreaAndRoleStep } from "@/features/onboarding/components/area-and-role-step";
+import { ExperienceLevelStep } from "@/features/onboarding/components/experience-level-step";
+import { ModalityStep } from "@/features/onboarding/components/modality-step";
+import { AvailabilityStep } from "@/features/onboarding/components/availability-step";
+import { AccountStep } from "@/features/onboarding/components/account-step";
+import { authClient } from "@/lib/auth-client";
+import { checkExistingUser } from "@/features/authentication/actions/existing-user";
+import { getUserByEmail } from "@/features/authentication/actions/get-user-by-email";
+import { verifyOAuthUser } from "@/features/authentication/actions/verify-oauth-user";
+import { OpportunityTypeStep } from "@/features/onboarding/components/opportunity-type-step";
+import { getTempAnalysisByUserEmail } from "@/features/onboarding/actions/get-temp-analysis";
+import { routes } from "@/lib/routes";
 
 const TOTAL_STEPS = 5;
 
@@ -40,6 +40,7 @@ export function OnboardingForm() {
     updateFormData,
     setIsOAuth,
     isOAuth,
+    isStepValid,
   } = useOnboardingStore();
 
   const router = useRouter();
@@ -56,9 +57,9 @@ export function OnboardingForm() {
       // Usamos .get({ ... }) si tu versión de Better Auth lo permite para ser más directo
       const session = await authClient.getSession();
       if (session?.data?.user) {
-        const {email, name, image} = session.data.user;
+        const { email, name, image } = session.data.user;
         setIsOAuth(true);
-        updateFormData({email, name, image});
+        updateFormData({ email, name, image });
       } else {
         setIsOAuth(false);
       }
@@ -81,7 +82,7 @@ export function OnboardingForm() {
     const trimmed = becaParam.trim();
     if (!trimmed || formData.beca) return;
 
-    updateFormData({beca: trimmed});
+    updateFormData({ beca: trimmed });
   }, [formData.beca, searchParams, updateFormData]);
 
   /**
@@ -148,10 +149,10 @@ export function OnboardingForm() {
 
         // 3. Lógica de Redirección Inteligente
         if (isOAuthFlow) {
-          const tempAnalysis = await getTempAnalysisByUserEmail({email: formData.email});
+          const tempAnalysis = await getTempAnalysisByUserEmail({ email: formData.email });
 
           if (tempAnalysis.success && tempAnalysis.data) {
-            const {tempCvEvaluationId, temporalUserId} = tempAnalysis.data;
+            const { tempCvEvaluationId, temporalUserId } = tempAnalysis.data;
             router.push(`/users/${temporalUserId}/analysis/${tempCvEvaluationId}/loading`);
           } else {
             router.push(routes.app.dashboard);
@@ -197,9 +198,8 @@ export function OnboardingForm() {
   // Render de Carga
   if (isInitializing) {
     return (
-      <div
-        className="max-w-2xl mx-auto min-h-[60vh] flex flex-col items-center justify-center space-y-4">
-        <Loader2 className="h-10 w-10 animate-spin text-primary/40"/>
+      <div className="max-w-2xl mx-auto min-h-[60vh] flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="h-10 w-10 animate-spin text-primary/40" />
         <p className="text-muted-foreground text-sm">Preparando tu experiencia...</p>
       </div>
     );
@@ -208,36 +208,55 @@ export function OnboardingForm() {
   return (
     <div className="max-w-2xl mx-auto py-10 px-4 md:px-0">
       {/* Barra de Progreso */}
-      <div className="mb-10 space-y-2">
+      <div className="mb-10 space-y-4">
         {step !== 1 && (
           <>
-            <div
-              className="flex justify-between text-xs font-bold uppercase tracking-wider text-muted-foreground/60">
-              <span>{step === 0 ? "Comenzando" : `Paso ${step - 1}`}</span>
-              <span>{Math.round(((step - 1) / TOTAL_STEPS) * 100)}%</span>
+            {/* Barra de progreso segmentada */}
+            <div className="flex gap-2 h-1.5 w-full">
+              {Array.from({ length: TOTAL_STEPS }).map((_, i) => {
+                const isCompleted = i < step - 1;
+                const isCurrent = i === step - 1;
+
+                return (
+                  <div
+                    key={i}
+                    className={`h-full flex-1 rounded-full transition-all duration-500 ${isCompleted
+                      ? "bg-primary"
+                      : isCurrent
+                        ? "bg-primary/40"
+                        : "bg-primary/10"
+                      }`}
+                  />
+                );
+              })}
             </div>
-            <Progress value={((step - 1) / TOTAL_STEPS) * 100} className="h-2"/>
+
+            {/* Etiquetas inferiores */}
+            <div className="flex justify-center items-end text-[15px] font-bold uppercase tracking-[0.15em] text-muted-foreground/70">
+              <span>
+                {step === 0 ? "Comenzando" : `Paso ${step - 1} de ${TOTAL_STEPS}`}
+              </span>
+
+              {/* <span className="text-primary/80">
+                {Math.round(((step - 1) / TOTAL_STEPS) * 100)}%
+              </span> */}
+            </div>
           </>
         )}
       </div>
 
       {/* Contenedor dinámico */}
       <div className="min-h-[450px] flex flex-col justify-center">
-        {step === 1 && <WelcomeStep/>}
-        {step === 2 && <BasicDataStep/>}
+        {step === 1 && <WelcomeStep />}
+        {step === 2 && <BasicDataStep />}
         {/* {step === 3 && <AreaAndRoleStep/>} */}
-        {step === 3 && <OpportunityTypeStep/>}
+        {step === 3 && <OpportunityTypeStep />}
         {/*{step === 5 && <SkillsStep/>}*/}
         {/* {step === 5 && <ModalityStep/>} */}
         {/* {step === 6 && <AvailabilityStep/>} */}
-        {step === 4 && <ExperienceLevelStep/>}
+        {step === 4 && <ExperienceLevelStep />}
         {/*{step === 9 && <PortfolioStep/>}*/}
-        {step === 5 && (
-          <AccountStep
-            user={userMemo}
-            isSignedIn={isOAuth}
-          />
-        )}
+        {step === 5 && <AccountStep user={userMemo} isSignedIn={isOAuth} />}
       </div>
 
       {/* Controles */}
@@ -249,19 +268,19 @@ export function OnboardingForm() {
             onClick={() => setStep(step - 1)}
             className="text-muted-foreground hover:text-foreground"
           >
-            <ArrowLeft className="mr-2 h-4 w-4"/>
+            <ArrowLeft className="mr-2 h-4 w-4" />
             Regresar
           </Button>
 
           <Button
             size="lg"
-            disabled={isPending || (step === TOTAL_STEPS && !formData.acceptedTerms)}
+            disabled={isPending || !isStepValid()}
             onClick={handleNext}
             className={step === TOTAL_STEPS ? "px-8 bg-primary hover:bg-primary/90" : "px-8"}
           >
             {isPending ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Procesando...
               </>
             ) : step === TOTAL_STEPS ? (
@@ -269,7 +288,7 @@ export function OnboardingForm() {
             ) : (
               "Continuar"
             )}
-            {!isPending && step !== TOTAL_STEPS && <ArrowRight className="ml-2 h-4 w-4"/>}
+            {!isPending && step !== TOTAL_STEPS && <ArrowRight className="ml-2 h-4 w-4" />}
           </Button>
         </div>
       )}

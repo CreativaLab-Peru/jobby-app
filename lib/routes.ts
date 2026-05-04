@@ -24,6 +24,11 @@ export const routes = {
     },
 
     admin: {
+      companies: {
+        root: "/admin/companies",
+        new: "/admin/companies/new",
+        invitations: (companyId: string) => `/admin/companies/${companyId}/invitations`,
+      },
       cv: {
         root: "/admin/cv",
         detail: (cvId: string) => `/admin/cv/${cvId}`,
@@ -90,7 +95,6 @@ export const routes = {
 
     profile: {
       root: "/profile",
-      byUsername: (username: string) => `/profile/${username}`,
     },
 
     settings: "/settings",
@@ -105,6 +109,8 @@ export const routes = {
     experts: "/expertos",
     institutions: "/instituticiones",
     pro: "/pro",
+    joinCompany: (slug: string) => `/empresas/${slug}`,
+    joinInvitation: (token: string) => `/join/${token}`,
     terms: "/terms-and-conditions",
   },
 } as const;

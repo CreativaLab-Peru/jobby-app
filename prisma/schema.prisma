@@ -18,44 +18,47 @@ model TemporalUser {
 
 // Usuarios registrados
 model User {
-  id                         String              @id @default(uuid())
+  id                         String    @id @default(uuid())
   name                       String
-  email                      String              @unique
+  email                      String    @unique
   emailVerified              Boolean
   image                      String?
-  updatedPassword            Boolean             @default(false)
-  isBlocked                  Boolean             @default(false)
+  updatedPassword            Boolean   @default(false)
+  isBlocked                  Boolean   @default(false)
   lastLoginAt                DateTime?
-  happensAfterPayment        Boolean             @default(false)
-  acceptedTermsAndConditions Boolean             @default(false)
+  happensAfterPayment        Boolean   @default(false)
+  acceptedTermsAndConditions Boolean   @default(false)
   acceptedTermsAt            DateTime?
-  acceptedPrivacyPolicy      Boolean             @default(false)
+  acceptedPrivacyPolicy      Boolean   @default(false)
   acceptedPrivacyPolicyAt    DateTime?
-  acceptedCookiePolicy       Boolean             @default(false)
-  acceptedSecurityPolicy     Boolean             @default(false)
+  acceptedCookiePolicy       Boolean   @default(false)
+  acceptedSecurityPolicy     Boolean   @default(false)
   phoneNumber                String?
   acceptedSecurityPolicyAt   DateTime?
   birthday                   DateTime?
-  createdAt                  DateTime
-  updatedAt                  DateTime
-  accounts                   Account[]
-  cvs                        Cv[]
-  logs                       LogEntry[]
-  magicLinks                 MagicLinkToken[]
-  sessions                   Session[]
-  payments                   UserPayment[]
-  verificationCode           VerificationCode[]
-  userPreference             UserPreference[]
-  userCreditBalance          UserCreditBalance[]
-  Invoice                    Invoice[]
-  complaints                 Complaint[]
-  role                       UserRole            @default(USER)
-  interviewSessions          InterviewSession[]
-  cvPhotos                   CvPhoto[]
-  routes                     Route[]
-  roadmaps                   Roadmap[]
-  queueJobs                  QueueJob[]
-  becaParams                 UserBecaParam[]
+
+  createdAt DateTime
+  updatedAt DateTime
+
+  accounts           Account[]
+  cvs                Cv[]
+  logs               LogEntry[]
+  magicLinks         MagicLinkToken[]
+  sessions           Session[]
+  payments           UserPayment[]
+  verificationCode   VerificationCode[]
+  userPreference     UserPreference[]
+  userCreditBalance  UserCreditBalance[]
+  Invoice            Invoice[]
+  complaints         Complaint[]
+  role               UserRole            @default(USER)
+  interviewSessions  InterviewSession[]
+  cvPhotos           CvPhoto[]
+  routes             Route[]
+  roadmaps           Roadmap[]
+  queueJobs          QueueJob[]
+  becaParams         UserBecaParam[]
+  companyMemberships CompanyMember[]
 
   @@map("user")
 }
@@ -622,7 +625,7 @@ model Route {
 
 model RoutePublicitySuggestion {
   id          String   @id @default(uuid())
-  icon        String?  // Nome del icono de Lucide
+  icon        String? // Nome del icono de Lucide
   title       String
   description String?
   isActive    Boolean  @default(true)
@@ -744,6 +747,178 @@ model UserBecaParam {
   @@map("user_beca_param")
 }
 
+// Empresa / organización (el "tenant")
+model Company {
+  id           String  @id @default(uuid())
+  name         String
+  slug         String  @unique // base del join link: levely.app/join/[slug]
+  logoUrl      String?
+  ruc          String?
+  website      String?
+  primaryColor String?
+
+  seekingTypes   CompanySeekingType[] // TALENT | SCHOLARSHIPS | EMPLOYMENT
+  onboardingStep CompanyOnboardingStatus @default(STEP_1)
+  isActive       Boolean                 @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members       CompanyMember[]
+  invitations   CompanyInvitation[]
+  notifications CompanyNotification[]
+  features      CompanyFeatureFlag[]
+
+  @@map("company")
+}
+
+// Tabla pivot User <-> Company con rol
+model CompanyMember {
+  id        String       @id @default(uuid())
+  companyId String
+  userId    String
+  role      CompanyRole  @default(MIEMBRO)
+  status    MemberStatus @default(ACTIVE)
+
+  invitedBy String? // userId del que invitó
+  joinedAt  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, userId]) // un user no puede estar 2 veces en la misma empresa
+  @@index([companyId, role])
+  @@index([userId])
+  @@map("company_member")
+}
+
+model CompanyInvitation {
+  id        String      @id @default(uuid())
+  companyId String
+  email     String
+  role      CompanyRole @default(MIEMBRO)
+
+  token    String @unique // va en la URL del link
+  code     String // código de 6 dígitos enviado al correo
+  codeHash String // guardamos el hash, no el raw
+
+  status    InvitationStatus @default(PENDING)
+  invitedBy String? // userId del admin/encargado
+  expiresAt DateTime
+  usedAt    DateTime?
+  usedByIp  String?
+
+  createdAt DateTime @default(now())
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, status])
+  @@index([email])
+  @@index([token])
+  @@map("company_invitation")
+}
+
+model CompanyNotification {
+  id        String    @id @default(uuid())
+  companyId String
+  userId    String // destinatario
+  type      String // "MEMBER_JOINED" | "INVITATION_SENT" | "TALENT_MATCH" etc.
+  title     String
+  body      String?
+  metadata  Json? // payload flexible
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, userId, readAt])
+  @@map("company_notification")
+}
+
+model Feature {
+  id          String  @id // "talent_search" | "export_csv" | "advanced_analytics"
+  name        String
+  description String?
+  category    String? // "analytics" | "talent" | "invitations"
+  isActive    Boolean @default(true)
+
+  rolePermissions     RolePermission[]
+  companyFeatureFlags CompanyFeatureFlag[]
+
+  @@map("feature")
+}
+
+// Qué roles pueden usar qué feature (configuración global del sistema)
+model RolePermission {
+  id        String      @id @default(uuid())
+  featureId String
+  role      CompanyRole
+  canRead   Boolean     @default(false)
+  canWrite  Boolean     @default(false)
+  canDelete Boolean     @default(false)
+
+  feature Feature @relation(fields: [featureId], references: [id], onDelete: Cascade)
+
+  @@unique([featureId, role])
+  @@map("role_permission")
+}
+
+// Qué features tiene habilitadas cada empresa (puede venir de su plan o asignación manual)
+model CompanyFeatureFlag {
+  id         String    @id @default(uuid())
+  companyId  String
+  featureId  String
+  enabled    Boolean   @default(true)
+  // Override manual: un admin de Levely puede forzar on/off independiente del plan
+  overrideBy String? // userId del admin de Levely
+  expiresAt  DateTime? // útil para trials de features premium
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  feature Feature @relation(fields: [featureId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, featureId])
+  @@index([companyId, enabled])
+  @@map("company_feature_flag")
+}
+
+enum CompanyRole {
+  ADMIN // Crea empresa, ve seguimiento, copia enlace
+  ENCARGADO // Asigna sub-encargados, miembros y encargados
+  SUB_ENCARGADO // Asigna miembros de su equipo
+  MIEMBRO // Usa herramientas, se monitorea a sí mismo
+}
+
+enum CompanySeekingType {
+  TALENT // Busca talento activo
+  SCHOLARSHIPS // Becas, intercambios, aceleradoras
+  EMPLOYMENT // Empleos directos
+}
+
+enum CompanyOnboardingStatus {
+  STEP_1 // Datos básicos (nombre, logo, ruc…)
+  STEP_2 // Qué busca la empresa
+  STEP_3 // Invitar miembros
+  COMPLETED
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  CANCELLED
+}
+
+enum MemberStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
 enum RouteStatus {
   CV_PENDING
   CV_CREATED
@@ -854,4 +1029,14 @@ enum LogLevel {
 enum UserRole {
   USER
   ADMIN
+}
+
+model AppConfig {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("app_config")
 }

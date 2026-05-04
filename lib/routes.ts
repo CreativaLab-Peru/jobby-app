@@ -24,6 +24,10 @@ export const routes = {
     },
 
     admin: {
+      companies: {
+        root: "/admin/companies",
+        new: "/admin/companies/new",
+      },
       cv: {
         root: "/admin/cv",
         detail: (cvId: string) => `/admin/cv/${cvId}`,
@@ -90,7 +94,6 @@ export const routes = {
 
     profile: {
       root: "/profile",
-      byUsername: (username: string) => `/profile/${username}`,
     },
 
     settings: "/settings",
@@ -105,6 +108,7 @@ export const routes = {
     experts: "/expertos",
     institutions: "/instituticiones",
     pro: "/pro",
+    joinCompany: (tokenOrSlug: string) => `/join/${tokenOrSlug}`,
     terms: "/terms-and-conditions",
   },
 } as const;

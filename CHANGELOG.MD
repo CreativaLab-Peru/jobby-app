@@ -5,13 +5,13 @@
 - [LV-86ah6jp4x](https://app.clickup.com/t/86ah6jp4x) Agregando la tabla de configuracion global de la aplicacion
 - [LV-86ah46qf4](https://app.clickup.com/t/86ah46qf4) Cambiado la experiencia del onboarding y agregado Emprendedor como opcion
 - [LV-86ah46uqa](https://app.clickup.com/t/86ah46uqa) Añadidos nuevos cards, cambiados los contenidos de los pages y mejora en el componente de planes y créditos en la página principal y dentro de la app
-- [LV-86ah46ne2](https://app.clickup.com/t/86ah46ne2) Mejorado el diseño del primer paso del omboarding
+- [LV-86ah46ne2](https://app.clickup.com/t/86ah46ne2) Mejorado el diseño del primer paso del onboarding
 
-# Fixes
+## Fixes
 
-- [LV-86ah46guw](https://app.clickup.com/t/86ah46guw) Cambiado el video y agregados dos video demos que cambian segun el tema seleccionad por el usuario
+- [LV-86ah46guw](https://app.clickup.com/t/86ah46guw) Cambiado el video y agregados dos video demos que cambian segun el tema seleccionado por el usuario
 - [LV-86ah46r9c](https://app.clickup.com/t/86ah46r9c) Mejoras en la portada del onboarding
-- [LV-86ah46jte](https://app.clickup.com/t/86ah46jte) Romovido el checkbox de aceptar terminos, asi como guardar que el usuario acepto terminos y condiciones en BD
+- [LV-86ah46jte](https://app.clickup.com/t/86ah46jte) Removido el checkbox de aceptar terminos, asi como guardar que el usuario acepto terminos y condiciones en BD
 - [LV-86ah46m4v](https://app.clickup.com/t/86ah46m4v) Cambiado el color del mensaje de estado de credito
 - [LV-86ah46kej](https://app.clickup.com/t/86ah46kej) Corrección de errores/tamanios de los botones en el componente de pasos de rutas
 - [LV-86ah46k4x](https://app.clickup.com/t/86ah46k4x) Responsive mejorado en el componente de pasos de rutas
@@ -71,7 +71,7 @@
 ## Fixes
 
 - [LV-86agwg5t2](https://app.clickup.com/t/86agwg5t2) Solved redirect after click in the CV modal
-- [LV-86agwg4wj](https://app.clickup.com/t/86agwg4wj) Solved recomended sections when you close the modal
+- [LV-86agwg4wj](https://app.clickup.com/t/86agwg4wj) Solved recommended sections when you close the modal
 - [LV-86agwg10m](https://app.clickup.com/t/86agwg10m) Solved redirection after create a new route
 
 # v1.2.11 - 2026-04-14
@@ -79,7 +79,7 @@
 ## Fixes
 
 - [LV-86agwg5t2](https://app.clickup.com/t/86agwg5t2) Solved redirect after click in the CV modal
-- [LV-86agwg4wj](https://app.clickup.com/t/86agwg4wj) Solved recomended sections when you close the modal
+- [LV-86agwg4wj](https://app.clickup.com/t/86agwg4wj) Solved recommended sections when you close the modal
 - [LV-86agwg10m](https://app.clickup.com/t/86agwg10m) Solved redirection after create a new route
 - [LV-86agvnwk6](https://app.clickup.com/t/86agvnwk6) Fixed double charging of IA Actions credits and CV credits. Manual for new users
 - [LV-86agv3my9](https://app.clickup.com/t/86agv3my9) Now the route generation mode only allows generating a roadmap depending on the plan
@@ -97,13 +97,13 @@
 ## Fixes
 
 - [LV-86agtfxnn](https://app.clickup.com/t/86agtfxnn) Fixed the bug where the analysis included unvalidated sections when creating or uploading CVs
-- [86agtgrck](https://app.clickup.com/t/86agtgrck) Improved prompt for not containt MD, and added REGEX validation before rendering
+- [LV-86agtgrck](https://app.clickup.com/t/86agtgrck) Improved prompt for not contain MD, and added REGEX validation before rendering
 
 # v1.2.8 and v1.2.9 - 2026-04-09
 
 ## Fixes
 
-- [LV-86agtehq5](https://app.clickup.com/t/86agrxq1b) No procesa, evalua y obtiene oportunidades luego de terminar de pagar y el onboarding
+- [LV-86agtehq5](https://app.clickup.com/t/86agtehq5) No procesa, evalua y obtiene oportunidades luego de terminar de pagar y el onboarding
 - [LV-86agtfvww](https://app.clickup.com/t/86agtfvww) Luego del proceso rapido de pago, subida, evaluacion y obtencion de oportunidades no se actualiza la ruta en la interfaz
 
 # v1.2.7 - 2026-04-09
@@ -144,7 +144,7 @@
 - [JB-86agrqhb1](https://app.clickup.com/t/86agrqhb1) Mejorar news letter y mensaje para el usuario que va pagar
 - [JB-86agrq9dq](https://app.clickup.com/t/86agrq9dq) Aún se puede acceder a career accelerator desde este card
 
-# v.1.2.2 - 2026-04-06
+# v1.2.2 - 2026-04-06
 
 ## Features
 
@@ -154,11 +154,10 @@
 
 - Onboarding is only used once; there is no longer a risk of having infinite credits.
 
-# v.1.2.1 - 2026-04-06
+# v1.2.1 - 2026-04-06
 
 ## Fixes
 
-- Fixed the problem where the summary content was not being saved.
 - Fixed the problem where the summary content was not being saved.
 - New way for hot selling (cv-pay and cv-builder)
 
@@ -171,14 +170,14 @@
 
 - Added english recommendations (only examples).
 
-# v.1.2.0 - 2026-03-30
+# v1.2.0 - 2026-03-30
 
 ## Fixes
 
 - Fix generate roadmap
 - Fix phone number for 1:1 meeting
 
-# v.1.1.31 - 2026-03-29
+# v1.1.31 - 2026-03-29
 
 ## Features
 
@@ -236,7 +235,7 @@
 - Fixed admin plan list preview price format to show PEN/USD correctly from cents.
 - Product prices in Paddle have been modified so that they can be edited from within the app.
 
-## Fix
+## Fixes
 
 - The discrepancy in the Mercado Pago amount has been corrected: `priceCentsPEN` is now converted to
   soles (`/100`) before `unit_price` is sent in both payment flows.
@@ -462,8 +461,7 @@
 - Filter opportunities by CV: Added a new filter in the Opportunities section that allows users to
   select a specific CV and see only the opportunities that match that profile. This helps users find
   relevant job openings more efficiently.
-- Search bar with debounce: Implemented a search bar in the Opportunities section that allows users
-  to
+- Search bar with debounce: Implemented a search bar in the Opportunities section that allows users to search and filter opportunities by keyword in real time.
 
 ## Fixes
 
@@ -471,7 +469,7 @@
 - Fixed a bug where multiple CVs with the same name would all be highlighted simultaneously in the
   selection menus by integrating unique IDs into the selection logic.
 
-# v1.1.16 - 2026-01-20
+# v1.1.16 - 2026-02-20
 
 ## Features
 

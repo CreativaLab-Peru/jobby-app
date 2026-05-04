@@ -44,7 +44,7 @@ export function AdminConfigDialog({
       <DialogContent className="sm:max-w-[425px] rounded-[2rem]">
         <form onSubmit={onSubmit}>
           <DialogHeader>
-            <DialogTitle className="text-2xl font-black uppercase tracking-tighter italic">
+            <DialogTitle className="text-2xl font-black uppercase tracking-tighter">
               {editingConfig ? "Editar Configuración" : "Nueva Configuración"}
             </DialogTitle>
             <DialogDescription>

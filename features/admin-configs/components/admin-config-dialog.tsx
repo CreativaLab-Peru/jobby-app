@@ -1,6 +1,6 @@
 "use client";
 
-import { Save, Settings2 } from "lucide-react";
+import { AlertCircle, Save, Settings2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,7 @@ interface AdminConfigDialogProps {
   formData: FormData;
   onFormDataChange: (data: FormData) => void;
   onSubmit: (event: React.FormEvent) => void;
+  existingConfigs: AppConfig[];
 }
 
 export function AdminConfigDialog({
@@ -38,13 +39,21 @@ export function AdminConfigDialog({
   formData,
   onFormDataChange,
   onSubmit,
+  existingConfigs,
 }: AdminConfigDialogProps) {
+  // Validar si la clave ya existe (excepto si es la que estamos editando)
+  const keyExists = existingConfigs.some(
+    (config) => config.key === formData.key.trim() && config.id !== editingConfig?.id,
+  );
+  const isKeyEmpty = !formData.key.trim();
+  const isValueEmpty = !formData.value.trim();
+  const isFormInvalid = isKeyEmpty || isValueEmpty || keyExists;
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px] rounded-[2rem]">
         <form onSubmit={onSubmit}>
           <DialogHeader>
-            <DialogTitle className="text-2xl font-black uppercase tracking-tighter">
+            <DialogTitle className="text-2xl font-bold uppercase">
               {editingConfig ? "Editar Configuración" : "Nueva Configuración"}
             </DialogTitle>
             <DialogDescription>
@@ -53,27 +62,27 @@ export function AdminConfigDialog({
           </DialogHeader>
           <div className="grid gap-6 py-6">
             <div className="space-y-2">
-              <Label
-                htmlFor="key"
-                className="text-xs font-black uppercase tracking-widest text-muted-foreground"
-              >
+              <Label htmlFor="key" className="text-xs font-black uppercase text-muted-foreground">
                 Clave (Key)
               </Label>
               <Input
                 id="key"
                 placeholder="EJ: STRIPE_PUBLIC_KEY"
-                className="rounded-xl font-mono uppercase text-xs"
+                className="roundedfont-mono uppercase text-xs"
                 value={formData.key}
                 onChange={(e) => onFormDataChange({ ...formData, key: e.target.value })}
                 disabled={!!editingConfig || isPending}
                 required
               />
+              {keyExists && (
+                <p className="text-xs text-red-600 font-semibold">
+                  <AlertCircle className="inline w-3.5 h-3.5 mr-1" />
+                  Esta clave ya existe
+                </p>
+              )}
             </div>
             <div className="space-y-2">
-              <Label
-                htmlFor="value"
-                className="text-xs font-black uppercase tracking-widest text-muted-foreground"
-              >
+              <Label htmlFor="value" className="text-xs font-black uppercase text-muted-foreground">
                 Valor (Value)
               </Label>
               <Input
@@ -97,7 +106,11 @@ export function AdminConfigDialog({
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={isPending} className="rounded-xl font-bold gap-2">
+            <Button
+              type="submit"
+              disabled={isPending || isFormInvalid}
+              className="rounded-xl font-bold gap-2"
+            >
               {isPending ? (
                 <Settings2 className="h-4 w-4 animate-spin" />
               ) : (

@@ -5,7 +5,8 @@ import { toast } from "sonner";
 import { AppConfig } from "@prisma/client";
 
 import { ConfirmModal } from "@/components/shared/confirm-modal";
-import { upsertConfig, deleteConfig } from "../actions/config-actions";
+import { upsertConfig } from "../actions/create-update-config";
+import { deleteConfig } from "../actions/delete-config";
 import { AdminConfigDialog } from "../components/admin-config-dialog";
 import { AdminConfigHeader } from "../components/admin-config-header";
 import { AdminConfigList } from "../components/admin-config-list";
@@ -16,11 +17,17 @@ interface AdminConfigScreenProps {
 
 export function AdminConfigScreen({ initialConfigs }: AdminConfigScreenProps) {
   const [configs, setConfigs] = useState<AppConfig[]>(initialConfigs);
+  const [searchTerm, setSearchTerm] = useState("");
   const [isPending, startTransition] = useTransition();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingConfig, setEditingConfig] = useState<AppConfig | null>(null);
   const [configToDelete, setConfigToDelete] = useState<AppConfig | null>(null);
   const [formData, setFormData] = useState({ key: "", value: "" });
+
+  // Filtrar configuraciones por búsqueda
+  const filteredConfigs = configs.filter((config) =>
+    config.key.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   useEffect(() => {
     setConfigs(initialConfigs);
@@ -76,10 +83,14 @@ export function AdminConfigScreen({ initialConfigs }: AdminConfigScreenProps) {
   return (
     <main className="min-h-screen p-4 md:p-8 bg-background">
       <div className="mx-auto max-w-5xl space-y-8">
-        <AdminConfigHeader onAdd={handleOpenAdd} />
+        <AdminConfigHeader
+          onAdd={handleOpenAdd}
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+        />
 
         <AdminConfigList
-          configs={configs}
+          configs={filteredConfigs}
           isPending={isPending}
           onAdd={handleOpenAdd}
           onEdit={handleOpenEdit}
@@ -95,6 +106,7 @@ export function AdminConfigScreen({ initialConfigs }: AdminConfigScreenProps) {
         formData={formData}
         onFormDataChange={setFormData}
         onSubmit={handleSubmit}
+        existingConfigs={configs}
       />
 
       <ConfirmModal

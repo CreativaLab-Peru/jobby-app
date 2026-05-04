@@ -126,7 +126,11 @@ export default function CVBuilderScreen({ user, packs }: CVBuilderScreenProps) {
           </div>
           <div id="video-demo" className="max-w-4xl mx-auto">
             <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-primary/20 to-levely-green/20 border border-shadow-2xl">
-              <AutoPlayVideo src="/videos/videoejemplo-cv.mp4" />
+              <AutoPlayVideo
+                src="/videos/demo_light.mov"
+                lightSrc="/videos/demo_light.mov"
+                darkSrc="/videos/demo_dark.mov"
+              />
             </div>
           </div>
         </div>

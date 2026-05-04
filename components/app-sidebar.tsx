@@ -27,7 +27,8 @@ import {
   Activity, Briefcase, CreditCard, Settings, Users, BarChart3,
   Tag, Wallet, Mic, Shield, Receipt, X, Map, Coins,
   FileCheckIcon,
-  LayoutDashboardIcon
+  LayoutDashboardIcon,
+  Settings2
 } from "lucide-react";
 
 import { ProfileButton } from "@/components/profile-button";
@@ -84,7 +85,8 @@ const adminNavItems = [
   { title: "Balances", href: "/admin/balances", icon: Wallet },
   { title: "Reclamos", href: "/admin/complaints", icon: MessageSquareWarning },
   { title: "Entrevistas", href: "/admin/interviews", icon: Mic },
-  { title: "Conf. Secciones", href: "/admin/cv-configs", icon: Settings },
+  { title: "Conf. Secciones", href: "/admin/cv-configs", icon: Settings2 },
+  { title: "Config. Global", href: "/admin/configurations", icon: Settings },
   { title: "Jobs", href: "/admin/jobs", icon: Activity },
 ];
 

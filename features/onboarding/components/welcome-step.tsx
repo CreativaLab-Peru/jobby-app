@@ -42,7 +42,7 @@ export function WelcomeStep() {
       <div className="flex items-center gap-4 md:gap-8 mb-10 w-full justify-center">
         <div className="h-[1px] w-8 md:w-16 bg-border/60" />
         <div className="inline-flex items-center text-[13px] md:text-sm text-muted-foreground tracking-wider font-medium uppercase">
-          <span>Descubre qué</span>
+          <span>Descubre</span>
           <div className="mx-3 min-w-[90px] md:min-w-[110px] h-6 relative overflow-hidden flex items-center justify-center">
             <span
               key={words[index]}
@@ -51,7 +51,7 @@ export function WelcomeStep() {
               {words[index]}
             </span>
           </div>
-          <span>hacen match contigo</span>
+          {/* <span>hacen match contigo</span> */}
         </div>
         <div className="h-[1px] w-8 md:w-16 bg-border/60" />
       </div>
@@ -63,11 +63,11 @@ export function WelcomeStep() {
           por <span className="text-primary">no saber que existían?</span>
         </h1>
 
-        <div className="space-y-2 text-sm md:text-base">
+        {/* <div className="space-y-2 text-sm md:text-base">
           <p className="text-muted-foreground opacity-80">Aplicas a las mismas 3 que todos.</p>
           <p className="text-red-500 font-medium">Eso tiene solución.</p>
           <p className="text-primary italic">Levely te dice dónde estás y qué hacer.</p>
-        </div>
+        </div> */}
       </div>
 
       {/* Botón Principal y Micro-copy */}
@@ -81,10 +81,10 @@ export function WelcomeStep() {
           <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
         </Button>
 
-        <div className="flex items-center justify-center gap-2 text-[10px] text-muted-foreground font-bold uppercase tracking-[0.15em]">
+        {/* <div className="flex items-center justify-center gap-2 text-[10px] text-muted-foreground font-bold uppercase tracking-[0.15em]">
           <Lock className="w-3 h-3" />
           <span>Gratis · 2 minutos · Sin tarjeta</span>
-        </div>
+        </div> */}
       </div>
 
       {/* Footer de Stats*/}

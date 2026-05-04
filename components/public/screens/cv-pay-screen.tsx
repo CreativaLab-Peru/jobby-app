@@ -1,13 +1,13 @@
 "use client";
 
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthInterceptionModal } from "@/components/auth-interception-modal";
 import { useAnalysisStore } from "@/hooks/use-analysis-store";
 import { User } from "@prisma/client";
-import {HeroSection} from "@/components/public/hero-section";
-import {CreditPackModal} from "@/features/credits/components/credit-pack-modal";
-import {HotSaleSection} from "@/components/ui/app/public/cv-builder/hot-sale-section";
+import { HeroSection } from "@/components/public/hero-section";
+import { CreditPackModal } from "@/features/credits/components/credit-pack-modal";
+import { HotSaleSection } from "@/components/ui/app/public/cv-builder/hot-sale-section";
 import AutoPlayVideo from "@/components/auto-play-video";
 import { CreditPackOffer } from "@/features/credits/consts";
 
@@ -38,7 +38,7 @@ export function CVPayScreen({ user, packs }: CVPayClientContentProps) {
     score,
     reset: resetStore,
     analysisId,
-    checkStatus
+    checkStatus,
   } = useAnalysisStore();
 
   const handleStartAnalysis = async () => {
@@ -105,17 +105,17 @@ export function CVPayScreen({ user, packs }: CVPayClientContentProps) {
           </div>
 
           <div id="video-demo" className="max-w-4xl mx-auto">
-            <div
-              className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-primary/20 to-levely-green/20 border border-shadow-2xl">
-              <AutoPlayVideo src="/videos/videoejemplo-cv.mp4"/>
+            <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-primary/20 to-levely-green/20 border border-shadow-2xl">
+              <AutoPlayVideo
+                src="/videos/demo_light.mov"
+                lightSrc="/videos/demo_light.mov"
+                darkSrc="/videos/demo_dark.mov"
+              />
             </div>
           </div>
         </div>
       </section>
-      <AuthInterceptionModal
-        open={showAuthModal}
-        onOpenChange={setShowAuthModal}
-      />
+      <AuthInterceptionModal open={showAuthModal} onOpenChange={setShowAuthModal} />
     </>
   );
 }

@@ -749,13 +749,14 @@ model UserBecaParam {
 
 // Empresa / organización (el "tenant")
 model Company {
-  id           String  @id @default(uuid())
-  name         String
-  slug         String  @unique // base del join link: levely.app/join/[slug]
-  logoUrl      String?
-  ruc          String?
-  website      String?
-  primaryColor String?
+  id             String  @id @default(uuid())
+  name           String
+  slug           String  @unique // base del join link: levely.app/join/[slug]
+  logoUrl        String?
+  ruc            String?
+  website        String?
+  primaryColor   String?
+  secondaryColor String?
 
   seekingTypes   CompanySeekingType[] // TALENT | SCHOLARSHIPS | EMPLOYMENT
   onboardingStep CompanyOnboardingStatus @default(STEP_1)

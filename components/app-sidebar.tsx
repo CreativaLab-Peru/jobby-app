@@ -28,7 +28,7 @@ import {
   Tag, Wallet, Mic, Shield, Receipt, X, Map, Coins,
   FileCheckIcon,
   LayoutDashboardIcon,
-  Settings2
+  Settings2, Building
 } from "lucide-react";
 
 import { ProfileButton } from "@/components/profile-button";
@@ -76,6 +76,7 @@ const accountNavItems = [
 
 const adminNavItems = [
   { title: "Usuarios", href: "/admin/users", icon: Users },
+  { title: "Empresas", href: "/admin/companies", icon: Building },
   { title: "CVs", href: "/admin/cv", icon: FileText },
   { title: "Evaluaciones", href: "/admin/evaluations", icon: BarChart3 },
   { title: "Prompts CV", href: "/admin/cv-evaluation-prompts", icon: MessageSquare },

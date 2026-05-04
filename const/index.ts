@@ -1,4 +1,5 @@
 import {CvSectionType, CvType, Language, OpportunityType} from "@prisma/client";
+import { LucideIcon, GraduationCap, BriefcaseIcon, Star, Globe2, TrendingUpIcon } from "lucide-react";
 
 export const cvTypes = [
   {
@@ -43,24 +44,29 @@ export const cvTypes = [
   },
 ];
 
-export const OPPORTUNITY_MAP: Record<OpportunityType, { label: string; description: string }> = {
+export const OPPORTUNITY_MAP: Record<OpportunityType, { icon: LucideIcon; label: string; description: string }> = {
   SCHOLARSHIP: {
+    icon: GraduationCap,
     label: "Becas de estudio",
     description: "Maestrías, doctorados, programas full funded"
   },
   EXCHANGE_PROGRAM: {
+    icon: Globe2,
     label: "Intercambios Académicos",
     description: "Semestres en el extranjero, programas de movilidad"
   },
   STARTUP: {
+    icon: Star,
     label: "Aceleradoras y fondos",
     description: "Capital semilla, programas para emprendedores"
   },
   INTERNSHIP: {
+    icon: TrendingUpIcon,
     label: "Pasantías",
     description: "Prácticas pre-profesionales y profesionales"
   },
   EMPLOYMENT: {
+    icon: BriefcaseIcon,
     label: "Trabajo Internacional",
     description: "Empleos en empresas globales o ONGs"
   },

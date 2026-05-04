@@ -6,21 +6,27 @@ import { cn } from "@/lib/utils";
 
 const LEVELS = [
   {
-    id: "EGRESADO",
-    label: "En curso o recién egresado/a",
-    desc: "Buscando mis primeras oportunidades.",
+    id: "ESTUDIANTE",
+    label: "Estudiante",
+    desc: "Cursando pregrado o posgrado.",
     icon: GraduationCap
   },
   {
-    id: "JUNIOR",
-    label: "Nivel Junior",
-    desc: "Tengo menos de 2 años de experiencia real.",
+    id: "RECIEN_EGRESADO",
+    label: "Recién egresado",
+    desc: "Menos de 2 años desde que terminé.",
     icon: Briefcase
   },
   {
-    id: "MID",
-    label: "Nivel Mid/Senior",
-    desc: "Cuento con más de 3 años de trayectoria sólida.",
+    id: "PROFESIONAL",
+    label: "Profesional",
+    desc: "Tengo experiencia laboral activa.",
+    icon: Award
+  },
+  {
+    id: "EMPRENDEDOR",
+    label: "Emprendedor",
+    desc: "Tengo o estoy construyendo un proyecto.",
     icon: Award
   },
 ];
@@ -33,8 +39,8 @@ export function ExperienceLevelStep() {
 
       {/* Header Directo */}
       <div className="text-center sm:text-left space-y-2">
-        <h2 className="text-2xl font-bold tracking-tight">Etapa profesional</h2>
-        <p className="text-muted-foreground italic text-sm">
+        <h2 className="text-center text-2xl font-bold tracking-tight">Etapa profesional</h2>
+        <p className="text-center text-muted-foreground text-[15px]">
           Esto nos ayuda a filtrar las vacantes que mejor se adapten a ti.
         </p>
       </div>
@@ -43,7 +49,7 @@ export function ExperienceLevelStep() {
         <p className="text-sm text-red-600 mt-1">{errors.expLevel}</p>
       )}
 
-      <div className="grid gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-fr">
         {LEVELS.map(({ id, label, desc, icon: Icon }) => {
           const isSelected = formData.expLevel === id;
 
@@ -59,12 +65,12 @@ export function ExperienceLevelStep() {
               )}
             >
               {/* Icono de estado profesional */}
-                <div className={cn(
+              <div className={cn(
                 "p-3 rounded-xl transition-colors",
                 isSelected ? "bg-primary dark:text-levely-dark text-white" : "bg-secondary text-muted-foreground"
-                )}>
+              )}>
                 <Icon className="w-6 h-6" />
-                </div>
+              </div>
 
               <div className="flex-1 space-y-1">
                 <p className={cn(

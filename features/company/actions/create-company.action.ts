@@ -6,7 +6,10 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { routes } from "@/lib/routes";
 import { requireAdmin } from "@/features/share/actions/require-admin";
-import { companyCreateSchema, type CompanyCreateInput } from "@/features/company/schemas/company-create.schema";
+import {
+  companyCreateSchema,
+  type CompanyCreateInput,
+} from "@/features/company/schemas/company-create.schema";
 
 export interface CompanyCreateFormState {
   success: boolean;
@@ -118,7 +121,11 @@ export const createCompanyAction = async (
         ruc: parsed.data.ruc?.trim() || null,
         website: parsed.data.website?.trim() || null,
         primaryColor: parsed.data.primaryColor?.trim() || null,
-        seekingTypes: [],
+        preference: {
+          create: {
+            seekingTypes: [],
+          },
+        },
       },
       select: {
         id: true,
@@ -149,4 +156,3 @@ export const createCompanyAction = async (
     };
   }
 };
-

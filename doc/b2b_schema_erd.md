@@ -1,4 +1,5 @@
 ## B2B schema
+
 ```mermaid
 erDiagram
 User {
@@ -14,9 +15,13 @@ string logoUrl
 string ruc
 string website
 string primaryColor
-string seekingTypes
 enum onboardingStep
 bool isActive
+}
+CompanyPreference {
+uuid id PK
+uuid companyId FK
+string seekingTypes
 }
 CompanyMember {
 uuid id PK
@@ -73,6 +78,7 @@ datetime expiresAt
 }
 
 User ||--o{ CompanyMember : "pertenece a"
+Company ||--o1 CompanyPreference : "tiene"
 Company ||--o{ CompanyMember : "tiene"
 Company ||--o{ CompanyInvitation : "genera"
 Company ||--o{ CompanyNotification : "emite"

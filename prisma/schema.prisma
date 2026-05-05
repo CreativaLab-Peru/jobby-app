@@ -757,19 +757,32 @@ model Company {
   website      String?
   primaryColor String?
 
-  seekingTypes   CompanySeekingType[] // TALENT | SCHOLARSHIPS | EMPLOYMENT
   onboardingStep CompanyOnboardingStatus @default(STEP_1)
   isActive       Boolean                 @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  preference    CompanyPreference?  // Preferencias de la empresa
   members       CompanyMember[]
   invitations   CompanyInvitation[]
   notifications CompanyNotification[]
   features      CompanyFeatureFlag[]
 
   @@map("company")
+}
+
+// Company Preference
+model CompanyPreference {
+  id        String @id @default(uuid())
+  companyId String @unique
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  seekingTypes CompanySeekingType[] // TALENT | SCHOLARSHIPS | EMPLOYMENT
+
+  updatedAt DateTime @updatedAt
+
+  @@map("company_preference")
 }
 
 // Tabla pivot User <-> Company con rol

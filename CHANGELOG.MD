@@ -1,3 +1,9 @@
+# WIP
+
+## Feature
+
+- [LV-86ah912y4](https://app.clickup.com/t/86ah912y4) Agregando omboarding de empresas, además de una nueva tabla CompaniesPreferences
+
 # v1.2.20 - 2026-05-04
 
 ## Enhancements

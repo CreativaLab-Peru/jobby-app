@@ -53,6 +53,7 @@ model User {
   complaints         Complaint[]
   role               UserRole            @default(USER)
   interviewSessions  InterviewSession[]
+  interviewAttempts  InterviewAttempt[]
   cvPhotos           CvPhoto[]
   routes             Route[]
   roadmaps           Roadmap[]
@@ -334,10 +335,31 @@ model InterviewSession {
   cv          Cv          @relation(fields: [cvId], references: [id])
   // Nota: Dado que Opportunity tiene un ID compuesto en tu schema:
   opportunity Opportunity @relation(fields: [opportunityId, cvId], references: [id, cvId])
+  attempt    InterviewAttempt?
 
   @@index([userId])
   @@index([opportunityId, cvId])
   @@map("interview_session")
+}
+
+model InterviewAttempt {
+  id                  String   @id @default(uuid())
+  interviewSessionId  String   @unique
+  userId              String
+  plannedSeconds      Int
+  secondsUsed         Int      @default(0)
+  startedAt           DateTime @default(now())
+  finishedAt          DateTime?
+  finishReason        String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  session InterviewSession @relation(fields: [interviewSessionId], references: [id], onDelete: Cascade)
+  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([interviewSessionId])
+  @@map("interview_attempt")
 }
 
 model CvSection {

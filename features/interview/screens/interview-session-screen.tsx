@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import { PhoneOff, ShieldCheck, Info } from "lucide-react";
+import { Clock3, PhoneOff, ShieldCheck, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AIAvatar } from "../components/ai-avatar";
 import { LiveTranscript } from "../components/live-transcript";
-import {useVapi} from "@/features/interview/hooks/use-vapi";
-import {useRouter} from "next/navigation";
+import { useVapi } from "@/features/interview/hooks/use-vapi";
+import { useRouter } from "next/navigation";
+import { Progress } from "@/components/ui/progress";
 
 interface InterviewSessionScreenProps {
   cvId: string;
@@ -22,12 +23,23 @@ export default function InterviewSessionScreen({ oppId, cvId }: InterviewSession
     isConnected,
     isConnecting,
     isSpeaking,
-    transcript
+    transcript,
+    elapsedSeconds,
+    durationSeconds,
+    remainingSeconds,
+    statusMessage,
   } = useVapi();
 
   useEffect(() => {
     if (oppId && cvId) startCall(oppId, cvId);
   }, [oppId, cvId, startCall]);
+
+  const formatTime = (seconds: number) => {
+    const safeSeconds = Math.max(0, seconds);
+    const minutes = Math.floor(safeSeconds / 60);
+    const rest = safeSeconds % 60;
+    return `${String(minutes).padStart(2, "0")}:${String(rest).padStart(2, "0")}`;
+  };
 
   const handleEndCall = () => {
     endCall();
@@ -44,15 +56,37 @@ export default function InterviewSessionScreen({ oppId, cvId }: InterviewSession
       {/* 1. Header de Estado */}
       <header className="z-20 w-full flex justify-between items-center max-w-5xl">
         <div className="flex items-center gap-3 bg-secondary/20 backdrop-blur-xl px-5 py-2.5 rounded-2xl border border-white/5">
-          <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-primary animate-pulse shadow-[0_0_10px_rgba(var(--primary),0.8)]' : 'bg-destructive'}`} />
+          <div
+            className={`w-2 h-2 rounded-full ${isConnected ? "bg-primary animate-pulse shadow-[0_0_10px_rgba(var(--primary),0.8)]" : "bg-destructive"}`}
+          />
           <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-            {isConnected ? "Sesión Encriptada" : isConnecting ? "Estableciendo Puente..." : "Desconectado"}
+            {isConnected
+              ? "Sesión Encriptada"
+              : isConnecting
+                ? "Estableciendo Puente..."
+                : "Desconectado"}
           </span>
         </div>
 
         <div className="flex items-center gap-2 text-muted-foreground">
           <Info className="w-4 h-4" />
-          <span className="text-[10px] font-bold uppercase tracking-widest">IA en Entrenamiento</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest">
+            IA en Entrenamiento
+          </span>
+        </div>
+
+        <div className="flex items-center gap-3 bg-card/80 backdrop-blur-xl px-4 py-2 rounded-2xl border border-border/40 min-w-[220px]">
+          <Clock3 className="w-4 h-4 text-primary" />
+          <div className="flex-1">
+            <div className="flex items-center justify-between gap-3 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+              <span>Tiempo restante</span>
+              <span>{remainingSeconds !== null ? formatTime(remainingSeconds) : "--:--"}</span>
+            </div>
+            <Progress
+              value={durationSeconds ? (elapsedSeconds / durationSeconds) * 100 : 0}
+              className="mt-2 h-1.5"
+            />
+          </div>
         </div>
       </header>
 
@@ -66,6 +100,12 @@ export default function InterviewSessionScreen({ oppId, cvId }: InterviewSession
 
       {/* 4. Controles e Info */}
       <footer className="z-20 w-full max-w-xl flex flex-col items-center gap-8">
+        {statusMessage && (
+          <div className="w-full rounded-2xl border border-border/60 bg-card/80 px-4 py-3 text-center text-sm text-muted-foreground backdrop-blur-xl">
+            {statusMessage}
+          </div>
+        )}
+
         <div className="flex flex-col items-center gap-3 group">
           <Button
             variant="destructive"
@@ -87,6 +127,14 @@ export default function InterviewSessionScreen({ oppId, cvId }: InterviewSession
               Privacidad Garantizada: Tus datos no se usan para entrenamiento externo.
             </span>
           </div>
+          {durationSeconds !== null && (
+            <div className="flex items-center gap-2 opacity-60">
+              <Clock3 className="w-3.5 h-3.5" />
+              <span className="text-[9px] font-black uppercase tracking-tighter text-white">
+                {formatTime(elapsedSeconds)} de {formatTime(durationSeconds)}
+              </span>
+            </div>
+          )}
         </div>
       </footer>
     </div>

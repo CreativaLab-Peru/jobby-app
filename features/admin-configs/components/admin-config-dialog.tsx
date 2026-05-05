@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { AppConfig } from "@prisma/client";
 
-type FormData = {
+type ConfigFormValues = {
   key: string;
   value: string;
 };
@@ -25,9 +25,9 @@ interface AdminConfigDialogProps {
   onOpenChange: (open: boolean) => void;
   editingConfig: AppConfig | null;
   isPending: boolean;
-  formData: FormData;
-  onFormDataChange: (data: FormData) => void;
-  onSubmit: (event: React.FormEvent) => void;
+  formData: ConfigFormValues;
+  onFormDataChange: (data: ConfigFormValues) => void;
+  action: (payload: globalThis.FormData) => void;
   existingConfigs: AppConfig[];
 }
 
@@ -38,7 +38,7 @@ export function AdminConfigDialog({
   isPending,
   formData,
   onFormDataChange,
-  onSubmit,
+  action,
   existingConfigs,
 }: AdminConfigDialogProps) {
   // Validar si la clave ya existe (excepto si es la que estamos editando)
@@ -51,7 +51,7 @@ export function AdminConfigDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px] rounded-[2rem]">
-        <form onSubmit={onSubmit}>
+        <form action={action}>
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold uppercase">
               {editingConfig ? "Editar Configuración" : "Nueva Configuración"}
@@ -61,17 +61,20 @@ export function AdminConfigDialog({
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-6 py-6">
+            {editingConfig && <input type="hidden" name="configId" value={editingConfig.id} />}
             <div className="space-y-2">
               <Label htmlFor="key" className="text-xs font-black uppercase text-muted-foreground">
                 Clave (Key)
               </Label>
               <Input
                 id="key"
+                name="key"
                 placeholder="EJ: STRIPE_PUBLIC_KEY"
                 className="roundedfont-mono uppercase text-xs"
                 value={formData.key}
                 onChange={(e) => onFormDataChange({ ...formData, key: e.target.value })}
-                disabled={!!editingConfig || isPending}
+                readOnly={!!editingConfig}
+                disabled={isPending}
                 required
               />
               {keyExists && (
@@ -87,6 +90,7 @@ export function AdminConfigDialog({
               </Label>
               <Input
                 id="value"
+                name="value"
                 placeholder="Ingresa el valor..."
                 className="rounded-xl"
                 value={formData.value}

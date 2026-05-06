@@ -2,6 +2,7 @@ import Vapi from "@vapi-ai/web";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { prepareInterviewSession } from "@/features/interview/actions/prepare-interview-session";
 import { linkVapiCallId } from "@/features/interview/actions/link-vapi-call-id-action";
+import { finishInterviewAttempt } from "@/features/interview/actions/finish-interview-attempt";
 import { VARS } from "@/config/variables";
 
 interface TranscriptMessage {
@@ -47,7 +48,7 @@ export const useVapi = () => {
     }
   };
 
-  const finalizeAttempt = useCallback(async (reason: string, useBeacon = false) => {
+  const finalizeAttempt = useCallback(async (reason: string) => {
     const sessionMeta = sessionRef.current;
     if (!sessionMeta || finishedRef.current) return;
 
@@ -64,27 +65,12 @@ export const useVapi = () => {
       setStatusMessage("La simulación terminó.");
     }
 
-    const payload = {
-      attemptId: sessionMeta.attemptId,
-      sessionId: sessionMeta.sessionId,
-      secondsUsed: Math.min(elapsedRef.current, sessionMeta.durationSeconds),
-      reason,
-    };
-
-    if (useBeacon && typeof navigator !== "undefined" && navigator.sendBeacon) {
-      navigator.sendBeacon(
-        "/api/interviews/attempts/finish",
-        new Blob([JSON.stringify(payload)], { type: "application/json" }),
-      );
-      return;
-    }
-
     try {
-      await fetch("/api/interviews/attempts/finish", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-        keepalive: true,
+      await finishInterviewAttempt({
+        attemptId: sessionMeta.attemptId,
+        sessionId: sessionMeta.sessionId,
+        secondsUsed: Math.min(elapsedRef.current, sessionMeta.durationSeconds),
+        reason,
       });
     } catch (error) {
       console.error("[FINISH_INTERVIEW_ATTEMPT_CLIENT_ERROR]", error);
@@ -155,7 +141,7 @@ export const useVapi = () => {
     };
 
     const handlePageHide = () => {
-      void finalizeAttempt(finishReasonRef.current || "pagehide", true);
+      void finalizeAttempt(finishReasonRef.current || "pagehide");
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);

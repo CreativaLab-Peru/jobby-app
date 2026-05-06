@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
+import { getValueFromKey } from "@/features/share/actions/get-value-from-key";
 
 const DEFAULT_INTERVIEW_DURATION_SECONDS = 180;
 
@@ -29,13 +30,10 @@ export async function prepareInterviewSession(opportunityId: string, cvId: strin
 
   if (!opp) throw new Error("Oportunidad o CV no encontrados");
 
-  const durationConfig = await prisma.appConfig.findUnique({
-    where: { key: "INTERVIEW_DURATION" },
-    select: { value: true },
-  });
+  const durationValue = await getValueFromKey("INTERVIEW_DURATION");
 
-  const durationSeconds = durationConfig
-    ? parseInterviewDuration(durationConfig.value)
+  const durationSeconds = durationValue
+    ? parseInterviewDuration(durationValue)
     : DEFAULT_INTERVIEW_DURATION_SECONDS;
 
   const result = await prisma.$transaction(async (tx) => {

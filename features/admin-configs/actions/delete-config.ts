@@ -8,6 +8,12 @@ export type DeleteConfigResult =
   | { success: true; message: string }
   | { success: false; error: string };
 
+export type DeleteConfigFormState = {
+  success: boolean;
+  message?: string;
+  error?: string;
+};
+
 /**
  * DELETE: Elimina una configuración por su ID
  * Requiere permisos de admin
@@ -40,4 +46,19 @@ export async function deleteConfig(id: string): Promise<DeleteConfigResult> {
     console.error("Error al eliminar configuración:", error);
     return { success: false, error: "Error al eliminar la configuración" };
   }
+}
+
+export async function deleteConfigAction(
+  _previousState: DeleteConfigFormState,
+  formData: FormData,
+): Promise<DeleteConfigFormState> {
+  const id = String(formData.get("configId") || "").trim();
+  const result = await deleteConfig(id);
+
+  if (result.success) {
+    return { success: true, message: result.message };
+  }
+
+  const errorResult = result as Extract<DeleteConfigResult, { success: false }>;
+  return { success: false, error: errorResult.error };
 }

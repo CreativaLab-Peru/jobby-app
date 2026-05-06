@@ -111,6 +111,15 @@ Sesiones de simulación de entrevista con IA (Vapi) vinculadas a un CV y una opo
 - **Índices:** `[userId]`, `[opportunityId, cvId]`.
 - **Relación:** Con `user`, `cv`, y `opportunity` (referencia compuesta `[opportunityId, cvId]`).
 
+### `interview_attempt` (Mapeado como `interview_attempt`)
+
+Registro de cada intento real de entrevista, usado para controlar la duración máxima y auditar el tiempo consumido por el usuario.
+
+- **Campos:** `id`, `interviewSessionId` (unique), `userId`, `plannedSeconds`, `secondsUsed` (default 0), `startedAt`, `finishedAt?`, `finishReason?`, `createdAt`, `updatedAt`.
+- **Relación:** Pertenece a `interview_session` y a `user` con cascada.
+- **Índices:** `[userId, createdAt]`, `[interviewSessionId]`.
+- **Uso:** Se crea al iniciar la simulación y se finaliza por tiempo agotado, cierre manual o fin normal de la llamada.
+
 ---
 
 ## 🧠 4. Dominio de Inteligencia y Análisis
@@ -290,6 +299,7 @@ Almacena variables de entorno dinámicas y parámetros configurables del sistema
 
 - **Campos:** `id`, `key` (unique), `value`, `createdAt`, `updatedAt`.
 - **Uso:** Guardar configuraciones globales como tokens de APIs, mensajes de mantenimiento, o flags de funcionalidad sin requerir un nuevo despliegue de código (redeploy).
+- **Configuración relevante:** `INTERVIEW_DURATION` define la duración máxima de las entrevistas en segundos. Si no existe, el sistema usa fallback interno.
 
 ---
 

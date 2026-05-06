@@ -2,6 +2,7 @@
 
 ## Enhancements
 
+- Añadida la tabla para guardar la duracion y otros detalles de las entrevistas, es necesario aplicar la nueva migración
 - Añadida la tabla de omboarding de empresas, es necesario aplicar la nueva migración
 
 # v1.2.20 - 2026-05-04

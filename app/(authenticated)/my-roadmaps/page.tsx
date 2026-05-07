@@ -4,6 +4,9 @@ import {
   getOpportunitiesForActiveRoute
 } from "@/features/routes/actions/get-opportunities-for-active-route";
 import {getStatisticsForUser} from "@/features/dashboard/actions/get-statistics-for-user";
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/features/share/actions/get-current-user";
 
 interface MyRoadmapsPageProps {
   searchParams?: Promise<{
@@ -13,6 +16,17 @@ interface MyRoadmapsPageProps {
 
 export default async function MyRoadmapsPage({searchParams}: MyRoadmapsPageProps) {
   const {openedModal = false} = searchParams ? await searchParams : {};
+
+  const user = await getCurrentUser();
+  if (user) {
+    const activeRoadmap = await prisma.roadmap.findFirst({
+      where: { userId: user.id, status: { in: ["IN_PROGRESS", "PENDING"] } },
+      select: { id: true }
+    });
+    if (activeRoadmap) {
+      return redirect(`/my-roadmaps/${activeRoadmap.id}`);
+    }
+  }
 
   const [data, opportunitiesData, stats] = await Promise.all([
     getRoadmapsForUser({skip: 0, take: 10}),

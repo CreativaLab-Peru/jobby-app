@@ -34,6 +34,7 @@ export default async function DashboardPage() {
 
   return (
     <RouteStepper
+      routeId={activeRoute.id}
       routeName={activeRoute.name}
       routeStatus={activeRoute.status}
       cvId={cv?.id ?? null}

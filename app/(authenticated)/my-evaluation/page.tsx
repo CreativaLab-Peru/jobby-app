@@ -4,10 +4,23 @@ import { getEvaluationsForActiveRoute } from "@/features/routes/actions/get-eval
 import { getCurrentCreditLimits } from "@/features/credits/actions/get-current-credits-limits";
 import { getCvForActiveRoute } from "@/features/routes/actions/get-cv-for-active-route";
 import MyEvaluationScreen from "@/features/routes/components/my-evaluation-screen";
+import { prisma } from "@/lib/prisma";
 
 export default async function MyEvaluationPage() {
   const activeRoute = await getActiveRoute();
   if (!activeRoute) return redirect("/routes/new");
+
+  if (activeRoute.cvId) {
+    const activeEval = await prisma.cvEvaluation.findFirst({
+      where: {
+        cvId: activeRoute.cvId,
+        status: { in: ["IN_PROGRESS", "PENDING"] },
+      },
+    });
+    if (activeEval) {
+      return redirect(`/process/${activeRoute.cvId}`);
+    }
+  }
 
   const [evalResult, creditLimits, cvResult] = await Promise.all([
     getEvaluationsForActiveRoute({ skip: 0, take: 5, onlySuccessful: true }),

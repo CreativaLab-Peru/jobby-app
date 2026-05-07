@@ -25,6 +25,7 @@ import {toast} from "sonner";
 import {useRouter} from "next/navigation";
 import {useCreditsStore} from "@/store/use-credits-store";
 import {QuickMatchLoading} from "./quick-match-loading";
+import {useBackgroundTasks} from "@/hooks/use-background-tasks";
 
 interface CreditLimits {
   manageCvsLimit: number;
@@ -126,6 +127,7 @@ export function QuickMatchCvModal({
   } = useQuickMatchModalStore();
   const {refreshCredits} = useCreditsStore();
   const router = useRouter();
+  const backgroundTasks = useBackgroundTasks();
 
   const hasCredits = credits.opportunitiesActionsLimit > 0;
 
@@ -140,31 +142,13 @@ export function QuickMatchCvModal({
     setIsMatching(true);
 
     try {
-      const response = await fetch("/api/opportunities/quick-match", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({cvId: selectedCvId}),
-      });
-
-      const data = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        if (response.status === 409) {
-          toast.info(data?.message || "El match ya está en proceso para esta ruta.");
-          onClose();
-          router.push("/my-opportunities?match=processing");
-          return;
-        }
-
-        toast.error(data?.message || "Error al iniciar el match de oportunidades");
-        return;
-      }
+      await backgroundTasks.startQuickMatchTask(selectedCvId);
 
       // Refresh credits after match
       await refreshCredits();
 
       toast.success("¡Match procesando!");
-      router.push(`/opportunities/cv/${selectedCvId}/analysis`);
+      router.push("/dashboard");
       onClose();
     } catch (error) {
       console.error("Error al hacer match:", error);

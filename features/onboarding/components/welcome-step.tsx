@@ -28,7 +28,7 @@ export function WelcomeStep() {
   return (
     <div className="relative flex flex-col items-center justify-center min-h-[80vh] max-w-5xl mx-auto text-center px-6 py-20 animate-in fade-in duration-1000">
       {/* Navegación Volver */}
-      <nav className="mb-16">
+      <nav className="mb-8 md:mb-16">
         <Link
           href="/"
           className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
@@ -39,8 +39,8 @@ export function WelcomeStep() {
       </nav>
 
       {/* Badge con líneas laterales (Estilo Imagen) */}
-      <div className="flex items-center gap-4 md:gap-8 mb-10 w-full justify-center">
-        <div className="h-[1px] w-8 md:w-16 bg-border/60" />
+      <div className="flex items-center gap-4 md:gap-8 mb-6 md:mb-10 w-full justify-center">
+        <div className="hidden xs:block h-[1px] w-8 md:w-16 bg-border/60" />
         <div className="inline-flex items-center text-[13px] md:text-sm text-muted-foreground tracking-wider font-medium uppercase">
           <span>Descubre</span>
           <div className="mx-3 min-w-[90px] md:min-w-[110px] h-6 relative overflow-hidden flex items-center justify-center">
@@ -53,14 +53,13 @@ export function WelcomeStep() {
           </div>
           {/* <span>hacen match contigo</span> */}
         </div>
-        <div className="h-[1px] w-8 md:w-16 bg-border/60" />
+        <div className="hidden xs:block h-[1px] w-8 md:w-16 bg-border/60" />
       </div>
 
       {/* Bloque de Título y Textos Secundarios */}
-      <div className="max-w-3xl mb-12">
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground leading-[1.1] mb-8">
-          ¿Cuántas becas perdiste <br />
-          por <span className="text-primary">no saber que existían?</span>
+      <div className="max-w-3xl mb-6 md:mb-12">
+        <h1 className="text-3xl md:text-6xl font-bold tracking-tight text-foreground leading-[1.2] md:leading-[1.1] mb-8">
+          ¿Cuántas becas perdiste por <span className="text-primary">no saber que existían?</span>
         </h1>
 
         {/* <div className="space-y-2 text-sm md:text-base">
@@ -71,7 +70,7 @@ export function WelcomeStep() {
       </div>
 
       {/* Botón Principal y Micro-copy */}
-      <div className="w-full max-w-xs space-y-5 mb-20">
+      <div className="w-full max-w-xs space-y-5 mb-10 md:mb-20">
         <Button
           size="lg"
           className="w-full h-16 text-lg font-bold rounded-full bg-primary text-primary-foreground hover:opacity-90 transition-all shadow-xl shadow-primary/20 group"
@@ -88,7 +87,7 @@ export function WelcomeStep() {
       </div>
 
       {/* Footer de Stats*/}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 w-full max-w-4xl pt-10 border-t border-border/40">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 w-full max-w-4xl pt-8 md:pt-10 border-t border-border/40">
         {/* Columna 1: Avatares Dinámicos */}
         <div className="flex flex-col items-center md:items-start gap-3">
           <div className="flex -space-x-3">

@@ -3,6 +3,7 @@ import { transformCVToDTO } from "@/features/cv/dto/transform-cv.dto";
 import { redirect } from "next/navigation";
 import { getCvById } from "@/features/cv/actions/get-cv-by-id";
 import { PreviewCVComponent } from "@/features/cv-preview/components/cv-review-page";
+import { CvProcessingScreen } from "@/features/cv/screens/cv-processing-screen";
 import { getCurrentCreditLimits } from "@/features/credits/actions/get-current-credits-limits";
 import { prisma } from "@/lib/prisma";
 
@@ -17,6 +18,10 @@ export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
   const cv = await getCvById(cvId);
 
   if (!cv) return redirect('/my-cv');
+
+  if (cv.status === "PENDING" || cv.status === "IN_PROGRESS") {
+    return <CvProcessingScreen cvId={cv.id} />;
+  }
 
   // 1. Traer la configuración maestra (la que define títulos, iconos y campos)
   const config = await prisma.cvSectionConfiguration.findUnique({

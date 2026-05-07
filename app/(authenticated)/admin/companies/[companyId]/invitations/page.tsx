@@ -33,6 +33,7 @@ export default async function AdminCompanyInvitationsPage({ params }: AdminCompa
           status: true,
           expiresAt: true,
           createdAt: true,
+          token: true,
         },
       },
     },

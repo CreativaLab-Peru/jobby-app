@@ -18,9 +18,6 @@ import {StatusBadge} from "@/components/shared/status-badge";
 import {formatDate} from "@/utils/format-date";
 import {AdminCompanyItem} from "@/features/company/actions/admin/get-admin-companies";
 import {deleteAdminCompany} from "@/features/company/actions/admin/delete-admin-company";
-import {
-  resendCompanyInvitationAction, ResendInvitationInput
-} from "@/features/company/actions/admin/generate-admin-invitation";
 import {useInvitationModal} from "@/features/company/hooks/use-invitation-modal";
 
 interface AdminCompanyCardProps {
@@ -75,7 +72,7 @@ export function AdminCompanyCard({company}: AdminCompanyCardProps) {
         metadata={
           <>
             <div className="flex items-center gap-1.5"><Link
-              className="h-3.5 w-3.5"/><span>/empresas/{company.slug}</span></div>
+              className="h-3.5 w-3.5"/><span>/company/{company.slug}</span></div>
             <div className="flex items-center gap-1.5"><Users
               className="h-3.5 w-3.5"/><span>{company._count.members} miembros</span></div>
             <div className="flex items-center gap-1.5"><Calendar
@@ -103,7 +100,7 @@ export function AdminCompanyCard({company}: AdminCompanyCardProps) {
               <DropdownMenuItem
                 onClick={() => handleGenerateInvitation()}
                 className="cursor-pointer font-medium">
-                <User2 className="mr-2 h-4 w-4"/> Generar invitacion </DropdownMenuItem>
+                <User2 className="mr-2 h-4 w-4"/> Generar Nueva invitacion </DropdownMenuItem>
               <DropdownMenuSeparator/>
               <DropdownMenuItem
                 onClick={() => router.push(`/admin/companies/${company.id}/invitations`)}

@@ -9,6 +9,7 @@ interface AdminCompaniesPageProps {
   searchParams: Promise<{
     q?: string;
     page?: string;
+    view?: string; // Nuevo parámetro
   }>;
 }
 
@@ -23,37 +24,27 @@ export default async function AdminCompaniesPage({ searchParams }: AdminCompanie
   const params = await searchParams;
   const query = params.q || "";
   const page = parseInt(params.page || "1");
+  const view = (params.view as "card" | "list") || "list"; // Recuperar vista
   const skip = (page - 1) * PAGE_SIZE;
 
   const result = await getAdminCompanies(skip, PAGE_SIZE);
 
-  if (!result.success) {
-    return (
-      <>
-        <AdminCompanyListScreen
-          initialCompanies={[]}
-          totalCount={0}
-          currentPage={page}
-          pageSize={PAGE_SIZE}
-          initialQuery={query}
-          initialError={"Algo ha pasado"}
-        />
-        <CompanyInvitationModal />
-      </>
-    );
-  }
+  const commonProps = {
+    totalCount: result.success ? result.data.totalCount : 0,
+    currentPage: page,
+    pageSize: PAGE_SIZE,
+    initialQuery: query,
+    initialView: view,
+  };
 
   return (
     <>
       <AdminCompanyListScreen
-        initialCompanies={result.data.companies}
-        totalCount={result.data.totalCount}
-        currentPage={page}
-        pageSize={PAGE_SIZE}
-        initialQuery={query}
+        {...commonProps}
+        initialCompanies={result.success ? result.data.companies : []}
+        initialError={!result.success ? "Algo ha pasado" : null}
       />
       <CompanyInvitationModal />
     </>
   );
 }
-

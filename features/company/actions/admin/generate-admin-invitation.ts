@@ -53,7 +53,7 @@ export const resendCompanyInvitationAction = async (
     });
 
     const saved = await persistInvitationCandidate(candidate, admin.user.id);
-    await sendCompanyInvitationEmail(candidate);
+    // await sendCompanyInvitationEmail(candidate);
 
     // 4. Revalidación de rutas
     revalidatePath(routes.app.admin.companies.root);

@@ -1,4 +1,4 @@
-import { Lock, ArrowRight, GraduationCap, Sparkles } from "lucide-react";
+import { Lock, ArrowRight, GraduationCap, Sparkles, Globe, Award, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -10,6 +10,7 @@ const scholarships = [
     description: "Para los mejores perfiles de máster y doctorado.",
     match: 59,
     status: "available",
+    type: "Excelencia",
   },
   {
     title: "MAECI",
@@ -18,6 +19,7 @@ const scholarships = [
     description: "Fomenta cooperación internacional y cultura italiana.",
     match: 54,
     status: "available",
+    type: "Gubernamental",
   },
   {
     title: "DAAD",
@@ -26,7 +28,7 @@ const scholarships = [
     description: "Programas de investigación y postgrado de alto nivel.",
     match: 0,
     status: "locked",
-    lockedText: "Desbloquea las 4 oportunidades restantes con Builder · S/19.90",
+    lockedText: "Desbloquea las 4 oportunidades restantes con Builder",
   },
   {
     title: "Chevening",
@@ -41,28 +43,49 @@ const scholarships = [
 
 export function ScholarshipGrid() {
   return (
-    <section className="section-padding bg-background">
-      <div className="container-levely">
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-[#0B1215] border border-white/[0.08] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)]">
-          <div className="absolute top-0 right-0 w-[60%] h-[60%] bg-gradient-to-bl from-secondary/10 via-transparent to-transparent pointer-events-none" />
-          <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
+    <section className="section-padding bg-background relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
 
-          <div className="relative p-8 sm:p-14 lg:p-20">
-            {/* Header del Card */}
-            <div className="mb-14">
-              <div className="flex items-center gap-2 mb-4">
-                <p className="text-secondary dark:text-primary uppercase tracking-[0.3em] text-[15px] font-bold">
-                  Oportunidades
-                </p>
+      <div className="container-levely">
+        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
+          {/* Header Section */}
+          <div className="lg:w-1/3 space-y-8 sticky lg:top-32">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 border border-secondary/20">
+                <Globe className="w-3.5 h-3.5 text-secondary-foreground dark:text-primary" />
+                <span className="text-[10px] font-bold text-secondary-foreground dark:text-primary uppercase tracking-wider">
+                  Mercado Global
+                </span>
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight leading-[1.1] max-w-xl">
+
+              <h2 className="text-5xl md:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
                 Hay becas reales <br />
-                <span className="text-white/40">esperando tu perfil.</span>
+                <span className="text-muted-foreground font-medium">esperando tu perfil.</span>
               </h2>
+
+              <p className="text-xl text-muted-foreground leading-relaxed">
+                Analizamos miles de convocatorias globales para presentarte solo las que tienen mayor compatibilidad con tu experiencia y objetivos.
+              </p>
             </div>
 
-            {/* Grid de items */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* Micro-stats */}
+            <div className="grid grid-cols-2 gap-4 pt-8 border-t border-border">
+              <div className="space-y-1">
+                <p className="text-2xl font-bold text-foreground">150+</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">Países</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-2xl font-bold text-foreground">2.5k</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">Becas</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Grid Section */}
+          <div className="lg:w-2/3 w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {scholarships.map((beca, index) => {
                 const isLocked = beca.status === "locked";
 
@@ -70,41 +93,60 @@ export function ScholarshipGrid() {
                   <div
                     key={index}
                     className={cn(
-                      "relative min-h-[180px] rounded-3xl p-7 border transition-all duration-300",
+                      "group relative flex flex-col justify-between min-h-[280px] rounded-[2.5rem] p-8 border transition-all duration-500",
                       isLocked
-                        ? "bg-white/[0.02] border-white/[0.04]"
-                        : "bg-[#141C1F] border-white/10 hover:border-secondary/40 shadow-lg",
+                        ? "bg-transparent border-border/40 opacity-60 grayscale-[0.5]"
+                        : "bg-card border-border hover:border-primary/30 shadow-xl shadow-black/5 hover:shadow-primary/5 hover:-translate-y-1"
                     )}
                   >
                     {!isLocked ? (
-                      <div className="h-full flex flex-col justify-between">
-                        <div className="flex justify-between items-start">
-                          <span className="px-2.5 py-1 rounded-md bg-[#1E293B] border border-white/10 text-[9px] font-bold text-blue-400 uppercase tracking-widest">
-                            Beca
-                          </span>
-                          <span className="text-secondary dark:text-primary font-bold text-xl tracking-tighter">
-                            {beca.match}%
-                          </span>
+                      <>
+                        <div className="space-y-6">
+                          <div className="flex justify-between items-start">
+                            <div className="p-3 rounded-2xl bg-primary/5 text-primary">
+                              <Award className="w-5 h-5" />
+                            </div>
+                            <div className="flex flex-col items-end">
+                              <div className="flex items-center gap-1 text-primary font-bold text-2xl tracking-tighter">
+                                <TrendingUp className="w-4 h-4" />
+                                {beca.match}%
+                              </div>
+                              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Match</span>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md uppercase tracking-wider">
+                              {beca.type}
+                            </span>
+                            <h3 className="text-xl font-bold text-foreground leading-tight">{beca.title}</h3>
+                            <p className="text-sm text-muted-foreground font-medium">
+                              {beca.institution} · {beca.country}
+                            </p>
+                          </div>
                         </div>
 
-                        <div>
-                          <h3 className="text-lg font-bold text-white mb-1">{beca.title}</h3>
-                          <p className="text-[14px] text-white/40 font-medium leading-relaxed">
-                            {beca.institution} · {beca.country}
+                        <div className="pt-6 mt-auto border-t border-border/50">
+                          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 italic">
+                            "{beca.description}"
                           </p>
                         </div>
-
-                        <p className="text-xs text-white/50 line-clamp-1 mt-4">
-                          {beca.description}
-                        </p>
-                      </div>
+                      </>
                     ) : (
-                      /* Bloqueado con efecto Ghost */
-                      <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-                        <Lock className="w-5 h-5 text-white/30 mb-3" />
-                        <p className="text-[11px] font-medium text-white/30 max-w-[180px] uppercase tracking-wider leading-relaxed">
-                          {beca.lockedText}
-                        </p>
+                      /* Locked State */
+                      <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
+                        <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+                          <Lock className="w-5 h-5 text-muted-foreground/40" />
+                        </div>
+                        <div className="space-y-2">
+                          <p className="text-sm font-bold text-foreground/80 uppercase tracking-widest">Contenido Bloqueado</p>
+                          <p className="text-[11px] text-muted-foreground leading-relaxed max-w-[180px] mx-auto">
+                            {beca.lockedText}
+                          </p>
+                        </div>
+                        <Button size="sm" variant="ghost" className="text-primary text-[10px] font-bold uppercase tracking-widest">
+                          Mejorar Plan
+                        </Button>
                       </div>
                     )}
                   </div>

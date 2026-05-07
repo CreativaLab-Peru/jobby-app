@@ -6,7 +6,10 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { routes } from "@/lib/routes";
 import { requireAdmin } from "@/features/share/actions/require-admin";
-import { companyCreateSchema, type CompanyCreateInput } from "@/features/company/schemas/company-create.schema";
+import {
+  companyCreateSchema,
+  type CompanyCreateInput,
+} from "@/features/company/schemas/company-create.schema";
 
 export interface CompanyCreateFormState {
   success: boolean;
@@ -21,7 +24,6 @@ export interface CompanyCreateFormState {
     ruc?: string | null;
     website?: string | null;
     primaryColor?: string | null;
-    secondaryColor?: string | null;
   };
 }
 
@@ -97,7 +99,6 @@ export const createCompanyAction = async (
       ruc: normalizeOptional(formData.get("ruc")),
       website: normalizeOptional(formData.get("website")),
       primaryColor: normalizeOptional(formData.get("primaryColor")),
-      secondaryColor: normalizeOptional(formData.get("secondaryColor")),
     });
 
     if (!parsed.success) {
@@ -120,8 +121,11 @@ export const createCompanyAction = async (
         ruc: parsed.data.ruc?.trim() || null,
         website: parsed.data.website?.trim() || null,
         primaryColor: parsed.data.primaryColor?.trim() || null,
-        secondaryColor: parsed.data.secondaryColor?.trim() || null,
-        seekingTypes: [],
+        preference: {
+          create: {
+            seekingTypes: [],
+          },
+        },
       },
       select: {
         id: true,
@@ -131,7 +135,6 @@ export const createCompanyAction = async (
         ruc: true,
         website: true,
         primaryColor: true,
-        secondaryColor: true,
       },
     });
 
@@ -153,4 +156,3 @@ export const createCompanyAction = async (
     };
   }
 };
-

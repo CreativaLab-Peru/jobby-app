@@ -9,6 +9,12 @@ export type UpsertConfigResult =
   | { success: true; message: string }
   | { success: false; error: string };
 
+export type UpsertConfigFormState = {
+  success: boolean;
+  message?: string;
+  error?: string;
+};
+
 /**
  * CREATE / UPDATE: Crea una nueva configuración o actualiza una existente
  * Requiere permisos de admin
@@ -58,5 +64,24 @@ export async function upsertConfig(
       success: false,
       error: `Error al guardar la configuración: ${error.message || "Error desconocido"}`,
     };
+  }
+}
+
+export async function upsertConfigAction(
+  _previousState: UpsertConfigFormState,
+  formData: FormData,
+): Promise<UpsertConfigFormState> {
+  const id = String(formData.get("configId") || "").trim() || undefined;
+  const data = {
+    key: String(formData.get("key") || "").trim(),
+    value: String(formData.get("value") || "").trim(),
+  };
+
+  const result = await upsertConfig(id, data);
+  if (result.success) {
+    return { success: true, message: result.message };
+  } else {
+    const errorResult = result as Extract<UpsertConfigResult, { success: false }>;
+    return { success: false, error: errorResult.error };
   }
 }

@@ -2,6 +2,13 @@
 
 ## Enhancements
 
+- Añadida la tabla para guardar la duracion y otros detalles de las entrevistas, es necesario aplicar la nueva migración
+- Añadida la tabla de omboarding de empresas, es necesario aplicar la nueva migración
+
+# v1.2.20 - 2026-05-04
+
+## Enhancements
+
 - Añadida la tabla de configuraciones para poder gestionar las configuraciones del sistema desde el panel de administracion
 
 # v1.2.15 - 2026-04-23

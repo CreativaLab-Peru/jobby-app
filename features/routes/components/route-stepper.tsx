@@ -60,6 +60,7 @@ interface Step {
 }
 
 interface RouteStepperProps {
+  routeId: string;
   routeName: string;
   routeStatus: RouteStatus;
   cvId: string | null;
@@ -100,6 +101,7 @@ function getStepStatus(
 }
 
 export default function RouteStepper({
+  routeId,
   routeName,
   routeStatus,
   cvId,
@@ -116,39 +118,74 @@ export default function RouteStepper({
   const tasks = useTaskStore((state) => state.tasks);
   const activeRoute = useRouteStore((state) => state.activeRoute);
 
+  const resolvedRoute = activeRoute?.id === routeId ? activeRoute : null;
+  const resolvedStatus = resolvedRoute?.status ?? routeStatus;
+  const resolvedCv = resolvedRoute?.cv ?? null;
+  const resolvedCvId = resolvedCv?.id ?? cvId;
+  const resolvedCvTitle = resolvedCv?.title ?? cvTitle;
+  const resolvedEvaluationScore =
+    resolvedCv?.evaluations?.[0]?.overallScore ?? evaluationScore;
+  const resolvedOpportunitiesCount =
+    resolvedCv?._count?.opportunities ?? opportunitiesCount;
+
   // Verificamos si hay alguna tarea en curso para este CV o Ruta
   const activeTask = Object.values(tasks).find((t) => {
     if (t.status !== "IN_PROGRESS") return false;
 
     return (
-      t.scopeId === cvId ||
-      t.metadata?.cvId === cvId ||
+      t.scopeId === resolvedCvId ||
+      t.metadata?.cvId === resolvedCvId ||
       (activeRoute?.id && t.metadata?.routeId === activeRoute.id) ||
       (activeRoute?.id && t.scopeId === activeRoute.id)
     );
   });
 
   const isProcessing = !!activeTask;
+  const processingStepId = activeTask
+    ? activeTask.type === "CV_PROCESSING"
+      ? 1
+      : activeTask.type === "ANALYSIS" || activeTask.type === "PROGRESS_TIMELINE"
+        ? 2
+        : activeTask.type === "QUICK_MATCH"
+          ? 3
+          : activeTask.type === "ROADMAP_GENERATION"
+            ? 4
+            : null
+    : null;
 
-  const isRoadmapDone = routeStatus === "ROADMAP_DONE";
-  const isFullCompleted = routeStatus === "PROGRAM_DONE";
+  const processingLabel = activeTask
+    ? activeTask.type === "CV_PROCESSING"
+      ? "Trabajando en el CV..."
+      : activeTask.type === "PROGRESS_TIMELINE"
+        ? "Analizando CV..."
+        : activeTask.type === "QUICK_MATCH"
+          ? "Buscando oportunidades..."
+          : activeTask.type === "ROADMAP_GENERATION"
+            ? "Generando roadmap..."
+            : activeTask.type === "ANALYSIS"
+              ? "Analizando perfil..."
+              : "Proceso en curso..."
+    : "";
+
+  const isRoadmapDone = resolvedStatus === "ROADMAP_DONE";
+  const isFullCompleted = resolvedStatus === "PROGRAM_DONE";
 
   const isStarterPlan = planTier === "STARTER";
   const starterLimitReached = isStarterPlan && generatedRoadmapsCount >= 1;
 
-  const steps: Step[] = [
+  const baseSteps: Step[] = [
     {
       id: 1,
       title: "Descubre tu perfil profesional",
       description: cvTitle
         ? `CV activo: "${cvTitle}"`
         : "Sube tu CV o crea uno desde cero para analizar tu potencial",
-      href: !cvId ? "/my-cv" : `/cv/${cvId}/preview`,
+      href: !resolvedCvId ? "/my-cv" : `/cv/${resolvedCvId}/preview`,
       icon: FileText,
-      status: getStepStatus("CV_PENDING", "CV_CREATED", routeStatus),
-      cta: cvId ? "Ver mi CV" : "Subir o crear CV",
+      status: getStepStatus("CV_PENDING", "CV_CREATED", resolvedStatus),
+      cta: resolvedCvId ? "Ver mi CV" : "Subir o crear CV",
       expanded: {
-        isReady: !!cvId,
+        isReady: !!resolvedCvId,
         readyTitle: "Tu CV está listo. Con él puedes acceder a:",
         pendingTitle: "Después de subir tu CV podrás ver:",
         benefits: ["Tu puntaje de perfil", "Oportunidades con match", "Tu roadmap personalizado"],
@@ -169,12 +206,13 @@ export default function RouteStepper({
       id: 2,
       title: "Optimiza tu perfil con IA",
       description: "Análisis detallado y textos mejorados para tu CV",
-      href: evaluationScore !== null ? "/my-evaluation" : "/my-evaluation?analyze=true",
+      href:
+        resolvedEvaluationScore !== null ? "/my-evaluation" : "/my-evaluation?analyze=true",
       icon: BarChart3,
-      status: getStepStatus("CV_CREATED", "ANALYSIS_DONE", routeStatus),
-      cta: evaluationScore !== null ? "Ver análisis" : "Analizar CV",
+      status: getStepStatus("CV_CREATED", "ANALYSIS_DONE", resolvedStatus),
+      cta: resolvedEvaluationScore !== null ? "Ver análisis" : "Analizar CV",
       expanded: {
-        isReady: evaluationScore !== null,
+        isReady: resolvedEvaluationScore !== null,
         readyTitle: "Análisis completado. Tienes acceso a:",
         pendingTitle: "Con el análisis de IA obtendrás:",
         benefits: ["Fortalezas y debilidades", "Sugerencias de mejora", "Puntuación competitiva"],
@@ -183,7 +221,7 @@ export default function RouteStepper({
           readyLabel: "Ver mi análisis",
           onClick: () =>
             router.push(
-              evaluationScore !== null ? "/my-evaluation" : "/my-evaluation?analyze=true",
+              resolvedEvaluationScore !== null ? "/my-evaluation" : "/my-evaluation?analyze=true",
             ),
         },
       },
@@ -192,12 +230,14 @@ export default function RouteStepper({
       id: 3,
       title: "Encuentra oportunidades con match",
       description: "Becas y programas alineados a tu perfil real",
-      href: opportunitiesCount > 0 ? "/my-opportunities" : "/my-opportunities?match=true",
+      href:
+        resolvedOpportunitiesCount > 0 ? "/my-opportunities" : "/my-opportunities?match=true",
       icon: Briefcase,
-      status: getStepStatus("ANALYSIS_DONE", "OPPORTUNITIES_DONE", routeStatus),
-      cta: opportunitiesCount > 0 ? "Ver oportunidades" : "Buscar oportunidades",
+      status: getStepStatus("ANALYSIS_DONE", "OPPORTUNITIES_DONE", resolvedStatus),
+      cta:
+        resolvedOpportunitiesCount > 0 ? "Ver oportunidades" : "Buscar oportunidades",
       expanded: {
-        isReady: opportunitiesCount > 0,
+        isReady: resolvedOpportunitiesCount > 0,
         readyTitle: "Oportunidades encontradas. Revisa:",
         pendingTitle: "Encontraremos para ti:",
         benefits: ["Becas recomendadas", "Match por habilidades", "Filtros inteligentes"],
@@ -206,7 +246,9 @@ export default function RouteStepper({
           readyLabel: "Ver mis oportunidades",
           onClick: () =>
             router.push(
-              opportunitiesCount > 0 ? "/my-opportunities" : "/my-opportunities?match=true",
+              resolvedOpportunitiesCount > 0
+                ? "/my-opportunities"
+                : "/my-opportunities?match=true",
             ),
         },
       },
@@ -217,7 +259,7 @@ export default function RouteStepper({
       description: "Roadmap paso a paso para aplicar a tu beca meta",
       href: hasRoadmap && roadmapId ? `/my-roadmaps/${roadmapId}` : "/my-roadmaps?openCreate=1",
       icon: Map,
-      status: getStepStatus("OPPORTUNITIES_DONE", "ROADMAP_DONE", routeStatus),
+      status: getStepStatus("OPPORTUNITIES_DONE", "ROADMAP_DONE", resolvedStatus),
       cta: hasRoadmap ? "Ver roadmap" : "Generar roadmap",
       expanded: {
         isReady: hasRoadmap,
@@ -251,6 +293,18 @@ export default function RouteStepper({
     },
   ];
 
+  const steps: Step[] = baseSteps.map((step) => {
+    // Si hay un proceso activo, forzamos el bloqueo estricto
+    if (processingStepId !== null) {
+      if (step.id === processingStepId) {
+        return { ...step, status: "current" as StepStatus };
+      } else if (step.id > processingStepId) {
+        return { ...step, status: "locked" as StepStatus };
+      }
+    }
+    return step;
+  });
+
   return (
     <main className="min-h-[90vh] p-4 md:p-8">
       <div className="mx-auto max-w-5xl">
@@ -282,13 +336,13 @@ export default function RouteStepper({
                   className={cn(
                     "relative flex flex-col md:flex-row items-start gap-5 p-6 rounded-2xl border transition-all duration-500",
                     step.status === "completed" &&
-                      "bg-gradient-to-r from-green-50/30 to-background border-green-100 dark:from-green-950/5 dark:border-green-900/30 opacity-90 hover:opacity-100",
+                    "bg-gradient-to-r from-green-50/30 to-background border-green-100 dark:from-green-950/5 dark:border-green-900/30 opacity-90 hover:opacity-100",
                     step.status === "current" &&
-                      (step.id === 5
-                        ? "bg-gradient-to-br from-indigo-50/80 via-white to-background dark:from-indigo-950/20 dark:to-background border-indigo-300 shadow-xl shadow-indigo-500/10 ring-1 ring-indigo-500/30"
-                        : "bg-gradient-to-br from-primary/10 via-primary/[0.02] to-background border-primary/40 shadow-2xl shadow-primary/20 ring-1 ring-primary/30"),
+                    (step.id === 5
+                      ? "bg-gradient-to-br from-indigo-50/80 via-white to-background dark:from-indigo-950/20 dark:to-background border-indigo-300 shadow-xl shadow-indigo-500/10 ring-1 ring-indigo-500/30"
+                      : "bg-gradient-to-br from-primary/10 via-primary/[0.02] to-background border-primary/40 shadow-2xl shadow-primary/20 ring-1 ring-primary/30"),
                     step.status === "locked" &&
-                      "bg-muted/10 border-border/40 opacity-40 grayscale-[0.5]",
+                    "bg-muted/10 border-border/40 opacity-40 grayscale-[0.5]",
                   )}
                 >
                   {/* Icono del paso */}
@@ -296,11 +350,11 @@ export default function RouteStepper({
                     className={cn(
                       "flex items-center justify-center h-12 w-12 rounded-xl shrink-0 transition-all duration-500",
                       step.status === "completed" &&
-                        "bg-green-100 text-green-600 dark:bg-green-900/30",
+                      "bg-green-100 text-green-600 dark:bg-green-900/30",
                       step.status === "current" &&
-                        (step.id === 5
-                          ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/40"
-                          : "bg-primary text-primary-foreground shadow-lg shadow-primary/40"),
+                      (step.id === 5
+                        ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/40"
+                        : "bg-primary text-primary-foreground shadow-lg shadow-primary/40"),
                       step.status === "locked" && "bg-muted/50 text-muted-foreground",
                       step.status === "current" && "scale-110 rotate-3",
                     )}
@@ -379,7 +433,7 @@ export default function RouteStepper({
                               )
                             )}
                             {isProcessing
-                              ? "Proceso en curso..."
+                              ? processingLabel
                               : step.expanded.isReady
                                 ? step.expanded.primaryAction.readyLabel
                                 : step.expanded.primaryAction.label}

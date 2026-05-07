@@ -168,10 +168,16 @@ export function ActionsSidebar({
         body: JSON.stringify({ cvId }),
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => null);
 
       if (!response.ok) {
-        toast.error(data.message || "Error al iniciar el match de oportunidades");
+        if (response.status === 409) {
+          toast.info(data?.message || "El match ya está en proceso para esta ruta.");
+          router.push("/my-opportunities?match=processing");
+          return;
+        }
+
+        toast.error(data?.message || "Error al iniciar el match de oportunidades");
         return;
       }
 

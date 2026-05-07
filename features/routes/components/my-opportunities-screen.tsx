@@ -59,6 +59,7 @@ export default function MyOpportunitiesScreen({
   const searchParams = useSearchParams();
   const router = useRouter();
   const hasOpenedFromMatchParamRef = useRef(false);
+  const matchParam = searchParams.get("match");
 
   const isQuickMatchBlocked = hasMatchedInRoute || isMatchProcessing;
   const isQuickMatchDisabled = isCvsLoading || isQuickMatchBlocked;
@@ -74,7 +75,7 @@ export default function MyOpportunitiesScreen({
   useEffect(() => {
     if (hasOpenedFromMatchParamRef.current) return;
     if (!hasCv || !cvId) return;
-    if (searchParams.get("match") !== "true") return;
+    if (matchParam !== "true") return;
 
     if (isQuickMatchBlocked) {
       hasOpenedFromMatchParamRef.current = true;
@@ -100,7 +101,27 @@ export default function MyOpportunitiesScreen({
         console.error("Error al cargar CVs:", error);
       }
     })();
-  }, [hasCv, cvId, searchParams, router, onOpen, setSelectedCvId, isQuickMatchBlocked]);
+  }, [hasCv, cvId, matchParam, router, onOpen, setSelectedCvId, isQuickMatchBlocked]);
+
+  useEffect(() => {
+    if (matchParam !== "processing") return;
+    if (!hasCv) return;
+    startTransition(async () => {
+      const result = await getOpportunitiesForActiveRoute({
+        skip: 0,
+        take: 6,
+        query: debouncedQuery || undefined,
+      });
+      if (result) {
+        setOpportunities(result.opportunities);
+        setHasMore(result.hasMore);
+        setTotalCount(result.totalCount);
+        setHasMatchedInRoute(result.hasMatchedOnce);
+        setIsMatchProcessing(result.isMatchingInProgress);
+      }
+    });
+    router.replace("/my-opportunities", { scroll: false });
+  }, [matchParam, hasCv, debouncedQuery, router]);
 
 
   // Debounce

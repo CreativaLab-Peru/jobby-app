@@ -146,11 +146,17 @@ export function QuickMatchCvModal({
         body: JSON.stringify({cvId: selectedCvId}),
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => null);
 
       if (!response.ok) {
-        toast.error(data.message || "Error al iniciar el match de oportunidades");
-        setIsMatching(false);
+        if (response.status === 409) {
+          toast.info(data?.message || "El match ya está en proceso para esta ruta.");
+          onClose();
+          router.push("/my-opportunities?match=processing");
+          return;
+        }
+
+        toast.error(data?.message || "Error al iniciar el match de oportunidades");
         return;
       }
 
@@ -160,11 +166,10 @@ export function QuickMatchCvModal({
       toast.success("¡Match procesando!");
       router.push(`/opportunities/cv/${selectedCvId}/analysis`);
       onClose();
-      setIsMatching(false);
-
     } catch (error) {
       console.error("Error al hacer match:", error);
       toast.error("Error al iniciar el match de oportunidades");
+    } finally {
       setIsMatching(false);
     }
   };

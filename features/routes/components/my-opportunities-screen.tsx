@@ -59,6 +59,7 @@ export default function MyOpportunitiesScreen({
   const searchParams = useSearchParams();
   const router = useRouter();
   const hasOpenedFromMatchParamRef = useRef(false);
+  const matchParam = searchParams.get("match");
 
   const isQuickMatchBlocked = hasMatchedInRoute || isMatchProcessing;
   const isQuickMatchDisabled = isCvsLoading || isQuickMatchBlocked;
@@ -74,7 +75,7 @@ export default function MyOpportunitiesScreen({
   useEffect(() => {
     if (hasOpenedFromMatchParamRef.current) return;
     if (!hasCv || !cvId) return;
-    if (searchParams.get("match") !== "true") return;
+    if (matchParam !== "true") return;
 
     if (isQuickMatchBlocked) {
       hasOpenedFromMatchParamRef.current = true;
@@ -100,7 +101,27 @@ export default function MyOpportunitiesScreen({
         console.error("Error al cargar CVs:", error);
       }
     })();
-  }, [hasCv, cvId, searchParams, router, onOpen, setSelectedCvId, isQuickMatchBlocked]);
+  }, [hasCv, cvId, matchParam, router, onOpen, setSelectedCvId, isQuickMatchBlocked]);
+
+  useEffect(() => {
+    if (matchParam !== "processing") return;
+    if (!hasCv) return;
+    startTransition(async () => {
+      const result = await getOpportunitiesForActiveRoute({
+        skip: 0,
+        take: 6,
+        query: debouncedQuery || undefined,
+      });
+      if (result) {
+        setOpportunities(result.opportunities);
+        setHasMore(result.hasMore);
+        setTotalCount(result.totalCount);
+        setHasMatchedInRoute(result.hasMatchedOnce);
+        setIsMatchProcessing(result.isMatchingInProgress);
+      }
+    });
+    router.replace("/my-opportunities", { scroll: false });
+  }, [matchParam, hasCv, debouncedQuery, router]);
 
 
   // Debounce
@@ -210,16 +231,21 @@ export default function MyOpportunitiesScreen({
               {/* Lista */}
               <div className="relative min-h-[400px]">
                 <AnimatePresence>
-                  {isPending && opportunities.length > 0 && (
+                  {(isPending || isMatchProcessing) && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="absolute inset-0 bg-background/20 backdrop-blur-[2px] z-10 rounded-3xl flex items-center justify-center pt-20"
+                      className="absolute inset-0 bg-background/60 backdrop-blur-md z-30 rounded-3xl flex flex-col items-center justify-center pt-10"
                     >
-                      <div className="bg-card p-4 rounded-2xl shadow-xl border border-border">
-                        <p className="text-xs font-bold uppercase tracking-widest animate-pulse">
-                          Sincronizando...
+                      <div className="bg-card p-8 rounded-3xl shadow-2xl border border-border flex flex-col items-center gap-4 text-center max-w-sm">
+                        <div className="p-4 bg-primary/10 rounded-full relative">
+                          <Rocket className="w-8 h-8 text-primary animate-bounce" />
+                          <div className="absolute top-0 right-0 w-3 h-3 bg-primary rounded-full animate-ping" />
+                        </div>
+                        <h3 className="font-black text-lg uppercase tracking-tight">Escaneando el mercado</h3>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          La IA está analizando tu perfil contra miles de vacantes. Te notificaremos cuando tengamos los resultados.
                         </p>
                       </div>
                     </motion.div>

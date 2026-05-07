@@ -146,6 +146,7 @@ export function useBackgroundTasks() {
               const routesResult = await getRoutesForUser();
               if (routesResult.success) hydrate(routesResult.routes);
               toast.success("¡Análisis completado!");
+              router.refresh();
             }
           } catch (e) {
             clearInterval(pollInterval);
@@ -207,6 +208,7 @@ export function useBackgroundTasks() {
             clearInterval(pollInterval);
             activeIntervals.delete(scopeId);
             toast.success("CV procesado");
+            router.refresh();
           } else if (result.status === "FAILED") {
             updateTask(scopeId, { status: "FAILED", description: "Fallo en el procesamiento." });
             clearInterval(pollInterval);
@@ -274,6 +276,7 @@ export function useBackgroundTasks() {
             const routesResult = await getRoutesForUser();
             if (routesResult.success) hydrate(routesResult.routes);
             toast.success("Evaluación lista");
+            router.refresh();
           }
         } catch (e) {
           clearInterval(pollInterval);
@@ -348,6 +351,7 @@ export function useBackgroundTasks() {
               const routesResult = await getRoutesForUser();
               if (routesResult.success) hydrate(routesResult.routes);
               toast.success("¡Roadmap listo!");
+              router.refresh();
             } else if (res.status === "FAILED") {
               clearInterval(pollInterval);
               activeIntervals.delete(scopeId);
@@ -426,6 +430,7 @@ export function useBackgroundTasks() {
               const routesResult = await getRoutesForUser();
               if (routesResult.success) hydrate(routesResult.routes);
               toast.success("Oportunidades listas");
+              router.refresh();
             } else if (steps.matches === JobStatus.FAILED) {
               clearInterval(pollInterval);
               activeIntervals.delete(scopeId);

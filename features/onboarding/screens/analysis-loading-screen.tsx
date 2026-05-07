@@ -12,7 +12,7 @@ interface AnalysisLoadingScreenProps {
 
 import { useTaskStore } from "@/store/use-task-store";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 export function AnalysisLoadingScreen({
   tempCvEvaluationId,

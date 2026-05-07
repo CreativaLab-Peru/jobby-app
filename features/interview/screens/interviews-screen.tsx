@@ -9,10 +9,10 @@ import { SearchableSelect } from "@/components/shared/searchable-select";
 import { LoadMoreButton } from "@/components/shared/load-more-button";
 import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
 import InterviewCard from "../components/interview-card"; // Lo crearemos luego
-import {getInterviews, InterviewWithRelations} from "../actions/get-interviews";
-import {useVapi} from "@/features/interview/hooks/use-vapi";
-import {NewInterviewModal} from "@/features/interview/components/new-interview-modal";
-import {OpportunityWithCV} from "@/features/opportunities/get-opportunities";
+import { getInterviews, InterviewWithRelations } from "../actions/get-interviews";
+import { useVapi } from "@/features/interview/hooks/use-vapi";
+import { NewInterviewModal } from "@/features/interview/components/new-interview-modal";
+import { OpportunityWithCV } from "@/features/opportunities/get-opportunities";
 
 interface Props {
   initialData: InterviewWithRelations[];
@@ -22,11 +22,11 @@ interface Props {
 }
 
 export default function InterviewsScreen({
-                                           initialData,
-                                           initialTotal,
-                                           initialHasMore,
-                                           opportunities
-                                         }: Props) {
+  initialData,
+  initialTotal,
+  initialHasMore,
+  opportunities,
+}: Props) {
   const [interviews, setInterviews] = useState(initialData);
   const [totalCount, setTotalCount] = useState(initialTotal);
   const [hasMore, setHasMore] = useState(initialHasMore);
@@ -36,15 +36,15 @@ export default function InterviewsScreen({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { startCall, isConnecting } = useVapi();
 
-  const oppOptions = opportunities.map(opt => ({
-    value:  `${opt.id}-${opt.cvId}`,
-    label: `${opt.company} - ${opt.title}`
+  const oppOptions = opportunities.map((opt) => ({
+    value: `${opt.id}-${opt.cvId}`,
+    label: `${opt.company} - ${opt.title}`,
   }));
 
   const handleFilterChange = (id: string | null) => {
     setFilterOppId(id);
     startTransition(async () => {
-      const result = await getInterviews({ skip: 0, take: 6, opportunityId: id || undefined });
+      const result = await getInterviews({ skip: 0, take: 6, opportunityId: id });
       if (result) {
         setInterviews(result.interviews);
         setTotalCount(result.totalCount);
@@ -58,10 +58,10 @@ export default function InterviewsScreen({
       const result = await getInterviews({
         skip: interviews.length,
         take: 6,
-        opportunityId: filterOppId || undefined
+        opportunityId: filterOppId,
       });
       if (result) {
-        setInterviews(prev => [...prev, ...result.interviews]);
+        setInterviews((prev) => [...prev, ...result.interviews]);
         setHasMore(result.hasMore);
       }
     });
@@ -82,7 +82,11 @@ export default function InterviewsScreen({
     <>
       <main className="min-h-[90vh] p-4 md:p-8">
         <div className="mx-auto max-w-7xl">
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-8"
+          >
             <PageHeader
               title="Simulaciones de Entrevista"
               description="Entrena con IA basándote en tus vacantes y mejora tus métricas de respuesta."
@@ -92,7 +96,9 @@ export default function InterviewsScreen({
             {/* Barra de Filtros (Consistencia con Opportunities) */}
             <div className="flex flex-col md:flex-row items-center justify-between gap-4 p-5 rounded-lg border border-border bg-card/50 backdrop-blur-sm">
               <div className="flex items-center gap-3">
-                <span className="text-xs font-black uppercase tracking-wider text-muted-foreground/80">Filtrar por Vacante:</span>
+                <span className="text-xs font-black uppercase tracking-wider text-muted-foreground/80">
+                  Filtrar por Vacante:
+                </span>
                 <SearchableSelect
                   items={oppOptions}
                   placeholder="Todas las vacantes"
@@ -108,9 +114,16 @@ export default function InterviewsScreen({
             <div className="relative min-h-[400px]">
               <AnimatePresence>
                 {isPending && (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-background/20 backdrop-blur-[2px] z-10 flex items-center justify-center">
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute inset-0 bg-background/20 backdrop-blur-[2px] z-10 flex items-center justify-center"
+                  >
                     <div className="bg-card p-4 rounded-2xl shadow-xl border border-border">
-                      <p className="text-xs font-bold uppercase tracking-widest animate-pulse">Cargando historial...</p>
+                      <p className="text-xs font-bold uppercase tracking-widest animate-pulse">
+                        Cargando historial...
+                      </p>
                     </div>
                   </motion.div>
                 )}

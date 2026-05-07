@@ -44,17 +44,17 @@ const StatCard = ({ icon: Icon, label, value, colorClass = "text-primary/60" }: 
 );
 
 export function OpportunityDetailsScreen({
-                                           opportunity,
-                                           matchValue,
-                                           isHighMatch,
-                                           requirements,
-                                           formattedDeadline,
-                                           roadmap = null,
-                                           canViewFullRoadmap = false,
-                                           canGenerateRoadmap = true,
-                                           roadmapBlockedMessage = null,
-                                           planNames,
-                                         }: Props) {
+  opportunity,
+  matchValue,
+  isHighMatch,
+  requirements,
+  formattedDeadline,
+  roadmap = null,
+  canViewFullRoadmap = false,
+  canGenerateRoadmap = true,
+  roadmapBlockedMessage = null,
+  planNames,
+}: Props) {
 
   // Normalización de requisitos (Array para badges)
   const renderRequirements = (data: any, type: 'required' | 'optional') => {
@@ -95,7 +95,7 @@ export function OpportunityDetailsScreen({
     <main className="min-h-screen p-4 md:p-12 bg-background/50 relative">
       {opportunity.isLocked && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/60 backdrop-blur-md">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="max-w-md w-full bg-card p-10 rounded-[3rem] border border-border shadow-2xl text-center space-y-6"
@@ -164,7 +164,7 @@ export function OpportunityDetailsScreen({
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
                     <StatCard icon={MapPin} label="Ubicación" value={opportunity.location || "Remoto"} />
                     <StatCard icon={Briefcase} label="Modalidad" value={MODALITIES_MAP[opportunity.modality] || "Full-time"} colorClass="text-blue-500/60" />
-                    { salaryLabel && salaryLabel.trim() !== "" && (
+                    {salaryLabel && salaryLabel.trim() !== "" && (
                       <StatCard icon={DollarSign} label="Salario" value={salaryLabel} colorClass="text-emerald-500/60" />
                     )}
                     <StatCard icon={Calendar} label="Deadline" value={formattedDeadline || "Abierta"} colorClass="text-orange-500/60" />
@@ -237,7 +237,7 @@ export function OpportunityDetailsScreen({
           </div>
         </div>
 
-        {/* Hidden roadmap into details of opportunities */}        
+        {/* Hidden roadmap into details of opportunities */}
         {/* Roadmap (Full Width) */}
         {/* {opportunity.cv?.id && (
           <div className="pt-10">

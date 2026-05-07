@@ -4,10 +4,22 @@
 
 - [LV-86ah912y4](https://app.clickup.com/t/86ah912y4) Agregando omboarding de empresas, además de una nueva tabla CompaniesPreferences
 
+## Enhancements
+
+- [LV-86ahbchqc](https://app.clickup.com/t/86ahbchqc) Cambiado el color para el modo oscuro, cambiados algunos textos y estilos de los cards en el hero
+
+## Fixes
+
+- [LV-86ahb5v1h](https://app.clickup.com/t/86ahb5v1h) Mejorado el responsive de la pagina de de bienvenida del onboarding
+- [LV-86ahb5u4e](https://app.clickup.com/t/86ahb5u4e) Arreglado el error que no cerraba el modal, ademas de agregar una pantalla de carga "Procesando"
+- [LV-86ahb5q5e](https://app.clickup.com/t/86ahb5q5e) Arreglado el error que no actualiza el proceso en el stepper de la ruta
+- [LV-86ahb5ttj](https://app.clickup.com/t/86ahb5ttj) Arreglado el refresh cuando se hace un match de oportunidades, ademas de agregar una pantalla de "Procesando"
+
 # v1.2.20 - 2026-05-04
 
 ## Enhancements
 
+- [LV-86ah6jkxg](https://app.clickup.com/t/86ah6jkxg) Agregada tabla para guardar la duracion de la entrevista, y tambien usar la tabla AppCondig para definir la duracion de una entrevista
 - [LV-86ah6jp4x](https://app.clickup.com/t/86ah6jp4x) Agregando la tabla de configuracion global de la aplicacion
 - [LV-86ah46qf4](https://app.clickup.com/t/86ah46qf4) Cambiado la experiencia del onboarding y agregado Emprendedor como opcion
 - [LV-86ah46uqa](https://app.clickup.com/t/86ah46uqa) Añadidos nuevos cards, cambiados los contenidos de los pages y mejora en el componente de planes y créditos en la página principal y dentro de la app

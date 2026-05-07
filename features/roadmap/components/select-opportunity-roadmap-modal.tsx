@@ -331,6 +331,7 @@ export function SelectOpportunityRoadmapModal({
                         onGenerated("");
                       }
                     }}
+                    onClose={onClose}
                     canGenerate={canGenerateInSelection}
                     blockedMessage={
                       starterLimitReached

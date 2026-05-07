@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { getOpportunitiesForActiveRoute } from "@/features/routes/actions/get-opportunities-for-active-route";
 import { getFirstUserPayment } from "@/features/billing/actions/get-first-user-payment";
 import { getPlanNames } from "@/features/billing/actions/get-plan-names";
+import { MatchProcessingScreen } from "@/features/opportunities/screens/match-processing-screen";
 
 export default async function MyOpportunitiesPage() {
   const activeRoute = await getActiveRoute();
@@ -53,6 +54,11 @@ export default async function MyOpportunitiesPage() {
   }
 
   const data = await getOpportunitiesForActiveRoute({ skip: 0, take: 6 });
+
+  if (data?.isMatchingInProgress) {
+    return <MatchProcessingScreen cvId={activeRoute.cvId} />;
+  }
+
   const userPayment = await getFirstUserPayment();
   const hasSubscription = Boolean(
     userPayment?.subscription && ["starter", "pro"].includes(userPayment.subscription.plan.slug),

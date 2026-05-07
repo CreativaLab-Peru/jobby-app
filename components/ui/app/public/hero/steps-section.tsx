@@ -1,6 +1,7 @@
 import { Check, Lock, Sparkles, FileText, Search, Map, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 const steps = [
   {
@@ -32,34 +33,38 @@ const steps = [
 
 export function StepBuilderHero() {
   return (
-    <section className="section-padding bg-background">
+    <section className="section-padding bg-background relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
+
       <div className="container-levely">
-        {/* Card Principal */}
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-primary dark:bg-levely-dark p-8 sm:p-14 lg:p-20 shadow-2xl border border-white/5">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[120px] -mr-40 -mt-40 pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px] -ml-40 -mb-40 pointer-events-none" />
-
-          <div className="relative grid lg:grid-cols-2 gap-16 items-center">
-            <div className="flex flex-col space-y-8">
-              <div className="space-y-4">
-                <p className="text-white/50 uppercase tracking-[0.2em] text-xs font-semibold">
+        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
+          {/* Left Side: Content */}
+          <div className="lg:w-5/12 sticky lg:top-32 space-y-8">
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                <span className="text-[10px] font-bold text-primary uppercase tracking-wider">
                   Cómo funciona
-                </p>
-                <h2 className="text-5xl md:text-6xl font-bold text-white tracking-tight leading-[1.1]">
-                  4 pasos. Sin adivinar <br />
-                  <span className="text-white/60 font-medium">qué mejorar.</span>
-                </h2>
+                </span>
               </div>
-
-              <p className="text-xl text-white/50 max-w-md leading-relaxed">
-                Nuestra plataforma automatiza el análisis de tu perfil para que solo te enfoques en
-                aplicar.
-              </p>
+              <h2 className="text-5xl md:text-6xl font-bold text-foreground tracking-tight leading-[1.1]">
+                4 pasos. Sin adivinar <br />
+                <span className="text-primary">qué mejorar.</span>
+              </h2>
             </div>
 
-            {/* Lado Derecho: La secuencia de pasos fiel a la imagen */}
-            <div className="flex flex-col gap-4">
-              {steps.map((step) => {
+            <p className="text-xl text-muted-foreground leading-relaxed">
+              Nuestra plataforma automatiza el análisis de tu perfil para que solo te enfoques en
+              aplicar a las mejores oportunidades globales.
+            </p>
+          </div>
+
+          {/* Right Side: Steps List */}
+          <div className="lg:w-7/12 w-full">
+            <div className="space-y-6">
+              {steps.map((step, index) => {
                 const isActive = step.status === "active";
                 const isCompleted = step.status === "completed";
                 const isLocked = step.status === "locked";
@@ -68,59 +73,68 @@ export function StepBuilderHero() {
                   <div
                     key={step.id}
                     className={cn(
-                      "group relative flex gap-5 p-6 rounded-[1.5rem] border transition-all duration-500",
-                      // Estilos basados en estado
+                      "group relative flex gap-6 p-8 rounded-3xl border transition-all duration-500",
                       isActive
-                        ? "bg-[#162125] border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] ring-1 ring-white/10"
-                        : "bg-white/[0.03] border-white/[0.05]",
-                      isLocked && "opacity-70",
+                        ? "bg-card border-primary/20 shadow-[0_20px_50px_rgba(0,0,0,0.05)] ring-1 ring-primary/5"
+                        : "bg-transparent border-border/40 hover:border-border/80",
+                      isLocked && "opacity-60"
                     )}
                   >
-                    {/* Círculo del Número/Estado */}
-                    <div
-                      className={cn(
-                        "flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300",
-                        isCompleted &&
-                          "bg-secondary text-secondary-foreground shadow-[0_0_15px_rgba(163,230,53,0.3)]",
-                        isActive && "bg-secondary text-secondary-foreground",
-                        isLocked && "bg-white/10 text-white/40 border border-white/10",
-                      )}
-                    >
-                      {isCompleted ? <Check className="w-5 h-5 stroke-[3.5]" /> : step.id}
-                    </div>
-
-                    {/* Contenido */}
-                    <div className="space-y-1.5 pt-1">
-                      <h3
+                    {/* Step number / icon */}
+                    <div className="flex flex-col items-center gap-4">
+                      <div
                         className={cn(
-                          "text-lg font-bold tracking-tight transition-colors",
-                          isLocked ? "text-white/40" : "text-white",
+                          "w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg transition-all duration-300",
+                          isCompleted && "bg-secondary text-secondary-foreground shadow-lg shadow-secondary/20",
+                          isActive && "bg-primary text-primary-foreground shadow-lg shadow-primary/20",
+                          isLocked && "bg-muted text-muted-foreground border border-border"
                         )}
                       >
-                        {step.title}
-                      </h3>
+                        {isCompleted ? <Check className="w-6 h-6 stroke-[3]" /> : step.id}
+                      </div>
+                      {/* Vertical line connector */}
+                      {index !== steps.length - 1 && (
+                        <div className="w-px h-full bg-border/40 group-hover:bg-border transition-colors" />
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 space-y-2 pt-1">
+                      <div className="flex items-center justify-between">
+                        <h3
+                          className={cn(
+                            "text-xl font-bold tracking-tight transition-colors",
+                            isLocked ? "text-muted-foreground" : "text-foreground"
+                          )}
+                        >
+                          {step.title}
+                        </h3>
+                        {isLocked && <Lock className="w-4 h-4 text-muted-foreground/40" />}
+                        {isActive && (
+                          <span className="text-[10px] font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-full uppercase tracking-widest animate-pulse">
+                            En curso
+                          </span>
+                        )}
+                      </div>
+
                       <p
                         className={cn(
-                          "text-sm leading-relaxed",
-                          isLocked ? "text-white/20" : "text-white/50",
+                          "text-base leading-relaxed max-w-md",
+                          isLocked ? "text-muted-foreground/60" : "text-muted-foreground"
                         )}
                       >
                         {step.desc}
                       </p>
 
                       {step.unlock && (
-                        <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest pt-2 italic">
-                          {step.unlock}
-                        </p>
+                        <div className="flex items-center gap-2 pt-3">
+                          <div className="h-px w-4 bg-primary/30" />
+                          <p className="text-[10px] font-bold text-primary/60 uppercase tracking-widest italic">
+                            {step.unlock}
+                          </p>
+                        </div>
                       )}
                     </div>
-
-                    {/* Icono de Candado para los bloqueados */}
-                    {isLocked && (
-                      <div className="absolute top-6 right-6">
-                        <Lock className="w-4 h-4 text-white/10" />
-                      </div>
-                    )}
                   </div>
                 );
               })}

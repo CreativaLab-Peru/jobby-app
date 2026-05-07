@@ -24,7 +24,11 @@ const errorMapper: Record<string, string> = {
   "Invalid email or password": "Correo electrónico o contraseña inválidos",
 };
 
-export function LoginForm() {
+interface LoginFormProps {
+  slug: string;
+}
+
+export function LoginForCompaniesForm({slug}: LoginFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [formError, setFormError] = useState<string | null>(null);

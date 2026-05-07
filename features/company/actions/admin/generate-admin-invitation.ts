@@ -8,7 +8,7 @@ import { routes } from "@/lib/routes";
 import { companyInvitationCreateSchema } from "@/features/company/schemas/company-invitation.schema";
 import {
   createInvitationCandidate,
-  persistInvitationCandidate, sendCompanyInvitationEmail,
+  persistInvitationCandidate,
 } from "@/features/company/services/company-invitation.service";
 import {
   CreateCompanyInvitationState
@@ -20,7 +20,7 @@ export interface ResendInvitationInput {
   companyId: string;
 }
 
-export const resendCompanyInvitationAction = async (
+export const createCompanyInvitationAction = async (
   { email, companyId }: ResendInvitationInput
 ): Promise<CreateCompanyInvitationState> => {
   try {
@@ -53,7 +53,6 @@ export const resendCompanyInvitationAction = async (
     });
 
     const saved = await persistInvitationCandidate(candidate, admin.user.id);
-    await sendCompanyInvitationEmail(candidate);
 
     // 4. Revalidación de rutas
     revalidatePath(routes.app.admin.companies.root);

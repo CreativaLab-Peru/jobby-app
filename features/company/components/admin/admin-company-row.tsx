@@ -28,7 +28,6 @@ import { StatusBadge } from "@/components/shared/status-badge";
 import { formatDate } from "@/utils/format-date";
 import { AdminCompanyItem } from "@/features/company/actions/admin/get-admin-companies";
 import { deleteAdminCompany } from "@/features/company/actions/admin/delete-admin-company";
-import { useInvitationModal } from "@/features/company/hooks/use-invitation-modal";
 
 interface AdminCompanyRowProps {
   company: AdminCompanyItem;
@@ -38,8 +37,6 @@ export function AdminCompanyRow({ company }: AdminCompanyRowProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
-
-  const { onOpen: openInvitationModal } = useInvitationModal();
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -122,12 +119,6 @@ export function AdminCompanyRow({ company }: AdminCompanyRowProps) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 rounded-xl">
-                <DropdownMenuItem
-                  onClick={() => openInvitationModal(company.id)}
-                  className="cursor-pointer font-medium"
-                >
-                  <User2 className="mr-2 h-4 w-4" /> Generar invitación
-                </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => router.push(`/admin/companies/${company.id}/invitations`)}
                   className="cursor-pointer font-medium"

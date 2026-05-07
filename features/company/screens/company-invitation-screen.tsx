@@ -1,15 +1,14 @@
 "use client";
 
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {
   AlertCircle,
   CheckCircle2,
   Clock,
   Copy,
   Mail,
-  Plus,
+  Plus, RefreshCcw,
   ShieldCheck,
-  Trash2,
   X
 } from "lucide-react";
 import {toast} from "sonner";
@@ -23,6 +22,9 @@ import {EmptyPlaceholder} from "@/components/shared/empty-placeholder";
 import {routes} from "@/lib/routes";
 import {useInvitationModal} from "@/features/company/hooks/use-invitation-modal";
 import {CompanyInvitationModal} from "@/features/company/components/company-invitation-modal";
+import {
+  regenerateCompanyInvitationAction
+} from "@/features/company/actions/admin/regenerate-company-invitation.action";
 
 interface InvitationListItem {
   id: string;
@@ -51,15 +53,31 @@ export function CompanyInvitationScreen({
                                           initialError
                                         }: CompanyInvitationScreenProps) {
   const {onOpen: openInvitationModal} = useInvitationModal();
+  const [isRegenerating, setIsRegenerating] = useState<string | null>(null);
 
   useEffect(() => {
     if (initialError) toast.error(initialError);
   }, [initialError]);
 
-  const copyToClipboard = (token: string) => {
+  const copyToClipboard = (token: string, silent = false) => {
     const url = `${window.location.origin}${routes.website.joinInvitation(token)}`;
     navigator.clipboard.writeText(url);
-    toast.success("Enlace copiado al portapapeles");
+    if (!silent) toast.success("Enlace copiado al portapapeles");
+  };
+
+  const handleRegenerate = async (id: string) => {
+    setIsRegenerating(id);
+    const result = await regenerateCompanyInvitationAction(id);
+
+    if (result.success && result.newToken) {
+      copyToClipboard(result.newToken);
+      toast.success("Link regenerado y copiado al portapapeles", {
+        description: "El código de acceso también ha cambiado.",
+      });
+    } else {
+      toast.error(result.error || "Error al regenerar");
+    }
+    setIsRegenerating(null);
   };
 
   return (
@@ -129,6 +147,25 @@ export function CompanyInvitationScreen({
                           </div>
 
                           <div className="flex items-center gap-2 self-end sm:self-center">
+                            {invite.status !== "ACCEPTED" && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleRegenerate(invite.id)}
+                                disabled={isRegenerating === invite.id}
+                                className="h-8 gap-2 rounded-lg text-[11px] font-bold border-primary/20 hover:bg-primary/5 text-primary"
+                                title="Genera un nuevo link y código sin enviar correo"
+                              >
+                                {isRegenerating === invite.id ? (
+                                  <RefreshCcw className="h-3.5 w-3.5 animate-spin"/>
+                                ) : (
+                                  <RefreshCcw className="h-3.5 w-3.5"/>
+                                )}
+                                REGENERAR LINK
+                              </Button>
+                            )}
+
+                            {/* Botón normal de copiar link */}
                             <Button
                               variant="secondary"
                               size="sm"
@@ -137,14 +174,7 @@ export function CompanyInvitationScreen({
                               className="h-8 gap-2 rounded-lg text-[11px] font-bold"
                             >
                               <Copy className="h-3.5 w-3.5"/>
-                              COPIAR LINK
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors"
-                            >
-                              <Trash2 className="h-4 w-4"/>
+                              COPIAR ACTUAL
                             </Button>
                           </div>
                         </div>

@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useInvitationModal } from "@/features/company/hooks/use-invitation-modal"
-import { resendCompanyInvitationAction } from "@/features/company/actions/admin/generate-admin-invitation"
+import { createCompanyInvitationAction } from "@/features/company/actions/admin/generate-admin-invitation"
 import {routes} from "@/lib/routes";
 
 export function CompanyInvitationModal() {
@@ -25,7 +25,7 @@ export function CompanyInvitationModal() {
     if (!email || !companyId) return
 
     startTransition(async () => {
-      const result = await resendCompanyInvitationAction({ companyId, email })
+      const result = await createCompanyInvitationAction({ companyId, email })
 
       if (result.success && result.invitation) {
         // 1. Construir la URL (ajusta la ruta según tus 'routes')

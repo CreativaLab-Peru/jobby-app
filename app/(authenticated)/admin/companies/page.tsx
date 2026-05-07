@@ -5,7 +5,6 @@ import {
   AdminCompanyListScreen
 } from "@/features/company/components/admin/admin-company-list-screen";
 import {routes} from "@/lib/routes";
-import {CompanyInvitationModal} from "@/features/company/components/company-invitation-modal";
 
 interface AdminCompaniesPageProps {
   searchParams: Promise<{
@@ -40,13 +39,10 @@ export default async function AdminCompaniesPage({searchParams}: AdminCompaniesP
   };
 
   return (
-    <>
-      <AdminCompanyListScreen
-        {...commonProps}
-        initialCompanies={result.success ? result.data.companies : []}
-        initialError={!result.success ? "Algo ha pasado" : null}
-      />
-      <CompanyInvitationModal/>
-    </>
+    <AdminCompanyListScreen
+      {...commonProps}
+      initialCompanies={result.success ? result.data.companies : []}
+      initialError={!result.success ? "Algo ha pasado" : null}
+    />
   );
 }

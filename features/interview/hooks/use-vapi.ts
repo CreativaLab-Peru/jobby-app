@@ -10,6 +10,24 @@ interface TranscriptMessage {
   text: string;
 }
 
+function isNetworkDisconnected(event: unknown) {
+  if (event === null || typeof event !== "object") return false;
+
+  const candidate = event as Record<string, unknown>;
+  const value = String(
+    candidate.state ??
+      candidate.status ??
+      candidate.connectionState ??
+      candidate.type ??
+      candidate.event ??
+      "",
+  ).toLowerCase();
+
+  return ["disconnected", "disconnect", "offline", "failed", "lost", "closed"].some((state) =>
+    value.includes(state),
+  );
+}
+
 export const useVapi = () => {
   const [vapi, setVapi] = useState<Vapi | null>(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -32,12 +50,12 @@ export const useVapi = () => {
   const finishedRef = useRef(false);
   const finishReasonRef = useRef<string | null>(null);
 
-  const clearTimer = () => {
+  const clearTimer = useCallback(() => {
     if (timerRef.current) {
       window.clearInterval(timerRef.current);
       timerRef.current = null;
     }
-  };
+  }, []);
 
   const syncElapsed = (nextElapsed: number) => {
     elapsedRef.current = nextElapsed;
@@ -77,6 +95,25 @@ export const useVapi = () => {
     }
   }, []);
 
+  const handleAbruptTermination = useCallback(
+    (reason: string, message: string, details: unknown | null = null) => {
+      if (!sessionRef.current || finishedRef.current) return;
+
+      if (details !== null) {
+        console.error("[VAPI_TERMINATION_EVENT]", reason, details);
+      }
+
+      setIsConnected(false);
+      setIsConnecting(false);
+      setIsSpeaking(false);
+      setStatusMessage(message);
+      finishReasonRef.current = reason;
+      clearTimer();
+      void finalizeAttempt(reason);
+    },
+    [clearTimer, finalizeAttempt],
+  );
+
   useEffect(() => {
     const vapiInstance = new Vapi(VARS.VAPI_PUBLIC_KEY);
     setVapi(vapiInstance);
@@ -111,6 +148,25 @@ export const useVapi = () => {
       void finalizeAttempt(finishReasonRef.current || "call-ended");
     });
 
+    vapiInstance.on("error", (error) => {
+      handleAbruptTermination(
+        "vapi-error",
+        "La entrevista se interrumpió por un error técnico en Vapi.",
+        error,
+      );
+    });
+
+    vapiInstance.on("network-connection", (event) => {
+      if (!sessionRef.current || finishedRef.current) return;
+      if (!isNetworkDisconnected(event)) return;
+
+      handleAbruptTermination(
+        "network-disconnected",
+        "Se perdió la conexión durante la entrevista. El intento quedó guardado.",
+        event,
+      );
+    });
+
     vapiInstance.on("speech-start", () => setIsSpeaking(true));
     vapiInstance.on("speech-end", () => setIsSpeaking(false));
 
@@ -131,25 +187,20 @@ export const useVapi = () => {
       vapiInstance.stop();
       clearTimer();
     };
-  }, [finalizeAttempt]);
+  }, [finalizeAttempt, handleAbruptTermination]);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       if (!sessionRef.current || finishedRef.current) return;
       event.preventDefault();
+      // El navegador mostrará su confirmación nativa al intentar cerrar o recargar.
       event.returnValue = "";
     };
 
-    const handlePageHide = () => {
-      void finalizeAttempt(finishReasonRef.current || "pagehide");
-    };
-
     window.addEventListener("beforeunload", handleBeforeUnload);
-    window.addEventListener("pagehide", handlePageHide);
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      window.removeEventListener("pagehide", handlePageHide);
     };
   }, [finalizeAttempt]);
 

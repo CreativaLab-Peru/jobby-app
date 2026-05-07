@@ -6,7 +6,7 @@ import { getValueFromKey } from "@/features/share/actions/get-value-from-key";
 
 const DEFAULT_INTERVIEW_DURATION_SECONDS = 180;
 
-function parseInterviewDuration(value: string | null | undefined) {
+function parseInterviewDuration(value: string | null) {
   const parsed = Number.parseInt(value ?? "", 10);
   if (Number.isFinite(parsed) && parsed > 0) {
     return parsed;
@@ -32,9 +32,10 @@ export async function prepareInterviewSession(opportunityId: string, cvId: strin
 
   const durationValue = await getValueFromKey("INTERVIEW_DURATION");
 
-  const durationSeconds = durationValue
-    ? parseInterviewDuration(durationValue)
-    : DEFAULT_INTERVIEW_DURATION_SECONDS;
+  const durationSeconds =
+    durationValue === null
+      ? DEFAULT_INTERVIEW_DURATION_SECONDS
+      : parseInterviewDuration(durationValue);
 
   const result = await prisma.$transaction(async (tx) => {
     const session = await tx.interviewSession.create({

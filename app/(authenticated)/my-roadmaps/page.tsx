@@ -1,9 +1,11 @@
+import { redirect } from "next/navigation";
 import {getRoadmapsForUser} from "@/features/roadmap/actions/get-roadmaps-for-user";
 import MyRoadmapsScreen from "@/features/roadmap/components/my-roadmaps-screen";
 import {
   getOpportunitiesForActiveRoute
 } from "@/features/routes/actions/get-opportunities-for-active-route";
 import {getStatisticsForUser} from "@/features/dashboard/actions/get-statistics-for-user";
+import { getActiveRoadmap } from "@/features/roadmap/actions/get-active-roadmap";
 
 interface MyRoadmapsPageProps {
   searchParams?: Promise<{
@@ -13,6 +15,11 @@ interface MyRoadmapsPageProps {
 
 export default async function MyRoadmapsPage({searchParams}: MyRoadmapsPageProps) {
   const {openedModal = false} = searchParams ? await searchParams : {};
+
+  const activeRoadmap = await getActiveRoadmap();
+  if (activeRoadmap) {
+    return redirect(`/my-roadmaps/${activeRoadmap.id}`);
+  }
 
   const [data, opportunitiesData, stats] = await Promise.all([
     getRoadmapsForUser({skip: 0, take: 10}),

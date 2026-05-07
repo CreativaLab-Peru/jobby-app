@@ -3,6 +3,8 @@
 import { useState, useCallback } from "react";
 import { Map, Loader2, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { useBackgroundTasks } from "@/hooks/use-background-tasks";
 import { useTaskStore } from "@/store/use-task-store";
 import { cn } from "@/lib/utils";
@@ -15,6 +17,7 @@ interface GenerateRoadmapButtonProps {
   onGenerated: (roadmapId: string) => void;
   canGenerate?: boolean;
   blockedMessage?: string | null;
+  onClose?: () => void;
 }
 
 export function GenerateRoadmapButton({
@@ -23,8 +26,11 @@ export function GenerateRoadmapButton({
   routeId = null,
   canGenerate = true,
   blockedMessage = null,
+  onGenerated,
+  onClose,
 }: GenerateRoadmapButtonProps) {
   const { startRoadmapTask } = useBackgroundTasks();
+  const router = useRouter();
   // Lookup por Scope ID (opportunityId)
   const task = useTaskStore((state) => state.tasks[opportunityId]);
   const [isLocalTriggering, setIsLocalTriggering] = useState(false);
@@ -36,7 +42,11 @@ export function GenerateRoadmapButton({
     setIsLocalTriggering(true);
     await startRoadmapTask(opportunityId, cvId, routeId);
     setIsLocalTriggering(false);
-  }, [opportunityId, cvId, routeId, startRoadmapTask]);
+    
+    toast.success("¡Diseñando roadmap!");
+    if (onClose) onClose();
+    router.push("/dashboard");
+  }, [opportunityId, cvId, routeId, startRoadmapTask, router, onClose]);
 
   if (task?.status === "SUCCEEDED") {
     return null;

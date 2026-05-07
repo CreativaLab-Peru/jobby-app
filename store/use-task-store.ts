@@ -74,15 +74,23 @@ export const useTaskStore = create<TaskStore>()(
       },
 
       updateTask: (scopeId, updates) =>
-        set((state) => ({
-          tasks: {
-            ...state.tasks,
-            [scopeId]: {
-              ...state.tasks[scopeId],
-              ...updates,
+        set((state) => {
+          const existingTask = state.tasks[scopeId];
+          if (!existingTask) return state;
+          
+          return {
+            tasks: {
+              ...state.tasks,
+              [scopeId]: {
+                ...existingTask,
+                ...updates,
+                metadata: updates.metadata
+                  ? { ...existingTask.metadata, ...updates.metadata }
+                  : existingTask.metadata,
+              },
             },
-          },
-        })),
+          };
+        }),
 
       removeTask: (scopeId) =>
         set((state) => {

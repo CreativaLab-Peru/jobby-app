@@ -10,17 +10,23 @@ export const talentOnboardingBaseSchema = z.object({
   workModality: z.array(z.string()).optional().default([]),
   relocation: z.boolean().default(false),
   availability: z.array(z.string()).optional().default([]),
-  skills: z.array(z.object({
-    name: z.string(),
-    level: z.enum(['Intermedio', 'Avanzado'])
-  })).optional().default([]),
+  skills: z
+    .array(
+      z.object({
+        name: z.string(),
+        level: z.enum(["Intermedio", "Avanzado"]),
+      }),
+    )
+    .optional()
+    .default([]),
   portfolioUrl: z.string().optional().or(z.literal("")),
   minSalary: z.coerce.number().min(0).optional(),
-  currency: z.enum(['PEN', 'USD']).default('USD'),
-  work: z.enum(['Remoto', 'Presencial', 'Híbrido']).optional(),
+  currency: z.enum(["PEN", "USD"]).default("USD"),
+  work: z.enum(["Remoto", "Presencial", "Híbrido"]).optional(),
   email: z.string().regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Correo electrónico inválido"),
   // Contraseñas opcionales para usuarios OAuth
-  password: z.string()
+  password: z
+    .string()
     .min(6, "La contraseña debe tener al menos 6 caracteres")
     .regex(/[A-Z]/, "Debe contener al menos una letra mayúscula")
     .regex(/[0-9]/, "Debe contener al menos un número")
@@ -47,7 +53,6 @@ export const talentOnboardingSchema = talentOnboardingBaseSchema.refine(
     message: "Las contraseñas no coinciden",
     path: ["confirmPassword"],
   },
-
 );
 
 export type TalentOnboardingFormData = z.infer<typeof talentOnboardingSchema>;

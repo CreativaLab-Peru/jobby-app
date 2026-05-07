@@ -1,13 +1,13 @@
-"use server"
+"use server";
 
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import { prisma } from "@/lib/prisma";
-import {InterviewSession, Opportunity} from "@prisma/client";
+import { InterviewSession, Opportunity } from "@prisma/client";
 
 export type InterviewWithRelations = InterviewSession & {
   opportunity: Opportunity & {
     match: number;
-  }
+  };
   cv: {
     title: string | null;
   };
@@ -16,7 +16,7 @@ export type InterviewWithRelations = InterviewSession & {
 export interface PaginationParams {
   skip?: number;
   take?: number;
-  opportunityId?: string;
+  opportunityId?: string | null;
 }
 
 export const getInterviews = async (params?: PaginationParams) => {
@@ -24,7 +24,7 @@ export const getInterviews = async (params?: PaginationParams) => {
     const currentUser = await getCurrentUser();
     if (!currentUser) return null;
 
-    const { skip = 0, take = 6, opportunityId } = params || {};
+    const { skip = 0, take = 6, opportunityId = null } = params || {};
 
     const whereClause: any = { userId: currentUser.id };
     if (opportunityId) whereClause.opportunityId = opportunityId;
@@ -35,12 +35,12 @@ export const getInterviews = async (params?: PaginationParams) => {
         orderBy: { createdAt: "desc" },
         include: {
           opportunity: true,
-          cv: { select: { title: true } }
+          cv: { select: { title: true } },
         },
         skip,
-        take
+        take,
       }),
-      prisma.interviewSession.count({ where: whereClause })
+      prisma.interviewSession.count({ where: whereClause }),
     ]);
 
     // Serialización segura para Next.js Server Components
@@ -49,7 +49,7 @@ export const getInterviews = async (params?: PaginationParams) => {
     return {
       interviews: formattedData,
       hasMore: skip + take < count,
-      totalCount: count
+      totalCount: count,
     };
   } catch (error) {
     console.error("[GET_INTERVIEWS_ERROR]", error);

@@ -50,12 +50,12 @@ export function CvProcessingScreen({ cvId }: CvProcessingScreenProps) {
 
         <div className="flex flex-col gap-3 w-full">
           <Button
-            onClick={() => router.push("/my-cvs")}
+            onClick={() => router.push("/dashboard")}
             variant="outline"
             className="rounded-2xl gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
-            Volver a mis CVs
+            Volver al dashboard
           </Button>
           <p className="text-[10px] text-muted-foreground italic uppercase font-bold">
             Progreso actual: {hasTask?.progress || 0}%

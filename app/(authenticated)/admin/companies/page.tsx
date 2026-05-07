@@ -11,7 +11,7 @@ interface AdminCompaniesPageProps {
   searchParams: Promise<{
     q?: string;
     page?: string;
-    view?: string; // Nuevo parámetro
+    view?: string;
   }>;
 }
 

@@ -845,6 +845,7 @@ model CompanyInvitation {
   expiresAt DateTime
   usedAt    DateTime?
   usedByIp  String?
+  lastSentAt DateTime?
 
   createdAt DateTime @default(now())
 

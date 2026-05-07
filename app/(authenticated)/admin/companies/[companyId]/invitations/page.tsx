@@ -1,62 +1,64 @@
 import { notFound, redirect } from "next/navigation";
-
-import { CompanyInvitationScreen } from "@/features/company/screens/company-invitation-screen";
 import { requireAdmin } from "@/features/share/actions/require-admin";
-import { prisma } from "@/lib/prisma";
 import { routes } from "@/lib/routes";
+import { getAdminCompanyInvitations } from "@/features/company/actions/admin/get-admin-company-invitations";
+import { CompanyInvitationScreen } from "@/features/company/screens/company-invitation-screen";
 
 interface AdminCompanyInvitationsPageProps {
   params: Promise<{
     companyId: string;
   }>;
+  searchParams: Promise<{
+    page?: string;
+    q?: string;
+  }>;
 }
 
-export default async function AdminCompanyInvitationsPage({ params }: AdminCompanyInvitationsPageProps) {
+const PAGE_SIZE = 10;
+
+export default async function AdminCompanyInvitationsPage({
+                                                            params,
+                                                            searchParams
+                                                          }: AdminCompanyInvitationsPageProps) {
   const admin = await requireAdmin();
   if (!admin.success) {
     redirect(routes.app.dashboard);
   }
 
   const { companyId } = await params;
-  const company = await prisma.company.findUnique({
-    where: { id: companyId },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      invitations: {
-        orderBy: { createdAt: "desc" },
-        select: {
-          id: true,
-          email: true,
-          role: true,
-          status: true,
-          expiresAt: true,
-          createdAt: true,
-          token: true,
-        },
-      },
-    },
-  });
+  const sParams = await searchParams;
 
-  if (!company) {
-    notFound();
+  const page = parseInt(sParams.page || "1");
+  const skip = (page - 1) * PAGE_SIZE;
+
+  const result = await getAdminCompanyInvitations(companyId, skip, PAGE_SIZE);
+
+  if (result.success === false) {
+    if (result.error === "Empresa no encontrada") notFound();
+
+    // Si es otro error (ej. permisos), mostramos la pantalla vacía con el error
+    return (
+      <CompanyInvitationScreen
+        companyId={companyId}
+        companyName="Error"
+        invitations={[]}
+        totalCount={0}
+        currentPage={page}
+        initialError={result.error}
+      />
+    );
   }
 
   return (
     <CompanyInvitationScreen
-      companyId={company.id}
-      companyName={company.name}
-      companySlug={company.slug}
-      invitations={company.invitations.map((invitation) => ({
-        id: invitation.id,
-        email: invitation.email,
-        role: invitation.role,
-        status: invitation.status,
-        expiresAt: invitation.expiresAt.toISOString(),
-        createdAt: invitation.createdAt.toISOString(),
+      companyId={companyId}
+      companyName={result.data.companyName}
+      totalCount={result.data.totalCount}
+      currentPage={page}
+      invitations={result.data.invitations.map((inv) => ({
+        ...inv,
+        expiresAt: inv.expiresAt.toISOString(), // Serialización para Client Component
       }))}
     />
   );
 }
-

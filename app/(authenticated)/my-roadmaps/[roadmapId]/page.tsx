@@ -5,6 +5,7 @@ import {RoadmapDetailScreen} from "@/features/roadmap/components/roadmap-detail-
 import {RoadmapProcessingScreen} from "@/features/roadmap/screens/roadmap-processing-screen";
 import {getRouteDossier} from "@/features/booking/actions/get-route-dossier";
 import {getActiveRoute} from "@/features/routes/actions/get-active-route";
+import { JobStatus } from "@/enums";
 
 interface PageProps {
   params: Promise<{ roadmapId: string }>;
@@ -28,7 +29,7 @@ export default async function RoadmapDetailPage({params}: PageProps) {
     notFound();
   }
 
-  if (roadmap.status === "PENDING" || roadmap.status === "IN_PROGRESS") {
+  if (roadmap.status === JobStatus.PENDING || roadmap.status === JobStatus.IN_PROGRESS) {
     return (
       <RoadmapProcessingScreen
         roadmapId={roadmap.id}

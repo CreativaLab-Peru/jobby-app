@@ -168,7 +168,10 @@ export function ActionsSidebar({
         body: JSON.stringify({ cvId }),
       });
 
-      const data = await response.json().catch(() => null);
+      const data = await response.json().catch((err) => {
+        console.error("Error parsing response JSON:", err);
+        return null;
+      });
 
       if (!response.ok) {
         if (response.status === 409) {

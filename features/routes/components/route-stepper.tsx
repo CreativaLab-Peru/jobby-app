@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { RouteStatus } from "@prisma/client";
+import { RouteStatus, JobStatus, TaskType } from "@/enums";
 import { PageHeader } from "@/components/shared/page-header";
 import { useCvModalStore } from "@/features/cv/hooks/use-cv-modal-store";
 import { CreateCVModal } from "@/features/cv/components/create-cv-modal";
@@ -62,7 +62,7 @@ interface Step {
 interface RouteStepperProps {
   routeId: string;
   routeName: string;
-  routeStatus: RouteStatus;
+  routeStatus: string;
   cvId: string | null;
   cvTitle: string | null;
   evaluationScore: number | null;
@@ -74,26 +74,26 @@ interface RouteStepperProps {
 }
 
 const STATUS_ORDER: RouteStatus[] = [
-  "CV_PENDING",
-  "CV_CREATED",
-  "ANALYSIS_PENDING",
-  "ANALYSIS_DONE",
-  "OPPORTUNITIES_PENDING",
-  "OPPORTUNITIES_DONE",
-  "ROADMAP_PENDING",
-  "ROADMAP_IN_PROGRESS",
-  "ROADMAP_DONE",
-  "PROGRAM_DONE",
+  RouteStatus.CV_PENDING,
+  RouteStatus.CV_CREATED,
+  RouteStatus.ANALYSIS_PENDING,
+  RouteStatus.ANALYSIS_DONE,
+  RouteStatus.OPPORTUNITIES_PENDING,
+  RouteStatus.OPPORTUNITIES_DONE,
+  RouteStatus.ROADMAP_PENDING,
+  RouteStatus.ROADMAP_IN_PROGRESS,
+  RouteStatus.ROADMAP_DONE,
+  RouteStatus.PROGRAM_DONE,
 ];
 
 function getStepStatus(
-  stepRequires: RouteStatus,
-  stepCompleted: RouteStatus,
-  currentStatus: RouteStatus,
+  stepRequires: string,
+  stepCompleted: string,
+  currentStatus: string,
 ): StepStatus {
-  const current = STATUS_ORDER.indexOf(currentStatus);
-  const completed = STATUS_ORDER.indexOf(stepCompleted);
-  const requires = STATUS_ORDER.indexOf(stepRequires);
+  const current = STATUS_ORDER.indexOf(currentStatus as RouteStatus);
+  const completed = STATUS_ORDER.indexOf(stepCompleted as RouteStatus);
+  const requires = STATUS_ORDER.indexOf(stepRequires as RouteStatus);
 
   if (current >= completed) return "completed";
   if (current >= requires) return "current";
@@ -130,7 +130,7 @@ export default function RouteStepper({
 
   // Verificamos si hay alguna tarea en curso para este CV o Ruta
   const activeTask = Object.values(tasks).find((t) => {
-    if (t.status !== "IN_PROGRESS") return false;
+    if (t.status !== JobStatus.IN_PROGRESS) return false;
 
     return (
       t.scopeId === resolvedCvId ||
@@ -141,34 +141,22 @@ export default function RouteStepper({
   });
 
   const isProcessing = !!activeTask;
-  const processingStepId = activeTask
-    ? activeTask.type === "CV_PROCESSING"
-      ? 1
-      : activeTask.type === "ANALYSIS" || activeTask.type === "PROGRESS_TIMELINE"
-        ? 2
-        : activeTask.type === "QUICK_MATCH"
-          ? 3
-          : activeTask.type === "ROADMAP_GENERATION"
-            ? 4
-            : null
-    : null;
 
-  const processingLabel = activeTask
-    ? activeTask.type === "CV_PROCESSING"
-      ? "Trabajando en el CV..."
-      : activeTask.type === "PROGRESS_TIMELINE"
-        ? "Analizando CV..."
-        : activeTask.type === "QUICK_MATCH"
-          ? "Buscando oportunidades..."
-          : activeTask.type === "ROADMAP_GENERATION"
-            ? "Generando roadmap..."
-            : activeTask.type === "ANALYSIS"
-              ? "Analizando perfil..."
-              : "Proceso en curso..."
-    : "";
+  // Mapeo de tipos de tareas a sus respectivos pasos y mensajes
+  const taskMapping: Record<string, { stepId: number; label: string }> = {
+    [TaskType.CV_PROCESSING]: { stepId: 1, label: "Trabajando en el CV..." },
+    [TaskType.PROGRESS_TIMELINE]: { stepId: 2, label: "Analizando CV..." },
+    [TaskType.ANALYSIS]: { stepId: 2, label: "Analizando perfil..." },
+    [TaskType.QUICK_MATCH]: { stepId: 3, label: "Buscando oportunidades..." },
+    [TaskType.ROADMAP_GENERATION]: { stepId: 4, label: "Generando roadmap..." },
+  };
 
-  const isRoadmapDone = resolvedStatus === "ROADMAP_DONE";
-  const isFullCompleted = resolvedStatus === "PROGRAM_DONE";
+  const currentTaskInfo = activeTask ? taskMapping[activeTask.type] : null;
+  const processingStepId = currentTaskInfo?.stepId ?? null;
+  const processingLabel = currentTaskInfo?.label ?? (isProcessing ? "Proceso en curso..." : "");
+
+  const isRoadmapDone = resolvedStatus === RouteStatus.ROADMAP_DONE;
+  const isFullCompleted = resolvedStatus === RouteStatus.PROGRAM_DONE;
 
   const isStarterPlan = planTier === "STARTER";
   const starterLimitReached = isStarterPlan && generatedRoadmapsCount >= 1;
@@ -182,7 +170,7 @@ export default function RouteStepper({
         : "Sube tu CV o crea uno desde cero para analizar tu potencial",
       href: !resolvedCvId ? "/my-cv" : `/cv/${resolvedCvId}/preview`,
       icon: FileText,
-      status: getStepStatus("CV_PENDING", "CV_CREATED", resolvedStatus),
+      status: getStepStatus(RouteStatus.CV_PENDING, RouteStatus.CV_CREATED, resolvedStatus),
       cta: resolvedCvId ? "Ver mi CV" : "Subir o crear CV",
       expanded: {
         isReady: !!resolvedCvId,
@@ -209,7 +197,7 @@ export default function RouteStepper({
       href:
         resolvedEvaluationScore !== null ? "/my-evaluation" : "/my-evaluation?analyze=true",
       icon: BarChart3,
-      status: getStepStatus("CV_CREATED", "ANALYSIS_DONE", resolvedStatus),
+      status: getStepStatus(RouteStatus.CV_CREATED, RouteStatus.ANALYSIS_DONE, resolvedStatus),
       cta: resolvedEvaluationScore !== null ? "Ver análisis" : "Analizar CV",
       expanded: {
         isReady: resolvedEvaluationScore !== null,
@@ -233,7 +221,7 @@ export default function RouteStepper({
       href:
         resolvedOpportunitiesCount > 0 ? "/my-opportunities" : "/my-opportunities?match=true",
       icon: Briefcase,
-      status: getStepStatus("ANALYSIS_DONE", "OPPORTUNITIES_DONE", resolvedStatus),
+      status: getStepStatus(RouteStatus.ANALYSIS_DONE, RouteStatus.OPPORTUNITIES_DONE, resolvedStatus),
       cta:
         resolvedOpportunitiesCount > 0 ? "Ver oportunidades" : "Buscar oportunidades",
       expanded: {
@@ -259,7 +247,7 @@ export default function RouteStepper({
       description: "Roadmap paso a paso para aplicar a tu beca meta",
       href: hasRoadmap && roadmapId ? `/my-roadmaps/${roadmapId}` : "/my-roadmaps?openCreate=1",
       icon: Map,
-      status: getStepStatus("OPPORTUNITIES_DONE", "ROADMAP_DONE", resolvedStatus),
+      status: getStepStatus(RouteStatus.OPPORTUNITIES_DONE, RouteStatus.ROADMAP_DONE, resolvedStatus),
       cta: hasRoadmap ? "Ver roadmap" : "Generar roadmap",
       expanded: {
         isReady: hasRoadmap,
@@ -391,7 +379,7 @@ export default function RouteStepper({
                                 : "text-primary-foreground bg-primary px-2 shadow-sm",
                           )}
                         >
-                          {step.id === 4 && routeStatus === "ROADMAP_IN_PROGRESS"
+                          {step.id === 4 && routeStatus === RouteStatus.ROADMAP_IN_PROGRESS
                             ? "En progreso"
                             : "Activo ahora"}
                         </span>

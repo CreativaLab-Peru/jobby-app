@@ -3,20 +3,15 @@ import { getActiveRoute } from "@/features/routes/actions/get-active-route";
 import { getEvaluationsForActiveRoute } from "@/features/routes/actions/get-evaluations-for-active-route";
 import { getCurrentCreditLimits } from "@/features/credits/actions/get-current-credits-limits";
 import { getCvForActiveRoute } from "@/features/routes/actions/get-cv-for-active-route";
+import { getInProgressEvaluation } from "@/features/routes/actions/get-in-progress-evaluation";
 import MyEvaluationScreen from "@/features/routes/components/my-evaluation-screen";
-import { prisma } from "@/lib/prisma";
 
 export default async function MyEvaluationPage() {
   const activeRoute = await getActiveRoute();
   if (!activeRoute) return redirect("/routes/new");
 
   if (activeRoute.cvId) {
-    const activeEval = await prisma.cvEvaluation.findFirst({
-      where: {
-        cvId: activeRoute.cvId,
-        status: { in: ["IN_PROGRESS", "PENDING"] },
-      },
-    });
+    const activeEval = await getInProgressEvaluation(activeRoute.cvId);
     if (activeEval) {
       return redirect(`/process/${activeRoute.cvId}`);
     }

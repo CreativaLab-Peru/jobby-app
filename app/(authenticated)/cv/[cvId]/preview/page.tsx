@@ -6,6 +6,7 @@ import { PreviewCVComponent } from "@/features/cv-preview/components/cv-review-p
 import { CvProcessingScreen } from "@/features/cv/screens/cv-processing-screen";
 import { getCurrentCreditLimits } from "@/features/credits/actions/get-current-credits-limits";
 import { prisma } from "@/lib/prisma";
+import { JobStatus } from "@/enums";
 
 interface PreviewCVPageProps {
   params: Promise<{
@@ -17,9 +18,9 @@ export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
   const { cvId } = await params;
   const cv = await getCvById(cvId);
 
-  if (!cv) return redirect('/my-cv');
+  if (!cv) return redirect("/my-cv");
 
-  if (cv.status === "PENDING" || cv.status === "IN_PROGRESS") {
+  if (cv.status === JobStatus.PENDING || cv.status === JobStatus.IN_PROGRESS) {
     return <CvProcessingScreen cvId={cv.id} />;
   }
 
@@ -40,7 +41,7 @@ export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
   const filteredSections = cv.sections
     .map((userSection) => {
       const sectionConfig = masterSections.find(
-        (s) => s.id?.toUpperCase() === userSection.sectionType?.toUpperCase()
+        (s) => s.id?.toUpperCase() === userSection.sectionType?.toUpperCase(),
       );
 
       if (!sectionConfig) {
@@ -57,7 +58,6 @@ export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
 
   const cvData: CVData = transformCVToDTO(cv);
   const creditLimits = await getCurrentCreditLimits();
-
 
   return (
     <PreviewCVComponent

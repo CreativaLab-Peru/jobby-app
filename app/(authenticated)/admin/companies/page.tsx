@@ -3,6 +3,7 @@ import { requireAdmin } from "@/features/share/actions/require-admin";
 import { getAdminCompanies } from "@/features/company/actions/admin/get-admin-companies";
 import { AdminCompanyListScreen } from "@/features/company/components/admin/admin-company-list-screen";
 import { routes } from "@/lib/routes";
+import {CompanyInvitationModal} from "@/features/company/components/company-invitation-modal";
 
 interface AdminCompaniesPageProps {
   searchParams: Promise<{
@@ -28,25 +29,31 @@ export default async function AdminCompaniesPage({ searchParams }: AdminCompanie
 
   if (!result.success) {
     return (
-      <AdminCompanyListScreen
-        initialCompanies={[]}
-        totalCount={0}
-        currentPage={page}
-        pageSize={PAGE_SIZE}
-        initialQuery={query}
-        initialError={"Algo ha pasado"}
-      />
+      <>
+        <AdminCompanyListScreen
+          initialCompanies={[]}
+          totalCount={0}
+          currentPage={page}
+          pageSize={PAGE_SIZE}
+          initialQuery={query}
+          initialError={"Algo ha pasado"}
+        />
+        <CompanyInvitationModal />
+      </>
     );
   }
 
   return (
-    <AdminCompanyListScreen
-      initialCompanies={result.data.companies}
-      totalCount={result.data.totalCount}
-      currentPage={page}
-      pageSize={PAGE_SIZE}
-      initialQuery={query}
-    />
+    <>
+      <AdminCompanyListScreen
+        initialCompanies={result.data.companies}
+        totalCount={result.data.totalCount}
+        currentPage={page}
+        pageSize={PAGE_SIZE}
+        initialQuery={query}
+      />
+      <CompanyInvitationModal />
+    </>
   );
 }
 

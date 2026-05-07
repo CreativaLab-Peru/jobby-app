@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Sparkles, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import heroBgLight from "@/public/hero/hero_black_2.png";
+import heroBgLight from "@/public/hero/hero_black_3.png";
 import heroBgDark from "@/public/hero/hero_light.png";
 
 export function HeroSection() {
@@ -41,12 +41,12 @@ export function HeroSection() {
       <div className="container-levely relative z-10">
         <div className="flex flex-col items-center text-center py-20 sm:py-28 lg:py-36">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-levely-green/10 border dark:border-levely-green/20 border-levely-dark/20 mb-8 animate-fade-up backdrop-blur-sm">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border dark:border-white/10 border-levely-dark/10 mb-8 animate-fade-up backdrop-blur-sm border-[0.5px]">
             <Sparkles className="w-4 h-4 text-levely-dark dark:text-levely-green " />
             {/* <span className="text-sm font-medium text-levely-dark dark:text-levely-green">
               Potenciado por IA
             </span> */}
-            <span className="text-sm font-medium text-levely-dark dark:text-levely-green">
+            <span className="text-sm font-medium text-levely-dark dark:text-white">
               Tu copiloto de carrera con IA
             </span>
           </div>

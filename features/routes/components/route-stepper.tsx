@@ -282,13 +282,13 @@ export default function RouteStepper({
                   className={cn(
                     "relative flex flex-col md:flex-row items-start gap-5 p-6 rounded-2xl border transition-all duration-500",
                     step.status === "completed" &&
-                      "bg-gradient-to-r from-green-50/30 to-background border-green-100 dark:from-green-950/5 dark:border-green-900/30 opacity-90 hover:opacity-100",
+                    "bg-gradient-to-r from-green-50/30 to-background border-green-100 dark:from-green-950/5 dark:border-green-900/30 opacity-90 hover:opacity-100",
                     step.status === "current" &&
-                      (step.id === 5
-                        ? "bg-gradient-to-br from-indigo-50/80 via-white to-background dark:from-indigo-950/20 dark:to-background border-indigo-300 shadow-xl shadow-indigo-500/10 ring-1 ring-indigo-500/30"
-                        : "bg-gradient-to-br from-primary/10 via-primary/[0.02] to-background border-primary/40 shadow-2xl shadow-primary/20 ring-1 ring-primary/30"),
+                    (step.id === 5
+                      ? "bg-gradient-to-br from-indigo-50/80 via-white to-background dark:from-indigo-950/20 dark:to-background border-indigo-300 shadow-xl shadow-indigo-500/10 ring-1 ring-indigo-500/30"
+                      : "bg-gradient-to-br from-primary/10 via-primary/[0.02] to-background border-primary/40 shadow-2xl shadow-primary/20 ring-1 ring-primary/30"),
                     step.status === "locked" &&
-                      "bg-muted/10 border-border/40 opacity-40 grayscale-[0.5]",
+                    "bg-muted/10 border-border/40 opacity-40 grayscale-[0.5]",
                   )}
                 >
                   {/* Icono del paso */}
@@ -296,11 +296,11 @@ export default function RouteStepper({
                     className={cn(
                       "flex items-center justify-center h-12 w-12 rounded-xl shrink-0 transition-all duration-500",
                       step.status === "completed" &&
-                        "bg-green-100 text-green-600 dark:bg-green-900/30",
+                      "bg-secondary text-black dark:text-white dark:bg-accent/20",
                       step.status === "current" &&
-                        (step.id === 5
-                          ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/40"
-                          : "bg-primary text-primary-foreground shadow-lg shadow-primary/40"),
+                      (step.id === 5
+                        ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/40"
+                        : "bg-primary text-primary-foreground shadow-lg shadow-primary/40"),
                       step.status === "locked" && "bg-muted/50 text-muted-foreground",
                       step.status === "current" && "scale-110 rotate-3",
                     )}
@@ -322,7 +322,7 @@ export default function RouteStepper({
                         Paso {step.id}
                       </span>
                       {step.status === "completed" && (
-                        <span className="text-[10px] font-bold text-green-700 bg-green-500/20 px-2 py-0.5 rounded-md uppercase tracking-wider">
+                        <span className="text-[10px] bg-primary/80 font-bold text-white dark:bg-accent/20 px-2 py-0.5 rounded-md uppercase tracking-wider">
                           Completado
                         </span>
                       )}

@@ -250,13 +250,13 @@ export default function MyOpportunitiesScreen({
 
                               {opt.isLocked && (
                                 <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
-                                  <div className="max-w-[280px] w-full mx-4 text-center p-6 rounded-2xl border border-border bg-background/90 backdrop-blur-sm shadow-xl pointer-events-auto">
+                                  <div className="max-w-[280px] w-full mx-4 text-center p-6 rounded-2xl border border-border bg-background/60 backdrop-blur-sm shadow-xl pointer-events-auto">
                                     <p className="font-bold text-foreground mb-1 text-sm">Contenido bloqueado</p>
                                     <p className="text-[10px] text-muted-foreground mb-4 leading-tight">
                                       Actualiza a {planNames.starter} o {planNames.pro} para ver los detalles.
                                     </p>
                                     <div className="flex justify-center">
-                                      <Button size="sm" className="h-8 text-[10px] px-4 rounded-xl" onClick={() => router.push("/credits")}>
+                                      <Button size="sm" className="bg-background text-primary h-8 text-[10px] px-4 rounded-xl" onClick={() => router.push("/credits")}>
                                         Ver planes
                                       </Button>
                                     </div>

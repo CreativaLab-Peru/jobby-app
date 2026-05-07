@@ -376,7 +376,7 @@ export default function RouteStepper({
                         Paso {step.id}
                       </span>
                       {step.status === "completed" && (
-                        <span className="text-[10px] font-bold text-green-700 bg-green-500/20 px-2 py-0.5 rounded-md uppercase tracking-wider">
+                        <span className="text-[10px] bg-primary/80 font-bold text-white dark:bg-accent/20 px-2 py-0.5 rounded-md uppercase tracking-wider">
                           Completado
                         </span>
                       )}

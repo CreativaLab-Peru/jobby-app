@@ -4,6 +4,10 @@
 
 - [LV-86ah912y4](https://app.clickup.com/t/86ah912y4) Agregando omboarding de empresas, además de una nueva tabla CompaniesPreferences
 
+## Enhancements
+
+- [LV-86ahbchqc](https://app.clickup.com/t/86ahbchqc) Cambiado el color para el modo oscuro, cambiados algunos textos y estilos de los cards en el hero
+
 ## Fixes
 
 - [LV-86ahb5v1h](https://app.clickup.com/t/86ahb5v1h) Mejorado el responsive de la pagina de de bienvenida del onboarding

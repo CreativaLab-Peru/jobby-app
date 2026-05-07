@@ -1,33 +1,33 @@
 "use client";
 
-import {Briefcase, Rocket, Search} from "lucide-react";
-import {Input} from "@/components/ui/input";
-import {PageHeader} from "@/components/shared/page-header";
-import {AnimatePresence, motion} from "framer-motion";
+import { Briefcase, Rocket, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { PageHeader } from "@/components/shared/page-header";
+import { AnimatePresence, motion } from "framer-motion";
 import OpportunityCard from "@/features/opportunities/components/opportunity-card";
-import {EmptyPlaceholder} from "@/components/shared/empty-placeholder";
-import {useState, useTransition, useEffect} from "react";
-import {getOpportunities} from "@/features/opportunities/get-opportunities";
-import {LoadMoreButton} from "@/components/shared/load-more-button";
-import {Button} from "@/components/ui/button";
-import {QuickMatchCvModal} from "@/features/opportunities/components/quick-match-cv-modal";
-import {useQuickMatchModalStore} from "@/features/opportunities/hooks/use-quick-match-modal-store";
-import {CvWithRelations} from "@/features/cv/actions/get-cv-for-current-user";
-import {SearchableSelect} from "@/components/shared/searchable-select";
-import {Opportunity} from ".prisma/client";
-import {getAllCvForCurrentUser} from "@/features/cv/actions/get-all-cv-for-current-user";
-import {useCreditsStore} from "@/store/use-credits-store";
+import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
+import { useState, useTransition, useEffect } from "react";
+import { getOpportunities } from "@/features/opportunities/get-opportunities";
+import { LoadMoreButton } from "@/components/shared/load-more-button";
+import { Button } from "@/components/ui/button";
+import { QuickMatchCvModal } from "@/features/opportunities/components/quick-match-cv-modal";
+import { useQuickMatchModalStore } from "@/features/opportunities/hooks/use-quick-match-modal-store";
+import { CvWithRelations } from "@/features/cv/actions/get-cv-for-current-user";
+import { SearchableSelect } from "@/components/shared/searchable-select";
+import { Opportunity } from ".prisma/client";
+import { getAllCvForCurrentUser } from "@/features/cv/actions/get-all-cv-for-current-user";
+import { useCreditsStore } from "@/store/use-credits-store";
 
 interface Props {
   initialData: (
     Opportunity & {
-    match: number;
-    cv: {
-      id: string;
-      title: string;
+      match: number;
+      cv: {
+        id: string;
+        title: string;
+      }
     }
-  }
-    )[];
+  )[];
   initialCvs: CvWithRelations[];
   hasMoreProp?: boolean;
   totalCount?: number;
@@ -36,22 +36,22 @@ interface Props {
 }
 
 export default function OpportunitiesScreen({
-                                              initialData,
-                                              initialCvs,
-                                              totalCount: initialTotal,
-                                              hasMoreProp,
-                                              currentFilterCvId,
-                                              hasSubscription
-                                            }: Props) {
+  initialData,
+  initialCvs,
+  totalCount: initialTotal,
+  hasMoreProp,
+  currentFilterCvId,
+  hasSubscription
+}: Props) {
   const [opportunities, setOpportunities] = useState<(
     Opportunity & {
-    match: number;
-    cv: {
-      id: string;
-      title: string;
+      match: number;
+      cv: {
+        id: string;
+        title: string;
+      }
     }
-  }
-    )[]>(initialData);
+  )[]>(initialData);
   const [hasMore, setHasMore] = useState(hasMoreProp);
   const [totalCount, setTotalCount] = useState(initialTotal || 0);
   const [isPending, startTransition] = useTransition();
@@ -61,8 +61,8 @@ export default function OpportunitiesScreen({
   const [isLockedMode, setIsLockedMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const {onOpen, setSelectedCvId} = useQuickMatchModalStore();
-  const {credits} = useCreditsStore();
+  const { onOpen, setSelectedCvId } = useQuickMatchModalStore();
+  const { credits } = useCreditsStore();
 
   useEffect(() => {
     if (!hasSubscription && opportunities.length > 1) {
@@ -140,7 +140,7 @@ export default function OpportunitiesScreen({
 
   const actions = (
     <Button onClick={handleQuickMatchClick} disabled={isCvsLoading}>
-      <Rocket className="mr-2 h-4 w-4"/>
+      <Rocket className="mr-2 h-4 w-4" />
       {isCvsLoading ? "Cargando..." : "Hacer Match"}
     </Button>
   );
@@ -149,8 +149,8 @@ export default function OpportunitiesScreen({
     <main className="min-h-[90-vh] p-4 md:p-8">
       <div className="mx-auto max-w-7xl">
         <motion.div
-          initial={{opacity: 0, y: 10}}
-          animate={{opacity: 1, y: 0}}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
           className="space-y-8"
         >
           <PageHeader
@@ -180,7 +180,7 @@ export default function OpportunitiesScreen({
               {/* Buscador minimalista */}
               <div className="relative max-w-xs group">
                 <Search
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors"/>
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <Input
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -200,7 +200,7 @@ export default function OpportunitiesScreen({
             <AnimatePresence>
               {isPending && opportunities.length > 0 && (
                 <motion.div
-                  initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                   className="absolute inset-0 bg-background/20 backdrop-blur-[2px] z-10 rounded-3xl flex items-center justify-center pt-20"
                 >
                   <div className="bg-card p-4 rounded-2xl shadow-xl border border-border">
@@ -217,13 +217,13 @@ export default function OpportunitiesScreen({
                     {opportunities.map((opt, index) => (
                       <motion.div
                         key={opt.id + opt.cvId} // Asegura un key único incluso si el mismo puesto aparece con diferentes matches
-                        initial={{opacity: 0, scale: 0.95}}
-                        animate={{opacity: 1, scale: 1}}
-                        transition={{duration: 0.3, delay: (index % 10) * 0.05}}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: (index % 10) * 0.05 }}
                       >
                         <div className="relative">
                           <div className={isLockedMode && index !== 0 ? 'filter blur-sm grayscale-[40%] pointer-events-none select-none' : ''}>
-                            <OpportunityCard opportunity={opt}/>
+                            <OpportunityCard opportunity={opt} />
                           </div>
                         </div>
                       </motion.div>

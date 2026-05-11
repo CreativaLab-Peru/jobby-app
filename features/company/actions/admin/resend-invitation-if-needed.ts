@@ -34,7 +34,7 @@ export async function resendInvitationIfNeeded(invitationId: string) {
     where: { id: invitationId},
     data: {
       code,
-      token,
+      // token,
       codeHash,
       expiresAt
     }

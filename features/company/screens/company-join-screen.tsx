@@ -19,6 +19,8 @@ interface CompanyJoinScreenProps {
   token: string;
   companyName?: string;
   inviteEmail?: string;
+  maskedEmail?: string;
+  slug?: string;
   expiresAt?: string;
   expired?: boolean;
 }
@@ -30,8 +32,10 @@ const initialState: AcceptCompanyInvitationState = {
 
 export function CompanyJoinScreen({
                                     token,
+                                    slug,
                                     companyName = "la empresa",
                                     inviteEmail,
+                                    maskedEmail,
                                     expired,
                                   }: CompanyJoinScreenProps) {
   const router = useRouter();
@@ -39,9 +43,11 @@ export function CompanyJoinScreen({
   const [code, setCode] = useState("");
   const fieldErrors = "fieldErrors" in state ? state.fieldErrors : undefined;
 
+  console.log("[state]", state);
+
   useEffect(() => {
     if (state.success) {
-      router.push("/dashboard");
+      router.push(`/c/${slug}/register?token=${token}`);
     }
   }, [router, state.success]);
 
@@ -68,6 +74,7 @@ export function CompanyJoinScreen({
             <form action={formAction} className="space-y-8">
               <input type="hidden" name="token" value={token} />
               <input type="hidden" name="code" value={code} />
+              <input type="hidden" name="email" value={inviteEmail} />
 
               <FieldGroup className="space-y-6">
                 {/* Email - Read Only View */}
@@ -77,7 +84,7 @@ export function CompanyJoinScreen({
                   </div>
                   <div className="flex-1">
                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Email de invitación</p>
-                    <p className="text-sm font-medium text-foreground">{inviteEmail}</p>
+                    <p className="text-sm font-medium text-foreground">{maskedEmail}</p>
                   </div>
                   <ShieldCheck className="h-5 w-5 text-emerald-500" />
                 </div>

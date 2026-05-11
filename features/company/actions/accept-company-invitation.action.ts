@@ -92,59 +92,59 @@ export const acceptCompanyInvitationAction = async (
       return { success: false, error: "El código es incorrecto." };
     }
 
-    const session = await auth.api.getSession({ headers: await headers() });
-    if (!session?.user) {
-      return {
-        success: false,
-        error: "Debes iniciar sesión para aceptar la invitación.",
-        requiresAuth: true,
-      };
-    }
+    // const session = await auth.api.getSession({ headers: await headers() });
+    // if (!session?.user) {
+    //   return {
+    //     success: false,
+    //     error: "Debes iniciar sesión para aceptar la invitación.",
+    //     requiresAuth: true,
+    //   };
+    // }
+    //
+    // const user = session.user;
+    // if (user.email.toLowerCase() !== normalizedEmail) {
+    //   return {
+    //     success: false,
+    //     error: "Debes iniciar sesión con el mismo correo de la invitación.",
+    //     requiresAuth: true,
+    //   };
+    // }
+    //
+    // await prisma.$transaction(async (tx) => {
+    //   await tx.companyMember.upsert({
+    //     where: {
+    //       companyId_userId: {
+    //         companyId: invitation.companyId,
+    //         userId: user.id,
+    //       },
+    //     },
+    //     create: {
+    //       companyId: invitation.companyId,
+    //       userId: user.id,
+    //       role: invitation.role,
+    //       invitedBy: invitation.invitedBy,
+    //       joinedAt: new Date(),
+    //     },
+    //     update: {
+    //       status: "ACTIVE",
+    //       role: invitation.role,
+    //       joinedAt: new Date(),
+    //     },
+    //   });
+    //
+    //   await tx.companyInvitation.update({
+    //     where: { id: invitation.id },
+    //     data: {
+    //       status: InvitationStatus.ACCEPTED,
+    //       usedAt: new Date(),
+    //     },
+    //   });
+    // });
 
-    const user = session.user;
-    if (user.email.toLowerCase() !== normalizedEmail) {
-      return {
-        success: false,
-        error: "Debes iniciar sesión con el mismo correo de la invitación.",
-        requiresAuth: true,
-      };
-    }
-
-    await prisma.$transaction(async (tx) => {
-      await tx.companyMember.upsert({
-        where: {
-          companyId_userId: {
-            companyId: invitation.companyId,
-            userId: user.id,
-          },
-        },
-        create: {
-          companyId: invitation.companyId,
-          userId: user.id,
-          role: invitation.role,
-          invitedBy: invitation.invitedBy,
-          joinedAt: new Date(),
-        },
-        update: {
-          status: "ACTIVE",
-          role: invitation.role,
-          joinedAt: new Date(),
-        },
-      });
-
-      await tx.companyInvitation.update({
-        where: { id: invitation.id },
-        data: {
-          status: InvitationStatus.ACCEPTED,
-          usedAt: new Date(),
-        },
-      });
-    });
-
-    await Promise.all([
-      revalidatePath(routes.app.dashboard),
-      revalidatePath(`${routes.app.admin.companies.root}/${invitation.companyId}/invitations`),
-    ]);
+    // await Promise.all([
+    //   revalidatePath(routes.app.dashboard),
+    //   revalidatePath(`${routes.app.admin.companies.root}/${invitation.companyId}/invitations`),
+    // ]);
 
     return {
       success: true,

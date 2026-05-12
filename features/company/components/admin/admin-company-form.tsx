@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { CompanyCreateFormState, createCompanyAction } from "../../actions/create-company.action";
+import {updateCompanyAction} from "@/features/company/actions/update-company.action";
 
 const SUGGESTED_COLORS = [
   { name: "Slate", hex: "#0f172a" },
@@ -22,12 +23,41 @@ const SUGGESTED_COLORS = [
   { name: "Violet", hex: "#8b5cf6" },
 ];
 
+const SECONDARY_COLORS = [
+  { name: "Slate Light", hex: "#94a3b8" }, // El neutro perfecto
+  { name: "Zinc", hex: "#71717a" },        // Más sobrio
+  { name: "Indigo Soft", hex: "#a5b4fc" }, // Monocromático suave
+  { name: "Rose Soft", hex: "#fecdd3" },   // Contraste cálido
+  { name: "Amber Soft", hex: "#fef3c7" },  // Contraste luz
+  { name: "Cyan Soft", hex: "#a5f3fc" },   // Refrescante
+  { name: "White/Gray", hex: "#f8fafc" },  // Casi blanco
+];
+
 const initialState: CompanyCreateFormState = {
   success: false,
 };
 
-export function AdminCompanyForm({ company }: { company?: any }) {
-  const [state, formAction, isPending] = useActionState(createCompanyAction, initialState);
+interface AdminCompanyFormProps {
+  company?: {
+    id: string;
+    name: string;
+    slug?: string;
+    logoUrl?: string;
+    ruc?: string;
+    website?: string,
+    primaryColor?: string,
+    secondaryColor?: string,
+    isActive: boolean,
+    onboardingStep: any,
+    createdAt: Date,
+    updatedAt: Date,
+    _count: { members: number; invitations: number; },
+  }
+}
+
+export function AdminCompanyForm({ company }: AdminCompanyFormProps) {
+  const action = company?.id ? updateCompanyAction : createCompanyAction;
+  const [state, formAction, isPending] = useActionState(action, initialState);
   const router = useRouter();
 
   // 1. Estados del formulario (Añadido secondaryColor)
@@ -48,8 +78,8 @@ export function AdminCompanyForm({ company }: { company?: any }) {
 
   return (
     <form action={formAction} className="space-y-8">
+      {company?.id && <input type="hidden" name="id" value={company.id} />}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
         {/* Sección: Información Principal */}
         <div className="space-y-4">
           <div className="space-y-2">
@@ -172,6 +202,25 @@ export function AdminCompanyForm({ company }: { company?: any }) {
                       key={c.hex}
                       type="button"
                       onClick={() => setPrimaryColor(c.hex)}
+                      className={cn(
+                        "h-6 w-6 rounded-full border-2 transition-transform hover:scale-110",
+                        primaryColor === c.hex ? "border-primary" : "border-transparent"
+                      )}
+                      style={{ backgroundColor: c.hex }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Sugerencias (aplica al color secundario por defecto) */}
+              <div className="space-y-2">
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase">Sugerencias (Secundario)</p>
+                <div className="flex flex-wrap gap-2">
+                  {SECONDARY_COLORS.map((c) => (
+                    <button
+                      key={c.hex}
+                      type="button"
+                      onClick={() => setSecondaryColor(c.hex)}
                       className={cn(
                         "h-6 w-6 rounded-full border-2 transition-transform hover:scale-110",
                         primaryColor === c.hex ? "border-primary" : "border-transparent"

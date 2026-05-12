@@ -1,7 +1,14 @@
 import {ProfileButton} from "@/components/profile-button";
 import {getCurrentUser} from "@/features/share/actions/get-current-user";
 
-export default async function DashboardCompany() {
+interface DashboardCompanyProps {
+  params: Promise<{
+    companyName: string;
+  }>,
+}
+
+export default async function DashboardCompany({params}: DashboardCompanyProps) {
+  const {companyName} = await params;
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     return <div className="text-5xl text-red-500">
@@ -18,7 +25,7 @@ export default async function DashboardCompany() {
         SECONDARY
       </div>
       <ProfileButton
-        redirectUrl={"/c/mujeres-digitales/login"}
+        redirectUrl={`/c/${companyName}/login`}
         user={{
           email: currentUser.email,
           name: currentUser.name,

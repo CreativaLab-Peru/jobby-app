@@ -1,6 +1,6 @@
 # WIP
 
-## Feature
+## Features
 
 - [LV-86ahbnxbe](https://app.clickup.com/t/86ahbnxbe) Integracion de onboarding para empresas e invitaciones. Con validaciones principales de empresa (tenant)
 

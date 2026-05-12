@@ -1,3 +1,16 @@
+# v1.2.22 - 2026-05-12
+
+## Enhancements
+
+- [LV-86ahdzxkv](https://app.clickup.com/t/86ahdzxkv) Mejorado el modal de subir CV con un drag and drop
+
+## Fixes
+
+- [LV-86ahdgwg0](https://app.clickup.com/t/86ahdgwg0) Cambiado el focus del input de nombre de cv, ademas de omogenizar los estilos entre ambos modales
+- [LV-86ahdgtae](https://app.clickup.com/t/86ahdgtae) Arreglado el boton de inicio en el sidebar/footer del usuario
+- [LV-86ahdgrwn](https://app.clickup.com/t/86ahdgrwn) Arreglado el boton de princing al hacer hover
+- [LV-86ahdhbgk](https://app.clickup.com/t/86ahdhbgk) Arreglado el error con la ventana flotante y ventana flotante al crear un CV manual
+
 # v1.2.21 - 2026-05-07
 
 ## Feature

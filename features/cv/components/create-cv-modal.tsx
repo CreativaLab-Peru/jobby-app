@@ -88,7 +88,7 @@ export function CreateCVModal() {
                 <Sparkles size={20} />
               </div>
               <div>
-                <DialogTitle className="text-lg font-bold leading-none">Configurador de CV</DialogTitle>
+                <DialogTitle className="text-lg font-bold leading-none">Configuración de CV</DialogTitle>
                 <DialogDescription className="text-xs mt-1">
                   Personaliza la estructura antes de generar el documento.
                 </DialogDescription>

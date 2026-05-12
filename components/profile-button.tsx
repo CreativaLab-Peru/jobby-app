@@ -50,7 +50,7 @@ export function ProfileButton({ user }: ProfileButtonProps) {
   const menuGroups = [
     {
       items: [
-        { label: "Inicio", icon: Home, onClick: () => router.push("/") },
+        { label: "Inicio", icon: Home, onClick: () => router.push("/dashboard") },
         { label: "Configuración", icon: Settings, onClick: () => router.push("/settings") },
       ]
     },
@@ -134,8 +134,8 @@ export function ProfileButton({ user }: ProfileButtonProps) {
               <LogOut className="h-4 w-4" />
             )}
             <span className="font-medium text-sm">
-    {isLoading ? "Cerrando sesión..." : "Cerrar sesión"}
-  </span>
+              {isLoading ? "Cerrando sesión..." : "Cerrar sesión"}
+            </span>
           </Button>
         </div>
 

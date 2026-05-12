@@ -1,19 +1,7 @@
 import { PaymentType, PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
 
-async function main() {
+export async function paymentConfiguration(prisma: PrismaClient) {
   try {
-    await prisma.appConfig.upsert({
-      where: { key: "INTERVIEW_DURATION" },
-      update: {
-        value: "180",
-      },
-      create: {
-        key: "INTERVIEW_DURATION",
-        value: "180", // 3 minutes in seconds for fallback
-      },
-    });
-
     // Seed payment plans
     await prisma.paymentPlan.upsert({
       where: { slug: "free" },
@@ -108,15 +96,6 @@ async function main() {
       },
     });
   } catch (e) {
-    console.error("[ERROR_SEED]", e);
+    console.error("[ERROR_PAYMENT_CONFIGURATION]", e);
   }
 }
-
-main()
-  .catch((e) => {
-    console.error("❌ [Error during seed]:", e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });

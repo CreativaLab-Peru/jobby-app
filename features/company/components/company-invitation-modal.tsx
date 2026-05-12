@@ -16,8 +16,12 @@ import { useInvitationModal } from "@/features/company/hooks/use-invitation-moda
 import { createCompanyInvitationAction } from "@/features/company/actions/admin/generate-admin-invitation"
 import {routes} from "@/lib/routes";
 
-export function CompanyInvitationModal() {
-  const { isOpen, onClose, companyId } = useInvitationModal()
+interface CompanyInvitationModalProps {
+  companyId: string
+}
+
+export function CompanyInvitationModal({companyId}: CompanyInvitationModalProps) {
+  const { isOpen, onClose } = useInvitationModal()
   const [isPending, startTransition] = useTransition()
   const [email, setEmail] = useState("")
 
@@ -26,7 +30,7 @@ export function CompanyInvitationModal() {
 
     startTransition(async () => {
       const result = await createCompanyInvitationAction({ companyId, email })
-
+      console.log("[result]:", result)
       if (result.success && result.invitation) {
         // 1. Construir la URL (ajusta la ruta según tus 'routes')
         // Usamos window.location.origin para obtener el dominio actual dinámicamente
@@ -44,7 +48,7 @@ export function CompanyInvitationModal() {
         }
       } else {
         // Manejo de errores basado en tu estructura de respuesta
-        const errorMsg = result?.fieldErrors?.role || result?.fieldErrors?.email || "Error al generar enlace"
+        const errorMsg = result?.fieldErrors?.email || "Error al generar enlace"
         toast.error(errorMsg)
       }
     })

@@ -24,6 +24,10 @@ export const createCompanyInvitationAction = async (
   { email, companyId }: ResendInvitationInput
 ): Promise<CreateCompanyInvitationState> => {
   try {
+    console.log("[email]", {
+      email,
+      companyId: companyId,
+    })
     // 1. Verificación de permisos
     const admin = await requireAdmin();
     if (!admin.success) {

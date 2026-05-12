@@ -19,7 +19,6 @@ export interface RegisterForAdminRoleCompaniesAction {
 }
 
 export async function registerForCompaniesAction(data: RegisterForAdminRoleCompaniesAction) {
-  console.log("[data]:", data)
   const parsed = await registerForCompaniesSchema.safeParseAsync(data);
   if (!parsed.success) {
     return {

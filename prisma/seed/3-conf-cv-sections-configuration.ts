@@ -1,7 +1,5 @@
 import { CvType, OpportunityType, PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
-
 // technology & engineering ES
 import { technologyEngineeringEmployment as EStechnologyEngineeringEmployment } from "../../features/cv/helpers/configs/language/es/technology-engineering/employment";
 import { technologyEngineeringInternship as EStechnologyEngineeringInternship } from "../../features/cv/helpers/configs/language/es/technology-engineering/internship";
@@ -780,9 +778,9 @@ const baseSectionsMap = {
     icon: "Star",
     multiple: true,
     fields: [
-      { 
-        name: "title", 
-        type: "text", 
+      {
+        name: "title",
+        type: "text",
         required: false,
         label: {
           es: "Actividad",
@@ -795,16 +793,16 @@ const baseSectionsMap = {
         example: {
           es: "Fotografía de Paisajes",
           en: "Landscape Photography",
-        }  
+        }
       },
-      { 
-        name: "description", 
-        type: "textarea", 
+      {
+        name: "description",
+        type: "textarea",
         required: false,
         label: {
           es: "Comentario breve",
           en: "Brief Comment",
-        }, 
+        },
         tip: {
           es: "Opcional: Detalla por qué te apasiona",
           en: "Optional: Detail why you are passionate about it",
@@ -892,336 +890,326 @@ function buildFullSectionJson(customConfig: any) {
 }
 
 // --- 3. IMPORTACIÓN DE CONFIGURACIONES ESPECÍFICAS (SIMULADO) ---
-async function main() {
-  const allConfigs = [
-    // TECHNOLOGY & ENGINEERING
-    {
-      type: CvType.TECHNOLOGY_ENGINEERING,
-      opp: OpportunityType.EMPLOYMENT,
-      data: mergeLangSection(EStechnologyEngineeringEmployment, ENtechnologyEngineeringEmployment),
-    },
-    {
-      type: CvType.TECHNOLOGY_ENGINEERING,
-      opp: OpportunityType.INTERNSHIP,
-      data: mergeLangSection(EStechnologyEngineeringInternship, ENtechnologyEngineeringInternship),
-    },
-    {
-      type: CvType.TECHNOLOGY_ENGINEERING,
-      opp: OpportunityType.EXCHANGE_PROGRAM,
-      data: mergeLangSection(
-        EStechnologyEngineeringExchangeProgram, 
-        ENtechnologyEngineeringExchangeProgram
-      ),
-    },
-    {
-      type: CvType.TECHNOLOGY_ENGINEERING,
-      opp: OpportunityType.SCHOLARSHIP,
-      data: mergeLangSection(
-        EStechnologyEngineeringScholarship, 
-        ENtechnologyEngineeringScholarship),
-    },
-    {
-      type: CvType.TECHNOLOGY_ENGINEERING,
-      opp: OpportunityType.STARTUP,
-      data: mergeLangSection(
-        EStechnologyEngineeringScholarship, 
-        ENtechnologyEngineeringScholarship),
-    },
+export async function cvSectionConfiguration(prisma: PrismaClient) {
+  try {
+    const allConfigs = [
+      // TECHNOLOGY & ENGINEERING
+      {
+        type: CvType.TECHNOLOGY_ENGINEERING,
+        opp: OpportunityType.EMPLOYMENT,
+        data: mergeLangSection(EStechnologyEngineeringEmployment, ENtechnologyEngineeringEmployment),
+      },
+      {
+        type: CvType.TECHNOLOGY_ENGINEERING,
+        opp: OpportunityType.INTERNSHIP,
+        data: mergeLangSection(EStechnologyEngineeringInternship, ENtechnologyEngineeringInternship),
+      },
+      {
+        type: CvType.TECHNOLOGY_ENGINEERING,
+        opp: OpportunityType.EXCHANGE_PROGRAM,
+        data: mergeLangSection(
+          EStechnologyEngineeringExchangeProgram,
+          ENtechnologyEngineeringExchangeProgram
+        ),
+      },
+      {
+        type: CvType.TECHNOLOGY_ENGINEERING,
+        opp: OpportunityType.SCHOLARSHIP,
+        data: mergeLangSection(
+          EStechnologyEngineeringScholarship,
+          ENtechnologyEngineeringScholarship),
+      },
+      {
+        type: CvType.TECHNOLOGY_ENGINEERING,
+        opp: OpportunityType.STARTUP,
+        data: mergeLangSection(
+          EStechnologyEngineeringScholarship,
+          ENtechnologyEngineeringScholarship),
+      },
 
-    // MARKETING & STRATEGY
-    {
-      type: CvType.MARKETING_STRATEGY,
-      opp: OpportunityType.EMPLOYMENT,
-      data: mergeLangSection(
-        ESmarketingStrategyEmployment, 
-        ENmarketingStrategyEmployment),
-    },
-    {
-      type: CvType.MARKETING_STRATEGY,
-      opp: OpportunityType.INTERNSHIP,
-      data: mergeLangSection(
-        ESmarketingStrategyInternship, 
-        ENmarketingStrategyInternship),
-    },
-    {
-      type: CvType.MARKETING_STRATEGY,
-      opp: OpportunityType.EXCHANGE_PROGRAM,
-      data: mergeLangSection(
-        ESmarketingStrategyExchangeProgram,
-        ENmarketingStrategyExchangeProgram,
-      ),
-    },
-    {
-      type: CvType.MARKETING_STRATEGY,
-      opp: OpportunityType.SCHOLARSHIP,
-      data: mergeLangSection(
-        ESmarketingStrategyScholarship, 
-        ENmarketingStrategyScholarship),
-    },
-    {
-      type: CvType.MARKETING_STRATEGY,
-      opp: OpportunityType.STARTUP,
-      data: mergeLangSection(
-        ESmarketingStrategyScholarship, 
-        ENmarketingStrategyScholarship),
-    },
+      // MARKETING & STRATEGY
+      {
+        type: CvType.MARKETING_STRATEGY,
+        opp: OpportunityType.EMPLOYMENT,
+        data: mergeLangSection(
+          ESmarketingStrategyEmployment,
+          ENmarketingStrategyEmployment),
+      },
+      {
+        type: CvType.MARKETING_STRATEGY,
+        opp: OpportunityType.INTERNSHIP,
+        data: mergeLangSection(
+          ESmarketingStrategyInternship,
+          ENmarketingStrategyInternship),
+      },
+      {
+        type: CvType.MARKETING_STRATEGY,
+        opp: OpportunityType.EXCHANGE_PROGRAM,
+        data: mergeLangSection(
+          ESmarketingStrategyExchangeProgram,
+          ENmarketingStrategyExchangeProgram,
+        ),
+      },
+      {
+        type: CvType.MARKETING_STRATEGY,
+        opp: OpportunityType.SCHOLARSHIP,
+        data: mergeLangSection(
+          ESmarketingStrategyScholarship,
+          ENmarketingStrategyScholarship),
+      },
+      {
+        type: CvType.MARKETING_STRATEGY,
+        opp: OpportunityType.STARTUP,
+        data: mergeLangSection(
+          ESmarketingStrategyScholarship,
+          ENmarketingStrategyScholarship),
+      },
 
-    // FINANCE & PROJECTS
-    {
-      type: CvType.FINANCE_PROJECTS,
-      opp: OpportunityType.EMPLOYMENT,
-      data: mergeLangSection(
-        ESfinanceProjectsEmployment, 
-        ENfinanceProjectsEmployment),
-    },
-    {
-      type: CvType.FINANCE_PROJECTS,
-      opp: OpportunityType.INTERNSHIP,
-      data: mergeLangSection(
-        ESfinanceProjectsInternship, 
-        ENfinanceProjectsInternship),
-    },
-    {
-      type: CvType.FINANCE_PROJECTS,
-      opp: OpportunityType.EXCHANGE_PROGRAM,
-      data: mergeLangSection(
-        ESfinanceProjectsExchangeProgram,
-        ENfinanceProjectsExchangeProgram,
-      ),
-    },
-    {
-      type: CvType.FINANCE_PROJECTS,
-      opp: OpportunityType.SCHOLARSHIP,
-      data: mergeLangSection(
-        ESfinanceProjectsScholarship, 
-        ENfinanceProjectsScholarship),
-    },
-    {
-      type: CvType.FINANCE_PROJECTS,
-      opp: OpportunityType.STARTUP,
-      data: mergeLangSection(
-        ESfinanceProjectsScholarship, 
-        ENfinanceProjectsScholarship),
-    },
+      // FINANCE & PROJECTS
+      {
+        type: CvType.FINANCE_PROJECTS,
+        opp: OpportunityType.EMPLOYMENT,
+        data: mergeLangSection(
+          ESfinanceProjectsEmployment,
+          ENfinanceProjectsEmployment),
+      },
+      {
+        type: CvType.FINANCE_PROJECTS,
+        opp: OpportunityType.INTERNSHIP,
+        data: mergeLangSection(
+          ESfinanceProjectsInternship,
+          ENfinanceProjectsInternship),
+      },
+      {
+        type: CvType.FINANCE_PROJECTS,
+        opp: OpportunityType.EXCHANGE_PROGRAM,
+        data: mergeLangSection(
+          ESfinanceProjectsExchangeProgram,
+          ENfinanceProjectsExchangeProgram,
+        ),
+      },
+      {
+        type: CvType.FINANCE_PROJECTS,
+        opp: OpportunityType.SCHOLARSHIP,
+        data: mergeLangSection(
+          ESfinanceProjectsScholarship,
+          ENfinanceProjectsScholarship),
+      },
+      {
+        type: CvType.FINANCE_PROJECTS,
+        opp: OpportunityType.STARTUP,
+        data: mergeLangSection(
+          ESfinanceProjectsScholarship,
+          ENfinanceProjectsScholarship),
+      },
 
-    // MANAGEMENT & BUSINESS
-    {
-      type: CvType.MANAGEMENT_BUSINESS,
-      opp: OpportunityType.EMPLOYMENT,
-      data: mergeLangSection(
-        ESmanagementBusinessEmployment,
-        ENmanagementBusinessEmployment
-      ),
-    },
-    {
-      type: CvType.MANAGEMENT_BUSINESS,
-      opp: OpportunityType.INTERNSHIP,
-      data: mergeLangSection(
-        ESmanagementBusinessInternship,
-        ENmanagementBusinessInternship
-      ),
-    },
-    {
-      type: CvType.MANAGEMENT_BUSINESS,
-      opp: OpportunityType.EXCHANGE_PROGRAM,
-      data: mergeLangSection(
-        ESmanagementBusinessExchangeProgram,
-        ENmanagementBusinessExchangeProgram
-      ),
-    },
-    {
-      type: CvType.MANAGEMENT_BUSINESS,
-      opp: OpportunityType.SCHOLARSHIP,
-      data: mergeLangSection(
-        ESmanagementBusinessScholarship,
-        ENmanagementBusinessScholarship
-      ),
-    },
-    {
-      type: CvType.MANAGEMENT_BUSINESS,
-      opp: OpportunityType.STARTUP,
-      data: mergeLangSection(
-        ESmanagementBusinessScholarship,
-        ENmanagementBusinessScholarship
-      ),
-    },
+      // MANAGEMENT & BUSINESS
+      {
+        type: CvType.MANAGEMENT_BUSINESS,
+        opp: OpportunityType.EMPLOYMENT,
+        data: mergeLangSection(
+          ESmanagementBusinessEmployment,
+          ENmanagementBusinessEmployment
+        ),
+      },
+      {
+        type: CvType.MANAGEMENT_BUSINESS,
+        opp: OpportunityType.INTERNSHIP,
+        data: mergeLangSection(
+          ESmanagementBusinessInternship,
+          ENmanagementBusinessInternship
+        ),
+      },
+      {
+        type: CvType.MANAGEMENT_BUSINESS,
+        opp: OpportunityType.EXCHANGE_PROGRAM,
+        data: mergeLangSection(
+          ESmanagementBusinessExchangeProgram,
+          ENmanagementBusinessExchangeProgram
+        ),
+      },
+      {
+        type: CvType.MANAGEMENT_BUSINESS,
+        opp: OpportunityType.SCHOLARSHIP,
+        data: mergeLangSection(
+          ESmanagementBusinessScholarship,
+          ENmanagementBusinessScholarship
+        ),
+      },
+      {
+        type: CvType.MANAGEMENT_BUSINESS,
+        opp: OpportunityType.STARTUP,
+        data: mergeLangSection(
+          ESmanagementBusinessScholarship,
+          ENmanagementBusinessScholarship
+        ),
+      },
 
-    // SCIENCE
-    { 
-      type: CvType.SCIENCE, 
-      opp: OpportunityType.EMPLOYMENT, 
-      data: mergeLangSection(
-        ESscienceEmployment, 
-        ENscienceEmployment) },
-    { 
-      type: CvType.SCIENCE, 
-      opp: OpportunityType.INTERNSHIP, 
-      data: mergeLangSection(
-        ESscienceInternship, 
-        ENscienceInternship
-      ) },
-    { 
-      type: CvType.SCIENCE, 
-      opp: OpportunityType.EXCHANGE_PROGRAM, 
-      data: mergeLangSection(
-        ESscienceExchangeProgram, 
-        ENscienceExchangeProgram
-      ) },
-    { 
-      type: CvType.SCIENCE, 
-      opp: OpportunityType.SCHOLARSHIP, 
-      data: mergeLangSection(
-        ESscienceScholarship, 
-        ENscienceScholarship
-      ) },
-    { 
-      type: CvType.SCIENCE, 
-      opp: OpportunityType.STARTUP, 
-      data: mergeLangSection(
-        ESscienceScholarship, 
-        ENscienceScholarship
-      ) },
+      // SCIENCE
+      {
+        type: CvType.SCIENCE,
+        opp: OpportunityType.EMPLOYMENT,
+        data: mergeLangSection(
+          ESscienceEmployment,
+          ENscienceEmployment) },
+      {
+        type: CvType.SCIENCE,
+        opp: OpportunityType.INTERNSHIP,
+        data: mergeLangSection(
+          ESscienceInternship,
+          ENscienceInternship
+        ) },
+      {
+        type: CvType.SCIENCE,
+        opp: OpportunityType.EXCHANGE_PROGRAM,
+        data: mergeLangSection(
+          ESscienceExchangeProgram,
+          ENscienceExchangeProgram
+        ) },
+      {
+        type: CvType.SCIENCE,
+        opp: OpportunityType.SCHOLARSHIP,
+        data: mergeLangSection(
+          ESscienceScholarship,
+          ENscienceScholarship
+        ) },
+      {
+        type: CvType.SCIENCE,
+        opp: OpportunityType.STARTUP,
+        data: mergeLangSection(
+          ESscienceScholarship,
+          ENscienceScholarship
+        ) },
 
-    // SOCIAL MEDIA
-    { 
-      type: CvType.SOCIAL_MEDIA, 
-      opp: OpportunityType.EMPLOYMENT, 
-      data: mergeLangSection(
-        ESsocialMediaEmployment, 
-        ENsocialMediaEmployment) },
-    { 
-      type: CvType.SOCIAL_MEDIA, 
-      opp: OpportunityType.INTERNSHIP, 
-      data: mergeLangSection(
-        ESsocialMediaInternship, 
-        ENsocialMediaInternship) },
-    {
-      type: CvType.SOCIAL_MEDIA,
-      opp: OpportunityType.EXCHANGE_PROGRAM,
-      data: mergeLangSection(
-        ESsocialMediaExchangeProgram, 
-        ENsocialMediaExchangeProgram
-      ),
-    },
-    { 
-      type: CvType.SOCIAL_MEDIA, 
-      opp: OpportunityType.SCHOLARSHIP, 
-      data: mergeLangSection(
-        ESsocialMediaScholarship, 
-        ENsocialMediaScholarship) },
-    { 
-      type: CvType.SOCIAL_MEDIA, 
-      opp: OpportunityType.STARTUP, 
-      data: mergeLangSection(
-        ESsocialMediaScholarship, 
-        ENsocialMediaScholarship
-      ) },
+      // SOCIAL MEDIA
+      {
+        type: CvType.SOCIAL_MEDIA,
+        opp: OpportunityType.EMPLOYMENT,
+        data: mergeLangSection(
+          ESsocialMediaEmployment,
+          ENsocialMediaEmployment) },
+      {
+        type: CvType.SOCIAL_MEDIA,
+        opp: OpportunityType.INTERNSHIP,
+        data: mergeLangSection(
+          ESsocialMediaInternship,
+          ENsocialMediaInternship) },
+      {
+        type: CvType.SOCIAL_MEDIA,
+        opp: OpportunityType.EXCHANGE_PROGRAM,
+        data: mergeLangSection(
+          ESsocialMediaExchangeProgram,
+          ENsocialMediaExchangeProgram
+        ),
+      },
+      {
+        type: CvType.SOCIAL_MEDIA,
+        opp: OpportunityType.SCHOLARSHIP,
+        data: mergeLangSection(
+          ESsocialMediaScholarship,
+          ENsocialMediaScholarship) },
+      {
+        type: CvType.SOCIAL_MEDIA,
+        opp: OpportunityType.STARTUP,
+        data: mergeLangSection(
+          ESsocialMediaScholarship,
+          ENsocialMediaScholarship
+        ) },
 
-    // EDUCATION
-    { 
-      type: CvType.EDUCATION, 
-      opp: OpportunityType.EMPLOYMENT, 
-      data: mergeLangSection(
-        ESeducationEmployment, 
-        ENeducationEmployment
-      ) },
-    { 
-      type: CvType.EDUCATION, 
-      opp: OpportunityType.INTERNSHIP, 
-      data: mergeLangSection(
-        ESeducationInternship, 
-        ENeducationInternship
-      ) },
-    {
-      type: CvType.EDUCATION,
-      opp: OpportunityType.EXCHANGE_PROGRAM,
-      data: mergeLangSection(
-        ESeducationExchangeProgram, 
-        ENeducationExchangeProgram),
-    },
-    { 
-      type: CvType.EDUCATION, 
-      opp: OpportunityType.SCHOLARSHIP, 
-      data: mergeLangSection(
-        ESeducationScholarship, 
-        ENeducationScholarship) },
-    { 
-      type: CvType.EDUCATION, 
-      opp: OpportunityType.STARTUP, 
-      data: mergeLangSection(
-        ESeducationScholarship, 
-        ENeducationScholarship
-      ) },
+      // EDUCATION
+      {
+        type: CvType.EDUCATION,
+        opp: OpportunityType.EMPLOYMENT,
+        data: mergeLangSection(
+          ESeducationEmployment,
+          ENeducationEmployment
+        ) },
+      {
+        type: CvType.EDUCATION,
+        opp: OpportunityType.INTERNSHIP,
+        data: mergeLangSection(
+          ESeducationInternship,
+          ENeducationInternship
+        ) },
+      {
+        type: CvType.EDUCATION,
+        opp: OpportunityType.EXCHANGE_PROGRAM,
+        data: mergeLangSection(
+          ESeducationExchangeProgram,
+          ENeducationExchangeProgram),
+      },
+      {
+        type: CvType.EDUCATION,
+        opp: OpportunityType.SCHOLARSHIP,
+        data: mergeLangSection(
+          ESeducationScholarship,
+          ENeducationScholarship) },
+      {
+        type: CvType.EDUCATION,
+        opp: OpportunityType.STARTUP,
+        data: mergeLangSection(
+          ESeducationScholarship,
+          ENeducationScholarship
+        ) },
 
-    // DESIGN & CREATIVITY
-    {
-      type: CvType.DESIGN_CREATIVITY,
-      opp: OpportunityType.EMPLOYMENT,
-      data: mergeLangSection(
-        ESdesignCreativityEmployment, 
-        ENdesignCreativityEmployment),
-    },
-    {
-      type: CvType.DESIGN_CREATIVITY,
-      opp: OpportunityType.INTERNSHIP,
-      data: mergeLangSection(
-        ESdesignCreativityInternship, 
-        ENdesignCreativityInternship),
-    },
-    {
-      type: CvType.DESIGN_CREATIVITY,
-      opp: OpportunityType.EXCHANGE_PROGRAM,
-      data: mergeLangSection(
-        ESdesignCreativityExchangeProgram, 
-        ENdesignCreativityExchangeProgram),
-    },
-    {
-      type: CvType.DESIGN_CREATIVITY,
-      opp: OpportunityType.SCHOLARSHIP,
-      data: mergeLangSection(
-        ESdesignCreativityScholarship, 
-        ENdesignCreativityScholarship),
-    },
-    {
-      type: CvType.DESIGN_CREATIVITY,
-      opp: OpportunityType.STARTUP,
-      data: mergeLangSection(
-        ESdesignCreativityScholarship, 
-        ENdesignCreativityScholarship),
-    }, // Usando scholarship como fallback puesto que startup no tiene config específica aún
-  ];
+      // DESIGN & CREATIVITY
+      {
+        type: CvType.DESIGN_CREATIVITY,
+        opp: OpportunityType.EMPLOYMENT,
+        data: mergeLangSection(
+          ESdesignCreativityEmployment,
+          ENdesignCreativityEmployment),
+      },
+      {
+        type: CvType.DESIGN_CREATIVITY,
+        opp: OpportunityType.INTERNSHIP,
+        data: mergeLangSection(
+          ESdesignCreativityInternship,
+          ENdesignCreativityInternship),
+      },
+      {
+        type: CvType.DESIGN_CREATIVITY,
+        opp: OpportunityType.EXCHANGE_PROGRAM,
+        data: mergeLangSection(
+          ESdesignCreativityExchangeProgram,
+          ENdesignCreativityExchangeProgram),
+      },
+      {
+        type: CvType.DESIGN_CREATIVITY,
+        opp: OpportunityType.SCHOLARSHIP,
+        data: mergeLangSection(
+          ESdesignCreativityScholarship,
+          ENdesignCreativityScholarship),
+      },
+      {
+        type: CvType.DESIGN_CREATIVITY,
+        opp: OpportunityType.STARTUP,
+        data: mergeLangSection(
+          ESdesignCreativityScholarship,
+          ENdesignCreativityScholarship),
+      }, // Usando scholarship como fallback puesto que startup no tiene config específica aún
+    ];
+    for (const item of allConfigs) {
+      const fullSectionsJson = buildFullSectionJson(item.data);
 
-  console.log("🚀 Iniciando carga de configuraciones de CV...");
-
-  for (const item of allConfigs) {
-    const fullSectionsJson = buildFullSectionJson(item.data);
-
-    await prisma.cvSectionConfiguration.upsert({
-      where: {
-        cvType_opportunityType: {
+      await prisma.cvSectionConfiguration.upsert({
+        where: {
+          cvType_opportunityType: {
+            cvType: item.type,
+            opportunityType: item.opp,
+          },
+        },
+        update: {
+          sections: fullSectionsJson as any,
+        },
+        create: {
           cvType: item.type,
           opportunityType: item.opp,
+          sections: fullSectionsJson as any,
         },
-      },
-      update: {
-        sections: fullSectionsJson as any,
-      },
-      create: {
-        cvType: item.type,
-        opportunityType: item.opp,
-        sections: fullSectionsJson as any,
-      },
-    });
+      });
+    }
+  } catch (e) {
+    console.error("[ERROR_CV_SECTION_CONFIGURATION", e)
   }
-
-  console.log("✅ Proceso completado con éxito.");
 }
-
-main()
-  .catch((e) => {
-    console.error("❌ Error en el seed:", e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });

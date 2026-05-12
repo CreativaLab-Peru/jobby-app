@@ -71,9 +71,6 @@ export function CompanyInvitationScreen({
 
     if (result.success && result.newToken) {
       copyToClipboard(result.newToken);
-      toast.success("Link regenerado y copiado al portapapeles", {
-        description: "El código de acceso también ha cambiado.",
-      });
     } else {
       toast.error(result.error || "Error al regenerar");
     }
@@ -209,7 +206,7 @@ export function CompanyInvitationScreen({
           )}
         </div>
       </main>
-      <CompanyInvitationModal/>
+      <CompanyInvitationModal companyId={companyId}/>
     </>
   );
 }

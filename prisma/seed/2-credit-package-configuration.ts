@@ -1,6 +1,4 @@
-import {PrismaClient} from "@prisma/client";
-
-const prisma = new PrismaClient();
+import {CreditBalanceType, PrismaClient} from "@prisma/client";
 
 const credit_package = [
   {
@@ -82,11 +80,11 @@ const credit_package = [
   }
 ]
 
-async function main() {
+export async function creditPackageConfiguration(prisma: PrismaClient) {
   try {
     for (const pkg of credit_package) {
       await prisma.creditPackage.upsert({
-        where: { id: pkg.id },
+        where: {id: pkg.id},
         update: {},
         create: {
           id: pkg.id,
@@ -96,21 +94,11 @@ async function main() {
           priceCents: pkg.priceCents,
           currency: pkg.currency,
           active: pkg.active,
-          type: pkg.type,
+          type: pkg.type as CreditBalanceType,
         },
       });
     }
   } catch (e) {
-    console.error("[ERROR_SEED]", e)
+    console.error("[ERROR_CREDIT_PACKAGE_CONFIGURATION]", e)
   }
 }
-
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });

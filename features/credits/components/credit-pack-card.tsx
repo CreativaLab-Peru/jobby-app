@@ -44,9 +44,8 @@ export function CreditPackCard({
   return (
     <>
       <div
-        className={`relative flex flex-col bg-card border rounded-3xl p-8 transition-all hover:shadow-md ${
-          pack.highlight ? "border-primary shadow-sm ring-1 ring-primary/20" : "border-border"
-        }`}
+        className={`relative flex flex-col bg-card border rounded-3xl p-8 transition-all hover:shadow-md ${pack.highlight ? "border-primary shadow-sm ring-1 ring-primary/20" : "border-border"
+          }`}
       >
         {pack.highlight && (
           <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary px-4 py-1 uppercase text-[10px] tracking-widest font-bold">
@@ -101,7 +100,7 @@ export function CreditPackCard({
           variant={pack.variant}
           disabled={isDisabled}
           className={`w-full py-6 rounded-2xl font-bold
-            ${pack.highlight ? "bg-primary/90 hover:bg-primary text-secondary" : ""}
+            ${pack.highlight ? "bg-primary/90 hover:bg-secondary text-secondary" : ""}
             ${isDisabled ? "opacity-70 cursor-not-allowed" : ""}`}
           onClick={() => {
             if (!isAuthenticated) {

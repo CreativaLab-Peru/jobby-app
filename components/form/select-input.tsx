@@ -46,7 +46,7 @@ export function FormSelect({
         value={value}
         disabled={disabled}
       >
-        <SelectTrigger className={error ? "border-destructive" : ""}>
+        <SelectTrigger className={cn(error ? "border-destructive" : "", className)}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>

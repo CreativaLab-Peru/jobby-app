@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Language } from "@prisma/client";
 import { Label } from "@/components/ui/label";
+import { CreditCard } from "lucide-react";
+import { useCreditsStore } from "@/store/use-credits-store";
 import {
   Select,
   SelectContent,
@@ -25,6 +27,7 @@ interface CVFormProps {
 }
 
 export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
+  const { credits } = useCreditsStore();
   const [activeTab, setActiveTab] = useState<"identidad" | "estructura">("identidad");
 
   const {
@@ -146,7 +149,7 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
               onValueChange={(v) => setValue("cvType", v as any, { shouldValidate: true })}
               value={watch("cvType")}
             >
-              <SelectTrigger className="rounded-lg h-10 bg-secondary/30 border-border font-medium">
+              <SelectTrigger className="rounded-lg h-10 border-border font-medium">
                 <SelectValue placeholder="Selecciona especialidad" />
               </SelectTrigger>
               <SelectContent>
@@ -162,6 +165,16 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
                 {errors.cvType.message}
               </p>
             )}
+          </div>
+
+          <div className="p-4 rounded-xl border border-primary/10 bg-primary/[0.02] flex items-center gap-3">
+            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+              <CreditCard size={16} />
+            </div>
+            <span className="text-xs font-bold">
+              Créditos:{" "}
+              <span className="text-primary">{credits.manageCvsLimit} disponibles</span>
+            </span>
           </div>
         </div>
       </div>

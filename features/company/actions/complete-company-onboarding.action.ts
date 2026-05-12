@@ -10,10 +10,6 @@ import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import { CompanyOnboardingStatus } from "@prisma/client";
 
 export async function completeCompanyOnboardingAction(companyId: string, data: CompanyOnboardingFormData) {
-  console.log({
-    companyId,
-    data,
-  })
   try {
     const currentUser = await getCurrentUser();
     if (!currentUser) {

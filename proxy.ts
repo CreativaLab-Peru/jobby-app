@@ -29,7 +29,6 @@ export async function proxy(request: NextRequest) {
     companySubPath === "/forgot-password" ||
     companySubPath.startsWith("/onboarding")
   )) {
-    console.log("[ENTRE AQUI 1]")
     return NextResponse.next();
   }
 
@@ -73,7 +72,7 @@ export async function proxy(request: NextRequest) {
     }
 
     // Verificar onboarding de empresa
-    if (member.company.preference.seekingTypes.length === 0) {
+    if (member?.company?.preference?.seekingTypes?.length === 0) {
       const onboardingUrl = new URL(`/c/${companySlug}/onboarding`, request.url);
       return NextResponse.redirect(onboardingUrl);
     }

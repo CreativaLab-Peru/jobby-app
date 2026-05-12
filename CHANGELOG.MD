@@ -1,3 +1,9 @@
+# WIP
+
+## Features
+
+- [LV-86ahbnxbe](https://app.clickup.com/t/86ahbnxbe) Integracion de onboarding para empresas e invitaciones. Con validaciones principales de empresa (tenant)
+
 # v1.2.22 - 2026-05-12
 
 ## Enhancements
@@ -15,7 +21,7 @@
 
 ## Feature
 
-- [LV-86ah912y4](https://app.clickup.com/t/86ah912y4) Agregando omboarding de empresas, además de una nueva tabla CompaniesPreferences
+- [LV-86ah912y4](https://app.clickup.com/t/86ah912y4) Agregando onboarding de empresas, además de una nueva tabla CompaniesPreferences
 
 ## Enhancements
 

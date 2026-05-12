@@ -4,6 +4,8 @@ import { FormEvent, useEffect, useState, useTransition } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Building2,
+  LayoutGrid,
+  List,
   Plus,
   Search,
   X,
@@ -13,9 +15,11 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
 import { PageHeader } from "@/components/shared/page-header";
 import { AdminCompanyCard } from "@/features/company/components/admin/admin-company-card";
+import { AdminCompanyRow } from "@/features/company/components/admin/admin-company-row"; // Importado el nuevo Row
 import { AdminCompanyItem } from "@/features/company/actions/admin/get-admin-companies";
 
 interface AdminCompanyListScreenProps {
@@ -24,6 +28,7 @@ interface AdminCompanyListScreenProps {
   currentPage: number;
   pageSize: number;
   initialQuery?: string;
+  initialView?: "card" | "list"; // Nueva prop
   initialError?: string | null;
 }
 
@@ -33,6 +38,7 @@ export function AdminCompanyListScreen({
                                          currentPage,
                                          pageSize,
                                          initialQuery = "",
+                                         initialView = "list", // Default a lista
                                          initialError = null,
                                        }: AdminCompanyListScreenProps) {
   const [isPending, startTransition] = useTransition();
@@ -40,7 +46,6 @@ export function AdminCompanyListScreen({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Sincronizar búsqueda inicial
   useEffect(() => {
     setSearchText(initialQuery);
   }, [initialQuery]);
@@ -85,6 +90,12 @@ export function AdminCompanyListScreen({
     updateQuery({ page: String(Math.max(1, Math.min(totalPages, p))) });
   };
 
+  const handleViewChange = (v: string) => {
+    if (v === "card" || v === "list") {
+      updateQuery({ view: v });
+    }
+  };
+
   return (
     <main className="min-h-[90vh] p-4 md:p-8">
       <div className="mx-auto max-w-7xl">
@@ -102,18 +113,18 @@ export function AdminCompanyListScreen({
                 className="rounded-lg font-bold text-xs h-9 shadow-sm"
                 onClick={() => router.push("/admin/companies/new")}
               >
-                  <Plus className="mr-2 h-4 w-4" /> Nueva Empresa
+                <Plus className="mr-2 h-4 w-4" /> Nueva Empresa
               </Button>
             }
           />
 
-          {/* Barra de Búsqueda Estilizada */}
-          <div className="flex flex-col gap-4 rounded-2xl border border-border/60 bg-card/60 p-4 md:flex-row md:items-center">
+          {/* Barra de Búsqueda y Selector de Vista */}
+          <div className="flex flex-col gap-4 rounded-2xl border border-border/60 bg-card/60 p-4 md:flex-row md:items-center md:justify-between">
             <form
               onSubmit={handleSearchSubmit}
               className="flex w-full flex-1 items-center gap-2"
             >
-              <div className="relative w-full">
+              <div className="relative w-full max-w-md">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   value={searchText}
@@ -141,30 +152,55 @@ export function AdminCompanyListScreen({
                 </Button>
               )}
             </form>
+
+            <Tabs value={initialView} onValueChange={handleViewChange}>
+              <TabsList className="h-10">
+                <TabsTrigger value="list" className="gap-2">
+                  <List className="h-4 w-4" /> Lista
+                </TabsTrigger>
+                <TabsTrigger value="card" className="gap-2">
+                  <LayoutGrid className="h-4 w-4" /> Tarjetas
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
 
-          {/* Listado de Empresas */}
+          {/* Listado Dinámico */}
           {initialCompanies.length > 0 ? (
             <>
-              <div className="space-y-3">
-                <AnimatePresence mode="popLayout">
-                  {initialCompanies.map((company, index) => (
-                    <motion.div
-                      key={company.id}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        duration: 0.25,
-                        delay: (index % 10) * 0.03,
-                      }}
-                    >
-                      <AdminCompanyCard company={company} />
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
+              {initialView === "card" ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <AnimatePresence mode="popLayout">
+                    {initialCompanies.map((company, index) => (
+                      <motion.div
+                        key={company.id}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.25, delay: (index % 10) * 0.05 }}
+                      >
+                        <AdminCompanyCard company={company} />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <AnimatePresence mode="popLayout">
+                    {initialCompanies.map((company, index) => (
+                      <motion.div
+                        key={company.id}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25, delay: (index % 10) * 0.03 }}
+                      >
+                        <AdminCompanyRow company={company} />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              )}
 
-              {/* Paginación Estilizada */}
+              {/* Paginación */}
               <div className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-card/50 p-4 md:flex-row md:items-center md:justify-between">
                 <div className="text-xs text-muted-foreground">
                   Mostrando <span className="font-medium text-foreground">{startItem}-{endItem}</span> de <span className="font-medium text-foreground">{totalCount}</span> empresas
@@ -197,32 +233,11 @@ export function AdminCompanyListScreen({
               <EmptyPlaceholder
                 icon={Building2}
                 title={hasQuery ? "Sin resultados" : "No hay empresas"}
-                description={
-                  hasQuery
-                    ? "No se encontraron empresas con esos criterios."
-                    : "Aún no hay empresas registradas en la plataforma."
-                }
+                description={hasQuery ? "No se encontraron resultados." : "Aún no hay empresas."}
                 action={
-                  hasQuery ? (
-                    <Button
-                      variant="default"
-                      onClick={handleClearSearch}
-                      className="rounded-lg font-bold shadow-sm"
-                    >
-                      <X className="mr-2 h-4 w-4" />
-                      Limpiar búsqueda
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="default"
-                      asChild
-                      className="rounded-lg font-bold shadow-sm"
-                    >
-                      <a href="/admin/companies/new">
-                        <Plus className="mr-2 h-4 w-4" /> Crear Empresa
-                      </a>
-                    </Button>
-                  )
+                  <Button variant="default" onClick={hasQuery ? handleClearSearch : () => router.push("/admin/companies/new")}>
+                    {hasQuery ? "Limpiar búsqueda" : "Crear Empresa"}
+                  </Button>
                 }
               />
             </div>

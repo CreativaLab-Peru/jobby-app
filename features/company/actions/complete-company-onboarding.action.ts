@@ -7,11 +7,9 @@ import {
   companyOnboardingSchema,
 } from "../schemas/company-onboarding.schema";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
-import { CompanyRole, CompanyOnboardingStatus, InvitationStatus } from "@prisma/client";
-import { generateNumericCode } from "@/utils/digicts";
-import { randomBytes } from "crypto";
+import { CompanyOnboardingStatus } from "@prisma/client";
 
-export async function completeCompanyOnboardingAction(data: CompanyOnboardingFormData) {
+export async function completeCompanyOnboardingAction(companyId: string, data: CompanyOnboardingFormData) {
   try {
     const currentUser = await getCurrentUser();
     if (!currentUser) {
@@ -20,11 +18,11 @@ export async function completeCompanyOnboardingAction(data: CompanyOnboardingFor
 
     // Verificar si el usuario ya pertenece a una empresa
     const existingMembership = await prisma.companyMember.findFirst({
-      where: { userId: currentUser.id },
+      where: { userId: currentUser.id, companyId },
     });
 
-    if (existingMembership) {
-      return { success: false, error: "Ya perteneces a una organización." };
+    if (!existingMembership) {
+      return { success: false, error: "No existe el usuario" };
     }
 
     // Validar los datos con el esquema
@@ -36,28 +34,13 @@ export async function completeCompanyOnboardingAction(data: CompanyOnboardingFor
     const { name, logoUrl, ruc, website, primaryColor, seekingTypes, students, generalMembers } =
       parsed.data;
 
-    // Generar slug único
-    const baseSlug = name
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-
-    let slug = baseSlug;
-    let counter = 1;
-    while (await prisma.company.findUnique({ where: { slug } })) {
-      slug = `${baseSlug}-${counter}`;
-      counter++;
-    }
-
     // Crear la empresa y sus relaciones en una transacción
     const result = await prisma.$transaction(async (tx) => {
       // 1. Crear la empresa
-      const company = await tx.company.create({
+      const company = await tx.company.update({
+        where: {id: companyId},
         data: {
           name,
-          slug,
           logoUrl: logoUrl || "",
           ruc: ruc || "",
           website: website || "",
@@ -67,43 +50,39 @@ export async function completeCompanyOnboardingAction(data: CompanyOnboardingFor
       });
 
       // 2. Crear las preferencias de la empresa
-      await tx.companyPreference.create({
-        data: {
-          companyId: company.id,
+      await tx.companyPreference.upsert({
+        where: {companyId},
+        update: {
+          companyId,
           seekingTypes,
         },
-      });
-
-      // 3. Crear el creador como ADMIN de la empresa
-      await tx.companyMember.create({
-        data: {
-          companyId: company.id,
-          userId: currentUser.id,
-          role: CompanyRole.ADMIN,
-        },
+        create: {
+          companyId,
+          seekingTypes,
+        }
       });
 
       // 3. Crear invitaciones para el equipo
-      const allInvitations = [...students, ...generalMembers];
-      for (const invite of allInvitations) {
-        const token = randomBytes(32).toString("hex");
-        const code = generateNumericCode();
-
-        await tx.companyInvitation.create({
-          data: {
-            companyId: company.id,
-            email: invite.email,
-            role: invite.role,
-            token,
-            code,
-            codeHash: code, // Deberías hashearlo idealmente
-            invitedBy: currentUser.id,
-            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 días
-          },
-        });
-
-        // TODO: Aquí se enviaría el correo en segundo plano
-      }
+      // const allInvitations = [...students, ...generalMembers];
+      // for (const invite of allInvitations) {
+      //   const token = randomBytes(32).toString("hex");
+      //   const code = generateNumericCode();
+      //
+      //   await tx.companyInvitation.create({
+      //     data: {
+      //       companyId: company.id,
+      //       email: invite.email,
+      //       role: invite.role,
+      //       token,
+      //       code,
+      //       codeHash: code, // Deberías hashearlo idealmente
+      //       invitedBy: currentUser.id,
+      //       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 días
+      //     },
+      //   });
+      //
+      //   // TODO: Aquí se enviaría el correo en segundo plano
+      // }
 
       return company;
     });

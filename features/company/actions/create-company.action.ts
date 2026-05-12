@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
+
 
 import { prisma } from "@/lib/prisma";
 import { routes } from "@/lib/routes";
@@ -10,6 +10,12 @@ import {
   companyCreateSchema,
   type CompanyCreateInput,
 } from "@/features/company/schemas/company-create.schema";
+import {
+  ensureUniqueSlug,
+  normalizeOptional,
+  parseFieldErrors,
+  slugify
+} from "@/features/company/actions/_utils";
 
 export interface CompanyCreateFormState {
   success: boolean;
@@ -29,57 +35,6 @@ export interface CompanyCreateFormState {
 
 const initialState: CompanyCreateFormState = {
   success: false,
-};
-
-const slugify = (value: string) =>
-  value
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .replace(/-{2,}/g, "-")
-    .slice(0, 80) || "empresa";
-
-const normalizeOptional = (value: FormDataEntryValue | null) => {
-  if (typeof value !== "string") {
-    return undefined;
-  }
-
-  const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : undefined;
-};
-
-const parseFieldErrors = (issues: z.ZodIssue[]) => {
-  const fieldErrors: Partial<Record<keyof CompanyCreateInput, string>> = {};
-
-  for (const issue of issues) {
-    const key = issue.path[0];
-    if (typeof key === "string" && !fieldErrors[key as keyof CompanyCreateInput]) {
-      fieldErrors[key as keyof CompanyCreateInput] = issue.message;
-    }
-  }
-
-  return fieldErrors;
-};
-
-const ensureUniqueSlug = async (baseSlug: string) => {
-  let candidate = baseSlug;
-  let counter = 1;
-
-  while (true) {
-    const existing = await prisma.company.findUnique({
-      where: { slug: candidate },
-      select: { id: true },
-    });
-
-    if (!existing) {
-      return candidate;
-    }
-
-    candidate = `${baseSlug}-${counter}`;
-    counter += 1;
-  }
 };
 
 export const createCompanyAction = async (
@@ -142,7 +97,7 @@ export const createCompanyAction = async (
 
     return {
       success: true,
-      message: "Empresa creada correctamente",
+      message: "Empresa agregada correctamente",
       company: {
         ...company,
         joinUrl: routes.website.joinCompany(company.slug),

@@ -1,23 +1,43 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-import { useCompanyOnboardingStore } from "../../store/company-onboarding-store";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Loader2, ArrowRight, ArrowLeft, CheckCircle2 } from "lucide-react";
-import { toast } from "sonner";
-import { StepIdentity } from "./step-identity";
-import { StepPurpose } from "./step-purpose";
-import { StepTeam } from "./step-team";
-import { completeCompanyOnboardingAction } from "../../actions/complete-company-onboarding.action";
-import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
+import {useEffect, useState, useTransition} from "react";
+import {useCompanyOnboardingStore} from "../../store/company-onboarding-store";
+import {Button} from "@/components/ui/button";
+import {Progress} from "@/components/ui/progress";
+import {Loader2, ArrowRight, ArrowLeft, CheckCircle2} from "lucide-react";
+import {toast} from "sonner";
+import {StepIdentity} from "./step-identity";
+import {StepPurpose} from "./step-purpose";
+import {StepTeam} from "./step-team";
+import {completeCompanyOnboardingAction} from "../../actions/complete-company-onboarding.action";
+import {useRouter} from "next/navigation";
+import {cn} from "@/lib/utils";
 
 const TOTAL_STEPS = 3;
 
-export function CompanyOnboardingForm() {
-  const { step, setStep, formData, validateCurrentStep, isStepValid, reset } =
-    useCompanyOnboardingStore();
+interface CompanyOnboardingFormProps {
+  initialData: {
+    id: string;
+    name?: string;
+    slug?: string;
+    logoUrl?: string;
+    ruc?: string;
+    website?: string;
+    primaryColor?: string;
+    secondaryColor?: string;
+  }
+}
+
+export function CompanyOnboardingForm({initialData}: CompanyOnboardingFormProps) {
+  const {
+    step,
+    setStep,
+    formData,
+    validateCurrentStep,
+    isStepValid,
+    reset,
+    updateFormData
+  } = useCompanyOnboardingStore();
   const [isPending, startTransition] = useTransition();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
@@ -25,6 +45,7 @@ export function CompanyOnboardingForm() {
   // Soluciona el error de Hydration Mismatch esperando a que el componente se monte en el cliente
   useEffect(() => {
     setMounted(true);
+    updateFormData(initialData)
   }, []);
 
   const handleNext = async () => {
@@ -36,7 +57,7 @@ export function CompanyOnboardingForm() {
     const validation = validateCurrentStep();
     if (validation.success) {
       setStep(step + 1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({top: 0, behavior: "smooth"});
     } else {
       toast.error(validation.error);
     }
@@ -51,11 +72,11 @@ export function CompanyOnboardingForm() {
 
     startTransition(async () => {
       try {
-        const result = await completeCompanyOnboardingAction(formData);
+        const result = await completeCompanyOnboardingAction(initialData.id, formData);
         if (result.success) {
           toast.success("¡Empresa creada con éxito!");
           reset();
-          router.push("/dashboard/company");
+          router.push(`/c/${initialData.slug}/dashboard`);
         } else {
           toast.error(result.error || "Ocurrió un error al crear la empresa");
         }
@@ -69,7 +90,7 @@ export function CompanyOnboardingForm() {
   if (!mounted) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary"/>
         <p className="text-muted-foreground text-sm font-medium">Cargando configuración...</p>
       </div>
     );
@@ -88,7 +109,8 @@ export function CompanyOnboardingForm() {
               Configura tu organización
             </p>
           </div>
-          <div className="flex items-center gap-4 bg-card/50 border border-border/40 px-6 py-3 rounded-2xl shadow-sm">
+          <div
+            className="flex items-center gap-4 bg-card/50 border border-border/40 px-6 py-3 rounded-2xl shadow-sm">
             <div className="text-right">
               <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest">
                 Paso {step} de {TOTAL_STEPS}
@@ -97,15 +119,15 @@ export function CompanyOnboardingForm() {
                 {Math.round((step / TOTAL_STEPS) * 100)}% Completado
               </p>
             </div>
-            <Progress value={(step / TOTAL_STEPS) * 100} className="w-32 h-2.5" />
+            <Progress value={(step / TOTAL_STEPS) * 100} className="w-32 h-2.5"/>
           </div>
         </div>
       </div>
 
       <div className="py-4">
-        {step === 1 && <StepIdentity />}
-        {step === 2 && <StepPurpose />}
-        {step === 3 && <StepTeam />}
+        {step === 1 && <StepIdentity/>}
+        {step === 2 && <StepPurpose/>}
+        {step === 3 && <StepTeam/>}
       </div>
 
       {/* Navegación */}
@@ -117,7 +139,7 @@ export function CompanyOnboardingForm() {
           onClick={() => setStep(step - 1)}
           className="text-muted-foreground hover:text-foreground h-14 px-8 rounded-2xl font-bold transition-all active:scale-95"
         >
-          <ArrowLeft className="mr-2 h-5 w-5" /> Regresar
+          <ArrowLeft className="mr-2 h-5 w-5"/> Regresar
         </Button>
 
         <Button
@@ -133,15 +155,15 @@ export function CompanyOnboardingForm() {
         >
           {isPending ? (
             <>
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Procesando...
+              <Loader2 className="mr-2 h-5 w-5 animate-spin"/> Procesando...
             </>
           ) : step === TOTAL_STEPS ? (
             <>
-              <CheckCircle2 className="mr-2 h-5 w-5" /> Finalizar Registro
+              <CheckCircle2 className="mr-2 h-5 w-5"/> Finalizar Registro
             </>
           ) : (
             <>
-              Continuar <ArrowRight className="ml-2 h-5 w-5" />
+              Continuar <ArrowRight className="ml-2 h-5 w-5"/>
             </>
           )}
         </Button>

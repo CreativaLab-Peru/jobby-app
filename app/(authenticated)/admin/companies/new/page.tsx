@@ -23,7 +23,7 @@ export default async function AdminCompanyNewPage() {
 
   return (
     <div className="min-h-screen bg-background px-4 py-10">
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-4xl">
         <Card>
           <CardHeader>
             <CardTitle>Crear nueva empresa</CardTitle>

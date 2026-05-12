@@ -9,7 +9,8 @@
     "build": "prisma generate && prisma migrate deploy && next build",
     "postinstall": "prisma generate",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed:main": "bun run prisma/seed.ts"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",

@@ -10,6 +10,8 @@ import { routes } from "@/lib/routes";
 import { companyInvitationAcceptSchema } from "@/features/company/schemas/company-invitation.schema";
 import { verifyInvitationCode } from "@/features/company/services/company-invitation.service";
 import { InvitationStatus } from "@prisma/client";
+import crypto from "node:crypto";
+import {hmacSha256} from "@/utils/hmac";
 
 type CompanyInvitationAcceptInput = z.infer<typeof companyInvitationAcceptSchema>;
 
@@ -18,6 +20,7 @@ export type AcceptCompanyInvitationState =
       success: true;
       message: string;
       companyId: string;
+      newCode: string;
       fieldErrors?: Partial<Record<keyof CompanyInvitationAcceptInput, string>>;
     }
   | {
@@ -92,62 +95,72 @@ export const acceptCompanyInvitationAction = async (
       return { success: false, error: "El código es incorrecto." };
     }
 
-    const session = await auth.api.getSession({ headers: await headers() });
-    if (!session?.user) {
-      return {
-        success: false,
-        error: "Debes iniciar sesión para aceptar la invitación.",
-        requiresAuth: true,
-      };
-    }
+    // const session = await auth.api.getSession({ headers: await headers() });
+    // if (!session?.user) {
+    //   return {
+    //     success: false,
+    //     error: "Debes iniciar sesión para aceptar la invitación.",
+    //     requiresAuth: true,
+    //   };
+    // }
+    //
+    // const user = session.user;
+    // if (user.email.toLowerCase() !== normalizedEmail) {
+    //   return {
+    //     success: false,
+    //     error: "Debes iniciar sesión con el mismo correo de la invitación.",
+    //     requiresAuth: true,
+    //   };
+    // }
+    //
+    // await prisma.$transaction(async (tx) => {
+    //   await tx.companyMember.upsert({
+    //     where: {
+    //       companyId_userId: {
+    //         companyId: invitation.companyId,
+    //         userId: user.id,
+    //       },
+    //     },
+    //     create: {
+    //       companyId: invitation.companyId,
+    //       userId: user.id,
+    //       role: invitation.role,
+    //       invitedBy: invitation.invitedBy,
+    //       joinedAt: new Date(),
+    //     },
+    //     update: {
+    //       status: "ACTIVE",
+    //       role: invitation.role,
+    //       joinedAt: new Date(),
+    //     },
+    //   });
+    //
+    //   await tx.companyInvitation.update({
+    //     where: { id: invitation.id },
+    //     data: {
+    //       status: InvitationStatus.ACCEPTED,
+    //       usedAt: new Date(),
+    //     },
+    //   });
+    // });
 
-    const user = session.user;
-    if (user.email.toLowerCase() !== normalizedEmail) {
-      return {
-        success: false,
-        error: "Debes iniciar sesión con el mismo correo de la invitación.",
-        requiresAuth: true,
-      };
-    }
+    // await Promise.all([
+    //   revalidatePath(routes.app.dashboard),
+    //   revalidatePath(`${routes.app.admin.companies.root}/${invitation.companyId}/invitations`),
+    // ]);
 
-    await prisma.$transaction(async (tx) => {
-      await tx.companyMember.upsert({
-        where: {
-          companyId_userId: {
-            companyId: invitation.companyId,
-            userId: user.id,
-          },
-        },
-        create: {
-          companyId: invitation.companyId,
-          userId: user.id,
-          role: invitation.role,
-          invitedBy: invitation.invitedBy,
-          joinedAt: new Date(),
-        },
-        update: {
-          status: "ACTIVE",
-          role: invitation.role,
-          joinedAt: new Date(),
-        },
-      });
-
-      await tx.companyInvitation.update({
-        where: { id: invitation.id },
-        data: {
-          status: InvitationStatus.ACCEPTED,
-          usedAt: new Date(),
-        },
-      });
+    const newCode = crypto.randomInt(0, 1_000_000).toString().padStart(6, "0");
+    await prisma.companyInvitation.update({
+      where: {id: invitation.id},
+      data: {
+        loginCode: newCode,
+        loginCodeHash: hmacSha256(`${invitation.token}:${newCode}`),
+      }
     });
-
-    await Promise.all([
-      revalidatePath(routes.app.dashboard),
-      revalidatePath(`${routes.app.admin.companies.root}/${invitation.companyId}/invitations`),
-    ]);
 
     return {
       success: true,
+      newCode,
       message: `Ya formas parte de ${invitation.company.name}`,
       companyId: invitation.companyId,
     };

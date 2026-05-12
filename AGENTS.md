@@ -53,8 +53,8 @@ bunx prisma migrate status
 
 Seed scripts (run manually after migrations when needed):
 ```bash
-node prisma/seed/init.js                          # main seed (called by setup.sh)
-bunx ts-node prisma/seed/conf_cv_sections.ts      # CV section config — re-run per schema version
+node prisma/seed/0-app-configuration.ts                          # main seed (called by setup.sh)
+bunx ts-node prisma/seed/3-conf-cv-sections-configuration.ts      # CV section config — re-run per schema version
 ```
 
 ## Architecture

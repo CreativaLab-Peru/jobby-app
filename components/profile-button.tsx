@@ -55,7 +55,7 @@ export function ProfileButton({ user, redirectUrl }: ProfileButtonProps) {
   const menuGroups = [
     {
       items: [
-        { label: "Inicio", icon: Home, onClick: () => router.push("/") },
+        { label: "Inicio", icon: Home, onClick: () => router.push("/dashboard") },
         { label: "Configuración", icon: Settings, onClick: () => router.push("/settings") },
       ]
     },

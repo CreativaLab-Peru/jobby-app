@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/form-field";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
 import { useCvModalStore } from "../hooks/use-cv-modal-store";
@@ -35,6 +36,8 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
 
   const [isUploading, setIsUploading] = useState(false);
   const [step, setStep] = useState(1);
+  const [activeTab, setActiveTab] = useState<"identidad" | "estructura">("identidad");
+  const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -55,6 +58,29 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
       sections: [],
     },
   });
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      if (file.type === "application/pdf") {
+        setValue("file", file, { shouldValidate: true });
+      }
+    }
+  };
 
   const currentFile = watch("file");
   const currentOpportunity = watch("opportunityType");
@@ -123,52 +149,122 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
 
   return (
     <Dialog open={isUploadOpen} onOpenChange={handleClose}>
-      <DialogContent
-        className={cn(
-          "p-0 border-border bg-background shadow-lg transition-all duration-300",
-          step === 1 ? "max-w-lg" : "max-w-5xl w-[95vw]",
-        )}
-      >
-        <div className="flex flex-col h-full max-h-[90vh]">
-          {/* Header Minimalista */}
-          <div className="p-6 border-b border-border">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-secondary flex items-center justify-center text-primary">
+      <DialogContent className={cn(
+        "max-w-[95vw] lg:max-w-6xl w-full p-0 overflow-hidden border border-border bg-background shadow-2xl rounded-xl transition-all duration-300",
+        step === 1 && "lg:max-w-xl"
+      )}>
+        <div className={cn(
+          "flex flex-col",
+          step === 1 ? "h-auto" : "h-[90vh] md:h-[80vh]"
+        )}>
+          {/* Header Superior - Homogenizado con CreateCVModal */}
+          <div className="p-8 border-b border-border bg-background flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
                 {step === 1 ? <Upload size={20} /> : <Sparkles size={20} />}
               </div>
               <div>
-                <DialogTitle className="text-lg font-bold">
+                <DialogTitle className="text-lg font-bold leading-none">
                   {step === 1 ? "Importar archivo" : "Configuración de datos"}
                 </DialogTitle>
-                <DialogDescription className="text-xs">
+                <DialogDescription className="text-xs mt-1">
                   {step === 1
                     ? "Selecciona el PDF de tu CV actual."
                     : "Confirma cómo se procesarán los datos extraídos."}
                 </DialogDescription>
               </div>
             </div>
+
+            {step === 2 && (
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <Button
+                  variant="outline"
+                  onClick={() => setStep(1)}
+                  className="flex-1 sm:flex-none h-10 font-semibold text-xs"
+                  disabled={isUploading}
+                >
+                  Atrás
+                </Button>
+                <Button
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={isUploading || !isValid}
+                  className="flex-[2] sm:flex-none h-10 px-6 font-bold text-xs"
+                >
+                  {isUploading ? (
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  ) : (
+                    "Confirmar e Importar"
+                  )}
+                </Button>
+              </div>
+            )}
           </div>
+
+          {/* Selector de Pestañas Móvil (Solo aparece en Paso 2 en móvil) */}
+          {step === 2 && (
+            <div className="md:hidden flex border-b border-border bg-background">
+              <button
+                onClick={() => setActiveTab("identidad")}
+                className={cn(
+                  "flex-1 py-3 text-sm font-semibold transition",
+                  activeTab === "identidad"
+                    ? "text-primary border-b-2 border-primary"
+                    : "text-muted-foreground",
+                )}
+              >
+                01 Identidad
+              </button>
+              <button
+                onClick={() => setActiveTab("estructura")}
+                className={cn(
+                  "flex-1 py-3 text-sm font-semibold transition",
+                  activeTab === "estructura"
+                    ? "text-primary border-b-2 border-primary"
+                    : "text-muted-foreground",
+                )}
+              >
+                02 Estructura
+              </button>
+            </div>
+          )}
 
           <div
             className={cn(
-              "flex-1 overflow-y-auto min-h-[300px]",
-              step === 2 && "grid grid-cols-1 md:grid-cols-2",
+              "flex-1 overflow-hidden",
+              step === 2 && "grid grid-cols-1 md:grid-cols-2"
             )}
           >
-            {/* COLUMNA 1 */}
+            {/* COLUMNA 1 - IDENTIDAD (Clonado de cv-form.tsx) */}
             <div
               className={cn(
-                "p-6 space-y-6",
-                step === 2 && "border-b md:border-b-0 md:border-r border-border",
+                "flex flex-col md:border-r border-border min-h-0",
+                step === 1 || (step === 2 && activeTab === "identidad") ? "flex" : "hidden",
+                "md:flex md:h-full"
               )}
             >
               {step === 1 ? (
                 /* Subida de Archivo */
-                <div className="py-4">
+                <div className="p-8 space-y-6 flex-1 overflow-y-auto">
+                  <div className="shrink-0 mb-2">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-primary">01. Importación</h3>
+                    <p className="text-xs text-muted-foreground">
+                      Selecciona el PDF de tu CV actual para empezar.
+                    </p>
+                  </div>
+
                   {!currentFile ? (
                     <div
+                      onDragEnter={handleDrag}
+                      onDragLeave={handleDrag}
+                      onDragOver={handleDrag}
+                      onDrop={handleDrop}
                       onClick={() => fileInputRef.current?.click()}
-                      className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-muted-foreground/20 bg-secondary/20 p-10 text-center hover:bg-secondary/40 transition-colors cursor-pointer"
+                      className={cn(
+                        "flex flex-col items-center justify-center rounded-2xl border-2 border-dashed transition-all cursor-pointer group p-12 text-center",
+                        dragActive
+                          ? "border-primary bg-primary/10 scale-105"
+                          : "border-primary/20 bg-primary/[0.02] hover:bg-primary/[0.04]"
+                      )}
                     >
                       <input
                         type="file"
@@ -180,144 +276,140 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
                           if (f) setValue("file", f, { shouldValidate: true });
                         }}
                       />
-                      <Upload className="h-8 w-8 text-muted-foreground mb-4" />
-                      <p className="text-sm font-semibold text-foreground">Seleccionar PDF</p>
-                      <p className="text-xs text-muted-foreground mt-1 tracking-tight">
-                        Máximo 5MB
+                      <div className={cn(
+                        "h-12 w-12 rounded-full flex items-center justify-center mb-4 transition-transform",
+                        dragActive ? "bg-primary text-white scale-110" : "bg-primary/10 text-primary group-hover:scale-110"
+                      )}>
+                        <Upload size={24} />
+                      </div>
+                      <p className="text-sm font-bold text-foreground">
+                        {dragActive ? "¡Suelta el archivo aquí!" : "Seleccionar PDF"}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Máximo 5MB • Formato PDF
                       </p>
                     </div>
                   ) : (
-                    <div className="flex items-center justify-between p-4 rounded-xl border border-primary/20 bg-primary/5">
+                    <div className="flex items-center justify-between p-4 rounded-xl border border-primary/20 bg-primary/[0.04]">
                       <div className="flex items-center gap-3 overflow-hidden">
-                        <FileIcon className="h-5 w-5 text-primary shrink-0" />
-                        <span className="text-sm font-medium truncate">{currentFile.name}</span>
+                        <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                          <FileIcon size={16} />
+                        </div>
+                        <span className="text-sm font-bold truncate">{currentFile.name}</span>
                       </div>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setValue("file", null as any)}
-                        className="h-8 w-8 p-0 rounded-full"
+                        className="h-8 w-8 p-0 rounded-full hover:bg-destructive/10 hover:text-destructive"
                       >
                         <X size={16} />
                       </Button>
                     </div>
                   )}
                   {errors.file && (
-                    <p className="text-xs text-destructive mt-3 font-medium">
+                    <p className="text-xs text-destructive text-center font-bold uppercase tracking-wider">
                       {errors.file.message}
                     </p>
                   )}
+
+                  {step === 1 && currentFile && (
+                    <Button
+                      onClick={() => setStep(2)}
+                      className="w-full h-10 font-bold text-xs"
+                    >
+                      Siguiente paso
+                      <ChevronRight size={16} className="ml-2" />
+                    </Button>
+                  )}
                 </div>
               ) : (
-                /* Formulario de Configuración */
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label className="text-xs font-semibold">Título del CV</Label>
-                    <Input
-                      {...register("title")}
-                      className="h-10 rounded-lg bg-secondary/30"
-                      placeholder="Ej: CV Senior Backend"
-                    />
+                /* Formulario de Configuración - Estilo idéntico a cv-form.tsx */
+                <>
+                  <div className="shrink-0 p-6 md:p-8">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-primary">01. Identidad</h3>
+                    <p className="text-xs text-muted-foreground">
+                      Define los parámetros básicos de tu documento.
+                    </p>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="flex-1 overflow-y-auto px-6 pb-6 md:px-8 md:pb-8 space-y-6">
+                    <FormField
+                      label="Nombre del CV"
+                      placeholder="Ej: CV John Doe"
+                      register={register("title")}
+                      error={errors.title?.message}
+                    />
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormSelect
+                        label="Diseño"
+                        value={watch("templateId")}
+                        options={[
+                          { key: "harvard", value: "Harvard" },
+                          { key: "europass", value: "Europass" },
+                        ]}
+                        onChange={(v) => setValue("templateId", v as any)}
+                      />
+                      <FormSelect
+                        label="Perfil Profesional"
+                        value={watch("cvType")}
+                        options={cvTypeOptions.map(({ value, label }) => ({
+                          key: value,
+                          value: label,
+                        }))}
+                        onChange={(v) => setValue("cvType", v as CvType)}
+                      />
+                    </div>
+
                     <FormSelect
-                      label="Plantilla"
-                      value={watch("templateId")}
-                      options={[
-                        { key: "harvard", value: "Harvard" },
-                        { key: "europass", value: "Europass" },
-                      ]}
-                      onChange={(v) => setValue("templateId", v as any)}
+                      label="Tipo de Oportunidad"
+                      value={watch("opportunityType")}
+                      options={opportunities}
+                      onChange={(v) => setValue("opportunityType", v as OpportunityType)}
                     />
-                    <FormSelect
-                      label="Perfil"
-                      value={watch("cvType")}
-                      options={cvTypeOptions.map(({ value, label }) => ({
-                        key: value,
-                        value: label,
-                      }))}
-                      onChange={(v) => setValue("cvType", v as CvType)}
-                    />
-                  </div>
 
-                  <FormSelect
-                    label="Oportunidad"
-                    value={watch("opportunityType")}
-                    options={opportunities}
-                    onChange={(v) => setValue("opportunityType", v as OpportunityType)}
-                  />
-
-                  <div className="p-4 rounded-xl border border-border bg-secondary/10 flex items-center gap-3">
-                    <CreditCard size={16} className="text-muted-foreground" />
-                    <span className="text-xs font-medium">
-                      Créditos disponibles:{" "}
-                      <b className="text-foreground">{credits.manageCvsLimit}</b>
-                    </span>
+                    <div className="p-4 rounded-xl border border-primary/10 bg-primary/[0.02] flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                        <CreditCard size={16} />
+                      </div>
+                      <span className="text-xs font-bold">
+                        Créditos:{" "}
+                        <span className="text-primary">{credits.manageCvsLimit} disponibles</span>
+                      </span>
+                    </div>
                   </div>
-                </div>
+                </>
               )}
             </div>
 
-            {/* COLUMNA 2 (Selector de Secciones) */}
+            {/* COLUMNA 2 - ESTRUCTURA (Clonado de cv-form.tsx) */}
             {step === 2 && (
-              <div className="p-6 bg-secondary/5 space-y-4">
-                <div>
-                  <h4 className="text-sm font-bold">Secciones a extraer</h4>
-                  <p className="text-[11px] text-muted-foreground">
+              <div className={cn(
+                "flex flex-col bg-secondary/5 min-h-0 md:h-full",
+                activeTab === "estructura" ? "flex" : "hidden",
+                "md:flex"
+              )}>
+                <div className="shrink-0 p-6 md:p-8">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-primary">02. Estructura</h4>
+                  <p className="text-xs text-muted-foreground mt-1">
                     La IA buscará estos datos en tu documento.
                   </p>
                 </div>
 
-                <div className="bg-background rounded-xl border border-border p-4">
-                  <CvSectionSelector
-                    opportunityType={currentOpportunity}
-                    selectedSections={currentSections}
-                    onChange={(newSections) =>
-                      setValue("sections", newSections, { shouldValidate: true })
-                    }
-                  />
+                <div className="flex-1 overflow-y-auto px-5 pb-6 md:px-8 md:pb-8">
+                  <div className="bg-background rounded-2xl border border-border p-6 shadow-sm">
+                    <CvSectionSelector
+                      opportunityType={currentOpportunity}
+                      selectedSections={currentSections}
+                      onChange={(newSections) =>
+                        setValue("sections", newSections, { shouldValidate: true })
+                      }
+                    />
+                  </div>
                 </div>
               </div>
             )}
-          </div>
-
-          {/* Footer Unificado */}
-          <div className="p-6 border-t border-border bg-background">
-            <div className="flex w-full gap-3">
-              {step === 1 ? (
-                <Button
-                  onClick={() => setStep(2)}
-                  disabled={!currentFile || !!errors.file}
-                  className="w-full h-11 font-bold"
-                >
-                  Siguiente paso
-                  <ChevronRight size={18} className="ml-2" />
-                </Button>
-              ) : (
-                <>
-                  <Button
-                    variant="outline"
-                    onClick={() => setStep(1)}
-                    className="flex-1 h-11 font-bold"
-                    disabled={isUploading}
-                  >
-                    Atrás
-                  </Button>
-                  <Button
-                    onClick={handleSubmit(onSubmit)}
-                    disabled={isUploading || !isValid}
-                    className="flex-[2] h-11 font-bold"
-                  >
-                    {isUploading ? (
-                      <Loader2 className="animate-spin mr-2" size={18} />
-                    ) : (
-                      "Importar ahora"
-                    )}
-                  </Button>
-                </>
-              )}
-            </div>
           </div>
         </div>
       </DialogContent>

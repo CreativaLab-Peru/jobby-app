@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useBackgroundTasks } from "@/hooks/use-background-tasks";
 import { Rocket } from "lucide-react";
+import { useCreditsStore } from "@/store/use-credits-store";
 
 interface QuickMatchLoadingModalProps {
   cvId: string;
@@ -12,6 +13,7 @@ interface QuickMatchLoadingModalProps {
 export function QuickMatchLoading({ cvId }: QuickMatchLoadingModalProps) {
   const router = useRouter();
   const { startQuickMatchTask } = useBackgroundTasks();
+  const { refreshCredits } = useCreditsStore();
   const hasStartedRef = useRef(false);
 
   useEffect(() => {
@@ -23,8 +25,9 @@ export function QuickMatchLoading({ cvId }: QuickMatchLoadingModalProps) {
     } else {
       console.error("startQuickMatchTask is not available in useBackgroundTasks");
     }
-    router.replace("/my-opportunities");
-  }, [cvId, startQuickMatchTask, router]);
+    refreshCredits();
+    router.replace("/my-opportunities?match=processing");
+  }, [cvId, startQuickMatchTask, router, refreshCredits]);
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background">

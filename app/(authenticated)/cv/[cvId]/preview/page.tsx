@@ -3,8 +3,10 @@ import { transformCVToDTO } from "@/features/cv/dto/transform-cv.dto";
 import { redirect } from "next/navigation";
 import { getCvById } from "@/features/cv/actions/get-cv-by-id";
 import { PreviewCVComponent } from "@/features/cv-preview/components/cv-review-page";
+import { CvProcessingScreen } from "@/features/cv/screens/cv-processing-screen";
 import { getCurrentCreditLimits } from "@/features/credits/actions/get-current-credits-limits";
 import { prisma } from "@/lib/prisma";
+import { JobStatus } from "@/enums";
 
 interface PreviewCVPageProps {
   params: Promise<{
@@ -16,7 +18,11 @@ export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
   const { cvId } = await params;
   const cv = await getCvById(cvId);
 
-  if (!cv) return redirect('/my-cv');
+  if (!cv) return redirect("/my-cv");
+
+  if (cv.status === JobStatus.PENDING || cv.status === JobStatus.IN_PROGRESS) {
+    return <CvProcessingScreen cvId={cv.id} />;
+  }
 
   // 1. Traer la configuración maestra (la que define títulos, iconos y campos)
   const config = await prisma.cvSectionConfiguration.findUnique({
@@ -35,7 +41,7 @@ export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
   const filteredSections = cv.sections
     .map((userSection) => {
       const sectionConfig = masterSections.find(
-        (s) => s.id?.toUpperCase() === userSection.sectionType?.toUpperCase()
+        (s) => s.id?.toUpperCase() === userSection.sectionType?.toUpperCase(),
       );
 
       if (!sectionConfig) {
@@ -52,7 +58,6 @@ export default async function PreviewCVPage({ params }: PreviewCVPageProps) {
 
   const cvData: CVData = transformCVToDTO(cv);
   const creditLimits = await getCurrentCreditLimits();
-
 
   return (
     <PreviewCVComponent

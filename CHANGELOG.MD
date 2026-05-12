@@ -1,4 +1,17 @@
-# WIP
+# v1.2.22 - 2026-05-12
+
+## Enhancements
+
+- [LV-86ahdzxkv](https://app.clickup.com/t/86ahdzxkv) Mejorado el modal de subir CV con un drag and drop
+
+## Fixes
+
+- [LV-86ahdgwg0](https://app.clickup.com/t/86ahdgwg0) Cambiado el focus del input de nombre de cv, ademas de omogenizar los estilos entre ambos modales
+- [LV-86ahdgtae](https://app.clickup.com/t/86ahdgtae) Arreglado el boton de inicio en el sidebar/footer del usuario
+- [LV-86ahdgrwn](https://app.clickup.com/t/86ahdgrwn) Arreglado el boton de princing al hacer hover
+- [LV-86ahdhbgk](https://app.clickup.com/t/86ahdhbgk) Arreglado el error con la ventana flotante y ventana flotante al crear un CV manual
+
+# v1.2.21 - 2026-05-07
 
 ## Feature
 
@@ -8,6 +21,13 @@
 ## Enhancements
 
 - [LV-86ahbchqc](https://app.clickup.com/t/86ahbchqc) Cambiado el color para el modo oscuro, cambiados algunos textos y estilos de los cards en el hero
+
+## Fixes
+
+- [LV-86ahb5v1h](https://app.clickup.com/t/86ahb5v1h) Mejorado el responsive de la pagina de de bienvenida del onboarding
+- [LV-86ahb5u4e](https://app.clickup.com/t/86ahb5u4e) Arreglado el error que no cerraba el modal, ademas de agregar una pantalla de carga "Procesando"
+- [LV-86ahb5q5e](https://app.clickup.com/t/86ahb5q5e) Arreglado el error que no actualiza el proceso en el stepper de la ruta
+- [LV-86ahb5ttj](https://app.clickup.com/t/86ahb5ttj) Arreglado el refresh cuando se hace un match de oportunidades, ademas de agregar una pantalla de "Procesando"
 
 # v1.2.20 - 2026-05-04
 

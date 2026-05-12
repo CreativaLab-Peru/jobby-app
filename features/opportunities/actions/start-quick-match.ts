@@ -3,6 +3,7 @@
 import { inngest } from "@/inngest/functions/client";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import { prisma } from "@/lib/prisma";
+import { getCurrentCreditLimits } from "@/features/credits/actions/get-current-credits-limits";
 import { JobStatus, RouteStatus } from "@prisma/client";
 
 interface QuickMatchResult {
@@ -79,21 +80,37 @@ export async function startQuickMatchAction(cvId: string): Promise<QuickMatchRes
 
     if (latestMatchJob?.status === JobStatus.IN_PROGRESS) {
       return {
-        success: false,
+        success: true,
         message: "El match de oportunidades ya está en proceso para esta ruta.",
       };
     }
 
     if (hasAlreadyMatched) {
       return {
-        success: false,
+        success: true,
         message: "Ya has realizado el match para este perfil.",
       };
     }
 
+    const creditLimits = await getCurrentCreditLimits();
+
+    if (creditLimits.opportunitiesActionsLimit <= 0) {
+      return {
+        success: false,
+        message: "No tienes créditos disponibles para hacer match de oportunidades. Por favor, actualiza tu plan.",
+      };
+    }
+
+    if (route?.status === RouteStatus.ANALYSIS_DONE) {
+      await prisma.route.update({
+        where: { id: route.id },
+        data: { status: RouteStatus.OPPORTUNITIES_PENDING },
+      });
+    }
+
     // Trigger Inngest function
     await inngest.send({
-      name: "cv/get-opportunities",
+      name: "get.and.save.opportunities",
       data: {
         cvId,
         userId: currentUser.id,

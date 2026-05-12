@@ -2,7 +2,7 @@
 
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
 import { prisma } from "@/lib/prisma";
-import { CvType, Language, OpportunityType, CvSectionType, CreditBalanceType, RouteStatus } from "@prisma/client";
+import { CvType, Language, OpportunityType, CvSectionType, CreditBalanceType, RouteStatus, JobStatus } from "@prisma/client";
 import { JsonObject } from "@prisma/client/runtime/library";
 import { consumeCredits } from "@/features/credits/actions/consume-credits";
 
@@ -77,6 +77,7 @@ export const createCVByTitleAndType = async (body: CreateCvBody) => {
         opportunityType,
         templateId,
         language,
+        status: JobStatus.SUCCEEDED,
         userId: currentUser.id,
         sections: {
           create: sectionsToCreate,

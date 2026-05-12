@@ -15,6 +15,7 @@ export type RoadmapDetail = {
     company: string | null;
     type: string;
     cvId: string;
+    routeId: string | null;
     location: string | null;
     linkUrl: string;
   };
@@ -45,6 +46,7 @@ export async function getRoadmapById(roadmapId: string): Promise<RoadmapDetail |
             company: true,
             type: true,
             cvId: true,
+            routeId: true,
             location: true,
             linkUrl: true,
           },
@@ -70,6 +72,7 @@ export async function getRoadmapById(roadmapId: string): Promise<RoadmapDetail |
         company: roadmap.opportunity.company,
         type: roadmap.opportunity.type,
         cvId: roadmap.opportunity.cvId,
+        routeId: roadmap.opportunity.routeId,
         location: roadmap.opportunity.location,
         linkUrl: roadmap.opportunity.linkUrl,
       },

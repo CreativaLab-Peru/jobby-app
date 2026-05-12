@@ -2,7 +2,7 @@ import {getCurrentUser} from "@/features/share/actions/get-current-user";
 import {prisma} from "@/lib/prisma";
 import {redirect} from "next/navigation";
 
-export default async function OFirstPage(){
+export default async function OFirstPage() {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     redirect('/')
@@ -17,6 +17,6 @@ export default async function OFirstPage(){
   if (!member) {
     redirect('/dashboard')
   } else {
-    redirect(`/c/${member.companyId}/dashboard`);
+    redirect(`/c/${member.company.slug}/dashboard`);
   }
 }

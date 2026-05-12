@@ -15,6 +15,7 @@ import {authClient} from "@/lib/auth-client";
 import {routes} from "@/lib/routes";
 import {GoogleOAuthButton} from "./google-oauth-button";
 import * as React from "react";
+import {isValidCompanyBelong} from "@/features/authentication/actions/verify-company-belong";
 
 const errorMapper: Record<string, string> = {
   "Invalid password": "Contraseña incorrecta",
@@ -80,7 +81,12 @@ export function LoginForCompaniesForm({slug}: LoginFormProps) {
       return;
     }
 
-    router.push(`/c/${slug}/dashboard`);
+    const verifyCompany = await isValidCompanyBelong(slug);
+    if (!verifyCompany.success) {
+      await authClient.signOut();
+    } else {
+      router.push(`/c/${slug}/dashboard`);
+    }
   };
 
   return (

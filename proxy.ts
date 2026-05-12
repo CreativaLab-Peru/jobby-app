@@ -3,17 +3,15 @@ import {getSessionCookie} from "better-auth/cookies";
 import {prisma} from "@/lib/prisma";
 import {auth} from "@/lib/auth";
 
-const PUBLIC_PAGES = [
-  '/',
-]
-
 export async function proxy(request: NextRequest) {
   const {pathname} = request.nextUrl;
 
   // ── Rutas siempre públicas ──────────────────────────────────────────────
   if (
     pathname.startsWith("/api/auth") ||
-    pathname.startsWith("/_next")
+    pathname.startsWith("/api/theme") ||
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/logout")
   ) {
     return NextResponse.next();
   }
@@ -74,7 +72,7 @@ export async function proxy(request: NextRequest) {
     }
 
     // Verificar onboarding de empresa
-    if (!member.company.preference) {
+    if (member.company.preference.seekingTypes.length === 0) {
       const onboardingUrl = new URL(`/c/${companySlug}/onboarding`, request.url);
       return NextResponse.redirect(onboardingUrl);
     }

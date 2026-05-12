@@ -7,9 +7,7 @@ import {
   companyOnboardingSchema,
 } from "../schemas/company-onboarding.schema";
 import { getCurrentUser } from "@/features/share/actions/get-current-user";
-import { CompanyRole, CompanyOnboardingStatus, InvitationStatus } from "@prisma/client";
-import { generateNumericCode } from "@/utils/digicts";
-import { randomBytes } from "crypto";
+import { CompanyOnboardingStatus } from "@prisma/client";
 
 export async function completeCompanyOnboardingAction(companyId: string, data: CompanyOnboardingFormData) {
   console.log({
@@ -40,21 +38,6 @@ export async function completeCompanyOnboardingAction(companyId: string, data: C
     const { name, logoUrl, ruc, website, primaryColor, seekingTypes, students, generalMembers } =
       parsed.data;
 
-    // Generar slug único
-    const baseSlug = name
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-
-    let slug = baseSlug;
-    let counter = 1;
-    while (await prisma.company.findUnique({ where: { slug } })) {
-      slug = `${baseSlug}-${counter}`;
-      counter++;
-    }
-
     // Crear la empresa y sus relaciones en una transacción
     const result = await prisma.$transaction(async (tx) => {
       // 1. Crear la empresa
@@ -62,7 +45,6 @@ export async function completeCompanyOnboardingAction(companyId: string, data: C
         where: {id: companyId},
         data: {
           name,
-          slug,
           logoUrl: logoUrl || "",
           ruc: ruc || "",
           website: website || "",

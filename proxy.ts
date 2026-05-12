@@ -1,63 +1,111 @@
 import {NextRequest, NextResponse} from "next/server";
 import {getSessionCookie} from "better-auth/cookies";
-import {auth} from "@/lib/auth";
 import {prisma} from "@/lib/prisma";
+import {auth} from "@/lib/auth";
+
+const PUBLIC_PAGES = [
+  '/',
+]
 
 export async function proxy(request: NextRequest) {
   const {pathname} = request.nextUrl;
 
+  // ── Rutas siempre públicas ──────────────────────────────────────────────
   if (
     pathname.startsWith("/api/auth") ||
-    pathname.startsWith("/onboarding") ||
     pathname.startsWith("/_next")
   ) {
     return NextResponse.next();
   }
 
-  // 1. Si NO hay sesión y el usuario intenta entrar a una ruta protegida
+  // ── Detectar si es ruta de empresa: /c/[slug]/... ──────────────────────
+  const companyRouteMatch = pathname.match(/^\/c\/([^/]+)(\/.*)?$/);
+  const isCompanyRoute = !!companyRouteMatch;
+  const companySlug = companyRouteMatch?.[1];
+  const companySubPath = companyRouteMatch?.[2] ?? "/";
+
+  // Rutas públicas de empresa (login/register no requieren sesión)
+  if (isCompanyRoute && (
+    companySubPath === "/login" ||
+    companySubPath === "/register" ||
+    companySubPath.startsWith("/onboarding")
+  )) {
+    console.log("[ENTRE AQUI 1]")
+    return NextResponse.next();
+  }
+
+  // ── Verificar sesión ───────────────────────────────────────────────────
   const sessionCookie = getSessionCookie(request);
   if (!sessionCookie) {
-    // Redirigir al login en lugar de 404 para mejorar la UX
+    if (isCompanyRoute) {
+      const loginUrl = new URL(`/c/${companySlug}/login`, request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
     const loginUrl = new URL("/login", request.url);
-    // Opcional: guardar la URL de origen para volver después del login
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // 2. Si hay sesión, verificar si necesita completar onboarding
-  try {
-    const session = await auth.api.getSession({
-      headers: request.headers,
+  // ── Flujo de empresa ───────────────────────────────────────────────────
+  if (isCompanyRoute && companySlug) {
+    const session = await auth.api.getSession({headers: request.headers});
+    if (!session?.user) {
+      const loginUrl = new URL(`/c/${companySlug}/login`, request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // Verificar que el usuario es miembro activo de esta empresa
+    const member = await prisma.companyMember.findFirst({
+      where: {
+        userId: session.user.id,
+        status: "ACTIVE",
+        company: {slug: companySlug},
+      },
+      include: {company: {include: {preference: true}}},
     });
 
-    if (session?.user) {
-      try {
-        // Verificar si tiene preferencias configuradas
-        const userPreference = await prisma.userPreference.findUnique({
-          where: { userId: session.user.id },
-        });
-
-        // Si no tiene preferencias, redirigir a onboarding
-        // Excepto si ya está en la ruta de onboarding
-        if (!userPreference && !pathname.startsWith("/onboarding")) {
-          const onboardingUrl = new URL("/onboarding/talents", request.url);
-          return NextResponse.redirect(onboardingUrl);
-        }
-      } catch (error) {
-        console.error("Error checking user preference:", error);
-      }
+    if (!member) {
+      // No es miembro: redirigir al login de la empresa
+      const loginUrl = new URL(`/c/${companySlug}/login`, request.url);
+      return NextResponse.redirect(loginUrl);
     }
-  } catch (error) {
-    console.error("Error getting session:", error);
+
+    // Verificar onboarding de empresa
+    if (!member.company.preference) {
+      const onboardingUrl = new URL(`/c/${companySlug}/onboarding`, request.url);
+      return NextResponse.redirect(onboardingUrl);
+    }
+
+    return NextResponse.next();
+  }
+
+  // ── Flujo de usuario normal ────────────────────────────────────────────
+  const session = await auth.api.getSession({headers: request.headers});
+  if (!session?.user) {
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  const preference = await prisma.userPreference.findUnique({
+    where: {userId: session.user.id},
+  });
+
+  if (!preference) {
+    const onboardingUrl = new URL("/onboarding/talents", request.url);
+    return NextResponse.redirect(onboardingUrl);
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  // Agregamos /onboarding y usamos un patrón más escalable
   matcher: [
-    "/cv/:path*",  // Usar :path* protege la ruta y todas sus sub-rutas
+    "/c/:path*",       // Todas las rutas de empresa
+    "/cv/:path*",
     "/create",
     "/upload-cv",
     "/preview",
@@ -67,6 +115,5 @@ export const config = {
     "/settings",
     "/billing",
     "/dashboard",
-    // "/app/:path*" // Recomendación: agrupar rutas protegidas bajo /app
   ],
 };

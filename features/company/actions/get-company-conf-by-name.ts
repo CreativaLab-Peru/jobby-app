@@ -13,6 +13,8 @@ export async function getCompanyConfByNameAction(companyName: string) {
         primaryColor: true,
         secondaryColor: true,
         logoUrl: true,
+        ruc: true,
+        website: true,
       }
     })
     if (!company) {

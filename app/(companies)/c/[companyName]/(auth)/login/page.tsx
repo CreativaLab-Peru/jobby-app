@@ -1,10 +1,23 @@
-import {LoginForm} from "@/features/authentication/components/login-form";
+import {LoginForCompaniesForm} from "@/features/authentication/components/login-for-companies-form";
+import {redirect} from "next/navigation";
+import {getSession} from "@/features/authentication/actions/get-session";
 
-export default async function CompanyLoginPage() {
+interface CompanyLoginPageProps {
+  params: Promise<{
+    companyName: string;
+  }>
+}
+
+export default async function CompanyLoginPage({params}: CompanyLoginPageProps) {
+  const {companyName} = await params;
+
+  const session = await getSession();
+  if (session.success) redirect(`/c/${companyName}/dashboard`);
+
   return (
     <div className="relative flex items-center justify-center min-h-screen bg-background">
       <div className="relative z-10">
-        <LoginForm/>
+        <LoginForCompaniesForm slug={companyName}/>
       </div>
     </div>
   );

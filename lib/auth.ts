@@ -29,7 +29,7 @@ export const auth = betterAuth({
 
       // 3. Inyectamos los parámetros necesarios
       verificationUrl.searchParams.append("token", token);
-      verificationUrl.searchParams.append("callbackURL", "/dashboard");
+      verificationUrl.searchParams.append("callbackURL", "/o");
 
       // 4. Renderizamos el template con la URL final controlada
       const html = await render(

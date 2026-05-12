@@ -10,6 +10,8 @@ import { routes } from "@/lib/routes";
 import { companyInvitationAcceptSchema } from "@/features/company/schemas/company-invitation.schema";
 import { verifyInvitationCode } from "@/features/company/services/company-invitation.service";
 import { InvitationStatus } from "@prisma/client";
+import crypto from "node:crypto";
+import {hmacSha256} from "@/utils/hmac";
 
 type CompanyInvitationAcceptInput = z.infer<typeof companyInvitationAcceptSchema>;
 
@@ -18,6 +20,7 @@ export type AcceptCompanyInvitationState =
       success: true;
       message: string;
       companyId: string;
+      newCode: string;
       fieldErrors?: Partial<Record<keyof CompanyInvitationAcceptInput, string>>;
     }
   | {
@@ -146,8 +149,18 @@ export const acceptCompanyInvitationAction = async (
     //   revalidatePath(`${routes.app.admin.companies.root}/${invitation.companyId}/invitations`),
     // ]);
 
+    const newCode = crypto.randomInt(0, 1_000_000).toString().padStart(6, "0");
+    await prisma.companyInvitation.update({
+      where: {id: invitation.id},
+      data: {
+        loginCode: newCode,
+        loginCodeHash: hmacSha256(`${invitation.token}:${newCode}`),
+      }
+    });
+
     return {
       success: true,
+      newCode,
       message: `Ya formas parte de ${invitation.company.name}`,
       companyId: invitation.companyId,
     };

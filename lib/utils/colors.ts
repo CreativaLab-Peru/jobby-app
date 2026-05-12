@@ -1,11 +1,23 @@
 // lib/utils/colors.ts
-export function hexToHslComponents(hex: string): string {
-  // Eliminar el # si existe
-  hex = hex.replace(/^#/, "");
+export function hexToHslComponents(hex: string | null | undefined): string | null {
+  // 1. Validar que sea un string y tenga contenido
+  if (!hex || typeof hex !== "string") return null;
 
-  const r = parseInt(hex.substring(0, 2), 16) / 255;
-  const g = parseInt(hex.substring(2, 4), 16) / 255;
-  const b = parseInt(hex.substring(4, 6), 16) / 255;
+  // Eliminar el # si existe
+  const cleanHex = hex.replace(/^#/, "");
+
+  // 2. Validar que sea un hex válido (3 o 6 caracteres)
+  if (!/^[0-9A-F]{3}$|^[0-9A-F]{6}$/i.test(cleanHex)) return null;
+
+  // Convertir hex corto (F00) a largo (FF0000)
+  let fullHex = cleanHex;
+  if (cleanHex.length === 3) {
+    fullHex = cleanHex.split('').map(char => char + char).join('');
+  }
+
+  const r = parseInt(fullHex.substring(0, 2), 16) / 255;
+  const g = parseInt(fullHex.substring(2, 4), 16) / 255;
+  const b = parseInt(fullHex.substring(4, 6), 16) / 255;
 
   const max = Math.max(r, g, b), min = Math.min(r, g, b);
   let h = 0, s, l = (max + min) / 2;
@@ -23,6 +35,5 @@ export function hexToHslComponents(hex: string): string {
     h /= 6;
   }
 
-  // Retornamos en formato "H S% L%" para que encaje en el hsl(var(...))
   return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
 }

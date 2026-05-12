@@ -26,6 +26,7 @@ export async function proxy(request: NextRequest) {
   if (isCompanyRoute && (
     companySubPath === "/login" ||
     companySubPath === "/register" ||
+    companySubPath === "/forgot-password" ||
     companySubPath.startsWith("/onboarding")
   )) {
     console.log("[ENTRE AQUI 1]")

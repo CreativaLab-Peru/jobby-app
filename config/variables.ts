@@ -15,4 +15,5 @@ const VARIABLES = {
   },
 } as const;
 
+
 export const VARS = VARIABLES[ENV ?? "development"];

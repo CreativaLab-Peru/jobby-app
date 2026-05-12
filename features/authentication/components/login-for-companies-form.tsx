@@ -16,6 +16,7 @@ import {routes} from "@/lib/routes";
 import {GoogleOAuthButton} from "./google-oauth-button";
 import * as React from "react";
 import {isValidCompanyBelong} from "@/features/authentication/actions/verify-company-belong";
+import Image from "next/image";
 
 const errorMapper: Record<string, string> = {
   "Invalid password": "Contraseña incorrecta",
@@ -27,9 +28,10 @@ const errorMapper: Record<string, string> = {
 
 interface LoginFormProps {
   slug: string;
+  companyImageUrl?: string;
 }
 
-export function LoginForCompaniesForm({slug}: LoginFormProps) {
+export function LoginForCompaniesForm({slug, companyImageUrl}: LoginFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [formError, setFormError] = useState<string | null>(null);
@@ -92,6 +94,22 @@ export function LoginForCompaniesForm({slug}: LoginFormProps) {
   return (
     <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-md">
+        {/* Lógica del Logo: Encapsulada y limpia */}
+        {companyImageUrl && (
+          <div className="flex justify-center mb-6">
+            <div
+              className="relative h-30 w-30 rounded-2xl overflow-hidden shadow-sm border border-border/50 bg-card">
+              <Image
+                src={companyImageUrl}
+                alt={`Logo de ${slug}`}
+                fill
+                priority // Carga prioritaria para evitar parpadeos
+                className="object-contain p-2" // "contain" para no deformar logos
+              />
+            </div>
+          </div>
+        )}
+
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-2">
             <span className="text-gradient">Bienvenido {" "}</span>
@@ -164,7 +182,7 @@ export function LoginForCompaniesForm({slug}: LoginFormProps) {
 
             <div className="flex justify-between text-sm">
               <Link
-                href="/forgot-password"
+                href={`/c/${slug}/forgot-password`}
                 className="text-primary hover:underline"
               >
                 ¿Olvidaste tu contraseña?
@@ -189,12 +207,12 @@ export function LoginForCompaniesForm({slug}: LoginFormProps) {
             {/*/>*/}
           </form>
 
-          <p className="text-center text-sm text-muted-foreground mt-6">
-            ¿No tienes cuenta?{" "}
-            <Link href="/register" className="text-primary hover:underline">
-              Regístrate aquí
-            </Link>
-          </p>
+          {/*<p className="text-center text-sm text-muted-foreground mt-6">*/}
+          {/*  ¿No tienes cuenta?{" "}*/}
+          {/*  <Link href="/register" className="text-primary hover:underline">*/}
+          {/*    Regístrate aquí*/}
+          {/*  </Link>*/}
+          {/*</p>*/}
         </Card>
       </div>
     </section>

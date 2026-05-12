@@ -25,9 +25,10 @@ interface ProfileButtonProps {
     email: string;
     image?: string | null;
   } | null;
+  redirectUrl?: string;
 }
 
-export function ProfileButton({ user }: ProfileButtonProps) {
+export function ProfileButton({ user, redirectUrl }: ProfileButtonProps) {
   const router = useRouter();
   const { state } = useSidebar();
   const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +39,12 @@ export function ProfileButton({ user }: ProfileButtonProps) {
     try {
       setIsLoading(true);
       await authClient.signOut();
-      router.push("/login");
+      if (redirectUrl) {
+        router.push(redirectUrl);
+      } else {
+        router.push("/login");
+      }
+
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
@@ -46,7 +52,6 @@ export function ProfileButton({ user }: ProfileButtonProps) {
     }
   };
 
-  // Definición de acciones para evitar repetición (KISS)
   const menuGroups = [
     {
       items: [
@@ -67,14 +72,14 @@ export function ProfileButton({ user }: ProfileButtonProps) {
         <Button
           variant="ghost"
           className={cn(
-            "relative h-10 w-10 rounded-full p-0 transition-all hover:ring-2 hover:ring-primary/20",
-            !isCollapsed && "hover:bg-accent"
+            "relative h-10 w-10 rounded-full p-0 transition-all hover:ring-2 hover:ring-primary/50",
+            !isCollapsed && "hover:bg-primary/10"
           )}
         >
-          <Avatar className="h-10 w-10 border border-border shadow-sm">
+          <Avatar className="h-10 w-10 border-2 border-primary/20 shadow-sm transition-colors hover:border-primary">
             <AvatarImage src={user?.image || ""} alt={user?.name || "Avatar"} />
-            <AvatarFallback className="bg-muted">
-              <User className="h-5 w-5 text-muted-foreground" />
+            <AvatarFallback className="bg-primary/10">
+              <User className="h-5 w-5 text-primary" />
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -86,14 +91,16 @@ export function ProfileButton({ user }: ProfileButtonProps) {
         sideOffset={15}
         className="w-64 rounded-xl p-2 shadow-xl border-border bg-popover/95 backdrop-blur-md"
       >
-        {/* Header con Info de Usuario */}
-        <div className="flex items-center gap-3 px-3 py-4 mb-2 bg-muted/30 rounded-lg">
-          <Avatar className="h-10 w-10 border border-background">
+        {/* Header con Info de Usuario usando Primary */}
+        <div className="flex items-center gap-3 px-3 py-4 mb-2 bg-primary/5 rounded-lg border border-primary/10">
+          <Avatar className="h-10 w-10 border border-primary/20">
             <AvatarImage src={user?.image || ""} />
-            <AvatarFallback><User className="h-4 w-4" /></AvatarFallback>
+            <AvatarFallback className="bg-primary text-primary-foreground">
+              <User className="h-4 w-4" />
+            </AvatarFallback>
           </Avatar>
           <div className="flex flex-col min-w-0">
-            <p className="text-sm font-bold truncate leading-none mb-1">
+            <p className="text-sm font-bold truncate leading-none mb-1 text-primary">
               {user?.name || "Usuario"}
             </p>
             <p className="text-[11px] text-muted-foreground truncate font-medium">
@@ -114,18 +121,14 @@ export function ProfileButton({ user }: ProfileButtonProps) {
             </div>
           ))}
 
-          {/* Logout con estado de carga */}
-          {/* Logout con estado de carga */}
+          {/* Logout manteniendo la semántica de error pero con transiciones suaves */}
           <Button
             variant="ghost"
             disabled={isLoading}
             onClick={handleLogout}
             className={cn(
               "w-full justify-start gap-3 px-3 h-10 transition-all duration-200",
-              // Estado inicial: Texto rojo suave
-              "text-destructive",
-              // Estado Hover: Fondo rojo sólido y texto de contraste (blanco/negro según tema)
-              "hover:bg-destructive hover:text-destructive-foreground"
+              "text-destructive hover:bg-destructive hover:text-destructive-foreground"
             )}
           >
             {isLoading ? (
@@ -134,14 +137,16 @@ export function ProfileButton({ user }: ProfileButtonProps) {
               <LogOut className="h-4 w-4" />
             )}
             <span className="font-medium text-sm">
-    {isLoading ? "Cerrando sesión..." : "Cerrar sesión"}
-  </span>
+              {isLoading ? "Cerrando sesión..." : "Cerrar sesión"}
+            </span>
           </Button>
         </div>
 
+        {/* Footer con acento Secondary */}
         <div className="mt-2 pt-2 border-t border-border/40 flex justify-center">
-          <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-muted-foreground/50">
-            Levely v1.0.0
+          <span
+            className="text-[9px] uppercase tracking-[0.2em] font-bold text-secondary-foreground/60">
+            Levely <span className="text-secondary">v1.0.0</span>
           </span>
         </div>
       </PopoverContent>
@@ -150,7 +155,7 @@ export function ProfileButton({ user }: ProfileButtonProps) {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Sub-componente Interno: MenuAction                                         */
+/* Sub-componente Interno: MenuAction con acentos Secondary                   */
 /* -------------------------------------------------------------------------- */
 
 interface MenuActionProps extends ButtonProps {
@@ -164,23 +169,24 @@ function MenuAction({ icon: Icon, children, className, ...props }: MenuActionPro
       variant="ghost"
       size="sm"
       className={cn(
-        // Añadimos hover:text-accent-foreground para asegurar contraste en modo claro
-        "w-full justify-between px-3 h-10 font-medium group transition-all hover:bg-accent hover:text-accent-foreground",
+        "w-full justify-between px-3 h-10 font-medium group transition-all",
+        "hover:bg-secondary hover:text-secondary-foreground",
         className
       )}
       {...props}
     >
       <div className="flex items-center gap-3">
-        {/* El icono ahora cambia a foreground en hover para resaltar */}
-        <Icon className="h-4 w-4 text-muted-foreground group-hover:text-secondary transition-colors" />
-
-        {/* Forzamos que el texto sea claramente visible en hover */}
+        <Icon
+          className="h-4 w-4 text-muted-foreground group-hover:text-secondary-foreground transition-colors"
+        />
         <span className="text-sm transition-colors">
           {children}
         </span>
       </div>
 
-      <ChevronRight className="h-3 w-3 text-muted-secondary/30 group-hover:text-secondary/70 transition-all group-hover:translate-x-0.5" />
+      <ChevronRight
+        className="h-3 w-3 text-muted-foreground/30 group-hover:text-secondary-foreground transition-all group-hover:translate-x-0.5"
+      />
     </Button>
   );
 }

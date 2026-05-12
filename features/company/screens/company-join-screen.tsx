@@ -43,11 +43,9 @@ export function CompanyJoinScreen({
   const [code, setCode] = useState("");
   const fieldErrors = "fieldErrors" in state ? state.fieldErrors : undefined;
 
-  console.log("[state]", state);
-
   useEffect(() => {
-    if (state.success) {
-      router.push(`/c/${slug}/register?token=${token}`);
+    if (state.success && state.newCode) {
+      router.push(`/c/${slug}/register?token=${token}&code=${code}`);
     }
   }, [router, state.success]);
 

@@ -80,7 +80,7 @@ export function LoginForCompaniesForm({slug}: LoginFormProps) {
       return;
     }
 
-    router.push(routes.app.dashboard);
+    router.push(`/c/${slug}/dashboard`);
   };
 
   return (
@@ -177,10 +177,10 @@ export function LoginForCompaniesForm({slug}: LoginFormProps) {
               )}
             </Button>
             {/* Botón de Google OAuth */}
-            <GoogleOAuthButton
-              mode={'signIn'}
-              callbackURL={routes.app.dashboard}
-            />
+            {/*<GoogleOAuthButton*/}
+            {/*  mode={'signIn'}*/}
+            {/*  callbackURL={routes.app.dashboard}*/}
+            {/*/>*/}
           </form>
 
           <p className="text-center text-sm text-muted-foreground mt-6">

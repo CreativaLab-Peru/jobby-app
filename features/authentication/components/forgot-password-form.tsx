@@ -1,12 +1,12 @@
 "use client";
 
-import {useState} from "react";
-import {motion} from "framer-motion";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
-import {Button} from "@/components/ui/button";
-import {Card, CardContent, CardHeader, CardTitle, CardDescription} from "@/components/ui/card";
-import {Loader2, Mail} from "lucide-react";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Loader2, Mail } from "lucide-react";
 
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
@@ -28,17 +28,17 @@ export function ForgotPasswordForm() {
 
   return (
     <motion.div
-      initial={{opacity: 0, y: 20}}
-      animate={{opacity: 1, y: 0}}
-      transition={{duration: 0.4, ease: "easeOut"}}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
       className="w-full max-w-md"
     >
       <Card className="shadow-xl border  backdrop-blur-sm">
         <CardHeader className="space-y-2 text-center">
           <div className="flex justify-center">
             <div
-              className="flex items-center justify-center w-16 h-16 rounded-full mb-3 border-2 ">
-              <Mail className="w-8 h-8 text-white"/>
+              className="flex items-center justify-center w-16 h-16 rounded-full mb-3 border-accent border-2 ">
+              <Mail className="w-8 h-8 text-accent" />
             </div>
           </div>
           <CardTitle className="text-2xl font-semibold text-gradient">
@@ -59,7 +59,7 @@ export function ForgotPasswordForm() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="you@company.com"
+                  placeholder="ejemplo@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -68,7 +68,7 @@ export function ForgotPasswordForm() {
 
               {/* Actions */}
               <div className="flex items-center justify-between text-sm">
-                <a href="/login" className="text-primary hover:underline">
+                <a href="/login" className="text-primary hover:text-underline">
                   Volver al login
                 </a>
               </div>
@@ -79,7 +79,7 @@ export function ForgotPasswordForm() {
                 disabled={submitting}
                 className="w-full shadow-md"
               >
-                {submitting ? <Loader2 className="w-4 h-4 animate-spin"/> : "Enviar enlace"}
+                {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Enviar enlace"}
               </Button>
             </form>
           ) : (
@@ -89,7 +89,7 @@ export function ForgotPasswordForm() {
               </p>
               <a
                 href="/login"
-                className="inline-block font-medium text-primary"
+                className="inline-block font-medium text-primary hover:text-underline"
               >
                 Volver al login
               </a>

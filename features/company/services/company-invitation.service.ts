@@ -73,7 +73,7 @@ export const persistInvitationCandidate = async (
       email: candidate.email,
       role: candidate.role,
       token: candidate.token,
-      code: candidate.codeHash,
+      code: candidate.code,
       codeHash: candidate.codeHash,
       invitedBy: invitedBy ?? null,
       expiresAt: candidate.expiresAt,

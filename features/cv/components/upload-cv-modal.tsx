@@ -339,6 +339,7 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
                       placeholder="Ej: CV John Doe"
                       register={register("title")}
                       error={errors.title?.message}
+                      className="focus-visible:ring-primary"
                     />
 
                     <div className="grid grid-cols-2 gap-4">
@@ -350,6 +351,7 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
                           { key: "europass", value: "Europass" },
                         ]}
                         onChange={(v) => setValue("templateId", v as any)}
+                        className="focus:ring-primary focus-visible:ring-primary"
                       />
                       <FormSelect
                         label="Perfil Profesional"
@@ -359,6 +361,7 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
                           value: label,
                         }))}
                         onChange={(v) => setValue("cvType", v as CvType)}
+                        className="focus:ring-primary focus-visible:ring-primary"
                       />
                     </div>
 
@@ -367,6 +370,7 @@ export function UploadCVModal({ initialFile, reset: resetParent }: UploadCVModal
                       value={watch("opportunityType")}
                       options={opportunities}
                       onChange={(v) => setValue("opportunityType", v as OpportunityType)}
+                      className="focus:ring-secondary focus-visible:ring-secondary"
                     />
 
                     <div className="p-4 rounded-xl border border-primary/10 bg-primary/[0.02] flex items-center gap-3">

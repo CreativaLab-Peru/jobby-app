@@ -31,7 +31,7 @@ export async function completeCompanyOnboardingAction(companyId: string, data: C
       return { success: false, error: "Datos de formulario inválidos." };
     }
 
-    const { name, logoUrl, ruc, website, primaryColor, seekingTypes, students, generalMembers } =
+    const { name, logoUrl, ruc, website, primaryColor, secondaryColor, seekingTypes, students, generalMembers } =
       parsed.data;
 
     // Crear la empresa y sus relaciones en una transacción
@@ -45,6 +45,7 @@ export async function completeCompanyOnboardingAction(companyId: string, data: C
           ruc: ruc || "",
           website: website || "",
           primaryColor: primaryColor || "",
+          secondaryColor: secondaryColor || "",
           onboardingStep: CompanyOnboardingStatus.COMPLETED,
         },
       });

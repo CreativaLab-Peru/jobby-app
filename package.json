@@ -12,6 +12,9 @@
     "lint": "next lint",
     "seed:main": "bun run prisma/seed.ts"
   },
+  "prisma": {
+    "seed": "bun run prisma/seed.ts"
+  },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
     "@hookform/resolvers": "^5.2.2",

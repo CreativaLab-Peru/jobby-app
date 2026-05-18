@@ -2,7 +2,7 @@
 
 import { useOnboardingStore } from "@/features/onboarding/store/talent-onboarding-store";
 import { FormField } from "@/components/form-field";
-import { Mail, Lock, CheckCircle2, LogOut } from "lucide-react";
+import { Mail, Lock, CheckCircle2, LogOut, Check, X } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { GoogleOAuthButton } from "@/features/authentication/components/google-oauth-button";
 import { Button } from "@/components/ui/button";
@@ -77,26 +77,62 @@ export function AccountStep({ user, isSignedIn }: AccountStepProps) {
             value={formData.email}
             onChange={(e) => updateFormData({ email: e.target.value })}
             error={errors.email}
+            className="focus-visible:ring-primary"
           />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              label="Contraseña"
-              placeholder="••••••••"
-              icon={Lock}
-              value={formData.password || ""}
-              onChange={(e) => updateFormData({ password: e.target.value })}
-              error={errors.password}
-              type="password"
-            />
-            <FormField
-              label="Confirmar contraseña"
-              placeholder="••••••••"
-              icon={Lock}
-              value={formData.confirmPassword || ""}
-              onChange={(e) => updateFormData({ confirmPassword: e.target.value })}
-              error={errors.confirmPassword}
-              type="password"
-            />
+          <div className="space-y-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                label="Contraseña"
+                placeholder="••••••••"
+                icon={Lock}
+                value={formData.password || ""}
+                onChange={(e) => updateFormData({ password: e.target.value })}
+                error={errors.password}
+                type="password"
+                className="focus-visible:ring-primary"
+              />
+              <FormField
+                label="Confirmar contraseña"
+                placeholder="••••••••"
+                icon={Lock}
+                value={formData.confirmPassword || ""}
+                onChange={(e) => updateFormData({ confirmPassword: e.target.value })}
+                error={errors.confirmPassword}
+                type="password"
+                className="focus-visible:ring-primary"
+              />
+            </div>
+            {/* Mensaje de contraseñas no coinciden */}
+            {(formData.confirmPassword || "").length > 0 && formData.password !== formData.confirmPassword && (
+              <p className="text-xs font-semibold text-destructive animate-in fade-in slide-in-from-top-1">
+                Las contraseñas no coinciden
+              </p>
+            )}
+            {/* Indicador de requisitos de contraseña */}
+            {(formData.password || "").length > 0 && (
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                {[
+                  { label: "Mín. 6 caracteres", met: (formData.password || "").length >= 6 },
+                  { label: "Una mayúscula", met: /[A-Z]/.test(formData.password || "") },
+                  { label: "Un número", met: /[0-9]/.test(formData.password || "") },
+                  { label: "Un carácter especial", met: /[^a-zA-Z0-9]/.test(formData.password || "") },
+                ].map(({ label, met }) => (
+                  <div
+                    key={label}
+                    className={`flex items-center gap-1.5 text-[11px] font-medium transition-colors px-2 py-1.5 rounded-lg border ${
+                      met
+                        ? "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+                        : "text-muted-foreground bg-muted/30 border-border/50"
+                    }`}
+                  >
+                    {met
+                      ? <Check className="h-3 w-3 flex-shrink-0 text-green-500" />
+                      : <X className="h-3 w-3 flex-shrink-0 text-muted-foreground/50" />}
+                    {label}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="relative my-6 text-center text-xs uppercase text-muted-foreground">

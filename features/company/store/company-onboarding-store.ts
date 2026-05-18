@@ -26,6 +26,7 @@ const initialFormData: CompanyOnboardingFormData = {
   ruc: "",
   website: "",
   primaryColor: "#000000",
+  secondaryColor: "#ffffff",
   seekingTypes: [],
   students: [],
   generalMembers: [],

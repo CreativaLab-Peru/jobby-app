@@ -1,7 +1,7 @@
 import {
   CompanyOnboardingForm
 } from "@/features/company/components/onboarding/company-onboarding-form";
-import {getCompanyConfByNameAction} from "@/features/company/actions/get-company-conf-by-name";
+import { getCompanyConfByNameAction } from "@/features/company/actions/get-company-conf-by-name";
 
 interface CompanyOnboardingPageProps {
   params: Promise<{
@@ -9,7 +9,7 @@ interface CompanyOnboardingPageProps {
   }>
 }
 
-export default async function CompanyOnboardingPage({params}: CompanyOnboardingPageProps) {
+export default async function CompanyOnboardingPage({ params }: CompanyOnboardingPageProps) {
   const { companyName } = await params;
   const company = await getCompanyConfByNameAction(companyName);
   if (!company) {

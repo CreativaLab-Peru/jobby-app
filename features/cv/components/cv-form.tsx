@@ -113,6 +113,7 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
             placeholder="Ej: CV John Doe"
             register={register("title")}
             error={errors.title?.message}
+            className="focus-visible:ring-primary"
           />
 
           <div className="grid grid-cols-2 gap-4">
@@ -124,6 +125,7 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
                 { key: "europass", value: "Europass" },
               ]}
               onChange={(v) => setValue("templateId", v as any, { shouldValidate: true })}
+              className="focus:ring-primary focus-visible:ring-primary"
             />
 
             <FormSelect
@@ -131,6 +133,7 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
               value={watch("language")}
               options={languages}
               onChange={(v) => setValue("language", v as any, { shouldValidate: true })}
+              className="focus:ring-primary focus-visible:ring-primary"
             />
           </div>
 
@@ -139,6 +142,7 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
             value={selectedOpportunity}
             options={opportunities}
             onChange={(v) => setValue("opportunityType", v as any, { shouldValidate: true })}
+            className="focus:ring-primary focus-visible:ring-primary"
           />
 
           <div className="space-y-2">
@@ -149,7 +153,7 @@ export function CVForm({ defaultValues, onValuesChange }: CVFormProps) {
               onValueChange={(v) => setValue("cvType", v as any, { shouldValidate: true })}
               value={watch("cvType")}
             >
-              <SelectTrigger className="rounded-lg h-10 border-border font-medium">
+              <SelectTrigger className="rounded-lg h-10 border-border font-medium focus:ring-primary focus-visible:ring-primary">
                 <SelectValue placeholder="Selecciona especialidad" />
               </SelectTrigger>
               <SelectContent>

@@ -93,7 +93,8 @@ export const useOnboardingStore = create<OnboardingStore>()(
                   .string()
                   .min(6, "La contraseña debe tener al menos 6 caracteres")
                   .regex(/[A-Z]/, "Debe contener al menos una letra mayúscula")
-                  .regex(/[0-9]/, "Debe contener al menos un número"),
+                  .regex(/[0-9]/, "Debe contener al menos un número")
+                  .regex(/[^a-zA-Z0-9]/, "Debe contener al menos un carácter especial"),
               })
               .superRefine((data, ctx) => {
                 if (
@@ -145,7 +146,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
             stepSchemas[5] = talentOnboardingBaseSchema
               .pick({ email: true, password: true, confirmPassword: true, acceptedTerms: true })
               .extend({
-                password: z.string().min(6).regex(/[A-Z]/).regex(/[0-9]/),
+                password: z.string().min(6).regex(/[A-Z]/).regex(/[0-9]/).regex(/[^a-zA-Z0-9]/),
               })
               .superRefine((data, ctx) => {
                 if (data.password !== data.confirmPassword) {

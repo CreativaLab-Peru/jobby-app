@@ -9,6 +9,7 @@ import { companyInvitationCreateSchema } from "@/features/company/schemas/compan
 import {
   createInvitationCandidate,
   persistInvitationCandidate,
+  sendCompanyInvitationEmail,
 } from "@/features/company/services/company-invitation.service";
 import {
   CreateCompanyInvitationState
@@ -57,6 +58,7 @@ export const createCompanyInvitationAction = async (
     });
 
     const saved = await persistInvitationCandidate(candidate, admin.user.id);
+    await sendCompanyInvitationEmail(candidate);
 
     // 4. Revalidación de rutas
     revalidatePath(routes.app.admin.companies.root);

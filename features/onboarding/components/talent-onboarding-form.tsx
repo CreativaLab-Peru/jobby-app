@@ -206,7 +206,7 @@ export function OnboardingForm() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-10 px-4 md:px-0">
+    <div className={`${step === 1 ? "max-w-5xl" : "max-w-2xl"} mx-auto py-4 md:py-6 px-4 md:px-0`}>
       {/* Barra de Progreso */}
       <div className="mb-10 space-y-4">
         {step !== 1 && (
@@ -291,6 +291,12 @@ export function OnboardingForm() {
             {!isPending && step !== TOTAL_STEPS && <ArrowRight className="ml-2 h-4 w-4" />}
           </Button>
         </div>
+      )}
+
+      {step > 1 && (
+        <footer className="text-center text-[11px] sm:text-xs text-muted-foreground mt-8 pt-4 border-t border-border/40">
+          Tus datos están seguros y solo se usarán para encontrar oportunidades relevantes en el futuro.
+        </footer>
       )}
     </div>
   );

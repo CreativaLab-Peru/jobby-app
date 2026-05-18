@@ -1,4 +1,4 @@
-# WIP
+# v1.2.23 - 2026-05-18
 
 ## Enhancements
 
@@ -21,13 +21,13 @@
 
 ## Enhancements
 
-- Es necesario volver a correr `conf_cv_sections.ts` de nuevo para actualizar las secciones de los CVs, asi como complementos e intereses
+- Es necesario volver a correr `3-conf-cv-sections-configuration.ts` de nuevo para actualizar las secciones de los CVs, asi como complementos e intereses
 
 # v1.2.1 - 2026-04-06
 
 ## Enhancements
 
-- It's necessary to run again prisma/seed/conf_cv_sections.ts.
+- It's necessary to run again prisma/seed/3-conf-cv-sections-configuration.ts.
 - `requiredRequirements, optionalRequirements, companyLogoUrl, minSalary and maxSalary` added in opportunities table
 - New CvSectionConfiguration and TempCvWithEvaluation added to support new CV template and evaluation flow
 
@@ -169,7 +169,7 @@ bun run build
   - `NEXT_PUBLIC_PADDLE_CLIENT_TOKEN` — client-side Paddle token for the JS overlay (sandbox: `test_...`, production: `live_...`)
   - `PADDLE_WEBHOOK_SECRET` — secret to validate incoming Paddle webhook signatures (from Paddle Dashboard → Notifications)
   - `PADDLE_PRICE_ID_STARTER` — Paddle price ID for the Starter plan (from Paddle Dashboard → Catalog → Prices)
-- Run seed `prisma/seed/credit_package.js` to populate the `credit_package` table if not already done.
+- Run seed `prisma/seed/2-credit-package-configuration.ts` to populate the `credit_package` table if not already done.
 - Register the webhook endpoint `https://<domain>/api/payments/paddle/confirm` in Paddle Dashboard → Notifications, with event `transaction.completed`.
 
 ---

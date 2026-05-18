@@ -331,11 +331,11 @@ model InterviewSession {
   createdAt DateTime @default(now())
 
   // Relaciones
-  user        User        @relation(fields: [userId], references: [id])
-  cv          Cv          @relation(fields: [cvId], references: [id])
+  user        User              @relation(fields: [userId], references: [id])
+  cv          Cv                @relation(fields: [cvId], references: [id])
   // Nota: Dado que Opportunity tiene un ID compuesto en tu schema:
-  opportunity Opportunity @relation(fields: [opportunityId, cvId], references: [id, cvId])
-  attempt    InterviewAttempt?
+  opportunity Opportunity       @relation(fields: [opportunityId, cvId], references: [id, cvId])
+  attempt     InterviewAttempt?
 
   @@index([userId])
   @@index([opportunityId, cvId])
@@ -343,16 +343,16 @@ model InterviewSession {
 }
 
 model InterviewAttempt {
-  id                  String   @id @default(uuid())
-  interviewSessionId  String   @unique
-  userId              String
-  plannedSeconds      Int
-  secondsUsed         Int      @default(0)
-  startedAt           DateTime @default(now())
-  finishedAt          DateTime?
-  finishReason        String?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id                 String    @id @default(uuid())
+  interviewSessionId String    @unique
+  userId             String
+  plannedSeconds     Int
+  secondsUsed        Int       @default(0)
+  startedAt          DateTime  @default(now())
+  finishedAt         DateTime?
+  finishReason       String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   session InterviewSession @relation(fields: [interviewSessionId], references: [id], onDelete: Cascade)
   user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -771,13 +771,14 @@ model UserBecaParam {
 
 // Empresa / organización (el "tenant")
 model Company {
-  id           String  @id @default(uuid())
-  name         String
-  slug         String  @unique // base del join link: levely.app/join/[slug]
-  logoUrl      String?
-  ruc          String?
-  website      String?
-  primaryColor String?
+  id             String  @id @default(uuid())
+  name           String
+  slug           String  @unique // base del join link: levely.app/join/[slug]
+  logoUrl        String?
+  ruc            String?
+  website        String?
+  primaryColor   String?
+  secondaryColor String?
 
   onboardingStep CompanyOnboardingStatus @default(STEP_1)
   isActive       Boolean                 @default(true)
@@ -785,7 +786,7 @@ model Company {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  preference    CompanyPreference?  // Preferencias de la empresa
+  preference    CompanyPreference? // Preferencias de la empresa
   members       CompanyMember[]
   invitations   CompanyInvitation[]
   notifications CompanyNotification[]
@@ -796,8 +797,8 @@ model Company {
 
 // Company Preference
 model CompanyPreference {
-  id        String @id @default(uuid())
-  companyId String @unique
+  id        String  @id @default(uuid())
+  companyId String  @unique
   company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   seekingTypes CompanySeekingType[] // TALENT | SCHOLARSHIPS | EMPLOYMENT
@@ -839,11 +840,14 @@ model CompanyInvitation {
   code     String // código de 6 dígitos enviado al correo
   codeHash String // guardamos el hash, no el raw
 
-  status    InvitationStatus @default(PENDING)
-  invitedBy String? // userId del admin/encargado
-  expiresAt DateTime
-  usedAt    DateTime?
-  usedByIp  String?
+  status        InvitationStatus @default(PENDING)
+  invitedBy     String? // userId del admin/encargado
+  expiresAt     DateTime
+  usedAt        DateTime?
+  usedByIp      String?
+  lastSentAt    DateTime?
+  loginCode     String? // Código de 6 dígitos para login si ya es usuario registrado
+  loginCodeHash String? // Hash del código de login
 
   createdAt DateTime @default(now())
 

@@ -3,10 +3,11 @@ import { CompanySeekingType, CompanyRole } from "@prisma/client";
 
 export const companyIdentitySchema = z.object({
   name: z.string().min(2, "El nombre de la empresa es requerido"),
-  logoUrl: z.string().default(""),
-  ruc: z.string().default(""),
-  website: z.string().url("URL inválida").or(z.literal("")).default(""),
+  logoUrl: z.union([z.string(), z.null(), z.undefined()]).default(""),
+  ruc: z.union([z.string(), z.null(), z.undefined()]).default(""),
+  website: z.union([z.string().url("URL inválida"), z.literal(""), z.null(), z.undefined()]).default(""),
   primaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Color hexadecimal inválido").or(z.literal("")).default(""),
+  secondaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Color hexadecimal inválido").or(z.literal("")).default(""),
 });
 
 export const companyPurposeSchema = z.object({

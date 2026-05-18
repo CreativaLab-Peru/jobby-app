@@ -97,7 +97,7 @@ export function StepIdentity() {
         {/* Branding y Preview */}
         <div className="space-y-6">
           <div className="space-y-2">
-            <Label className="text-sm font-semibold">Color de Marca</Label>
+            <Label className="text-sm font-semibold">Branding de Marca</Label>
             <Card className="p-6 space-y-6 border-border/60 bg-card/50 rounded-2xl shadow-sm">
               {/* Preview Dinámico */}
               <div className="flex items-center gap-4 p-4 rounded-xl border border-dashed border-border bg-background/50">
@@ -126,35 +126,65 @@ export function StepIdentity() {
                   >
                     {formData.name || "Tu Empresa"}
                   </p>
-                  <p className="text-xs text-muted-foreground uppercase font-mono tracking-widest">
-                    {formData.primaryColor || "#000000"}
-                  </p>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground uppercase font-mono tracking-widest">
+                      P: {formData.primaryColor || "#000000"}
+                    </span>
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground uppercase font-mono tracking-widest border-l-2" style={{ borderLeftColor: formData.secondaryColor || "#ffffff" }}>
+                      S: {formData.secondaryColor || "#ffffff"}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              {/* Selector */}
+              {/* Selector de Color Primario */}
               <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="relative flex-1">
-                    <Palette className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                      value={formData.primaryColor || ""}
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] font-bold uppercase text-muted-foreground tracking-wider">Color Primario</Label>
+                  <div className="flex items-center gap-3">
+                    <div className="relative flex-1">
+                      <Palette className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        value={formData.primaryColor || ""}
+                        onChange={(e) => updateFormData({ primaryColor: e.target.value })}
+                        className="pl-9 h-11 font-mono rounded-xl"
+                        placeholder="#000000"
+                      />
+                    </div>
+                    <input
+                      type="color"
+                      value={formData.primaryColor || "#000000"}
                       onChange={(e) => updateFormData({ primaryColor: e.target.value })}
-                      className="pl-9 h-11 font-mono rounded-xl"
-                      placeholder="#000000"
+                      className="h-11 w-14 cursor-pointer rounded-xl border-2 border-border bg-transparent p-1 transition-transform active:scale-95"
                     />
                   </div>
-                  <input
-                    type="color"
-                    value={formData.primaryColor || "#000000"}
-                    onChange={(e) => updateFormData({ primaryColor: e.target.value })}
-                    className="h-11 w-14 cursor-pointer rounded-xl border-2 border-border bg-transparent p-1 transition-transform active:scale-95"
-                  />
                 </div>
 
-                <div className="space-y-2">
+                {/* Selector de Color Secundario */}
+                <div className="space-y-1.5 pt-2">
+                  <Label className="text-[11px] font-bold uppercase text-muted-foreground tracking-wider">Color Secundario</Label>
+                  <div className="flex items-center gap-3">
+                    <div className="relative flex-1">
+                      <Palette className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        value={formData.secondaryColor || ""}
+                        onChange={(e) => updateFormData({ secondaryColor: e.target.value })}
+                        className="pl-9 h-11 font-mono rounded-xl"
+                        placeholder="#ffffff"
+                      />
+                    </div>
+                    <input
+                      type="color"
+                      value={formData.secondaryColor || "#ffffff"}
+                      onChange={(e) => updateFormData({ secondaryColor: e.target.value })}
+                      className="h-11 w-14 cursor-pointer rounded-xl border-2 border-border bg-transparent p-1 transition-transform active:scale-95"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2 pt-2">
                   <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                    Sugerencias
+                    Sugerencias para el Primario
                   </p>
                   <div className="flex flex-wrap gap-2.5">
                     {SUGGESTED_COLORS.map((c) => (

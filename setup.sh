@@ -18,6 +18,6 @@ echo "Running Prisma migrations..."
 bunx prisma migrate dev --skip-seed
 
 echo "Seeding database..."
-node prisma/seed/init.js
+bun prisma/seed.ts
 
 echo "Finished successfully."

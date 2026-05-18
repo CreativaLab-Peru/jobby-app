@@ -37,6 +37,7 @@ export const getAdminCompanyById = async (
         ruc: true,
         website: true,
         primaryColor: true,
+        secondaryColor: true,
         isActive: true,
         onboardingStep: true,
         createdAt: true,

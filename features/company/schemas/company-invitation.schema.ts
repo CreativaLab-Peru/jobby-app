@@ -10,7 +10,6 @@ export const companyInvitationRoleSchema = z.enum([
 export const companyInvitationCreateSchema = z.object({
   companyId: z.string().uuid("La empresa no es válida"),
   email: z.string().email("Ingresa un email válido"),
-  role: companyInvitationRoleSchema.default("MIEMBRO"),
 });
 
 export const companyInvitationAcceptSchema = z.object({

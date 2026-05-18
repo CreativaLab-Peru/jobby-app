@@ -33,6 +33,12 @@ export const companyCreateSchema = z.object({
     .max(32, "El color principal es demasiado largo")
     .optional()
     .or(z.literal("")),
+  secondaryColor: z
+    .string()
+    .trim()
+    .max(32, "El color secundario es demasiado largo")
+    .optional()
+    .or(z.literal("")),
 });
 
 export type CompanyCreateInput = z.infer<typeof companyCreateSchema>;

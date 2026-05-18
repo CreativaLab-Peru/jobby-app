@@ -45,20 +45,6 @@ export const createInvitationCandidate = async ({
   }
 
   const normalizedEmail = email.trim().toLowerCase();
-  const existingPending = await prisma.companyInvitation.findFirst({
-    where: {
-      companyId,
-      email: normalizedEmail,
-      status: InvitationStatus.PENDING,
-      expiresAt: { gt: new Date() },
-    },
-    select: { id: true },
-  });
-
-  if (existingPending) {
-    throw new Error("Ya existe una invitación pendiente para este correo");
-  }
-
   const token = crypto.randomUUID();
   const code = crypto.randomInt(0, 1_000_000).toString().padStart(6, "0");
   const expiresAt = new Date(Date.now() + INVITATION_TTL_HOURS * 60 * 60 * 1000);
@@ -87,7 +73,7 @@ export const persistInvitationCandidate = async (
       email: candidate.email,
       role: candidate.role,
       token: candidate.token,
-      code: candidate.codeHash,
+      code: candidate.code,
       codeHash: candidate.codeHash,
       invitedBy: invitedBy ?? null,
       expiresAt: candidate.expiresAt,

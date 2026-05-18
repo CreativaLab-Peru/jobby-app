@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, User, ChevronDown } from "lucide-react";
+import { Menu, X, User, ChevronDown, FileText, Mic2, Radar, BarChart3, Globe, Map } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/button-toggle-theme";
@@ -16,74 +16,53 @@ interface HeaderProps {
 const navItems = [
   { name: "CV Builder", href: "/cv-builder" },
   // { name: "Career Accelerator", href: "/career-accelerator" },
-  { name: "Partners", href: "/partners" },
+  { name: "Para universidades", href: "/universidades" },
   { name: "Newsletter", href: "/newsletter" },
   // { name: "Empresas", href: "/empresas" },
   // { name: "Resources", href: "/resources" },
 ];
 
-interface ToolItem {
-  id: string;
-  name: string;
-  description: string;
-  href: string;
-  icon: string;
-  badge?: string;
-  section: "agents" | "tools";
-}
-
-const toolsItems: ToolItem[] = [
-  // Agentes IA
+const agentsItems = [
   {
-    id: "score",
     name: "Score de CV",
+    href: "/herramientas/score",
     description: "71/100 por beca específica · mejoras exactas",
-    href: "#score",
-    icon: "📊",
+    icon: "BarChart3",
     badge: "Core",
-    section: "agents",
   },
   {
-    id: "match",
     name: "Match de oportunidades",
+    href: "/herramientas/match",
     description: "500+ becas y fellowships con % de compatibilidad",
-    href: "#match",
-    icon: "🌍",
-    section: "agents",
+    icon: "Globe",
   },
   {
-    id: "roadmap",
     name: "Roadmap personalizado",
+    href: "/herramientas/roadmap",
     description: "Plan exacto paso a paso hasta ganar",
-    href: "#roadmap",
-    icon: "🗺️",
-    section: "agents",
+    icon: "Map",
   },
-  // Herramientas IA
+];
+
+const toolsItems = [
   {
-    id: "cv",
     name: "CV Internacional",
+    href: "/herramientas/cv-internacional",
     description: "Harvard · Europass en segundos · EN / ES",
-    href: "#cv",
-    icon: "📄",
-    section: "tools",
+    icon: "FileText",
   },
   {
-    id: "entrevista",
     name: "Simulador de entrevistas",
+    href: "/herramientas/entrevista",
     description: "Voz real · STAR + Learning · feedback instantáneo",
-    href: "#entrevista",
-    icon: "🎤",
-    section: "tools",
+    icon: "Mic2",
   },
   {
-    id: "radar",
     name: "Radar de oportunidades",
+    href: "/herramientas/radar",
     description: "Embajadas y boletines internacionales en español",
-    href: "#radar",
-    icon: "📡",
+    icon: "Radar",
     badge: "Nuevo",
-    section: "tools",
   },
 ];
 
@@ -91,24 +70,6 @@ export default function PublicNavbar({ authenticated }: HeaderProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = React.useState(false);
   const [mobileRegisterOpen, setMobileRegisterOpen] = React.useState(false);
-  const [isToolsDropdownOpen, setIsToolsDropdownOpen] = React.useState(false);
-  const toolsDropdownRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (toolsDropdownRef.current && !toolsDropdownRef.current.contains(event.target as Node)) {
-        setIsToolsDropdownOpen(false);
-      }
-    };
-
-    if (isToolsDropdownOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
-    }
-  }, [isToolsDropdownOpen]);
-
-  const agentsItems = toolsItems.filter((item) => item.section === "agents");
-  const toolsOnlyItems = toolsItems.filter((item) => item.section === "tools");
 
   return (
     <nav
@@ -137,96 +98,6 @@ export default function PublicNavbar({ authenticated }: HeaderProps) {
 
           {/* Desktop navigation */}
           <div className="hidden lg:flex items-center gap-1">
-            {/* Herramientas Dropdown */}
-            <div className="relative group" ref={toolsDropdownRef}>
-              <button
-                onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
-                className={`px-4 py-2 text-sm font-medium rounded-full flex items-center gap-1 transition-colors ${
-                  isToolsDropdownOpen
-                    ? "text-foreground bg-secondary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
-                }`}
-              >
-                Herramientas
-                <ChevronDown
-                  size={14}
-                  className={`transition-transform duration-200 ${isToolsDropdownOpen ? "rotate-180" : ""}`}
-                />
-              </button>
-
-              {/* Dropdown menu */}
-              {isToolsDropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 w-72 bg-popover border border-border rounded-lg shadow-lg p-2 z-50">
-                  {/* Agentes IA Section */}
-                  <div className="mb-2">
-                    <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                      Agentes IA
-                    </div>
-                    <div className="space-y-1">
-                      {agentsItems.map((item) => (
-                        <Link
-                          key={item.id}
-                          href={item.href}
-                          onClick={() => setIsToolsDropdownOpen(false)}
-                          className="flex gap-3 p-2 rounded-lg hover:bg-secondary/50 transition-colors group/item"
-                        >
-                          <div className="text-2xl flex-shrink-0 w-8 h-8 flex items-center justify-center">
-                            {item.icon}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
-                              {item.badge && (
-                                <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-accent/20 text-accent flex-shrink-0">
-                                  {item.badge}
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-xs text-muted-foreground line-clamp-2">{item.description}</p>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Separator */}
-                  <div className="h-px bg-border my-2" />
-
-                  {/* Herramientas IA Section */}
-                  <div>
-                    <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                      Herramientas IA
-                    </div>
-                    <div className="space-y-1">
-                      {toolsOnlyItems.map((item) => (
-                        <Link
-                          key={item.id}
-                          href={item.href}
-                          onClick={() => setIsToolsDropdownOpen(false)}
-                          className="flex gap-3 p-2 rounded-lg hover:bg-secondary/50 transition-colors group/item"
-                        >
-                          <div className="text-2xl flex-shrink-0 w-8 h-8 flex items-center justify-center">
-                            {item.icon}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
-                              {item.badge && (
-                                <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-accent/20 text-accent flex-shrink-0">
-                                  {item.badge}
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-xs text-muted-foreground line-clamp-2">{item.description}</p>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
             {navItems.map((item) => {
               const active = pathname === item.href;
               return (
@@ -243,6 +114,108 @@ export default function PublicNavbar({ authenticated }: HeaderProps) {
                 </Link>
               );
             })}
+
+            {/* Herramientas Dropdown */}
+            <div className="relative group">
+              <button className="px-4 py-2 text-sm font-medium rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary/50 flex items-center gap-2 transition-colors">
+                Herramientas
+                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+              </button>
+
+              {/* Dropdown Menu */}
+              <div className="absolute top-full left-0 mt-0 bg-background border border-border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 min-w-[20rem] z-50">
+                <div className="p-3 space-y-4">
+                  {/* Agentes IA */}
+                  <div>
+                    <div className="px-3 py-1.5 text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">
+                      Agentes IA
+                    </div>
+                    <div className="space-y-1 mt-1">
+                      {agentsItems.map((tool, idx) => {
+                        const IconComponent =
+                          tool.icon === "BarChart3"
+                            ? BarChart3
+                            : tool.icon === "Globe"
+                              ? Globe
+                              : Map;
+                        return (
+                          <Link
+                            key={idx}
+                            href={tool.href}
+                            className="flex gap-3 items-start p-3 rounded-lg hover:bg-secondary/50 transition-colors"
+                          >
+                            <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 text-primary">
+                              <IconComponent className="h-4 w-4" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-medium text-foreground">
+                                  {tool.name}
+                                </span>
+                                {tool.badge && (
+                                  <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-accent/20 text-accent">
+                                    {tool.badge}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1 leading-snug">
+                                {tool.description}
+                              </p>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Separador */}
+                  <div className="h-px bg-border/40 mx-2" />
+
+                  {/* Herramientas IA */}
+                  <div>
+                    <div className="px-3 py-1.5 text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">
+                      Herramientas IA
+                    </div>
+                    <div className="space-y-1 mt-1">
+                      {toolsItems.map((tool, idx) => {
+                        const IconComponent =
+                          tool.icon === "FileText"
+                            ? FileText
+                            : tool.icon === "Mic2"
+                              ? Mic2
+                              : Radar;
+                        return (
+                          <Link
+                            key={idx}
+                            href={tool.href}
+                            className="flex gap-3 items-start p-3 rounded-lg hover:bg-secondary/50 transition-colors"
+                          >
+                            <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 text-primary">
+                              <IconComponent className="h-4 w-4" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-medium text-foreground">
+                                  {tool.name}
+                                </span>
+                                {tool.badge && (
+                                  <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-accent/20 text-accent">
+                                    {tool.badge}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1 leading-snug">
+                                {tool.description}
+                              </p>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Desktop CTA */}
@@ -302,95 +275,7 @@ export default function PublicNavbar({ authenticated }: HeaderProps) {
       {/* MOBILE MENU */}
       {isOpen && (
         <div className="lg:hidden border-t bg-background px-4 py-4 space-y-3">
-          {/* Mobile navigation - Tools accordion */}
-          <div className="space-y-2">
-            <button
-              onClick={() => setMobileRegisterOpen(!mobileRegisterOpen)}
-              className={`w-full text-left rounded-lg px-4 py-2 text-sm flex items-center justify-between ${
-                mobileRegisterOpen
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-primary/10 hover:text-primary"
-              }`}
-            >
-              <span>Herramientas</span>
-              <ChevronDown
-                size={16}
-                className={`transition-transform ${mobileRegisterOpen ? "rotate-180" : ""}`}
-              />
-            </button>
-
-            {mobileRegisterOpen && (
-              <div className="space-y-2 pl-4">
-                {/* Agentes IA Section */}
-                <div>
-                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                    Agentes IA
-                  </div>
-                  <div className="space-y-2">
-                    {agentsItems.map((item) => (
-                      <Link
-                        key={item.id}
-                        href={item.href}
-                        onClick={() => {
-                          setIsOpen(false);
-                          setMobileRegisterOpen(false);
-                        }}
-                        className="flex gap-2 rounded-lg px-3 py-2 text-xs hover:bg-primary/10 hover:text-primary transition-colors"
-                      >
-                        <span className="text-lg">{item.icon}</span>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-1">
-                            <span className="font-medium">{item.name}</span>
-                            {item.badge && (
-                              <span className="text-xs font-semibold px-1.5 py-0.5 rounded-full bg-accent/20 text-accent">
-                                {item.badge}
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-muted-foreground text-xs line-clamp-2">{item.description}</p>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Herramientas IA Section */}
-                <div>
-                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                    Herramientas IA
-                  </div>
-                  <div className="space-y-2">
-                    {toolsOnlyItems.map((item) => (
-                      <Link
-                        key={item.id}
-                        href={item.href}
-                        onClick={() => {
-                          setIsOpen(false);
-                          setMobileRegisterOpen(false);
-                        }}
-                        className="flex gap-2 rounded-lg px-3 py-2 text-xs hover:bg-primary/10 hover:text-primary transition-colors"
-                      >
-                        <span className="text-lg">{item.icon}</span>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-1">
-                            <span className="font-medium">{item.name}</span>
-                            {item.badge && (
-                              <span className="text-xs font-semibold px-1.5 py-0.5 rounded-full bg-accent/20 text-accent">
-                                {item.badge}
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-muted-foreground text-xs line-clamp-2">{item.description}</p>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Other mobile navigation items */}
+          {/* Mobile navigation */}
           {navItems.map((item) => (
             <Link
               key={item.name}
@@ -406,6 +291,100 @@ export default function PublicNavbar({ authenticated }: HeaderProps) {
               {item.name}
             </Link>
           ))}
+
+          {/* Mobile Herramientas Section */}
+          <div className="border-t pt-3 space-y-4">
+            {/* Agentes IA Section */}
+            <div>
+              <div className="px-4 py-1 text-xs font-bold text-muted-foreground/60 uppercase tracking-widest">
+                Agentes IA
+              </div>
+              <div className="space-y-1 mt-2">
+                {agentsItems.map((tool, idx) => {
+                  const IconComponent =
+                    tool.icon === "BarChart3"
+                      ? BarChart3
+                      : tool.icon === "Globe"
+                        ? Globe
+                        : Map;
+                  return (
+                    <Link
+                      key={idx}
+                      href={tool.href}
+                      onClick={() => setIsOpen(false)}
+                      className="flex gap-3 items-start p-3 mx-2 rounded-lg hover:bg-primary/10 transition-colors"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 text-primary">
+                        <IconComponent className="h-4 w-4" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-foreground">
+                            {tool.name}
+                          </span>
+                          {tool.badge && (
+                            <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-accent/20 text-accent">
+                              {tool.badge}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1 leading-snug">
+                          {tool.description}
+                        </p>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Separador */}
+            <div className="h-px bg-border/40 mx-4" />
+
+            {/* Herramientas IA Section */}
+            <div>
+              <div className="px-4 py-1 text-xs font-bold text-muted-foreground/60 uppercase tracking-widest">
+                Herramientas IA
+              </div>
+              <div className="space-y-1 mt-2">
+                {toolsItems.map((tool, idx) => {
+                  const IconComponent =
+                    tool.icon === "FileText"
+                      ? FileText
+                      : tool.icon === "Mic2"
+                        ? Mic2
+                        : Radar;
+                  return (
+                    <Link
+                      key={idx}
+                      href={tool.href}
+                      onClick={() => setIsOpen(false)}
+                      className="flex gap-3 items-start p-3 mx-2 rounded-lg hover:bg-primary/10 transition-colors"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 text-primary">
+                        <IconComponent className="h-4 w-4" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-foreground">
+                            {tool.name}
+                          </span>
+                          {tool.badge && (
+                            <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-accent/20 text-accent">
+                              {tool.badge}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1 leading-snug">
+                          {tool.description}
+                        </p>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
 
           <div className="border-t pt-4 space-y-2">
             {authenticated ? (

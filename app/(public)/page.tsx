@@ -2,6 +2,7 @@ import { TestimoniosCarousel } from "@/components/testimonios";
 import { LogosSection } from "@/components/ui/app/public/partners/logos-section";
 import { AnalysisResultSection } from "@/components/ui/app/public/hero/analisys-result-section";
 import { StepBuilderHero } from "@/components/ui/app/public/hero/steps-section";
+import { ToolsSection } from "@/components/ui/app/public/hero/tools-section";
 import { ScholarshipGrid } from "@/components/ui/app/public/hero/opportunities-section";
 import { HeroSection } from "@/components/ui/app/public/hero/hero-section";
 import { PublicPageTransition } from "@/components/shared/public-page-transition";
@@ -16,6 +17,7 @@ export default async function IndexPage() {
         {/* <CVBuilderPreview /> */}
         <AnalysisResultSection />
         <StepBuilderHero />
+        <ToolsSection />
         <ScholarshipGrid />
         {/*<RoadmapPreview />*/}
         {/*<CareerAcceleratorTeaser />*/}

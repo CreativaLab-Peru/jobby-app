@@ -2,6 +2,7 @@
 
 ## Features
 
+- [LV-86ahhh0w9](https://app.clickup.com/t/86ahhh0w9) Agregado el desplegable de herramientas y las nuevas paginas (Universidades y Herramientas
 - [LV-86ahbnxbe](https://app.clickup.com/t/86ahbnxbe) Integracion de onboarding para empresas e invitaciones. Con validaciones principales de empresa (tenant)
 
 # v1.2.22 - 2026-05-12

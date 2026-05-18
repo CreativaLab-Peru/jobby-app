@@ -70,6 +70,7 @@ export default function PublicNavbar({ authenticated }: HeaderProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = React.useState(false);
   const [mobileRegisterOpen, setMobileRegisterOpen] = React.useState(false);
+  const [mobileToolsOpen, setMobileToolsOpen] = React.useState(false);
 
   return (
     <nav
@@ -275,98 +276,111 @@ export default function PublicNavbar({ authenticated }: HeaderProps) {
       {/* MOBILE MENU */}
       {isOpen && (
         <div className="lg:hidden border-t bg-background px-4 py-4 space-y-3">
-          {/* Mobile Herramientas Section */}
-          <div className="space-y-4">
-            {/* Agentes IA Section */}
-            <div>
-              <div className="px-4 py-1 text-xs font-bold text-muted-foreground/60 uppercase tracking-widest">
-                Agentes IA
-              </div>
-              <div className="space-y-1 mt-2">
-                {agentsItems.map((tool, idx) => {
-                  const IconComponent =
-                    tool.icon === "BarChart3"
-                      ? BarChart3
-                      : tool.icon === "Globe"
-                        ? Globe
-                        : Map;
-                  return (
-                    <Link
-                      key={idx}
-                      href={tool.href}
-                      onClick={() => setIsOpen(false)}
-                      className="flex gap-3 items-start p-3 mx-2 rounded-lg hover:bg-primary/10 transition-colors"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 text-primary">
-                        <IconComponent className="h-4 w-4" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-foreground">
-                            {tool.name}
-                          </span>
-                          {tool.badge && (
-                            <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-accent/20 text-accent">
-                              {tool.badge}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-1 leading-snug">
-                          {tool.description}
-                        </p>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
+          {/* Mobile Herramientas Header / Accordion Trigger */}
+          <div>
+            <button
+              onClick={() => setMobileToolsOpen(!mobileToolsOpen)}
+              className="w-full flex items-center justify-between rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+            >
+              <span>Herramientas</span>
+              <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${mobileToolsOpen ? 'rotate-180' : ''}`} />
+            </button>
 
-            {/* Separador */}
-            <div className="h-px bg-border/40 mx-4" />
+            {/* Mobile Herramientas Collapsible Content */}
+            {mobileToolsOpen && (
+              <div className="mt-2 pl-2 border-l border-border space-y-4 animate-in slide-in-from-top-2 duration-200">
+                {/* Agentes IA Section */}
+                <div>
+                  <div className="px-4 py-1 text-xs font-bold text-muted-foreground/60 uppercase tracking-widest">
+                    Agentes IA
+                  </div>
+                  <div className="space-y-1 mt-2">
+                    {agentsItems.map((tool, idx) => {
+                      const IconComponent =
+                        tool.icon === "BarChart3"
+                          ? BarChart3
+                          : tool.icon === "Globe"
+                            ? Globe
+                            : Map;
+                      return (
+                        <Link
+                          key={idx}
+                          href={tool.href}
+                          onClick={() => setIsOpen(false)}
+                          className="flex gap-3 items-start p-3 mx-2 rounded-lg hover:bg-primary/10 transition-colors"
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 text-primary">
+                            <IconComponent className="h-4 w-4" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-foreground">
+                                {tool.name}
+                              </span>
+                              {tool.badge && (
+                                <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-accent/20 text-accent">
+                                  {tool.badge}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1 leading-snug">
+                              {tool.description}
+                            </p>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
 
-            {/* Herramientas IA Section */}
-            <div>
-              <div className="px-4 py-1 text-xs font-bold text-muted-foreground/60 uppercase tracking-widest">
-                Herramientas IA
+                {/* Separador */}
+                <div className="h-px bg-border/40 mx-4" />
+
+                {/* Herramientas IA Section */}
+                <div>
+                  <div className="px-4 py-1 text-xs font-bold text-muted-foreground/60 uppercase tracking-widest">
+                    Herramientas IA
+                  </div>
+                  <div className="space-y-1 mt-2">
+                    {toolsItems.map((tool, idx) => {
+                      const IconComponent =
+                        tool.icon === "FileText"
+                          ? FileText
+                          : tool.icon === "Mic2"
+                            ? Mic2
+                            : Radar;
+                      return (
+                        <Link
+                          key={idx}
+                          href={tool.href}
+                          onClick={() => setIsOpen(false)}
+                          className="flex gap-3 items-start p-3 mx-2 rounded-lg hover:bg-primary/10 transition-colors"
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 text-primary">
+                            <IconComponent className="h-4 w-4" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-foreground">
+                                {tool.name}
+                              </span>
+                              {tool.badge && (
+                                <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-accent/20 text-accent">
+                                  {tool.badge}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1 leading-snug">
+                              {tool.description}
+                            </p>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
-              <div className="space-y-1 mt-2">
-                {toolsItems.map((tool, idx) => {
-                  const IconComponent =
-                    tool.icon === "FileText"
-                      ? FileText
-                      : tool.icon === "Mic2"
-                        ? Mic2
-                        : Radar;
-                  return (
-                    <Link
-                      key={idx}
-                      href={tool.href}
-                      onClick={() => setIsOpen(false)}
-                      className="flex gap-3 items-start p-3 mx-2 rounded-lg hover:bg-primary/10 transition-colors"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 text-primary">
-                        <IconComponent className="h-4 w-4" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-foreground">
-                            {tool.name}
-                          </span>
-                          {tool.badge && (
-                            <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-accent/20 text-accent">
-                              {tool.badge}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-1 leading-snug">
-                          {tool.description}
-                        </p>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Mobile navigation */}

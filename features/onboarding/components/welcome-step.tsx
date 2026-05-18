@@ -57,9 +57,9 @@ export function WelcomeStep() {
       </div>
 
       {/* Bloque de Título y Textos Secundarios */}
-      <div className="max-w-3xl mb-4 md:mb-6">
-        <h1 className="text-3xl md:text-6xl font-bold tracking-tight text-foreground leading-[1.2] md:leading-[1.1] mb-4">
-          ¿Cuántas becas perdiste por <span className="text-primary">no saber que existían?</span>
+      <div className="max-w-4xl mb-4 md:mb-6">
+        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.2] md:leading-[1.1] mb-4">
+          Descubre hasta dónde <br /> puede llegar tu <span className="text-primary">carrera</span>
         </h1>
 
         {/* <div className="space-y-2 text-sm md:text-base">

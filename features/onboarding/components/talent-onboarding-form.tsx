@@ -206,7 +206,7 @@ export function OnboardingForm() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-4 md:py-6 px-4 md:px-0">
+    <div className={`${step === 1 ? "max-w-5xl" : "max-w-2xl"} mx-auto py-4 md:py-6 px-4 md:px-0`}>
       {/* Barra de Progreso */}
       <div className="mb-10 space-y-4">
         {step !== 1 && (

@@ -75,9 +75,9 @@ export function HeroSection() {
           </h1> */}
 
           <h1 className="headline-xl max-w-4xl text-balance animate-fade-up text-[#1b292d] dark:text-white">
-            Mejora tu{" "}
+            ¿Qué tan listo está tu perfil para{" "}
             <span className="inline-flex relative h-[1.2em] align-top overflow-hidden text-primary">
-              juego de carrera
+              el mundo?
             </span>
           </h1>
 
@@ -101,7 +101,7 @@ export function HeroSection() {
               tu búsqueda de oportunidades.
             </p>
             <p className="text-lg sm:text-xl text-muted-foreground text-center">
-              Mejora tu <span className="text-primary">CV</span> y tu{" "}
+              Descubre nuevas <span className="text-primary">oportunidades</span> y aumenta tu{" "}
               <span className="text-primary">score</span> — todo en un solo lugar.
             </p>
           </div>
@@ -110,7 +110,7 @@ export function HeroSection() {
           <div className="mt-10 animate-fade-up" style={{ animationDelay: "0.3s" }}>
             <Button asChild variant="hero" size="xl" className="cursor-pointer">
               <Link href="/onboarding/talents">
-                Analizar mi CV gratis
+                Empezar ahora
                 <ArrowRight className="w-5 h-5 ml-1" />
               </Link>
             </Button>

@@ -128,7 +128,7 @@ export function ProfileButton({ user, redirectUrl }: ProfileButtonProps) {
             onClick={handleLogout}
             className={cn(
               "w-full justify-start gap-3 px-3 h-10 transition-all duration-200",
-              "text-destructive hover:bg-destructive hover:text-destructive-foreground"
+              "text-red-500 hover:bg-destructive hover:text-destructive-foreground"
             )}
           >
             {isLoading ? (

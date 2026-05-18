@@ -98,23 +98,6 @@ export default function PublicNavbar({ authenticated }: HeaderProps) {
 
           {/* Desktop navigation */}
           <div className="hidden lg:flex items-center gap-1">
-            {navItems.map((item) => {
-              const active = pathname === item.href;
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`px-4 py-2 text-sm font medium rounded-full tracking-colors ${
-                    active
-                      ? "text-foreground bg-secondary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              );
-            })}
-
             {/* Herramientas Dropdown */}
             <div className="relative group">
               <button className="px-4 py-2 text-sm font-medium rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary/50 flex items-center gap-2 transition-colors">
@@ -216,6 +199,23 @@ export default function PublicNavbar({ authenticated }: HeaderProps) {
                 </div>
               </div>
             </div>
+
+            {navItems.map((item) => {
+              const active = pathname === item.href;
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`px-4 py-2 text-sm font-medium rounded-full tracking-colors ${
+                    active
+                      ? "text-foreground bg-secondary"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              );
+            })}
           </div>
 
           {/* Desktop CTA */}
@@ -275,25 +275,8 @@ export default function PublicNavbar({ authenticated }: HeaderProps) {
       {/* MOBILE MENU */}
       {isOpen && (
         <div className="lg:hidden border-t bg-background px-4 py-4 space-y-3">
-          {/* Mobile navigation */}
-          {navItems.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              onClick={() => setIsOpen(false)}
-              className={`block rounded-lg px-4 py-2 text-sm
-          ${
-            pathname === item.href
-              ? "bg-primary/10 text-primary"
-              : "text-muted-foreground hover:bg-primary/10 hover:text-primary"
-          }`}
-            >
-              {item.name}
-            </Link>
-          ))}
-
           {/* Mobile Herramientas Section */}
-          <div className="border-t pt-3 space-y-4">
+          <div className="space-y-4">
             {/* Agentes IA Section */}
             <div>
               <div className="px-4 py-1 text-xs font-bold text-muted-foreground/60 uppercase tracking-widest">
@@ -384,6 +367,25 @@ export default function PublicNavbar({ authenticated }: HeaderProps) {
                 })}
               </div>
             </div>
+          </div>
+
+          {/* Mobile navigation */}
+          <div className="border-t pt-3 space-y-1 flex flex-col">
+            {navItems.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                onClick={() => setIsOpen(false)}
+                className={`block rounded-lg px-4 py-2 text-sm
+            ${
+              pathname === item.href
+                ? "bg-primary/10 text-primary"
+                : "text-muted-foreground hover:bg-primary/10 hover:text-primary"
+            }`}
+              >
+                {item.name}
+              </Link>
+            ))}
           </div>
 
           <div className="border-t pt-4 space-y-2">

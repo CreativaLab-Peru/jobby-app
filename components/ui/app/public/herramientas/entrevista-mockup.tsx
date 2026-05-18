@@ -7,7 +7,7 @@ export function EntrevistaMockup() {
     { label: "T", name: "Task", pct: 82, color: "text-accent bg-accent/10 border-accent/20" },
     { label: "A", name: "Action", pct: 78, color: "text-primary bg-primary/10 border-primary/20" },
     { label: "R", name: "Result", pct: 88, color: "text-accent bg-accent/10 border-accent/20" },
-    { label: "L", name: "Learning", pct: 22, color: "text-destructive bg-destructive/10 border-destructive/20" },
+    { label: "L", name: "Learning", pct: 22, color: "text-red-500 bg-destructive/10 border-destructive/20" },
   ];
 
   return (
@@ -33,10 +33,10 @@ export function EntrevistaMockup() {
       </div>
 
       {/* Feedback Warning Box */}
-      <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-xs sm:text-sm text-foreground/90 leading-relaxed flex items-start gap-3">
-        <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+      <div className="p-4 rounded-xl bg-destructive/10 border border-red-500 text-xs sm:text-sm text-foreground/90 leading-relaxed flex items-start gap-3">
+        <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
         <div>
-          <strong className="text-destructive font-bold">Learning ausente</strong> — es lo que Chevening evalúa con más peso. Agrega qué aprendiste y cómo cambió tu forma de liderar.
+          <strong className="text-red-500 font-bold">Learning ausente</strong> — es lo que Chevening evalúa con más peso. Agrega qué aprendiste y cómo cambió tu forma de liderar.
         </div>
       </div>
     </div>

@@ -109,11 +109,6 @@ export default function ParaUniversidades() {
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
-                <Link href="https://calendly.com/joinlevely/30min" target="_blank" rel="noopener noreferrer">
-                  <Button size="xl" variant="outline" className="cursor-pointer font-bold border-border/80 text-muted-foreground hover:text-foreground">
-                    Ver demo en 90 seg
-                  </Button>
-                </Link>
               </div>
             </div>
 

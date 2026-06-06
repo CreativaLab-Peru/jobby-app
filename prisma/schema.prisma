@@ -1079,3 +1079,94 @@ model AppConfig {
 
   @@map("app_config")
 }
+
+// Diagnostico-CV: Countries for scholarships
+model Country {
+  id        String   @id @default(uuid())
+  name      String
+  code      String   @unique // "UK", "US", "DE", "FR", "JP"
+  flag      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  opportunities ScholarshipOpportunity[]
+
+  @@map("country")
+}
+
+// Diagnostico-CV: Scholarship opportunities catalog
+model ScholarshipOpportunity {
+  id           String   @id @default(uuid())
+  countryId    String
+  country      Country  @relation(fields: [countryId], references: [id])
+  name         String   // "Chevening", "Fulbright", "DAAD"
+  type         ScholarshipType
+  requirements String[]
+  benefits     String[]
+  deadline     DateTime?
+  url          String
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([countryId])
+  @@index([type])
+  @@index([isActive])
+  @@map("scholarship_opportunity")
+}
+
+// Diagnostico-CV: Session for tracking unique link after payment
+model DiagnosticSession {
+  id             String   @id @default(uuid())
+  token String   @unique // Hashed magic link token
+  email          String
+  name           String?
+  status DiagnosticStatus @default(PENDING)
+  countries      String[] // Selected country codes
+  scholarshipType ScholarshipType?
+  area           String?
+  cvUrl          String?
+  createdAt      DateTime @default(now())
+  expiresAt      DateTime
+
+  result DiagnosticResult?
+
+  @@index([token])
+  @@index([email])
+  @@map("diagnostic_session")
+}
+
+// Diagnostico-CV: Result after AI evaluation
+model DiagnosticResult {
+  id                  String   @id @default(uuid())
+  sessionId           String   @unique
+  session             DiagnosticSession @relation(fields: [sessionId], references: [id])
+  email               String
+  name                String?
+  resultJson          Json
+  overallScore        Float?
+  profileType         String?
+  profileDescription String?
+  recommendations     Json?
+  opportunities Json?
+  emailSent           Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([email])
+  @@index([sessionId])
+  @@map("diagnostic_result")
+}
+
+enum ScholarshipType {
+  MASTER
+  PHD
+  FELLOWSHIP
+}
+
+enum DiagnosticStatus {
+  PENDING
+  CV_UPLOADED
+  PROCESSING
+  COMPLETED
+}

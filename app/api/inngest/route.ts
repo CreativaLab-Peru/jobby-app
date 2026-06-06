@@ -8,6 +8,9 @@ import {getAndSaveOpportunities} from "@/inngest/functions/get-and-save-opportun
 import {generateRoadmap} from "@/inngest/functions/generate-roadmap";
 import {processTempCvEvaluation} from "@/inngest/functions/process-temp-cv-evaluation";
 import {processTempCvMigration} from "@/inngest/functions/process-temp-cv-migration";
+import {sendDiagnosticAccessEmail} from "@/inngest/functions/send-diagnostic-access-email";
+import {sendDiagnosticResultsEmail} from "@/inngest/functions/send-diagnostic-results-email";
+import {evaluateDiagnosticCv} from "@/inngest/functions/evaluate-diagnostic-cv";
 
 // Create an API that serves zero functions
 export const {GET, POST, PUT} = serve({
@@ -21,5 +24,8 @@ export const {GET, POST, PUT} = serve({
     generateRoadmap,
     processTempCvEvaluation,
     processTempCvMigration,
+    sendDiagnosticAccessEmail,
+    sendDiagnosticResultsEmail,
+    evaluateDiagnosticCv,
   ],
 });

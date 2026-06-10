@@ -1,80 +1,87 @@
-import {prisma} from "@/lib/prisma"
-import {Payment} from "mercadopago"
-import {NextResponse} from "next/server"
+import {prisma} from "@/lib/prisma";
+import {Payment} from "mercadopago";
+import {NextResponse} from "next/server";
 import {JobStatus, LogAction, LogLevel} from "@prisma/client";
 import {logsService} from "@/features/share/services/logs-service";
-import {inngest} from "@/inngest/functions/client";
-import {generateMagicLinkToken, hashMagicLinkToken} from "@/utils/magic-links";
-import {authClient} from "@/lib/auth-client";
 import {mercadopago} from "@/features/billing/domain/mercado-preference";
-import {rechargeCreditsByPlan} from "@/features/credits/actions/recharge-credits-by-plan";
+import {processDiagnostico} from "@/features/processors/process-diagnostico";
+import {processPlan} from "@/features/processors/process-plan";
 
-const FIRST_PASSWORD = process.env.FIRST_PASSWORD
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+type PaymentType = "DIAGNOSTICO" | "PLAN"; // extend as needed
+
+// ---------------------------------------------------------------------------
+// Webhook entry-point
+// ---------------------------------------------------------------------------
 
 export async function POST(req: Request) {
   const body = await req.json();
 
-  const paymentPlanId = body?.data?.id;
-  if (!paymentPlanId) {
+  const paymentId: string | undefined = body?.data?.id;
+  if (!paymentId) {
     return new NextResponse("[MISSING_ID_ERROR]", {status: 400});
   }
 
-  // 1. Crear un job en DB
+  // Upsert a queue job so the webhook is idempotent at the job level too
   const job = await prisma.queueJob.upsert({
-    where: {jobId: paymentPlanId},
+    where: {jobId: paymentId},
     create: {
-      jobId: paymentPlanId,
+      jobId: paymentId,
       type: "MERCADOPAGO_PAYMENT",
       status: JobStatus.PENDING,
-      payload: {paymentId: paymentPlanId},
+      payload: {paymentId},
     },
     update: {
-      // choose which fields to update if the record exists
       status: JobStatus.PENDING,
-      payload: {paymentId: paymentPlanId},
+      payload: {paymentId},
     },
   });
 
   await logsService.createLog({
     action: LogAction.PAYMENT,
     level: LogLevel.INFO,
-    entity: "MERCADO_PAGO_INTEGRATION",
+    entity: "MERCADO_PAGO_WEBHOOK",
     entityId: job.id,
-    message: `Started saving info of payment: ${paymentPlanId}`,
-    metadata: {paymentId: paymentPlanId},
+    message: `Received webhook for payment: ${paymentId}`,
+    metadata: {paymentId},
   });
 
-  // 2. Procesarlo inmediatamente
   try {
-    await processPaymentJob(job.id, paymentPlanId)
+    await processPaymentJob(job.id, paymentId);
   } catch (e) {
-    console.error("[ERROR_PROCESS_PAYMENT_JOB]", e)
+    console.error("[ERROR_PROCESS_PAYMENT_JOB]", e);
     return new NextResponse("[ERROR_PROCESS_PAYMENT_JOB]", {status: 500});
   }
 
-  // 3. Responder rápido al webhook
   return new NextResponse(null, {status: 200});
 }
 
-async function processPaymentJob(jobId: string, paymentId: string) {
-  try {
-    // 1. Update job started
-    await prisma.queueJob.update({
-      where: {id: jobId},
-      data: {status: JobStatus.IN_PROGRESS}
-    });
+// ---------------------------------------------------------------------------
+// Job lifecycle wrapper — owns status transitions and error handling
+// ---------------------------------------------------------------------------
 
-    // 2. Obtener pago de MercadoPago
+async function processPaymentJob(jobId: string, paymentId: string): Promise<void> {
+  await prisma.queueJob.update({
+    where: {id: jobId},
+    data: {status: JobStatus.IN_PROGRESS},
+  });
+
+  try {
+    // 1. Fetch payment from MercadoPago
     const payment = await new Payment(mercadopago).get({id: paymentId});
 
     await logsService.createLog({
       action: LogAction.PAYMENT,
       level: LogLevel.INFO,
-      entity: "MERCADO_PAGO_INTEGRATION_GET_PAYMENT",
-      message: `Started saving info of payment: ${paymentId}`,
+      entity: "MERCADO_PAGO_GET_PAYMENT",
+      message: `Fetched payment: ${paymentId}`,
       metadata: {payment},
     });
 
+    // 2. Guard: only process approved payments
     if (!payment || payment.status !== "approved") {
       await prisma.queueJob.update({
         where: {id: jobId},
@@ -88,117 +95,28 @@ async function processPaymentJob(jobId: string, paymentId: string) {
       await logsService.createLog({
         action: LogAction.PAYMENT,
         level: LogLevel.ERROR,
-        entity: "MERCADO_PAGO_INTEGRATION_GET_PAYMENT_ERROR",
-        message: `There is not payment or payment status is not approved: ${paymentId}`,
+        entity: "MERCADO_PAGO_PAYMENT_NOT_APPROVED",
+        message: `Payment not approved: ${paymentId}`,
         metadata: {payment},
       });
 
       return;
     }
 
-    let {user_id: userId} = payment.metadata;
-    const {id: paymentPlanId, email} = payment.metadata;
+    // 3. Dispatch to the correct processor by type
+    const type: PaymentType = payment.metadata?.type ?? "PLAN";
 
-    const existing = await prisma.userPayment.findFirst({
-      where: {
-        metadata: {
-          path: ["paymentId"],
-          equals: paymentId,
-        },
-      },
-    });
+    switch (type) {
+      case "DIAGNOSTICO":
+        await processDiagnostico(jobId, paymentId, payment);
+        break;
 
-    if (existing) {
-      await prisma.queueJob.update({
-        where: {id: jobId},
-        data: {
-          status: JobStatus.SUCCEEDED,
-          finishedAt: new Date(),
-        },
-      });
-      return;
+      default:
+        await processPlan(jobId, paymentId, payment);
+        break;
     }
 
-    if (email) {
-      const temporalUser = await prisma.temporalUser.findFirst({
-        where: {email},
-      });
-      if (temporalUser) {
-        let existingUser = await prisma.user.findFirst({
-          where: {email},
-        });
-        if (!existingUser) {
-          await authClient.signUp.email({
-            email,
-            password: FIRST_PASSWORD,
-            name: temporalUser.name || "Cambiar nombre",
-          })
-          existingUser = await prisma.user.findFirst({
-            where: {email},
-          });
-        }
-
-        userId = existingUser ? existingUser.id : userId;
-        const token = generateMagicLinkToken();
-        const hashedToken = hashMagicLinkToken(token);
-
-
-        await prisma.magicLinkToken.create({
-          data: {
-            userId,
-            tokenHash: hashedToken,
-            expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24), // 24 hours
-            purpose: "post_payment_access",
-          }
-        });
-
-        await inngest.send({
-          name: "send/magiclink",
-          data: {
-            email: existingUser.email,
-            name: existingUser.name,
-            userId: existingUser.id,
-            magicLink: token,
-          }
-        });
-
-        console.info("[==> GENERATED_MAGIC_LINK_TOKEN_1]", {
-          email,
-          token,
-          hashedToken,
-          paymentIdMP: paymentId,
-        });
-      }
-    }
-
-    // 6. Crear userPayment
-    const newUserPayment = await prisma.userPayment.create({
-      data: {
-        userId: userId,
-        planId: paymentPlanId,
-        metadata: {paymentId},
-      },
-    });
-
-    if (!newUserPayment) {
-      console.error("[ERROR_CREATING_USER_PAYMENT]", {paymentId, userId, planId: paymentPlanId});
-      await logsService.createLog({
-        action: LogAction.PAYMENT,
-        level: LogLevel.ERROR,
-        entity: "MERCADO_PAGO_INTEGRATION_CREATE_USER_PAYMENT_ERROR",
-        message: `Error creating user payment: ${paymentId}`,
-        metadata: {paymentId, userId, planId: paymentPlanId},
-      })
-    }
-
-    console.info("[++> GENERATED_MAGIC_LINK_TOKEN_2]", {
-      email,
-      newPaymentId: newUserPayment?.id
-    });
-
-    await rechargeCreditsByPlan(paymentPlanId, userId);
-
-    // 7. Marcar job como completado
+    // 4. Mark job succeeded
     await prisma.queueJob.update({
       where: {id: jobId},
       data: {
@@ -210,18 +128,17 @@ async function processPaymentJob(jobId: string, paymentId: string) {
     await logsService.createLog({
       action: LogAction.PAYMENT,
       level: LogLevel.INFO,
-      entity: "MERCADO_PAGO_INTEGRATION_CREATE_USER_PAYMENT_COMPLETED",
-      message: `Payment completed: ${paymentId}`,
-      metadata: {newUserPayment},
+      entity: "MERCADO_PAGO_PAYMENT_COMPLETED",
+      message: `Payment job completed: ${paymentId}`,
+      metadata: {type, paymentId},
     });
-
-  } catch (err) {
+  } catch (err: any) {
     await logsService.createLog({
       action: LogAction.PAYMENT,
       level: LogLevel.ERROR,
-      entity: "MERCADO_PAGO_INTEGRATION_CREATE_USER_PAYMENT",
-      message: `Error saving info of payment: ${paymentId}`,
-      metadata: {err},
+      entity: "MERCADO_PAGO_PAYMENT_ERROR",
+      message: `Error processing payment: ${paymentId}`,
+      metadata: {err: err.message},
     });
 
     await prisma.queueJob.update({

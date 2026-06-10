@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { DiagnosisFlow } from "../../../features/diagnostico-cv/screens/diagnosis-flow";
+import { DiagnosisFlow } from "@/features/diagnostico-cv/screens/diagnosis-flow";
 
 export const metadata: Metadata = {
   title: "Diagnostico de Beca Levely | Analisis IA para Posgrado",

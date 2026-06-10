@@ -1,3 +1,8 @@
+# v1.2.24 - 2026-06-09
+
+## Features
+- Diagnostic cv new product (first version, we need to do some tests to validate the product)
+
 # v1.2.23 - 2026-05-18
 
 ## Fixes:

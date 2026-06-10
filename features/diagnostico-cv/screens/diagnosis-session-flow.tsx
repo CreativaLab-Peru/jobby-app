@@ -4,11 +4,10 @@ import { useState, useEffect } from "react";
 import { DiagnosticStatus, ScholarshipType } from "@prisma/client";
 import { DiagnosisCvUpload } from "../components/diagnosis-cv-upload";
 import { DiagnosticoOnboarding } from "../components/diagnostico-onboarding";
-import { DiagnosticoLoading } from "../components/diagnostico-loading";
+import {DiagnosticoProcessing} from "../components/diagnostico-loading";
 import { DiagnosticoResults } from "../components/diagnostico-results";
 import { updateDiagnosticSession } from "../actions/update-diagnostic-session";
 import { triggerDiagnosticProcessing } from "../actions/trigger-diagnostic-processing";
-import { uploadCvAction } from "../actions/upload-cv-action";
 import {saveAndGetUrlOfCvAction} from "@/features/diagnostico-cv/actions/save-and-get-url-of-cv";
 
 interface DiagnosisSessionFlowProps {
@@ -152,7 +151,7 @@ export function DiagnosisSessionFlow({ session, sessionToken }: DiagnosisSession
       );
 
     case "loading":
-      return <DiagnosticoLoading />;
+      return <DiagnosticoProcessing />;
 
     case "results":
       return results ? (
@@ -164,7 +163,7 @@ export function DiagnosisSessionFlow({ session, sessionToken }: DiagnosisSession
           opportunities={results.opportunities}
         />
       ) : (
-        <DiagnosticoLoading />
+        <DiagnosticoProcessing />
       );
   }
 }

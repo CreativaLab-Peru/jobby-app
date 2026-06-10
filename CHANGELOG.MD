@@ -1,3 +1,9 @@
+# WIP
+
+# Features
+- New product: Diagnostic CV (CV Diagnóstico) - A tool that analyzes a user's CV and provides insights and recommendations for improvement.
+- Maintenances for countries and scholarships
+
 # v1.2.24 - 2026-06-09
 
 ## Features

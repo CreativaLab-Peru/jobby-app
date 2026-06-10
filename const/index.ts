@@ -100,9 +100,9 @@ export const MODALITIES_MAP = {
 
 export const MODALITIES: {key: string, value: string}[]  = Object.entries(MODALITIES_MAP).map(([key, value]) => ({ key, value }));
 
-export const opportunities: {key: string, value: string}[] = Object.entries(OPPORTUNITY_MAP).map(([key, value]) => ({ 
-  key, 
-  value: value.label 
+export const opportunities: {key: string, value: string}[] = Object.entries(OPPORTUNITY_MAP).map(([key, value]) => ({
+  key,
+  value: value.label
 }));
 
 export const RECOMMENDATIONS_BY_OPPORTUNITY: Record<OpportunityType, CvSectionType[]> = {
@@ -127,4 +127,19 @@ export const LATAM_COUNTRIES = [
   { code: "CR", name: "Costa Rica", prefix: "+506" },
   { code: "PA", name: "Panamá", prefix: "+507" },
   { code: "DO", name: "Dom. Rep.", prefix: "+1" },
+];
+
+export const DIAGNOSTICO_FEATURES = [
+  "Score 0–100 para la beca que eliges",
+  "Top 10 oportunidades con % de match",
+  "Las 3 mejores exactas para tu CV",
+  "Roadmap mes a mes con fechas reales",
+  "Tu perfil dominante entre 6 arquetipos",
+  "PDF completo en tu email",
+] as const;
+
+export const BADGES = [
+  { label: "522+ usuarios activos en Latam" },
+  { label: "Respaldado por PRO Innóvate", bold: "PRO Innóvate" },
+  { label: "Embajada Británica · AIESEC", bold: "Embajada Británica" },
 ];

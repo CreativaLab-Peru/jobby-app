@@ -112,7 +112,7 @@ export async function createCvFromPdfAction(formData: FormData) {
       });
     }
 
-    return { success: true, cvId: cv.id };
+    return { success: true, cvId: cv.id, cvUrl: url };
   } catch (err) {
     console.error("[ERROR_CREATE_CV_FROM_PDF]", err);
     return { error: "No se pudo agregar tu CV" };

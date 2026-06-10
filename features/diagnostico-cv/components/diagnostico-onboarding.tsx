@@ -1,125 +1,151 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
-  DIAGNOSTICO_COUNTRIES,
   DIAGNOSTICO_SCHOLARSHIP_TYPES,
   DIAGNOSTICO_AREAS,
-  DiagnosticoCountry,
-  DiagnosticoScholarshipType,
-  DiagnosticoArea,
 } from "../types/diagnostico";
+import {CountryOption, getCountriesAction} from "@/features/diagnostico-cv/actions/get-countries";
 
 interface DiagnosticoOnboardingProps {
   onComplete: (data: {
-    countries: string[];
+    countries: string[]; // country codes: ["GB", "US"]
     scholarshipType: string;
     area: string;
   }) => void;
   isLoading: boolean;
 }
 
-type Step = "countries" | "scholarship" | "area";
+type SubStep = "countries" | "scholarship" | "area";
+const SUB_STEPS: SubStep[] = ["countries", "scholarship", "area"];
 
 export function DiagnosticoOnboarding({ onComplete, isLoading }: DiagnosticoOnboardingProps) {
-  const [step, setStep] = useState<Step>("countries");
-  const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
+  const [subStep, setSubStep] = useState<SubStep>("countries");
+
+  // Countries from DB
+  const [countries, setCountries] = useState<CountryOption[]>([]);
+  const [countriesLoading, setCountriesLoading] = useState(true);
+
+  // Selections — stored as country.code strings
+  const [selectedCodes, setSelectedCodes] = useState<string[]>([]);
   const [selectedScholarship, setSelectedScholarship] = useState<string | null>(null);
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
 
-  const stepIndex = step === "countries" ? 0 : step === "scholarship" ? 1 : 2;
-  const totalSteps = 3;
+  useEffect(() => {
+    getCountriesAction()
+      .then(setCountries)
+      .finally(() => setCountriesLoading(false));
+  }, []);
 
-  const toggleCountry = (code: string) => {
-    setSelectedCountries((prev) => {
-      if (prev.includes(code)) {
-        return prev.filter((c) => c !== code);
-      }
-      if (prev.length >= 2) {
-        return prev;
-      }
+  const subStepIndex = SUB_STEPS.indexOf(subStep);
+  // Bar fills proportionally through the first global step (1/3 of total flow)
+  const globalProgress = ((subStepIndex + 1) / SUB_STEPS.length) * (1 / 3) * 100;
+
+  const toggleCode = (code: string) => {
+    setSelectedCodes((prev) => {
+      if (prev.includes(code)) return prev.filter((c) => c !== code);
+      if (prev.length >= 2) return prev; // max 2 countries
       return [...prev, code];
     });
   };
 
-  const handleNext = () => {
-    if (step === "countries" && selectedCountries.length > 0) {
-      setStep("scholarship");
-    } else if (step === "scholarship" && selectedScholarship) {
-      setStep("area");
-    } else if (step === "area" && selectedArea) {
-      onComplete({
-        countries: selectedCountries,
-        scholarshipType: selectedScholarship,
-        area: selectedArea,
-      });
-    }
+  const canProceed = () => {
+    if (subStep === "countries") return selectedCodes.length > 0;
+    if (subStep === "scholarship") return !!selectedScholarship;
+    if (subStep === "area") return !!selectedArea;
+    return false;
   };
 
-  const canProceed = () => {
-    if (step === "countries") return selectedCountries.length > 0;
-    if (step === "scholarship") return !!selectedScholarship;
-    if (step === "area") return !!selectedArea;
-    return false;
+  const goBack = () => {
+    if (subStep === "scholarship") setSubStep("countries");
+    if (subStep === "area") setSubStep("scholarship");
+  };
+
+  const handleNext = () => {
+    if (subStep === "countries" && canProceed()) setSubStep("scholarship");
+    else if (subStep === "scholarship" && canProceed()) setSubStep("area");
+    else if (subStep === "area" && canProceed()) {
+      onComplete({
+        countries: selectedCodes,       // ["GB", "US"] — codes, not UUIDs
+        scholarshipType: selectedScholarship!,
+        area: selectedArea!,
+      });
+    }
   };
 
   return (
     <div className="min-h-screen bg-[#080f0d] text-[#f4f0e6] font-sans flex items-center justify-center p-6">
       <div className="w-full max-w-md">
-        {/* Progress */}
+        {/* Global progress — step 1 of 3 */}
         <div className="flex items-center gap-2 mb-8">
           <div className="flex-1 h-1 bg-[#111f1b] rounded-full overflow-hidden">
-            <div className="h-full bg-[#c8f562] transition-all" style={{ width: `${((stepIndex + 1) / totalSteps) * 100}%` }} />
+            <div
+              className="h-full bg-[#c8f562] transition-all duration-300"
+              style={{ width: `${globalProgress}%` }}
+            />
           </div>
-          <span className="text-[#8a9e93] text-sm">{stepIndex + 1} de {totalSteps}</span>
+          <span className="text-[#8a9e93] text-sm">1 de 3</span>
         </div>
 
-        {/* Step1: Countries */}
-        {step === "countries" && (
+        {/* Sub-step: Countries */}
+        {subStep === "countries" && (
           <div>
-            <h2 className="text-2xl font-serif font-bold mb-2 text-center" style={{ fontFamily: "'Fraunces', serif" }}>
-              Selecciona hasta 2 paises
+            <h2
+              className="text-2xl font-serif font-bold mb-2 text-center"
+              style={{ fontFamily: "'Fraunces', serif" }}
+            >
+              Selecciona hasta 2 países
             </h2>
             <p className="text-[#8a9e93] text-center mb-8">
               ¿A qué países te gustaría aplicar?
             </p>
 
-            <div className="space-y-3">
-              {DIAGNOSTICO_COUNTRIES.map((country) => (
-                <button
-                  key={country.code}
-                  onClick={() => toggleCountry(country.code)}
-                  className={`w-full p-4 rounded-xl border transition-all flex items-center gap-4 ${
-                    selectedCountries.includes(country.code)
-                      ? "border-[#c8f562] bg-[#c8f562]/10"
-                      : "border-[rgba(255,255,255,.08)] hover:border-[#c8f562]/30"
-                  }`}
-                >
-                  <span className="text-2xl">{country.flag}</span>
-                  <span className="flex-1 text-left font-medium">{country.name}</span>
-                  {selectedCountries.includes(country.code) && (
-                    <div className="w-5 h-5 rounded-full bg-[#c8f562] flex items-center justify-center">
-                      <svg className="w-3 h-3 text-[#080f0d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                  )}
-                </button>
-              ))}
-            </div>
+            {countriesLoading ? (
+              <div className="space-y-3">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="w-full h-16 rounded-xl bg-[#111f1b] animate-pulse" />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {countries.map((country) => (
+                  <button
+                    key={country.code}
+                    onClick={() => toggleCode(country.code)}
+                    className={`w-full p-4 rounded-xl border transition-all flex items-center gap-4 ${
+                      selectedCodes.includes(country.code)
+                        ? "border-[#c8f562] bg-[#c8f562]/10"
+                        : "border-[rgba(255,255,255,.08)] hover:border-[#c8f562]/30"
+                    }`}
+                  >
+                    <span className="text-2xl">{country.flag}</span>
+                    <span className="flex-1 text-left font-medium">{country.name}</span>
+                    {selectedCodes.includes(country.code) && (
+                      <div className="w-5 h-5 rounded-full bg-[#c8f562] flex items-center justify-center">
+                        <svg className="w-3 h-3 text-[#080f0d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
-        {/* Step 2: Scholarship Type */}
-        {step === "scholarship" && (
+        {/* Sub-step: Scholarship Type */}
+        {subStep === "scholarship" && (
           <div>
-            <h2 className="text-2xl font-serif font-bold mb-2 text-center" style={{ fontFamily: "'Fraunces', serif" }}>
+            <h2
+              className="text-2xl font-serif font-bold mb-2 text-center"
+              style={{ fontFamily: "'Fraunces', serif" }}
+            >
               ¿Qué tipo de beca buscas?
             </h2>
             <p className="text-[#8a9e93] text-center mb-8">
-              El diagnostico esta especializado en becas de posgrado
+              El diagnóstico está especializado en becas de posgrado
             </p>
-
             <div className="space-y-3">
               {DIAGNOSTICO_SCHOLARSHIP_TYPES.map((type) => (
                 <button
@@ -142,16 +168,18 @@ export function DiagnosticoOnboarding({ onComplete, isLoading }: DiagnosticoOnbo
           </div>
         )}
 
-        {/* Step 3: Area */}
-        {step === "area" && (
+        {/* Sub-step: Area */}
+        {subStep === "area" && (
           <div>
-            <h2 className="text-2xl font-serif font-bold mb-2 text-center" style={{ fontFamily: "'Fraunces', serif" }}>
-              ¿Cuál es tu area principal?
+            <h2
+              className="text-2xl font-serif font-bold mb-2 text-center"
+              style={{ fontFamily: "'Fraunces', serif" }}
+            >
+              ¿Cuál es tu área principal?
             </h2>
             <p className="text-[#8a9e93] text-center mb-8">
-              Esto personaliza las oportunidades y mejora la precision del analisis
+              Personaliza las oportunidades y mejora la precisión del análisis
             </p>
-
             <div className="space-y-3">
               {DIAGNOSTICO_AREAS.map((area) => (
                 <button
@@ -176,20 +204,18 @@ export function DiagnosticoOnboarding({ onComplete, isLoading }: DiagnosticoOnbo
 
         {/* Navigation */}
         <div className="flex gap-3 mt-8">
-          {step !== "countries" && (
+          {subStep !== "countries" && (
             <button
-              onClick={() => {
-                if (step === "scholarship") setStep("countries");
-                if (step === "area") setStep("scholarship");
-              }}
-              className="flex-1 py-4 border border-[rgba(255,255,255,.08)] rounded-xl font-medium hover:border-[#c8f562]/30 transition-colors"
+              onClick={goBack}
+              disabled={isLoading}
+              className="flex-1 py-4 border border-[rgba(255,255,255,.08)] rounded-xl font-medium hover:border-[#c8f562]/30 transition-colors disabled:opacity-50"
             >
               Atrás
             </button>
           )}
           <button
             onClick={handleNext}
-            disabled={!canProceed() || isLoading}
+            disabled={!canProceed() || isLoading || countriesLoading}
             className="flex-1 py-4 bg-[#c8f562] text-[#080f0d] rounded-xl font-bold hover:bg-[#a8d444] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isLoading ? (
@@ -200,8 +226,8 @@ export function DiagnosticoOnboarding({ onComplete, isLoading }: DiagnosticoOnbo
                 </svg>
                 Procesando...
               </>
-            ) : step === "area" ? (
-              "Hacer diagnostico"
+            ) : subStep === "area" ? (
+              "Continuar"
             ) : (
               <>
                 Siguiente

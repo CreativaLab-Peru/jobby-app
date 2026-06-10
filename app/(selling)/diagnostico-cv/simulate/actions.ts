@@ -4,6 +4,21 @@ import { prisma } from "@/lib/prisma";
 import { generateMagicLinkToken, hashMagicLinkToken } from "@/utils/magic-links";
 
 export async function createDiagnosticSessionAction(email: string, name: string) {
+
+  // Create or find temporal user
+  let temporalUser = await prisma.temporalUser.findUnique({
+    where: {email: email.toLowerCase()},
+  });
+
+  if (!temporalUser) {
+    temporalUser = await prisma.temporalUser.create({
+      data: {
+        email: email.toLowerCase(),
+        name,
+      },
+    });
+  }
+
   const token = generateMagicLinkToken(32);
   const hashedToken = hashMagicLinkToken(token);
 

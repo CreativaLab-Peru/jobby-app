@@ -1,7 +1,8 @@
+//page.tsx
 import { Metadata } from "next";
 import { hashMagicLinkToken } from "@/utils/magic-links";
 import { prisma } from "@/lib/prisma";
-import { DiagnosticoSessionFlow } from "@/features/diagnostico-cv/screens/diagnostico-session-flow";
+import { DiagnosisSessionFlow } from "@/features/diagnostico-cv/screens/diagnosis-session-flow";
 
 interface PageProps {
   params: Promise<{ sessionToken: string }>;
@@ -14,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function DiagnosticoSessionPage({ params }: PageProps) {
+export default async function DiagnosisSessionPage({ params }: PageProps) {
   const { sessionToken } = await params;
 
   // Verify session exists and is valid
@@ -49,5 +50,5 @@ export default async function DiagnosticoSessionPage({ params }: PageProps) {
     );
   }
 
-  return <DiagnosticoSessionFlow session={session} sessionToken={sessionToken} />;
+  return <DiagnosisSessionFlow session={session} sessionToken={sessionToken} />;
 }

@@ -5,31 +5,46 @@ import {
   DIAGNOSTICO_SCHOLARSHIP_TYPES,
   DIAGNOSTICO_AREAS,
 } from "../types/diagnostico";
-import {CountryOption, getCountriesAction} from "@/features/diagnostico-cv/actions/get-countries";
+import { CountryOption, getCountriesAction } from "@/features/diagnostico-cv/actions/get-countries";
+
+interface OnboardingData {
+  countries: string[];
+  scholarshipType: string;
+  area: string;
+}
 
 interface DiagnosticoOnboardingProps {
-  onComplete: (data: {
-    countries: string[]; // country codes: ["GB", "US"]
-    scholarshipType: string;
-    area: string;
-  }) => void;
+  /** Pre-filled values from localStorage / DB so selections survive a refresh */
+  initialData?: OnboardingData;
+  onComplete: (data: OnboardingData) => void;
   isLoading: boolean;
 }
 
 type SubStep = "countries" | "scholarship" | "area";
 const SUB_STEPS: SubStep[] = ["countries", "scholarship", "area"];
 
-export function DiagnosticoOnboarding({ onComplete, isLoading }: DiagnosticoOnboardingProps) {
+export function DiagnosticoOnboarding({
+                                        initialData,
+                                        onComplete,
+                                        isLoading,
+                                      }: DiagnosticoOnboardingProps) {
   const [subStep, setSubStep] = useState<SubStep>("countries");
 
-  // Countries from DB
-  const [countries, setCountries] = useState<CountryOption[]>([]);
+  const [countries, setCountries]         = useState<CountryOption[]>([]);
   const [countriesLoading, setCountriesLoading] = useState(true);
 
-  // Selections — stored as country.code strings
-  const [selectedCodes, setSelectedCodes] = useState<string[]>([]);
-  const [selectedScholarship, setSelectedScholarship] = useState<string | null>(null);
-  const [selectedArea, setSelectedArea] = useState<string | null>(null);
+  // Initialise selections from persisted data so a refresh doesn't lose them
+  const [selectedCodes, setSelectedCodes]           = useState<string[]>(initialData?.countries      ?? []);
+  const [selectedScholarship, setSelectedScholarship] = useState<string | null>(initialData?.scholarshipType ?? null);
+  const [selectedArea, setSelectedArea]               = useState<string | null>(initialData?.area           ?? null);
+
+  // Re-sync if the parent passes initialData after an async load
+  useEffect(() => {
+    if (!initialData) return;
+    setSelectedCodes(      prev => prev.length      ? prev  : initialData.countries);
+    setSelectedScholarship(prev => prev             ? prev  : initialData.scholarshipType);
+    setSelectedArea(       prev => prev             ? prev  : initialData.area);
+  }, [initialData]);
 
   useEffect(() => {
     getCountriesAction()
@@ -37,44 +52,47 @@ export function DiagnosticoOnboarding({ onComplete, isLoading }: DiagnosticoOnbo
       .finally(() => setCountriesLoading(false));
   }, []);
 
-  const subStepIndex = SUB_STEPS.indexOf(subStep);
-  // Bar fills proportionally through the first global step (1/3 of total flow)
+  const subStepIndex   = SUB_STEPS.indexOf(subStep);
   const globalProgress = ((subStepIndex + 1) / SUB_STEPS.length) * (1 / 3) * 100;
 
   const toggleCode = (code: string) => {
-    setSelectedCodes((prev) => {
-      if (prev.includes(code)) return prev.filter((c) => c !== code);
-      if (prev.length >= 2) return prev; // max 2 countries
+    setSelectedCodes(prev => {
+      if (prev.includes(code)) return prev.filter(c => c !== code);
+      if (prev.length >= 2)    return prev; // max 2
       return [...prev, code];
     });
   };
 
-  const canProceed = () => {
-    if (subStep === "countries") return selectedCodes.length > 0;
+  const canProceed = (): boolean => {
+    if (subStep === "countries")  return selectedCodes.length > 0;
     if (subStep === "scholarship") return !!selectedScholarship;
-    if (subStep === "area") return !!selectedArea;
+    if (subStep === "area")       return !!selectedArea;
     return false;
   };
 
   const goBack = () => {
     if (subStep === "scholarship") setSubStep("countries");
-    if (subStep === "area") setSubStep("scholarship");
+    if (subStep === "area")        setSubStep("scholarship");
   };
 
   const handleNext = () => {
-    if (subStep === "countries" && canProceed()) setSubStep("scholarship");
-    else if (subStep === "scholarship" && canProceed()) setSubStep("area");
-    else if (subStep === "area" && canProceed()) {
-      onComplete({
-        countries: selectedCodes,       // ["GB", "US"] — codes, not UUIDs
-        scholarshipType: selectedScholarship!,
-        area: selectedArea!,
-      });
-    }
+    if (!canProceed()) return;
+
+    if (subStep === "countries")  { setSubStep("scholarship"); return; }
+    if (subStep === "scholarship"){ setSubStep("area");        return; }
+
+    // Final sub-step — all fields are guaranteed non-null by canProceed
+    onComplete({
+      countries:       selectedCodes,
+      scholarshipType: selectedScholarship!,
+      area:            selectedArea!,
+    });
   };
 
   return (
-    <div className="min-h-screen bg-[#080f0d] text-[#f4f0e6] font-sans flex items-center justify-center p-6">
+    <div
+      className="min-h-screen bg-[#080f0d] text-[#f4f0e6] font-sans flex items-center justify-center p-6"
+    >
       <div className="w-full max-w-md">
         {/* Global progress — step 1 of 3 */}
         <div className="flex items-center gap-2 mb-8">
@@ -108,7 +126,7 @@ export function DiagnosticoOnboarding({ onComplete, isLoading }: DiagnosticoOnbo
               </div>
             ) : (
               <div className="space-y-3">
-                {countries.map((country) => (
+                {countries.map(country => (
                   <button
                     key={country.code}
                     onClick={() => toggleCode(country.code)}
@@ -147,7 +165,7 @@ export function DiagnosticoOnboarding({ onComplete, isLoading }: DiagnosticoOnbo
               El diagnóstico está especializado en becas de posgrado
             </p>
             <div className="space-y-3">
-              {DIAGNOSTICO_SCHOLARSHIP_TYPES.map((type) => (
+              {DIAGNOSTICO_SCHOLARSHIP_TYPES.map(type => (
                 <button
                   key={type.id}
                   onClick={() => setSelectedScholarship(type.id)}
@@ -181,7 +199,7 @@ export function DiagnosticoOnboarding({ onComplete, isLoading }: DiagnosticoOnbo
               Personaliza las oportunidades y mejora la precisión del análisis
             </p>
             <div className="space-y-3">
-              {DIAGNOSTICO_AREAS.map((area) => (
+              {DIAGNOSTICO_AREAS.map(area => (
                 <button
                   key={area.id}
                   onClick={() => setSelectedArea(area.id)}

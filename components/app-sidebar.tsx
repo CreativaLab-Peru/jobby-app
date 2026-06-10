@@ -28,7 +28,7 @@ import {
   Tag, Wallet, Mic, Shield, Receipt, X, Map, Coins,
   FileCheckIcon,
   LayoutDashboardIcon,
-  Settings2, Building
+  Settings2, Building, Megaphone, Globe, GraduationCap
 } from "lucide-react";
 
 import { ProfileButton } from "@/components/profile-button";
@@ -92,7 +92,21 @@ const adminNavItems = [
 ];
 
 const AdvertisingItems = [
-  { title: "Rutas/Publicidad", href: "/admin/routes-publicity", icon: LayoutDashboardIcon },
+  {
+    title: "Rutas/Publicidad",
+    href: "/admin/routes-publicity",
+    icon: Megaphone
+  },
+  {
+    title: "Paises",
+    href: "/admin/countries",
+    icon: Globe
+  },
+  {
+    title: "Becas",
+    href: "/admin/scholarships",
+    icon: GraduationCap
+  },
 ];
 
 export default function AppSidebar({

@@ -1,113 +1,213 @@
 "use client";
 
-import { useState } from "react";
 import { DIAGNOSTICO_PRICE } from "../types/diagnostico";
+import {BADGES, DIAGNOSTICO_FEATURES} from "@/const";
 
 interface DiagnosticoLandingScreenProps {
   onStart: () => void;
 }
 
-export function DiagnosticoLandingScreen({ onStart }: DiagnosticoLandingScreenProps) {
-  return (
-    <div className="min-h-screen bg-[#080f0d] text-[#f4f0e6] font-sans">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 2px 2px, #c8f562 1px, transparent 0)`,
-            backgroundSize: '40px 40px'
-          }} />
-        </div>
+const STATS = [
+  {
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+      />
+    ),
+    text: (
+      <>
+        Respaldado por <strong className="text-[rgba(240,237,228,.6)] font-medium">PRO Innóvate · PRODUCE</strong>
+      </>
+    ),
+  },
+  {
+    icon: (
+      <>
+        <circle cx="12" cy="12" r="10" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+      </>
+    ),
+    text: (
+      <>
+        <strong className="text-[rgba(240,237,228,.6)] font-medium">522+</strong> usuarios activos en Latinoamérica
+      </>
+    ),
+  },
+  {
+    icon: (
+      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+    ),
+    text: (
+      <>
+        <strong className="text-[rgba(240,237,228,.6)] font-medium">500+</strong> oportunidades internacionales
+      </>
+    ),
+  },
+  {
+    icon: (
+      <>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+      </>
+    ),
+    text: (
+      <>
+        Cusco, Perú · <strong className="text-[rgba(240,237,228,.6)] font-medium">para toda Latinoamérica</strong>
+      </>
+    ),
+  },
+];
 
-        <div className="relative max-w-4xl mx-auto px-6 py-20 text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#c8f562]/20 bg-[#c8f562]/10 mb-8">
-            <span className="text-[#c8f562] text-sm font-medium">Nuevo</span>
-            <span className="text-[#8a9e93] text-sm">Diagnostico IA para becas</span>
+export function DiagnosticoLandingScreen({ onStart }: DiagnosticoLandingScreenProps) {
+  // Parse price into integer and decimal parts for styled display
+  const [priceInt, priceDec] = String(DIAGNOSTICO_PRICE).split(".");
+
+  return (
+    <div
+      className="min-h-screen bg-[#0a0f0c] text-[#f0ede4] flex flex-col"
+      style={{ fontFamily: "'Inter', sans-serif" }}
+    >
+      {/* ── Nav ── */}
+      <nav className="flex justify-between items-center px-6 md:px-10 py-[18px] border-b border-white/[.06]">
+        <span
+          className="text-[#c9f563] text-[22px] font-bold italic"
+          style={{ fontFamily: "'Fraunces', serif" }}
+        >
+          levely
+        </span>
+        <span className="text-[13px] text-[rgba(240,237,228,.5)]">Diagnóstico con IA</span>
+      </nav>
+
+      {/* ── Hero ── */}
+      <section className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-10 lg:gap-12 px-6 md:px-10 pt-10 md:pt-14 pb-12 flex-1 items-start max-w-6xl mx-auto w-full">
+        {/* Left — copy */}
+        <div className="flex flex-col">
+          {/* Eyebrow */}
+          <div className="flex items-center gap-2.5 mb-6 md:mb-7">
+            <div className="w-8 h-px bg-[#c9f563]" />
+            <span className="text-[11px] font-semibold tracking-[.12em] uppercase text-[rgba(240,237,228,.45)]">
+              Diagnóstico de perfil · Levely
+            </span>
           </div>
 
-          {/* Heading */}
-          <h1 className="text-4xl md:text-6xl font-serif font-bold mb-6 leading-tight" style={{ fontFamily: "'Fraunces', serif" }}>
-            Sabes quais becas
-            <br />
-            <span className="text-[#c8f562]">combinan contigo?</span>
+          {/* Headline */}
+          <h1
+            className="text-[40px] md:text-[56px] font-black leading-[1.04] tracking-[-1.5px] mb-6"
+            style={{ fontFamily: "'Fraunces', serif" }}
+          >
+            Descubre cuánto<br />
+            vale tu CV<br />
+            para una beca<br />
+            <em className="text-[#c9f563]">internacional.</em>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-lg text-[#8a9e93] max-w-2xl mx-auto mb-12">
-            Analizamos tu CV y te mostramos exactamente qué becas de posgrado en UK, US, Alemania, Francia y Japin tienes en el radar, con tu score de competitividad.
+          <p className="text-[15px] leading-[1.65] text-[rgba(240,237,228,.55)] max-w-full lg:max-w-[420px] mb-8 md:mb-9">
+            Sube tu CV. En{" "}
+            <strong className="text-[rgba(240,237,228,.85)] font-medium">2 minutos</strong>{" "}
+            recibes tu score, tus 10 mejores oportunidades y el plan exacto para ganar
+            tu beca — Chevening, Fulbright, DAAD o la que elijas.
           </p>
 
-          {/* CTA Button */}
-          <button
-            onClick={onStart}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-[#c8f562] text-[#080f0d] rounded-xl font-bold text-lg hover:bg-[#a8d444] transition-colors"
-          >
-            Empezar mi diagnostico
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      {/* Price Card */}
-      <div className="max-w-md mx-auto px-6 pb-20">
-        <div className="bg-[#0d1a17] border border-[rgba(255,255,255,.08)] rounded-2xl p-8 text-center">
-          <div className="flex items-baseline justify-center gap-1 mb-2">
-            <span className="text-[#8a9e93] text-lg">S/</span>
-            <span className="text-5xl font-bold text-[#f4f0e6]">{DIAGNOSTICO_PRICE}</span>
-          </div>
-          <p className="text-[#8a9e93] text-sm mb-6">Pago único</p>
-
-          <div className="space-y-4 text-left">
-            {[
-              "Analisis IA de tu CV",
-              "Matching con becas de5 paises",
-              "Score de competitividad 0-100",
-              "Perfil personalizado",
-              "Top 10 oportunidades",
-              "Email con resultados",
-            ].map((feature, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full bg-[#c8f562]/20 flex items-center justify-center flex-shrink-0">
-                  <svg className="w-3 h-3 text-[#c8f562]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <span className="text-[#f4f0e6]">{feature}</span>
+          {/* Social proof badges */}
+          <div className="flex flex-wrap gap-2">
+            {BADGES.map(({ label }, i) => (
+              <div
+                key={i}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 border border-white/10 rounded-full text-[12px] text-[rgba(240,237,228,.55)]"
+              >
+                <span className="text-[#c9f563] font-bold text-[13px]">+</span>
+                {label}
               </div>
             ))}
           </div>
         </div>
-      </div>
 
-      {/* Trust Indicators */}
-      <div className="border-t border-[rgba(255,255,255,.08)] py-12">
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="flex flex-wrap justify-center gap-8 text-[#8a9e93] text-sm">
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-              <span>Pago seguro</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
-              <span>Resultados en minutos</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              <span>Email incluido</span>
-            </div>
+        {/* Right — price card */}
+        <div className="relative bg-[#c9f563] rounded-[20px] p-6 md:p-8 overflow-hidden flex flex-col w-full">
+          {/* Decorative blob */}
+          <div className="absolute w-48 h-48 bg-white/[.08] rounded-full -bottom-14 -right-10 pointer-events-none" />
+
+          <p className="text-[11px] font-semibold tracking-[.1em] uppercase text-[rgba(10,15,12,.45)] mb-4">
+            Diagnóstico completo
+          </p>
+
+          {/* Price */}
+          <div className="flex items-baseline gap-0.5 mb-1">
+            <span className="text-[18px] font-semibold text-[#0a0f0c] mr-1">S/</span>
+            <span
+              className="text-[64px] md:text-[72px] font-black leading-none tracking-[-2px] text-[#0a0f0c]"
+              style={{ fontFamily: "'Fraunces', serif" }}
+            >
+              {priceInt}
+            </span>
+            <span
+              className="text-[28px] md:text-[32px] font-bold text-[#0a0f0c] self-start mt-3"
+              style={{ fontFamily: "'Fraunces', serif" }}
+            >
+              {priceDec ? `.${priceDec}` : ""}0
+            </span>
+          </div>
+          <p className="text-[12px] text-[rgba(10,15,12,.45)] mb-6">
+            Pago único · Sin suscripción · PDF incluido
+          </p>
+
+          {/* CTA */}
+          <button
+            onClick={onStart}
+            className="w-full bg-[#0a0f0c] text-[#c9f563] rounded-xl py-4 text-[15px] font-semibold tracking-[.01em] mb-6 hover:bg-[#1a2a20] transition-colors"
+          >
+            Empezar mi diagnóstico →
+          </button>
+
+          {/* Features */}
+          <div className="flex flex-col gap-2.5 mb-5">
+            {DIAGNOSTICO_FEATURES.map((feat, i) => (
+              <div key={i} className="flex items-center gap-2.5 text-[13px] text-[rgba(10,15,12,.75)]">
+                <svg
+                  className="w-3.5 h-3.5 flex-shrink-0 text-[#0a0f0c] opacity-70"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <polyline points="20 6 9 17 4 12" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                {feat}
+              </div>
+            ))}
+          </div>
+
+          {/* Card footer */}
+          <div className="border-t border-[rgba(10,15,12,.12)] pt-4 flex items-center gap-2 text-[11px] text-[rgba(10,15,12,.45)]">
+            <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <rect x="3" y="11" width="18" height="11" rx="2" />
+              <path d="M7 11V7a5 5 0 0110 0v4" />
+            </svg>
+            Pago seguro · Visa / Mastercard / Yape
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* ── Footer stats ── */}
+      <footer className="border-t border-white/[.06] px-6 md:px-10 py-6 md:py-4 flex gap-6 md:gap-8 flex-col sm:flex-row sm:flex-wrap">
+        {STATS.map(({ icon, text }, i) => (
+          <div key={i} className="flex items-center gap-2 text-[12px] text-[rgba(240,237,228,.35)]">
+            <svg
+              className="w-3.5 h-3.5 opacity-40 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+            >
+              {icon}
+            </svg>
+            {text}
+          </div>
+        ))}
+      </footer>
     </div>
   );
 }

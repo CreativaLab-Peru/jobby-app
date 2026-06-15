@@ -49,7 +49,7 @@ export function DiagnosticoProcessing() {
       <div
         className="w-full max-w-md bg-[#111c18] p-6 rounded-2xl border border-[#c8f562]/10 mb-10">
         <h3 className="text-[#c8f562] text-sm font-semibold mb-4 uppercase tracking-wider">
-          En segundo plano estamos:
+          Esto es lo que está pasando detrás de escena:
         </h3>
         <div className="space-y-4">
           {STEPS.map((step, index) => (

@@ -1,3 +1,11 @@
+# WIP
+
+# Enhancements
+- Fix text in diagnosis landing.
+- Add badge of the message to send a email to the user.
+- Add badges to inform the user that we already send a email after payment.
+- Verify if the token is already used.
+
 # v1.2.25 - 2026-06-09
 
 # Features

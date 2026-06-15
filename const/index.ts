@@ -141,5 +141,5 @@ export const DIAGNOSTICO_FEATURES = [
 export const BADGES = [
   { label: "522+ usuarios activos en Latam" },
   { label: "Respaldado por PRO Innóvate", bold: "PRO Innóvate" },
-  { label: "Embajada Británica · AIESEC", bold: "Embajada Británica" },
+  // { label: "Embajada Británica · AIESEC", bold: "Embajada Británica" },
 ];

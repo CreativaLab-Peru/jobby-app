@@ -23,6 +23,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function DiagnosticoCvPage() {
-  return <DiagnosisFlow />;
+interface DiagnosticoCvPageProps {
+  searchParams: Promise<{
+    payment?: "success" | "failure" | "pending";
+  }>
+}
+
+export default async function DiagnosticoCvPage({searchParams}: DiagnosticoCvPageProps) {
+  const {payment} = await searchParams;
+  return <DiagnosisFlow paymentStatus={payment} />;
 }

@@ -170,9 +170,15 @@ export function DiagnosticoPaymentForm({
               >
                 Tus datos
               </h2>
-              <p className="text-[13px] text-[rgba(240,237,228,.4)] leading-relaxed">
-                Solo para enviarte el enlace de acceso a tu diagnóstico.
-              </p>
+              <div className="inline-flex items-center gap-2 mt-0.5 px-3 py-1.5 rounded-lg bg-[#c9f563]/[.08] border border-[#c9f563]/[.18]">
+                <svg className="w-3.5 h-3.5 text-[#c9f563] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <rect x="2" y="4" width="20" height="16" rx="2" />
+                  <path d="M2 7l10 7 10-7" />
+                </svg>
+                <p className="text-[13px] text-[#c9f563]/80 leading-none">
+                  Te enviaremos el acceso a este correo
+                </p>
+              </div>
             </div>
 
             <form onSubmit={handleSubmit} noValidate>

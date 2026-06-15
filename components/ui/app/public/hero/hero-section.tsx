@@ -123,8 +123,7 @@ export function HeroSection() {
           {/* Social proof */}
           <div
             className="mt-16 flex flex-col sm:flex-row items-center gap-6 text-sm text-muted-foreground animate-fade-up"
-            style={{ animationDelay: "0.4s" }}
-          >
+            style={{ animationDelay: "0.4s" }}>
             <div className="flex -space-x-2">
               {[
                 "/testimonios/Andy.png",

@@ -4,8 +4,13 @@ import { useDiagnosticoFlow } from "../hooks/use-diagnostico-flow";
 import { DiagnosticoLandingScreen } from "../components/diagnostico-landing-screen";
 import { DiagnosticoPaymentForm } from "../components/diagnostico-payment-form";
 import { createDiagnosticoPreference } from "../actions/create-diagnostico-preference";
+import {JSX} from "react";
 
-export function DiagnosisFlow() {
+interface DiagnosisFlowProps {
+  paymentStatus?: "success" | "failure" | "pending";
+}
+
+export function DiagnosisFlow({ paymentStatus }: DiagnosisFlowProps) {
   const {
     step,
     setStep,
@@ -19,8 +24,6 @@ export function DiagnosisFlow() {
 
   const handlePaymentSubmit = async (email: string, name: string) => {
     setUserInfo(email, name);
-    setStep("processing");
-
     const result = await createDiagnosticoPreference(email, name);
 
     if (result.success && result.redirect) {
@@ -32,7 +35,7 @@ export function DiagnosisFlow() {
 
   switch (step) {
     case "landing":
-      return <DiagnosticoLandingScreen onStart={handleStart} />;
+      return <DiagnosticoLandingScreen onStart={handleStart} paymentStatus={paymentStatus} />;
 
     case "payment":
       return (

@@ -2,9 +2,11 @@
 
 import { DIAGNOSTICO_PRICE } from "../types/diagnostico";
 import {BADGES, DIAGNOSTICO_FEATURES} from "@/const";
+import Image from "next/image";
 
 interface DiagnosticoLandingScreenProps {
   onStart: () => void;
+  paymentStatus?: "success" | "failure" | "pending";
 }
 
 const STATS = [
@@ -61,7 +63,7 @@ const STATS = [
   },
 ];
 
-export function DiagnosticoLandingScreen({ onStart }: DiagnosticoLandingScreenProps) {
+export function DiagnosticoLandingScreen({ onStart, paymentStatus }: DiagnosticoLandingScreenProps) {
   // Parse price into integer and decimal parts for styled display
   const [priceInt, priceDec] = String(DIAGNOSTICO_PRICE).split(".");
 
@@ -80,6 +82,32 @@ export function DiagnosticoLandingScreen({ onStart }: DiagnosticoLandingScreenPr
         </span>
         <span className="text-[13px] text-[rgba(240,237,228,.5)]">Diagnóstico con IA</span>
       </nav>
+
+      {/* ── Payment success banner ── */}
+      {paymentStatus && paymentStatus !== "failure" && (
+        <div className={`flex items-center justify-center gap-2.5 px-6 py-3 border-b ${
+          paymentStatus === "success"
+            ? "bg-[#c9f563]/[.08] border-[#c9f563]/[.18]"
+            : "bg-amber-400/[.08] border-amber-400/[.18]"
+        }`}>
+          {paymentStatus === "success" ? (
+            <svg className="w-4 h-4 text-[#c9f563] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <rect x="2" y="4" width="20" height="16" rx="2" />
+              <path d="M2 7l10 7 10-7" />
+            </svg>
+          ) : (
+            <svg className="w-4 h-4 text-amber-400 flex-shrink-0 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeOpacity={0.25} />
+              <path d="M21 12a9 9 0 00-9-9" />
+            </svg>
+          )}
+          <p className={`text-[13px] ${paymentStatus === "success" ? "text-[#c9f563]/90" : "text-amber-400/90"}`}>
+            {paymentStatus === "success"
+              ? "¡Pago recibido! Revisa tu correo — ahí encontrarás el enlace a tu diagnóstico."
+              : "Tu pago está en proceso — te avisaremos por correo en cuanto se confirme."}
+          </p>
+        </div>
+      )}
 
       {/* ── Hero ── */}
       <section className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-10 lg:gap-12 px-6 md:px-10 pt-10 md:pt-14 pb-12 flex-1 items-start max-w-6xl mx-auto w-full">
@@ -123,6 +151,37 @@ export function DiagnosticoLandingScreen({ onStart }: DiagnosticoLandingScreenPr
                 {label}
               </div>
             ))}
+          </div>
+
+          <div
+            className="mt-16 flex flex-col sm:flex-row items-center gap-6 text-sm text-muted-foreground animate-fade-up"
+            style={{ animationDelay: "0.4s" }}>
+            <div className="flex -space-x-2">
+              {[
+                "/testimonios/Andy.png",
+                "/testimonios/Monica.png",
+                "/testimonios/Jhon.png",
+                "/testimonios/Aaron.png",
+                "/testimonios/Brenda.png",
+              ].map((src, i) => (
+                <div
+                  key={i}
+                  className="w-10 h-10 rounded-full bg-gradient-to-br from-accent/20 to-accent/40 border-2 border-background flex items-center justify-center overflow-hidden fadeUp"
+                >
+                  <Image
+                    src={src}
+                    alt={`Avatar ${i + 1}`}
+                    width={40}
+                    height={40}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+              ))}
+            </div>
+            <p>
+              <span className="font-semibold text-primary">+500</span> profesionales ya
+              optimizaron su perfil
+            </p>
           </div>
         </div>
 

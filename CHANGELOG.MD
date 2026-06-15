@@ -1,4 +1,4 @@
-# WIP
+# v1.2.26 - 2026-06-15
 
 # Enhancements
 - Fix text in diagnosis landing.

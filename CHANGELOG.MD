@@ -1,3 +1,9 @@
+# v1.2.27 - 2026-06-16
+
+# Fixes
+- Fix text syntaxes
+- Fix percent of opportunities
+
 # v1.2.26 - 2026-06-15
 
 # Enhancements

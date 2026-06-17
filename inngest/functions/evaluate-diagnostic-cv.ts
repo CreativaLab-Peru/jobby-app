@@ -185,7 +185,8 @@ Responde ÚNICAMENTE con un objeto JSON válido, sin explicaciones ni bloques de
  * Calculates a match percentage for an opportunity.
  *
  * Base: the AI overall score (reflects how strong the profile is).
- * Bonus: +1 point per requirement keyword that overlaps with the user's area.
+ * Bonus: +3 points per requirement keyword that overlaps with the user's area.
+ * Variance: +/- a random percentage to make scores feel dynamic.
  * Capped at 98 so no opportunity ever shows a perfect 100 unrealistically.
  */
 function calculateMatchPercentage(
@@ -198,5 +199,19 @@ function calculateMatchPercentage(
     req.toLowerCase().includes(areaLower)
   ).length * 3; // 3 points per matching requirement keyword
 
-  return Math.min(98, Math.max(10, Math.round(overallScore + keywordBonus)));
+  // 1. Definir la variación máxima permitida (ej. +/- 5 puntos)
+  const maxVariance = 5;
+
+  // 2. Generar un número aleatorio entre -maxVariance y +maxVariance
+  // Math.random() genera entre 0 y 0.99
+  // Multiplicamos por (5 * 2 + 1) = 11, lo que da entre 0 y 10.99
+  // Math.floor lo baja a un entero entre 0 y 10
+  // Restamos maxVariance (5), resultando en un rango de -5 a +5
+  const randomVariance = Math.floor(Math.random() * (maxVariance * 2 + 1)) - maxVariance;
+
+  // 3. Sumar el score, el bono y la variación aleatoria
+  const rawScore = overallScore + keywordBonus + randomVariance;
+
+  // 4. Limitar el resultado final entre 10 y 98
+  return Math.min(98, Math.max(10, Math.round(rawScore)));
 }

@@ -55,7 +55,7 @@ export const DiagnosticResultsEmail = ({
             <Text style={badgeText}>DIAGNOSTICO COMPLETADO</Text>
           </Section>
 
-          <Heading style={h1}>Tu diagnostico esta listo</Heading>
+          <Heading style={h1}>Tu diagnóstico esta listo</Heading>
 
           <Text style={text}>
             Hola <strong style={{ color: colors.foreground }}>{displayName}</strong>,

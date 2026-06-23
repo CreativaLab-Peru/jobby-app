@@ -1,3 +1,8 @@
+# WIP
+
+## Features
+- New product: Mentoría 1:1 - Landing page at `/mentoria` with form flow (name, email, WhatsApp, Chevening plan) → Resend email confirmation with MercadoPago payment link and WhatsApp contact button.
+
 # v1.2.27 - 2026-06-16
 
 # Fixes

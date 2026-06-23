@@ -84,14 +84,14 @@ export const MentoriaConfirmationEmail = ({
               ¿Ya pagaste? Comunícate con Dara por WhatsApp para agendar tu sesión:
             </Text>
             <Link href={whatsappUrl} style={whatsappButton}>
-              <Img
-                src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-                width="20"
-                height="20"
-                alt="WhatsApp"
-                style={{ marginRight: "8px", verticalAlign: "middle" }}
-              />
-              Confirmar pago por WhatsApp
+              {/*<Img*/}
+              {/*  src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"*/}
+              {/*  width="20"*/}
+              {/*  height="20"*/}
+              {/*  alt="WhatsApp"*/}
+              {/*  style={{ marginRight: "8px", verticalAlign: "middle" }}*/}
+              {/*/>*/}
+              Confirmar por WhatsApp
             </Link>
           </Section>
 

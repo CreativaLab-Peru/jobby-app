@@ -148,7 +148,7 @@ export function MentoriaRequestForm({
                 className="text-[26px] font-bold text-[#0a0f0c] self-start mt-2.5"
                 style={{ fontFamily: "'Fraunces', serif" }}
               >
-                {priceDec ? `.${priceDec}` : ""}0
+                {priceDec ? `.${priceDec}` : ""}.00
               </span>
             </div>
 

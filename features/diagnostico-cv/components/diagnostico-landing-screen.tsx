@@ -57,7 +57,7 @@ const STATS = [
     ),
     text: (
       <>
-        Cusco, Perú · <strong className="text-[rgba(240,237,228,.6)] font-medium">para toda Latinoamérica</strong>
+        Peru
       </>
     ),
   },
@@ -74,13 +74,16 @@ export function DiagnosticoLandingScreen({ onStart, paymentStatus }: Diagnostico
     >
       {/* ── Nav ── */}
       <nav className="flex justify-between items-center px-6 md:px-10 py-[18px] border-b border-white/[.06]">
-        <span
-          className="text-[#c9f563] text-[22px] font-bold italic"
-          style={{ fontFamily: "'Fraunces', serif" }}
-        >
-          levely
-        </span>
-        <span className="text-[13px] text-[rgba(240,237,228,.5)]">Diagnóstico con IA</span>
+        {/* Logo */}
+        <div className="relative h-8 w-20">
+          <Image
+            src="/logo_dark.png"
+            alt="Levely"
+            fill
+            priority
+            className="object-contain"
+          />
+        </div>
       </nav>
 
       {/* ── Payment success banner ── */}

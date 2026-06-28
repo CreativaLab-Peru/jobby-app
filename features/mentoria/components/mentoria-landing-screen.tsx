@@ -106,12 +106,16 @@ export function MentoriaLandingScreen({onStart, requestStatus}: MentoriaLandingS
       {/* ── Nav ── */}
       <nav
         className="flex justify-between items-center px-6 md:px-12 py-[18px] border-b border-white/[.06] bg-[#0a0f0c]">
-        <span
-          className="text-[#c9f563] text-[22px] font-bold italic"
-          style={{fontFamily: "'Fraunces', serif"}}
-        >
-          levely
-        </span>
+        {/* Logo */}
+        <div className="relative h-8 w-20">
+          <Image
+            src="/logo_dark.png"
+            alt="Levely"
+            fill
+            priority
+            className="object-contain"
+          />
+        </div>
         <button
           onClick={onStart}
           className="flex items-center gap-1.5 px-4 py-2 bg-[#c9f563] text-[#0a0f0c] rounded-full text-[13px] font-semibold hover:bg-[#b8e050] transition-colors"
@@ -383,7 +387,7 @@ export function MentoriaLandingScreen({onStart, requestStatus}: MentoriaLandingS
               className="text-[28px] font-bold text-[#0a0f0c] self-start mt-4"
               style={{fontFamily: "'Fraunces', serif"}}
             >
-              {priceDec ? `.${priceDec}` : ""}0
+              {priceDec ? `.${priceDec}` : ""}.00
             </span>
           </div>
 

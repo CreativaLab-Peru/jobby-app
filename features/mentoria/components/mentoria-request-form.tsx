@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { MENTORIA_PRICE, CHEVENING_OPTIONS, MentoriaRequestData } from "../types/mentoria";
+import Image from "next/image";
 
 interface MentoriaRequestFormProps {
   onBack?: () => void;
@@ -103,12 +104,15 @@ export function MentoriaRequestForm({
     >
       {/* ── Nav ── */}
       <nav className="flex justify-between items-center px-6 md:px-12 py-[18px] border-b border-white/[.06]">
-        <span
-          className="text-[#c9f563] text-[22px] font-bold italic"
-          style={{ fontFamily: "'Fraunces', serif" }}
-        >
-          levely
-        </span>
+        <div className="relative h-8 w-20">
+          <Image
+            src="/logo_dark.png"
+            alt="Levely"
+            fill
+            priority
+            className="object-contain"
+          />
+        </div>
 
         {onBack && (
           <button

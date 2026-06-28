@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { DIAGNOSTICO_PRICE } from "../types/diagnostico";
 import {DIAGNOSTICO_FEATURES} from "@/const";
+import Image from "next/image";
 
 interface DiagnosticoPaymentFormProps {
   onBack?: () => void;
@@ -87,12 +88,15 @@ export function DiagnosticoPaymentForm({
     >
       {/* ── Nav ── */}
       <nav className="flex justify-between items-center px-6 md:px-12 py-[18px] border-b border-white/[.06]">
-        <span
-          className="text-[#c9f563] text-[22px] font-bold italic"
-          style={{ fontFamily: "'Fraunces', serif" }}
-        >
-          levely
-        </span>
+        <div className="relative h-8 w-20">
+          <Image
+            src="/logo_dark.png"
+            alt="Levely"
+            fill
+            priority
+            className="object-contain"
+          />
+        </div>
 
         {onBack && (
           <button

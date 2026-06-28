@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Radar de Becas — Levely</title>
+  <meta name="description" content="Cada mañana escaneamos más de 100 fuentes y te enviamos las mejores becas del día — full funded, maestrías, doctorados y fellowships. Gratis siempre." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    /* ── TOKENS DARK ── */
+    :root {
+      --bg:       #0B1314;
+      --bg2:      #0f1a1b;
+      --fg:       #f0fff4;
+      --fg2:      #F5F5F0;
+      --fg3:      #F5F5F0;
+      --green:    #d2ff7d;
+      --green-lt: #d2ff7d;
+      --green-btn:#c4f060;
+      --border:   rgba(255,255,255,0.07);
+      --card-bg:  rgba(255,255,255,0.04);
+      --input-bg: rgba(255,255,255,0.06);
+      --input-br: rgba(255,255,255,0.12);
+      --shadow:   0 2px 24px rgba(0,0,0,0.4);
+      --serif:    'DM Serif Display', Georgia, serif;
+      --sans:     'DM Sans', system-ui, sans-serif;
+      --wrap:     1100px;
+      --pad:      clamp(20px,5vw,56px);
+    }
+
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--fg); -webkit-font-smoothing: antialiased; transition: background .2s, color .2s; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── HERO ── */
+    .hero {
+      padding: clamp(70px,11vw,120px) var(--pad) clamp(60px,9vw,100px);
+      text-align: center;
+      max-width: var(--wrap); margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 12px; font-weight: 500;
+      color: var(--fg3); background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 6px 16px; border-radius: 40px; margin-bottom: 28px;
+    }
+    .hero-badge-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green); animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    .hero-h1 {
+      font-family: var(--serif);
+      font-size: clamp(36px, 7vw, 72px);
+      line-height: 1.08; letter-spacing: -1px;
+      color: var(--fg); margin-bottom: 22px; font-weight: 400;
+    }
+    .hero-h1 em { color: var(--green); font-style: normal; }
+
+    .hero-sub {
+      font-size: clamp(15px,2vw,18px);
+      color: var(--fg3); line-height: 1.7;
+      max-width: 560px; margin: 0 auto 44px;
+    }
+    .hero-sub strong { color: var(--fg2); font-weight: 500; }
+
+    /* ── FORM ── */
+    .form-wrap { max-width: 480px; margin: 0 auto; }
+    .form-row { display: flex; flex-direction: column; gap: 10px; }
+    .form-input {
+      font-family: var(--sans); font-size: 15px; color: var(--fg);
+      background: var(--input-bg); border: 1.5px solid var(--input-br);
+      border-radius: 10px; padding: 14px 18px; outline: none; width: 100%;
+      transition: border-color .15s;
+    }
+    .form-input::placeholder { color: var(--fg3); }
+    .form-input:focus { border-color: var(--green); }
+    .btn-sub {
+      display: block; width: 100%;
+      background: var(--green); color: #0d1a0f;
+      font-family: var(--sans); font-size: 15px; font-weight: 600;
+      padding: 15px 24px; border-radius: 10px; border: none;
+      cursor: pointer; letter-spacing: .1px;
+      transition: filter .15s, transform .1s;
+    }
+    .btn-sub:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    .form-proof {
+      font-size: 12px; color: var(--fg3);
+      text-align: center; margin-top: 14px; line-height: 1.65;
+    }
+    .form-proof a { color: var(--fg3); border-bottom: 1px solid var(--border); }
+
+    /* ── STATS ── */
+    .stats-strip {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 0 var(--pad);
+    }
+    .stats-inner {
+      max-width: var(--wrap); margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4,1fr);
+    }
+    .stat {
+      padding: 28px 20px; text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-n {
+      font-family: var(--serif); font-size: 38px;
+      color: var(--green); line-height: 1; margin-bottom: 5px;
+    }
+    .stat-l { font-size: 12px; color: var(--fg3); line-height: 1.5; }
+
+    /* ── SECTION BASE ── */
+    .sec { padding: clamp(60px,8vw,90px) var(--pad); }
+    .sec-inner { max-width: var(--wrap); margin: 0 auto; }
+    .sec-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--green); margin-bottom: 14px;
+    }
+    .sec-h2 {
+      font-family: var(--serif); font-weight: 400;
+      font-size: clamp(26px,4vw,44px);
+      line-height: 1.15; letter-spacing: -.3px; margin-bottom: 16px; color: var(--fg);
+    }
+    .sec-h2 em { color: var(--green); font-style: normal; }
+    .sec-p { font-size: 15px; color: var(--fg3); line-height: 1.75; }
+
+    /* ── TYPES GRID ── */
+    .types-grid {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
+      margin-top: 48px;
+    }
+    .type-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 24px 22px;
+      transition: border-color .2s;
+    }
+    .type-card:hover { border-color: var(--green); }
+    .type-icon { font-size: 26px; margin-bottom: 12px; }
+    .type-title { font-size: 15px; font-weight: 600; color: var(--fg); margin-bottom: 6px; }
+    .type-desc  { font-size: 13px; color: var(--fg3); line-height: 1.65; }
+    .type-tag {
+      display: inline-block; margin-top: 12px;
+      font-size: 10px; font-weight: 600; letter-spacing: .5px;
+      text-transform: uppercase; color: var(--green);
+      background: rgba(120,200,80,0.1); padding: 3px 10px; border-radius: 20px;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how-grid { display: flex; flex-direction: column; gap: 0; }
+    .how-row {
+      display: grid; grid-template-columns: 52px 1fr;
+      gap: 20px; align-items: flex-start;
+      padding: 22px 0; border-bottom: 1px solid var(--border);
+    }
+    .how-row:last-child { border-bottom: none; }
+    .how-n {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--card-bg); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif); font-size: 18px; color: var(--green);
+      flex-shrink: 0;
+    }
+    .how-title { font-size: 15px; font-weight: 500; color: var(--fg); margin-bottom: 4px; }
+    .how-desc  { font-size: 13px; color: var(--fg3); line-height: 1.65; }
+
+    /* ── SOURCES ── */
+    .sources-wrap { margin-top: 32px; }
+    .sources-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--fg3); margin-bottom: 14px; }
+    .sources { display: flex; flex-wrap: wrap; gap: 7px; }
+    .source-tag {
+      font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: 40px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #F5F5F0;
+    }
+
+    /* ── BOTTOM CTA ── */
+    .bottom-cta {
+      background: var(--bg2); border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .bottom-inner { max-width: 580px; margin: 0 auto; }
+
+    /* ── FOOTER ── */
+    .footer-wrap {
+      border-top: 1px solid var(--border);
+      padding: 28px var(--pad);
+    }
+    .footer-inner {
+      max-width: var(--wrap); margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 14px;
+    }
+    .footer-logo {
+      font-family: var(--serif); font-size: 20px; color: var(--fg); font-weight: 400;
+    }
+    .footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .footer-links a { font-size: 12px; color: var(--fg3); transition: color .15s; }
+    .footer-links a:hover { color: var(--fg); }
+    .footer-badge {
+      width: 100%; padding-top: 14px; border-top: 1px solid var(--border);
+      font-size: 11px; color: var(--fg3); text-align: center;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 800px) {
+      .stats-inner  { grid-template-columns: 1fr 1fr; }
+      .stat         { border-right: none; border-bottom: 1px solid var(--border); }
+      .stat:nth-child(2n){ border-right: none; }
+      .types-grid   { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 500px) {
+      .stats-inner  { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ HERO ══════════════════════════════════════════════════ -->
+<section class="hero">
+
+  <div class="hero-badge">
+    <span class="hero-badge-dot"></span>
+    Radar de Becas
+  </div>
+
+  <h1 class="hero-h1">
+    Otros buscan becas.<br>
+    <em>Tú las recibes.</em>
+  </h1>
+
+  <p class="hero-sub">
+    Cada mañana escaneamos <strong>más de 100 fuentes internacionales</strong>
+    y te enviamos las mejores oportunidades del día.
+    Becas full funded, maestrías, doctorados, fellowships y más.
+    Solo lo que realmente existe hoy.
+  </p>
+
+  <div class="form-wrap">
+    <!-- Edward: conectar a Resend + Airtable. Variables: nombre + email -->
+    <form action="/suscribir" method="POST" class="form-row">
+      <input class="form-input" type="text" name="nombre" placeholder="Tu nombre" required autocomplete="given-name" />
+      <input class="form-input" type="email" name="email" placeholder="tu@email.com" required autocomplete="email" />
+      <button type="submit" class="btn-sub">Suscribirme al Radar →</button>
+    </form>
+    <p class="form-proof">
+      Únete a +2,000 personas en Perú y Latam<br>
+      <a href="/politica-de-privacidad">Política de privacidad</a>
+    </p>
+  </div>
+
+</section>
+
+
+<!-- ══ STATS ══════════════════════════════════════════════════ -->
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat">
+      <div class="stat-n">+100</div>
+      <div class="stat-l">fuentes monitoreadas<br>cada día</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">+2K</div>
+      <div class="stat-l">suscriptores activos<br>en Perú y Latam</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">5×</div>
+      <div class="stat-l">días a la semana<br>en tu correo</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">100%</div>
+      <div class="stat-l">becas con link directo<br>a la fuente oficial</div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+<!-- ══ COMO LLEGA ══════════════════════════════════════════ -->
+<section class="sec" style="padding-top:clamp(48px,6vw,72px);padding-bottom:clamp(48px,6vw,72px)">
+  <div class="sec-inner" style="text-align:center;max-width:600px;margin:0 auto">
+
+    <!-- Gmail icon -->
+    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:40px;padding:7px 16px;margin-bottom:22px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4Z" stroke="#F5F5F0" stroke-opacity="0.4" stroke-width="1.5"/>
+        <path d="M2 6L12 13L22 6" stroke="#D2FF7D" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span style="font-size:12px;font-weight:500;color:rgba(245,245,240,0.5)">llega a tu correo cada mañana</span>
+    </div>
+
+    <p class="sec-label">Así llega cada mañana</p>
+    <h2 class="sec-h2">
+      Abres tu correo.<br>
+      <em>Ya están listas para aplicar.</em>
+    </h2>
+    <p class="sec-p">
+      Un correo limpio, con lo que abrió hoy y el link directo a cada convocatoria.
+    </p>
+  </div>
+</section>
+
+
+<!-- ══ TIPOS DE OPORTUNIDADES ══════════════════════════════════ -->
+<section class="sec" style="padding-top:0">
+  <div class="sec-inner">
+    <div class="types-grid">
+      <div class="type-card">
+        <div class="type-icon">🎓</div>
+        <div class="type-title">Becas de maestría full funded</div>
+        <div class="type-desc">Programas que cubren matrícula, vuelo, alojamiento y manutención mensual. Chevening, DAAD, Erasmus Mundus, Fulbright y más.</div>
+        <span class="type-tag">Full funded</span>
+      </div>
+      <div class="type-card">
+        <div class="type-icon">🔬</div>
+        <div class="type-title">Doctorados financiados</div>
+        <div class="type-desc">Programas de doctorado con estipendio mensual en universidades de Europa, UK, EEUU, Canadá y Asia. Sin deuda, con salario.</div>
+        <span class="type-tag">PhD</span>
+      </div>
+      <div class="type-card">
+        <div class="type-icon">🌐</div>
+        <div class="type-title">Fellowships internacionales</div>
+        <div class="type-desc">Programas de liderazgo, innovación e impacto social con financiamiento completo. Para jóvenes profesionales y emprendedores.</div>
+        <span class="type-tag">Liderazgo</span>
+      </div>
+      <div class="type-card">
+        <div class="type-icon">🏛️</div>
+        <div class="type-title">Fondos de investigación</div>
+        <div class="type-desc">Grants y financiamiento para proyectos de investigación aplicada, ciencia, tecnología e impacto social desde Latinoamérica.</div>
+        <span class="type-tag">Research</span>
+      </div>
+      <div class="type-card">
+        <div class="type-icon">🚀</div>
+        <div class="type-title">Aceleradoras y residencias</div>
+        <div class="type-desc">Programas de aceleración, residencias internacionales y oportunidades para emprendedores con financiamiento o equity.</div>
+        <span class="type-tag">Startups</span>
+      </div>
+      <div class="type-card">
+        <div class="type-icon">🤝</div>
+        <div class="type-title">Intercambios y programas cortos</div>
+        <div class="type-desc">Visitas de investigación, programas de verano e intercambios académicos con viaje y alojamiento cubiertos.</div>
+        <span class="type-tag">Exchange</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══ CÓMO FUNCIONA ══════════════════════════════════════════ -->
+<section class="sec" style="padding-top:0">
+  <div class="sec-inner" style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start">
+
+    <div>
+      <p class="sec-label">Cómo funciona</p>
+      <h2 class="sec-h2">Sin buscar.<br><em>Sin perderte nada.</em></h2>
+      <p class="sec-p">
+        Armamos el Radar porque buscar becas manualmente es un trabajo de tiempo completo que nadie tiene.
+        Hay cientos de convocatorias abriéndose cada semana,
+        la mayoría en inglés, dispersas en sitios que nunca revisarías.
+        Nosotros lo hacemos por ti.
+      </p>
+
+      <div class="sources-wrap">
+        <div class="sources-label">Algunas fuentes que monitoreamos</div>
+        <div class="sources">
+          <span class="source-tag">🇬🇧 Chevening</span>
+          <span class="source-tag">🇺🇸 Fulbright</span>
+          <span class="source-tag">🇩🇪 DAAD</span>
+          <span class="source-tag">🇪🇺 Erasmus Mundus</span>
+          <span class="source-tag">🌎 OEA</span>
+          <span class="source-tag">🇯🇵 MEXT</span>
+          <span class="source-tag">🇨🇳 CSC</span>
+          <span class="source-tag">🇰🇷 GKS Korea</span>
+          <span class="source-tag">Fundación Carolina</span>
+          <span class="source-tag">ANID Chile</span>
+          <span class="source-tag">Pronabec</span>
+          <span class="source-tag">Gates Foundation</span>
+          <span class="source-tag">Open Society</span>
+          <span class="source-tag">+ 90 más</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="how-grid">
+      <div class="how-row">
+        <div class="how-n">1</div>
+        <div>
+          <div class="how-title">Te suscribes en 30 segundos</div>
+          <div class="how-desc">Solo tu nombre y tu correo.</div>
+        </div>
+      </div>
+      <div class="how-row">
+        <div class="how-n">2</div>
+        <div>
+          <div class="how-title">Cada mañana escaneamos más de 100 fuentes</div>
+          <div class="how-desc">El sistema revisa embajadas, universidades, fundaciones, gobiernos y portales especializados. Solo convocatorias abiertas hoy.</div>
+        </div>
+      </div>
+      <div class="how-row">
+        <div class="how-n">3</div>
+        <div>
+          <div class="how-title">Recibes lo mejor directo en tu correo</div>
+          <div class="how-desc">Un correo diario con las oportunidades del día. Clasificadas, con descripción clara y el link oficial para aplicar. Tú decides qué te interesa.</div>
+        </div>
+      </div>
+      <div class="how-row">
+        <div class="how-n">4</div>
+        <div>
+          <div class="how-title">Aplicas cuando algo encaja contigo</div>
+          <div class="how-desc">No tienes que postular a todo. Solo estar informado a tiempo para cuando aparezca la beca que sí es para ti.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══ BOTTOM CTA ══════════════════════════════════════════════ -->
+<section class="sec bottom-cta">
+  <div class="sec-inner bottom-inner">
+
+    <p class="sec-label" style="text-align:center">Cancela cuando quieras</p>
+    <h2 class="sec-h2" style="text-align:center;font-size:clamp(28px,5vw,50px);margin-bottom:14px">
+      El Radar trabaja.<br><em>Tú aplicas.</em>
+    </h2>
+    <p class="sec-p" style="text-align:center;margin-bottom:36px;max-width:480px;margin-left:auto;margin-right:auto">
+      Mientras trabajas, estudias o duermes, el Radar está monitoreando las becas
+      que pueden cambiar tu trayectoria. Tú solo abres el correo.
+    </p>
+
+    <div class="form-wrap">
+      <form action="/suscribir" method="POST" class="form-row">
+        <input class="form-input" type="text" name="nombre" placeholder="Tu nombre" required autocomplete="given-name" />
+        <input class="form-input" type="email" name="email" placeholder="tu@email.com" required autocomplete="email" />
+        <button type="submit" class="btn-sub">Activar mi Radar gratis →</button>
+      </form>
+      <p class="form-proof">
+        +2,000 personas ya lo reciben
+      </p>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══ FOOTER ══════════════════════════════════════════════════ -->
+<div class="footer-wrap">
+  <div class="footer-inner">
+    <a href="https://joinlevely.com" class="footer-logo">levely</a>
+    <nav class="footer-links">
+      <a href="https://joinlevely.com/diagnostico-cv">Diagnóstico S/19.90</a>
+      <a href="https://joinlevely.com/mentoria-uk">Mentoría 1:1</a>
+      <a href="https://joinlevely.com/politica-de-privacidad">Privacidad</a>
+      <a href="https://joinlevely.com/terminos-y-condiciones">Términos</a>
+    </nav>
+    <p class="footer-badge">
+      Co-financiada por PRO Innóvate · Startup Perú · Ministerio de Producción del Perú &nbsp;·&nbsp; © 2026 Levely
+    </p>
+  </div>
+</div>
+
+</body>
+</html>

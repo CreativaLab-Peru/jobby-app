@@ -1,10 +1,5 @@
-import { Newsletter } from "@/features/newletter/screens/new-letter-screen";
-import { PublicPageTransition } from "@/components/shared/public-page-transition";
+import { redirect } from "next/navigation";
 
-export default function NewLetterPage() {
-  return (
-    <PublicPageTransition>
-      <Newsletter />
-    </PublicPageTransition>
-  );
+export default function NewsletterPage() {
+  redirect("/radar");
 }

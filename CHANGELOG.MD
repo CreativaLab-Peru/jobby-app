@@ -1,3 +1,8 @@
+# v1.2.29 - 2026-06-28
+
+## Features
+- New landing page: Radar de Becas at `/radar` - Dark mode landing page for the scholarship newsletter product. Replaces old newsletter page at `/newsletter` which now redirects to `/radar`. Uses existing Kit (ConvertKit) form for subscriptions.
+
 # v1.2.28 - 2026-06-23
 
 ## Features

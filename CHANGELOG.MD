@@ -1,3 +1,11 @@
+# v1.2.29 - 2026-06-28
+
+## Features
+- New landing page: Radar de Becas at `/radar` - Dark mode landing page for the scholarship newsletter product. Replaces old newsletter page at `/newsletter` which now redirects to `/radar`. Uses existing Kit (ConvertKit) form for subscriptions.
+
+## Enhancements
+- Replace text "levely" logo with real `logo_dark.png` in mentoria-landing-screen.tsx and diagnostico-landing-screen.tsx nav bars
+
 # v1.2.28 - 2026-06-23
 
 ## Features

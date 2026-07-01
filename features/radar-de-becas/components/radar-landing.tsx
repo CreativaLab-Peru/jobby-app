@@ -139,8 +139,8 @@ export function RadarLanding() {
         >
           {[
             { num: "+100", label: "fuentes monitoreadas\ncada día" },
-            { num: "+2K", label: "suscriptores activos\nen Perú y Latam" },
-            { num: "5×", label: "días a la semana\nen tu correo" },
+            { num: "+200", label: "suscriptores activos\nen Perú y Latam" },
+            { num: "1×", label: "vez a la semana\nen tu correo" },
             { num: "100%", label: "becas con link directo\na la fuente oficial" },
           ].map((stat, i) => (
             <div
@@ -203,9 +203,6 @@ export function RadarLanding() {
             <path d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4Z" stroke={colors.fg3} strokeOpacity="0.4" strokeWidth="1.5"/>
             <path d="M2 6L12 13L22 6" stroke={colors.green} strokeWidth="1.5" strokeLinecap="round"/>
           </svg>
-          <span style={{ fontSize: "12px", fontWeight: 500, color: "rgba(245,245,240,0.5)" }}>
-            llega a tu correo cada mañana
-          </span>
         </div>
 
         <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "1.5px", textTransform: "uppercase", color: colors.green, marginBottom: "14px" }}>
@@ -329,7 +326,7 @@ export function RadarLanding() {
           {[
             { num: "1", title: "Te suscribes en 30 segundos", desc: "Solo tu nombre y tu correo." },
             { num: "2", title: "Cada mañana escaneamos más de 100 fuentes", desc: "El sistema revisa embajadas, universidades, fundaciones, gobiernos y portales especializados. Solo convocatorias abiertas hoy." },
-            { num: "3", title: "Recibes lo mejor directo en tu correo", desc: "Un correo diario con las oportunidades del día. Clasificadas, con descripción clara y el link oficial para aplicar. Tú decides qué te interesa." },
+            { num: "3", title: "Recibes lo mejor directo en tu correo", desc: "Un correo semanal con las oportunidades del día. Clasificadas, con descripción clara y el link oficial para aplicar. Tú decides qué te interesa." },
             { num: "4", title: "Aplicas cuando algo encaja contigo", desc: "No tienes que postale a todo. Solo estar informado a tiempo para cuando aparezca la beca que sí es para ti." },
           ].map((step, i) => (
             <div
@@ -422,7 +419,7 @@ export function RadarLanding() {
                 lineHeight: 1.65,
               }}
             >
-              +2,000 personas ya lo reciben
+              +200 personas ya lo reciben
             </p>
           </div>
         </div>

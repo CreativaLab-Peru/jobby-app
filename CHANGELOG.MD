@@ -1,3 +1,10 @@
+# WIP
+
+# Fixes
+- Text of small cards
+- Delete navbar for radar page
+- Change text from 1 by day to 1 by week
+
 # v1.2.29 - 2026-06-28
 
 ## Features

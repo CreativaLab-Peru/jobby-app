@@ -1,4 +1,4 @@
-# WIP
+# v1.2.29 - 2026-07-01
 
 # Fixes
 - Text of small cards

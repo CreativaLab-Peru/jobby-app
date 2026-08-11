@@ -7,6 +7,7 @@ import {TooltipProvider} from "@/components/ui/tooltip";
 import {ThemeProvider} from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner"
 import { cookies } from 'next/headers'
+import { Analytics } from '@vercel/analytics/next'
 
 // Configura la fuente Poppins
 const poppins = Poppins({
@@ -75,6 +76,7 @@ export default async function RootLayout({
           </TooltipProvider>
           <Toaster />
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   )

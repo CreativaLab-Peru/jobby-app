@@ -60,6 +60,7 @@
     "@types/pdf-parse": "^1.1.5",
     "@types/pg": "^8.15.4",
     "@vapi-ai/web": "^2.5.2",
+    "@vercel/analytics": "^2.0.1",
     "@vercel/blob": "^1.1.1",
     "autoprefixer": "^10.4.20",
     "axios": "1.13.5",

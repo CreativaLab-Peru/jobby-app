@@ -1,3 +1,8 @@
+# v1.2.31 - 2026-08-10
+
+# Features
+- Analytics vercel feature
+
 # v1.2.29 - 2026-07-01
 
 # Fixes
